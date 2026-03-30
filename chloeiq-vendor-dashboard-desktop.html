@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChloeIQ — Vendor Intelligence Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0A0B07;--s1:#13160D;--s2:#1A1E12;--s3:#222818;--s4:#2A3020;
+  --acc:#B8E030;--ad:rgba(184,224,48,.10);--am:rgba(184,224,48,.22);
+  --tx:#EEF0E5;--txm:#8A8F7A;--txd:#4A5040;
+  --br:rgba(184,224,48,.12);--bs:rgba(238,240,229,.06);
+  --red:#FF5A4A;--amb:#F5A623;--grn:#4ADE80;--blu:#60A5FA;--pur:#A78BFA;
+  --sw:210px;--hh:58px;
+}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:14px;overflow:hidden;}
+
+/* SHELL */
+.shell{display:grid;grid-template-columns:var(--sw) 1fr;grid-template-rows:var(--hh) 1fr;height:100vh;}
+
+/* TOPBAR */
+.topbar{grid-column:1/-1;display:flex;align-items:center;padding:0 24px;border-bottom:1px solid var(--bs);background:var(--bg);z-index:20;}
+.tl{display:flex;align-items:center;gap:9px;width:var(--sw);flex-shrink:0;}
+.lm{width:28px;height:28px;background:var(--acc);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:var(--bg);}
+.lt{font-family:'Fraunces',serif;font-size:17px;}.lt b{color:var(--acc);font-weight:400;}
+.tc{flex:1;display:flex;align-items:center;gap:10px;}
+.bc{font-size:12px;color:var(--txm);display:flex;align-items:center;gap:5px;}
+.bc .sep{opacity:.35;}.bc .cur{color:var(--tx);font-weight:500;}
+.vtag{background:var(--ad);border:1px solid var(--br);color:var(--acc);font-family:'DM Mono',monospace;font-size:10px;padding:3px 10px;border-radius:20px;letter-spacing:.5px;}
+.tr{display:flex;align-items:center;gap:9px;margin-left:auto;}
+.tbtn{height:31px;padding:0 13px;border-radius:7px;border:1px solid var(--bs);background:var(--s1);color:var(--txm);font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .13s;}
+.tbtn:hover{border-color:var(--br);color:var(--tx);background:var(--s2);}
+.tbtn.pri{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:600;}
+.tbtn.pri:hover{background:#c8f040;}
+.notif{width:31px;height:31px;border-radius:7px;border:1px solid var(--bs);background:var(--s1);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;}
+.ndot{width:6px;height:6px;background:var(--acc);border-radius:50%;position:absolute;top:6px;right:6px;border:1.5px solid var(--bg);}
+.ava{width:31px;height:31px;border-radius:50%;background:linear-gradient(135deg,#7AB800,var(--acc));display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--bg);cursor:pointer;}
+
+/* SIDEBAR */
+.sidebar{border-right:1px solid var(--bs);background:var(--s1);display:flex;flex-direction:column;padding:10px 0 0;overflow-y:auto;}
+.nsec{font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:1px;text-transform:uppercase;padding:12px 16px 4px;}
+.ni{display:flex;align-items:center;gap:8px;padding:8px 16px;cursor:pointer;font-size:13px;color:var(--txm);border-left:2px solid transparent;transition:all .11s;}
+.ni:hover{background:var(--s2);color:var(--tx);}
+.ni.active{background:var(--ad);color:var(--acc);border-left-color:var(--acc);font-weight:500;}
+.nico{width:14px;height:14px;opacity:.6;flex-shrink:0;}
+.ni.active .nico{opacity:1;}
+.nbdg{margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;background:var(--acc);color:var(--bg);padding:1px 5px;border-radius:7px;font-weight:600;}
+.nbdg.w{background:rgba(245,166,35,.15);color:var(--amb);}
+.nbdg.m{background:var(--s3);color:var(--txd);}
+.sf{margin-top:auto;padding:12px 14px 14px;border-top:1px solid var(--bs);}
+.sfc{background:var(--s2);border:1px solid var(--br);border-radius:9px;padding:11px;}
+.sfl{font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:.8px;text-transform:uppercase;margin-bottom:6px;}
+.sfr{display:flex;justify-content:space-between;align-items:baseline;}
+.sfv{font-family:'Fraunces',serif;font-size:22px;color:var(--acc);}
+.sfb{height:3px;background:var(--s3);border-radius:2px;margin-top:7px;}
+.sfbf{height:3px;background:var(--acc);border-radius:2px;}
+
+/* MAIN */
+.main{overflow-y:auto;background:var(--bg);}
+.view{display:none;padding:26px 30px;flex-direction:column;gap:20px;}
+.view.active{display:flex;animation:fu .18s ease;}
+@keyframes fu{from{opacity:0;transform:translateY(7px);}to{opacity:1;transform:translateY(0);}}
+
+/* SHARED */
+.vh{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;}
+.vtit{font-family:'Fraunces',serif;font-size:24px;font-weight:400;line-height:1.1;}
+.vtit em{color:var(--acc);font-style:italic;}
+.vsub{font-size:12.5px;color:var(--txm);margin-top:3px;}
+.ha{display:flex;gap:8px;align-items:center;flex-shrink:0;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 15px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;border:none;transition:all .13s;}
+.bp{background:var(--acc);color:var(--bg);}
+.bp:hover{background:#c8f040;}
+.bg{background:transparent;color:var(--txm);border:1px solid var(--bs);}
+.bg:hover{border-color:var(--br);color:var(--tx);background:var(--s1);}
+.krow{display:grid;gap:14px;}
+.k5{grid-template-columns:repeat(5,1fr);}
+.k4{grid-template-columns:repeat(4,1fr);}
+.k3{grid-template-columns:repeat(3,1fr);}
+.kpi{background:var(--s1);border:1px solid var(--bs);border-radius:10px;padding:15px 17px;cursor:pointer;transition:border-color .13s;}
+.kpi:hover{border-color:var(--br);}
+.ka .kv{color:var(--acc);}
+.ka{border-left:2px solid var(--acc);}
+.kl{font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;}
+.kv{font-family:'Fraunces',serif;font-size:26px;font-weight:400;line-height:1;}
+.kv .u{font-size:13px;color:var(--txm);}
+.kd{font-size:11px;margin-top:4px;}
+.up{color:var(--grn);}.dn{color:var(--red);}.ne{color:var(--txm);}
+.panel{background:var(--s1);border:1px solid var(--bs);border-radius:10px;overflow:hidden;}
+.ph{display:flex;align-items:center;justify-content:space-between;padding:13px 17px;border-bottom:1px solid var(--bs);}
+.pht{font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px;}
+.phc{font-family:'DM Mono',monospace;font-size:10px;color:var(--txm);background:var(--s3);padding:2px 6px;border-radius:7px;}
+.pha{font-size:12px;color:var(--acc);cursor:pointer;font-weight:500;}
+.pha:hover{text-decoration:underline;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.g2w{display:grid;grid-template-columns:2fr 1fr;gap:18px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+.pill{display:inline-flex;align-items:center;font-family:'DM Mono',monospace;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap;}
+.pg{background:rgba(74,222,128,.10);color:var(--grn);}
+.pa{background:rgba(245,166,35,.10);color:var(--amb);}
+.pr{background:rgba(255,90,74,.10);color:var(--red);}
+.pb{background:rgba(96,165,250,.10);color:var(--blu);}
+.pac{background:var(--ad);color:var(--acc);}
+.pm{background:var(--s3);color:var(--txd);}
+.bb{height:5px;background:var(--s3);border-radius:3px;overflow:hidden;}
+.bf{height:5px;border-radius:3px;background:var(--acc);transition:width 1s cubic-bezier(.4,0,.2,1);}
+.bf.b{background:var(--blu);}.bf.a{background:var(--amb);}.bf.r{background:var(--red);}.bf.p{background:var(--pur);}
+.trow{display:grid;align-items:center;padding:10px 17px;border-bottom:1px solid var(--bs);cursor:pointer;transition:background .11s;gap:12px;}
+.trow:last-child{border-bottom:none;}
+.trow:hover{background:var(--s2);}
+.trow.sel{background:var(--ad);}
+.thead{font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:.5px;text-transform:uppercase;cursor:default!important;}
+.thead:hover{background:transparent!important;}
+.cn{display:flex;flex-direction:column;gap:1px;}
+.cn .n{font-size:13px;font-weight:500;}.cn .s{font-size:11px;color:var(--txm);}
+.chip{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--bs);background:var(--s2);color:var(--txm);transition:all .12s;}
+.chip:hover{border-color:var(--br);color:var(--tx);}
+.chip.active{background:var(--ad);border-color:var(--am);color:var(--acc);}
+::-webkit-scrollbar{width:3px;height:3px;}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px;}
+
+/* CAMPAIGN CARD */
+.cmp-card{background:var(--s1);border:1px solid var(--bs);border-radius:10px;padding:18px 20px;cursor:pointer;transition:border-color .13s;display:flex;flex-direction:column;gap:10px;}
+.cmp-card:hover{border-color:var(--br);}
+.cmp-card.sel{border-color:var(--acc);background:var(--ad);}
+.cmp-header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+.cmp-name{font-size:14px;font-weight:600;}
+.cmp-dna{font-size:11.5px;color:var(--txm);margin-top:2px;}
+.cmp-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px;}
+.cs{display:flex;flex-direction:column;gap:2px;}
+.cs-val{font-family:'Fraunces',serif;font-size:20px;color:var(--tx);}
+.cs-lbl{font-size:10px;color:var(--txm);}
+.cmp-bar-row{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--txm);}
+.cmp-budget{font-family:'DM Mono',monospace;font-size:10px;color:var(--txd);}
+
+/* DNA SEGMENT CARDS */
+.dna-card{background:var(--s1);border:1px solid var(--bs);border-radius:10px;overflow:hidden;cursor:pointer;transition:border-color .13s;}
+.dna-card:hover{border-color:var(--br);}
+.dna-card.sel{border-color:var(--acc);}
+.dna-hero{padding:20px 20px 14px;border-bottom:1px solid var(--bs);}
+.dna-badge{display:inline-block;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.5px;padding:3px 9px;border-radius:10px;margin-bottom:8px;}
+.dna-name{font-family:'Fraunces',serif;font-size:20px;font-weight:400;margin-bottom:3px;}
+.dna-pct{font-family:'Fraunces',serif;font-size:36px;color:var(--acc);}
+.dna-lbl{font-size:11px;color:var(--txm);}
+.dna-body{padding:14px 20px;display:flex;flex-direction:column;gap:9px;}
+.dna-trait{display:flex;flex-direction:column;gap:4px;}
+.dna-trait-row{display:flex;justify-content:space-between;font-size:11.5px;}
+.dna-trait-k{color:var(--txm);}
+.dna-trait-v{font-family:'DM Mono',monospace;font-size:10px;color:var(--tx);}
+
+/* CAMPAIGN CREATOR */
+.creator{background:var(--s1);border:1px solid var(--bs);border-radius:10px;overflow:hidden;}
+.cr-steps{display:flex;border-bottom:1px solid var(--bs);background:var(--s2);}
+.cr-step{flex:1;padding:13px 16px;display:flex;align-items:center;gap:9px;cursor:pointer;transition:background .12s;border-bottom:2px solid transparent;}
+.cr-step:hover{background:var(--s3);}
+.cr-step.active{background:var(--s1);border-bottom-color:var(--acc);}
+.cr-step-num{width:22px;height:22px;border-radius:50%;background:var(--s3);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:10px;color:var(--txm);flex-shrink:0;}
+.cr-step.active .cr-step-num{background:var(--acc);color:var(--bg);font-weight:600;}
+.cr-step.done .cr-step-num{background:var(--grn);color:var(--bg);}
+.cr-step-label{font-size:12px;color:var(--txm);font-weight:500;}
+.cr-step.active .cr-step-label{color:var(--tx);}
+.cr-body{padding:24px 26px;min-height:280px;}
+.cr-panel{display:none;flex-direction:column;gap:16px;}
+.cr-panel.active{display:flex;}
+.cr-field{display:flex;flex-direction:column;gap:6px;}
+.cr-label{font-family:'DM Mono',monospace;font-size:10px;color:var(--txm);letter-spacing:.5px;text-transform:uppercase;}
+.cr-input{background:var(--s2);border:1px solid var(--bs);border-radius:7px;padding:9px 12px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border-color .13s;width:100%;}
+.cr-input:focus{border-color:var(--br);}
+.cr-select{background:var(--s2);border:1px solid var(--bs);border-radius:7px;padding:9px 12px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;width:100%;cursor:pointer;}
+.cr-textarea{background:var(--s2);border:1px solid var(--bs);border-radius:7px;padding:9px 12px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;resize:vertical;width:100%;min-height:80px;}
+.cr-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.cr-footer{display:flex;justify-content:space-between;align-items:center;padding:14px 26px;border-top:1px solid var(--bs);background:var(--s2);}
+.dna-picker{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.dna-option{border:1px solid var(--bs);border-radius:8px;padding:12px;cursor:pointer;transition:all .12s;text-align:center;}
+.dna-option:hover{border-color:var(--br);}
+.dna-option.picked{border-color:var(--acc);background:var(--ad);}
+.dna-option-name{font-size:12px;font-weight:500;margin-top:5px;}
+.dna-option-pct{font-family:'DM Mono',monospace;font-size:10px;color:var(--txm);}
+
+/* PRICING */
+.price-toggle{display:flex;align-items:center;gap:12px;background:var(--s2);border:1px solid var(--bs);border-radius:30px;padding:4px;width:fit-content;}
+.pt-opt{padding:6px 18px;border-radius:26px;font-size:12.5px;cursor:pointer;transition:all .15s;color:var(--txm);font-weight:500;}
+.pt-opt.active{background:var(--acc);color:var(--bg);}
+.save-badge{font-family:'DM Mono',monospace;font-size:9px;color:var(--grn);background:rgba(74,222,128,.1);padding:2px 7px;border-radius:10px;}
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.price-card{background:var(--s1);border:1px solid var(--bs);border-radius:12px;padding:24px 22px;display:flex;flex-direction:column;gap:12px;transition:border-color .13s;}
+.price-card:hover{border-color:var(--br);}
+.price-card.featured{border-color:var(--acc);background:var(--ad);}
+.pc-tag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.5px;padding:3px 9px;border-radius:10px;display:inline-block;width:fit-content;}
+.pc-name{font-family:'Fraunces',serif;font-size:20px;font-weight:400;}
+.pc-price{font-family:'Fraunces',serif;font-size:40px;color:var(--acc);line-height:1;}
+.pc-price .u{font-size:16px;color:var(--txm);font-family:'DM Sans',sans-serif;}
+.pc-price .mo{font-size:14px;color:var(--txm);font-family:'DM Sans',sans-serif;}
+.pc-desc{font-size:12px;color:var(--txm);line-height:1.55;}
+.pc-features{display:flex;flex-direction:column;gap:7px;margin-top:4px;}
+.pf{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--txm);}
+.pf::before{content:'✓';color:var(--grn);font-size:12px;flex-shrink:0;}
+.pf.no{color:var(--txd);}
+.pf.no::before{content:'–';color:var(--txd);}
+.pc-cta{margin-top:auto;}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="tl"><div class="lm">C</div><div class="lt">Chloe<b>IQ</b></div></div>
+  <div class="tc">
+    <div class="bc"><span>Vendor Portal</span><span class="sep">›</span><span class="cur" id="bc">Overview</span></div>
+    <div class="vtag">ACME HOME SERVICES</div>
+  </div>
+  <div class="tr">
+    <button class="tbtn" id="btn-analytics">Analytics</button>
+    <button class="tbtn" id="btn-billing">Billing</button>
+    <button class="tbtn pri" id="btn-new-campaign">+ New Campaign</button>
+    <div class="notif" id="btn-notif"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="ndot"></span></div>
+    <div class="ava" id="btn-ava">AH</div>
+  </div>
+</header>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="nsec">Dashboard</div>
+  <div class="ni active" data-vid="overview" data-vlabel="Overview">
+    <svg class="nico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    Overview
+  </div>
+  <div class="ni" data-vid="audience" data-vlabel="Audience Intelligence">
+    <svg class="nico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Audience
+    <span class="nbdg">4</span>
+  </div>
+  <div class="ni" data-vid="campaigns" data-vlabel="Campaigns">
+    <svg class="nico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    Campaigns
+    <span class="nbdg">4</span>
+  </div>
+  <div class="ni" data-vid="creator" data-vlabel="Campaign Creator">
+    <svg class="nico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+    Create Campaign
+  </div>
+  <div class="nsec">Account</div>
+  <div class="ni" data-vid="pricing" data-vlabel="Pricing & Plans">
+    <svg class="nico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+    Pricing
+  </div>
+  <div class="ni" data-vid="overview" data-vlabel="Settings">
+    <svg class="nico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    Settings
+    <span class="nbdg m">Soon</span>
+  </div>
+  <div class="sf">
+    <div class="sfc">
+      <div class="sfl">Budget Remaining</div>
+      <div class="sfr"><div class="sfv">$7.2K</div><div style="font-size:11px;color:var(--txm);">of $12K</div></div>
+      <div class="sfb"><div class="sfbf" style="width:60%"></div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- ▸ OVERVIEW ◂ -->
+<div class="view active" id="view-overview">
+  <div class="vh">
+    <div><div class="vtit">Vendor <em>Overview</em></div><div class="vsub">ACME Home Services · Active vendor · Q1 2026 performance</div></div>
+    <div class="ha">
+      <button class="btn bg" id="ov-report">Download Report</button>
+      <button class="btn bp" id="ov-campaign">+ New Campaign</button>
+    </div>
+  </div>
+  <div class="krow k5">
+    <div class="kpi ka"><div class="kl">Total Impressions</div><div class="kv">41,200</div><div class="kd up">↑ 28% vs Q4</div></div>
+    <div class="kpi"><div class="kl">Buyer Profiles Reached</div><div class="kv">2,847</div><div class="kd up">↑ DNA-matched</div></div>
+    <div class="kpi"><div class="kl">Campaign CTR</div><div class="kv">6.4<span class="u">%</span></div><div class="kd up">↑ 2.1× industry avg</div></div>
+    <div class="kpi"><div class="kl">Avg Match Relevance</div><div class="kv">79<span class="u">%</span></div><div class="kd up">↑ DNA targeting works</div></div>
+    <div class="kpi"><div class="kl">Leads Generated</div><div class="kv">184</div><div class="kd up">↑ 44% vs last quarter</div></div>
+  </div>
+  <div class="g2w">
+    <div class="panel">
+      <div class="ph"><div class="pht">Campaign Performance — Last 30 Days</div><span class="pha" id="ov-cmp-link">All Campaigns →</span></div>
+      <div style="padding:18px 17px 10px;"><canvas id="ov-chart" width="600" height="140"></canvas></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><div class="pht">Top DNA Segments</div><span class="pha" id="ov-aud-link">Audience →</span></div>
+      <div style="padding:14px 17px;display:flex;flex-direction:column;gap:11px;">
+        <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--txm);">Refined Modern</span><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--acc);">38% · 1,082</span></div><div class="bb"><div class="bf" style="width:38%"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--txm);">Warm Organic</span><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--acc);">27% · 769</span></div><div class="bb"><div class="bf b" style="width:27%"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--txm);">Coastal Luxe</span><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--acc);">21% · 598</span></div><div class="bb"><div class="bf a" style="width:21%"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--txm);">Bold Eclectic</span><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--acc);">14% · 398</span></div><div class="bb"><div class="bf r" style="width:14%"></div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="g3">
+    <div class="panel">
+      <div class="ph"><div class="pht">Active Campaigns <span class="phc">4</span></div><span class="pha" id="ov-cmp2-link">View All →</span></div>
+      <div style="padding:0;">
+        <div class="trow" style="grid-template-columns:1fr 80px 60px;"><div class="cn"><span class="n">Spring Refresh</span><span class="s">Refined Modern · Active</span></div><span class="pill pg">● Live</span><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--acc);">7.2%</span></div>
+        <div class="trow" style="grid-template-columns:1fr 80px 60px;"><div class="cn"><span class="n">Kitchen & Bath</span><span class="s">Warm Organic · Active</span></div><span class="pill pg">● Live</span><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--acc);">5.8%</span></div>
+        <div class="trow" style="grid-template-columns:1fr 80px 60px;"><div class="cn"><span class="n">Luxury Staging</span><span class="s">Coastal Luxe · Paused</span></div><span class="pill pa">Paused</span><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--txm);">4.1%</span></div>
+        <div class="trow" style="grid-template-columns:1fr 80px 60px;"><div class="cn"><span class="n">Move-In Ready</span><span class="s">All Segments · Draft</span></div><span class="pill pm">Draft</span><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--txm);">—</span></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><div class="pht">Budget Utilization</div></div>
+      <div style="padding:14px 17px;display:flex;flex-direction:column;gap:10px;">
+        <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--txm);">Spring Refresh</span><span style="font-family:'DM Mono',monospace;font-size:11px;">$2,400 / $3,000</span></div><div class="bb"><div class="bf" style="width:80%"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--txm);">Kitchen & Bath</span><span style="font-family:'DM Mono',monospace;font-size:11px;">$1,800 / $2,500</span></div><div class="bb"><div class="bf b" style="width:72%"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--txm);">Luxury Staging</span><span style="font-family:'DM Mono',monospace;font-size:11px;">$600 / $2,000</span></div><div class="bb"><div class="bf a" style="width:30%"></div></div></div>
+        <div style="padding-top:8px;border-top:1px solid var(--bs);display:flex;justify-content:space-between;font-size:12px;"><span style="color:var(--txm);">Total Spent</span><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--acc);">$4,800 / $12,000</span></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><div class="pht">Chloe AI Insights</div></div>
+      <div style="padding:14px 17px;display:flex;flex-direction:column;gap:10px;">
+        <div style="background:var(--s2);border:1px solid var(--br);border-radius:8px;padding:11px 13px;"><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--acc);letter-spacing:.5px;margin-bottom:5px;">OPPORTUNITY</div><div style="font-size:12px;color:var(--txm);line-height:1.5;">Coastal Luxe segment is growing +6pts this quarter. Consider reactivating Luxury Staging campaign now.</div></div>
+        <div style="background:var(--s2);border:1px solid var(--br);border-radius:8px;padding:11px 13px;"><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--amb);letter-spacing:.5px;margin-bottom:5px;">WATCH</div><div style="font-size:12px;color:var(--txm);line-height:1.5;">Spring Refresh budget 80% spent with 9 days remaining. Consider increasing budget or pausing.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ▸ AUDIENCE ◂ -->
+<div class="view" id="view-audience">
+  <div class="vh">
+    <div><div class="vtit">Audience <em>Intelligence</em></div><div class="vsub">4 buyer DNA segments · 2,847 profiles · DFW market · Q1 2026</div></div>
+    <div class="ha">
+      <button class="btn bg" id="aud-export">Export Audience Data</button>
+      <button class="btn bp" id="aud-target">Target a Segment</button>
+    </div>
+  </div>
+  <div class="krow k4">
+    <div class="kpi ka"><div class="kl">Total Profiles</div><div class="kv">2,847</div><div class="kd up">↑ 22% vs Q4</div></div>
+    <div class="kpi"><div class="kl">Avg Purchase Timeline</div><div class="kv">68<span class="u">d</span></div><div class="kd ne">Active purchase window</div></div>
+    <div class="kpi"><div class="kl">Highest Intent Segment</div><div class="kv" style="font-size:18px;">Coastal Luxe</div><div class="kd up">11d avg days-to-offer</div></div>
+    <div class="kpi"><div class="kl">Segments Available</div><div class="kv">4</div><div class="kd ne">All targeting-ready</div></div>
+  </div>
+  <div class="g2">
+    <div style="display:flex;flex-direction:column;gap:14px;" id="dna-cards-left"></div>
+    <div style="display:flex;flex-direction:column;gap:14px;" id="dna-cards-right"></div>
+  </div>
+</div>
+
+<!-- ▸ CAMPAIGNS ◂ -->
+<div class="view" id="view-campaigns">
+  <div class="vh">
+    <div><div class="vtit">Campaign <em>Manager</em></div><div class="vsub">4 campaigns · 2 active · $4,800 spent of $12,000 budget</div></div>
+    <div class="ha">
+      <div style="display:flex;gap:7px;">
+        <div class="chip active" id="cmp-all">All (4)</div>
+        <div class="chip" id="cmp-live">Live</div>
+        <div class="chip" id="cmp-paused">Paused</div>
+        <div class="chip" id="cmp-draft">Draft</div>
+      </div>
+      <button class="btn bp" id="cmp-create">+ Create Campaign</button>
+    </div>
+  </div>
+  <div class="krow k4">
+    <div class="kpi ka"><div class="kl">Total Impressions</div><div class="kv">41,200</div><div class="kd up">↑ 28%</div></div>
+    <div class="kpi"><div class="kl">Avg CTR</div><div class="kv">6.4<span class="u">%</span></div><div class="kd up">↑ 2.1× avg</div></div>
+    <div class="kpi"><div class="kl">Leads Generated</div><div class="kv">184</div><div class="kd up">↑ 44%</div></div>
+    <div class="kpi"><div class="kl">Budget Remaining</div><div class="kv">$7.2<span class="u">K</span></div><div class="kd ne">of $12K total</div></div>
+  </div>
+  <div id="cmp-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;"></div>
+</div>
+
+<!-- ▸ CAMPAIGN CREATOR ◂ -->
+<div class="view" id="view-creator">
+  <div class="vh">
+    <div><div class="vtit">Campaign <em>Creator</em></div><div class="vsub">Build a targeted campaign in 4 steps — reaches buyers at the moment of open house visit</div></div>
+    <div class="ha"><button class="btn bg" id="cr-save-draft">Save Draft</button></div>
+  </div>
+  <div class="creator">
+    <div class="cr-steps">
+      <div class="cr-step active" data-step="1">
+        <div class="cr-step-num">1</div>
+        <div class="cr-step-label">Campaign Basics</div>
+      </div>
+      <div class="cr-step" data-step="2">
+        <div class="cr-step-num">2</div>
+        <div class="cr-step-label">Audience Targeting</div>
+      </div>
+      <div class="cr-step" data-step="3">
+        <div class="cr-step-num">3</div>
+        <div class="cr-step-label">Creative & Message</div>
+      </div>
+      <div class="cr-step" data-step="4">
+        <div class="cr-step-num">4</div>
+        <div class="cr-step-label">Budget & Schedule</div>
+      </div>
+    </div>
+    <div class="cr-body">
+      <!-- Step 1 -->
+      <div class="cr-panel active" id="cr-panel-1">
+        <div class="cr-grid">
+          <div class="cr-field"><div class="cr-label">Campaign Name</div><input class="cr-input" id="cr-name" placeholder="e.g. Spring Home Refresh 2026" /></div>
+          <div class="cr-field"><div class="cr-label">Campaign Type</div>
+            <select class="cr-select" id="cr-type">
+              <option>Brand Awareness</option><option>Lead Generation</option><option>Offer Promotion</option><option>Event Announcement</option>
+            </select>
+          </div>
+        </div>
+        <div class="cr-field"><div class="cr-label">Campaign Goal</div><textarea class="cr-textarea" id="cr-goal" placeholder="What do you want buyers to do? e.g. Request a free home staging consultation..."></textarea></div>
+        <div class="cr-grid">
+          <div class="cr-field"><div class="cr-label">Industry Category</div>
+            <select class="cr-select" id="cr-category">
+              <option>Home Services</option><option>Mortgage / Lending</option><option>Insurance</option><option>Moving Services</option><option>Interior Design</option><option>Appliances / Electronics</option><option>Other</option>
+            </select>
+          </div>
+          <div class="cr-field"><div class="cr-label">Landing Page URL</div><input class="cr-input" id="cr-url" placeholder="https://yourdomain.com/offer" /></div>
+        </div>
+      </div>
+      <!-- Step 2 -->
+      <div class="cr-panel" id="cr-panel-2">
+        <div class="cr-field"><div class="cr-label">Select DNA Segments to Target</div></div>
+        <div class="dna-picker">
+          <div class="dna-option picked" data-dna="Refined Modern"><div style="font-size:20px;">✦</div><div class="dna-option-name">Refined Modern</div><div class="dna-option-pct">38% · 1,082 buyers</div></div>
+          <div class="dna-option" data-dna="Warm Organic"><div style="font-size:20px;">🌿</div><div class="dna-option-name">Warm Organic</div><div class="dna-option-pct">27% · 769 buyers</div></div>
+          <div class="dna-option" data-dna="Coastal Luxe"><div style="font-size:20px;">🌊</div><div class="dna-option-name">Coastal Luxe</div><div class="dna-option-pct">21% · 598 buyers</div></div>
+          <div class="dna-option" data-dna="Bold Eclectic"><div style="font-size:20px;">🎨</div><div class="dna-option-name">Bold Eclectic</div><div class="dna-option-pct">14% · 398 buyers</div></div>
+        </div>
+        <div class="cr-grid">
+          <div class="cr-field"><div class="cr-label">Price Range Filter</div>
+            <select class="cr-select"><option>All Price Ranges</option><option>$300K–600K</option><option>$600K–800K</option><option>$800K–1.2M</option><option>$1.2M+</option></select>
+          </div>
+          <div class="cr-field"><div class="cr-label">ZIP Code Focus</div>
+            <select class="cr-select"><option>All DFW ZIPs</option><option>75022 — Flower Mound</option><option>75034 — Frisco</option><option>76092 — Southlake</option><option>75024 — Plano</option></select>
+          </div>
+        </div>
+        <div style="background:var(--s2);border:1px solid var(--br);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--txm);"><span style="color:var(--acc);">Estimated reach:</span> <strong style="color:var(--tx);" id="reach-est">1,082 buyers</strong> based on current selections</div>
+      </div>
+      <!-- Step 3 -->
+      <div class="cr-panel" id="cr-panel-3">
+        <div class="cr-field"><div class="cr-label">Headline</div><input class="cr-input" id="cr-headline" placeholder="e.g. Free Staging Consultation for Your New Home" /></div>
+        <div class="cr-field"><div class="cr-label">Body Copy</div><textarea class="cr-textarea" id="cr-copy" placeholder="Write your message to buyers. Keep it relevant to their home purchase journey..."></textarea></div>
+        <div class="cr-grid">
+          <div class="cr-field"><div class="cr-label">Call to Action</div>
+            <select class="cr-select"><option>Book a Consultation</option><option>Get a Free Quote</option><option>Learn More</option><option>Claim Offer</option><option>Schedule Now</option></select>
+          </div>
+          <div class="cr-field"><div class="cr-label">Creative Format</div>
+            <select class="cr-select"><option>Banner Ad (native)</option><option>Inline Card</option><option>Post-Tour Message</option><option>Follow-Up Email Insert</option></select>
+          </div>
+        </div>
+        <div style="background:var(--s2);border:1px solid var(--bs);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--txm);line-height:1.5;">
+          <span style="color:var(--acc);">Chloe AI tip:</span> Buyers in the Refined Modern segment respond best to clean, minimal messaging that emphasizes quality and craftsmanship. Avoid high-pressure language.
+        </div>
+      </div>
+      <!-- Step 4 -->
+      <div class="cr-panel" id="cr-panel-4">
+        <div class="cr-grid">
+          <div class="cr-field"><div class="cr-label">Total Budget</div><input class="cr-input" id="cr-budget" placeholder="$2,500" /></div>
+          <div class="cr-field"><div class="cr-label">Bidding Strategy</div>
+            <select class="cr-select"><option>CPM — Cost per 1,000 impressions</option><option>CPC — Cost per click</option><option>CPL — Cost per lead</option></select>
+          </div>
+        </div>
+        <div class="cr-grid">
+          <div class="cr-field"><div class="cr-label">Start Date</div><input class="cr-input" id="cr-start" type="date" /></div>
+          <div class="cr-field"><div class="cr-label">End Date</div><input class="cr-input" id="cr-end" type="date" /></div>
+        </div>
+        <div style="background:var(--s2);border:1px solid var(--br);border-radius:8px;padding:14px 16px;">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--acc);letter-spacing:.5px;margin-bottom:8px;">ESTIMATED PERFORMANCE</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
+            <div><div style="font-family:'Fraunces',serif;font-size:24px;color:var(--tx);">8,400</div><div style="font-size:11px;color:var(--txm);">Est. Impressions</div></div>
+            <div><div style="font-family:'Fraunces',serif;font-size:24px;color:var(--tx);">538</div><div style="font-size:11px;color:var(--txm);">Est. Clicks (6.4% CTR)</div></div>
+            <div><div style="font-family:'Fraunces',serif;font-size:24px;color:var(--acc);">~54</div><div style="font-size:11px;color:var(--txm);">Est. Leads</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="cr-footer">
+      <button class="btn bg" id="cr-back">← Back</button>
+      <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--txm);" id="cr-step-label">Step 1 of 4</div>
+      <button class="btn bp" id="cr-next">Next Step →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ▸ PRICING ◂ -->
+<div class="view" id="view-pricing">
+  <div class="vh">
+    <div><div class="vtit">Vendor <em>Pricing</em></div><div class="vsub">Choose a plan that fits your campaign goals — cancel or upgrade anytime</div></div>
+    <div class="ha">
+      <div class="price-toggle">
+        <div class="pt-opt active" id="pt-monthly">Monthly</div>
+        <div class="pt-opt" id="pt-annual">Annual <span class="save-badge">Save 20%</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="price-grid">
+    <div class="price-card">
+      <div class="pc-tag" style="background:var(--s3);color:var(--txm);">STARTER</div>
+      <div class="pc-name">Launch</div>
+      <div class="pc-price" id="price-launch">$499<span class="mo"> / mo</span></div>
+      <div class="pc-desc">Perfect for vendors testing ChloeIQ's buyer intelligence platform with a single campaign.</div>
+      <div class="pc-features">
+        <div class="pf">1 active campaign</div>
+        <div class="pf">Access to 1 DNA segment</div>
+        <div class="pf">Up to 500 buyer profiles / mo</div>
+        <div class="pf">Basic analytics dashboard</div>
+        <div class="pf">Email support</div>
+        <div class="pf no">Multi-segment targeting</div>
+        <div class="pf no">Chloe AI copy assist</div>
+        <div class="pf no">Custom audience filters</div>
+      </div>
+      <div class="pc-cta"><button class="btn bg" style="width:100%;justify-content:center;" id="price-launch-btn">Get Started</button></div>
+    </div>
+    <div class="price-card featured">
+      <div class="pc-tag" style="background:var(--acc);color:var(--bg);">MOST POPULAR</div>
+      <div class="pc-name">Growth</div>
+      <div class="pc-price" id="price-growth">$1,499<span class="mo"> / mo</span></div>
+      <div class="pc-desc">For active vendors running multiple campaigns across DNA segments with full analytics access.</div>
+      <div class="pc-features">
+        <div class="pf">Up to 4 active campaigns</div>
+        <div class="pf">All 4 DNA segments</div>
+        <div class="pf">Up to 3,000 buyer profiles / mo</div>
+        <div class="pf">Full analytics + attribution</div>
+        <div class="pf">Chloe AI copy assist</div>
+        <div class="pf">Custom audience filters (ZIP, price)</div>
+        <div class="pf">Priority support</div>
+        <div class="pf no">White-label reporting</div>
+      </div>
+      <div class="pc-cta"><button class="btn bp" style="width:100%;justify-content:center;" id="price-growth-btn">Upgrade to Growth</button></div>
+    </div>
+    <div class="price-card">
+      <div class="pc-tag" style="background:var(--s3);color:var(--acc);border:1px solid var(--br);">ENTERPRISE</div>
+      <div class="pc-name">Scale</div>
+      <div class="pc-price" id="price-scale">$2,500<span class="mo"> / campaign</span></div>
+      <div class="pc-desc">For national vendors and enterprise partners requiring custom targeting, white-label output, and dedicated support.</div>
+      <div class="pc-features">
+        <div class="pf">Unlimited campaigns</div>
+        <div class="pf">All segments + custom segments</div>
+        <div class="pf">Unlimited buyer profiles</div>
+        <div class="pf">White-label reporting</div>
+        <div class="pf">Dedicated account manager</div>
+        <div class="pf">API access</div>
+        <div class="pf">Custom integrations (CRM, email)</div>
+        <div class="pf">SLA + priority onboarding</div>
+      </div>
+      <div class="pc-cta"><button class="btn bg" style="width:100%;justify-content:center;" id="price-scale-btn">Contact Sales</button></div>
+    </div>
+  </div>
+  <div class="panel" style="margin-top:4px;">
+    <div class="ph"><div class="pht">All Plans Include</div></div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;padding:16px 20px;">
+      <div style="display:flex;align-items:flex-start;gap:9px;padding:8px 12px;"><span style="color:var(--acc);font-size:16px;margin-top:1px;">✦</span><div><div style="font-size:13px;font-weight:500;margin-bottom:2px;">DNA-Based Targeting</div><div style="font-size:11px;color:var(--txm);">Reach buyers by lifestyle profile, not just demographics</div></div></div>
+      <div style="display:flex;align-items:flex-start;gap:9px;padding:8px 12px;"><span style="color:var(--acc);font-size:16px;margin-top:1px;">✦</span><div><div style="font-size:13px;font-weight:500;margin-bottom:2px;">Purchase-Moment Timing</div><div style="font-size:11px;color:var(--txm);">Ads delivered during active open house visits</div></div></div>
+      <div style="display:flex;align-items:flex-start;gap:9px;padding:8px 12px;"><span style="color:var(--acc);font-size:16px;margin-top:1px;">✦</span><div><div style="font-size:13px;font-weight:500;margin-bottom:2px;">Real Buyer Profiles</div><div style="font-size:11px;color:var(--txm);">Anonymized, consent-based, high-intent data</div></div></div>
+      <div style="display:flex;align-items:flex-start;gap:9px;padding:8px 12px;"><span style="color:var(--acc);font-size:16px;margin-top:1px;">✦</span><div><div style="font-size:13px;font-weight:500;margin-bottom:2px;">No Wasted Impressions</div><div style="font-size:11px;color:var(--txm);">Only buyers in active purchase window see your ads</div></div></div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+// ════════════════════════════════════
+// VENDOR DASHBOARD — FULL INTERACTIONS
+// ════════════════════════════════════
+
+function toast(msg, type) {
+  var old = document.getElementById('vt'); if (old) old.remove();
+  var t = document.createElement('div'); t.id = 'vt';
+  t.textContent = msg;
+  var bg = type === 'success' ? '#B8E030' : '#1A1E12';
+  var col = type === 'success' ? '#0A0B07' : '#EEF0E5';
+  t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:' + bg + ';color:' + col + ';padding:10px 20px;border-radius:8px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all .2s ease;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.4);border:1px solid rgba(184,224,48,.15);';
+  document.body.appendChild(t);
+  requestAnimationFrame(function () { t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)'; });
+  clearTimeout(t._x);
+  t._x = setTimeout(function () { t.style.opacity = '0'; }, 2800);
+}
+
+function modal(title, body, label, cb) {
+  var old = document.getElementById('vm'); if (old) old.remove();
+  var el = document.createElement('div'); el.id = 'vm';
+  el.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9990;display:flex;align-items:center;justify-content:center;';
+  el.innerHTML = '<div style="background:#13160D;border:1px solid rgba(184,224,48,.15);border-radius:13px;padding:26px 28px;min-width:380px;max-width:460px;box-shadow:0 20px 60px rgba(0,0,0,.6);">'
+    + '<div style="font-family:Fraunces,serif;font-size:19px;margin-bottom:9px;">' + title + '</div>'
+    + '<div style="font-size:13px;color:#8A8F7A;line-height:1.6;margin-bottom:20px;">' + body + '</div>'
+    + '<div style="display:flex;gap:9px;justify-content:flex-end;">'
+    + '<button id="mc" style="padding:7px 16px;border-radius:7px;border:1px solid rgba(238,240,229,.08);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:12px;cursor:pointer;">Cancel</button>'
+    + '<button id="mo" style="padding:7px 16px;border-radius:7px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:12px;font-weight:600;cursor:pointer;">' + (label || 'Confirm') + '</button>'
+    + '</div></div>';
+  document.body.appendChild(el);
+  el.querySelector('#mc').onclick = function () { el.remove(); };
+  el.querySelector('#mo').onclick = function () { el.remove(); if (cb) cb(); };
+  el.onclick = function (e) { if (e.target === el) el.remove(); };
+}
+
+// ── SWITCH VIEW ──
+function switchView(id, label) {
+  document.querySelectorAll('.view').forEach(function (v) { v.classList.remove('active'); });
+  var t = document.getElementById('view-' + id); if (t) t.classList.add('active');
+  document.getElementById('bc').textContent = label;
+  document.querySelectorAll('.ni').forEach(function (n) { n.classList.remove('active'); });
+  document.querySelectorAll('.ni[data-vid="' + id + '"]').forEach(function (n) { n.classList.add('active'); });
+  if (id === 'audience') buildDNACards();
+  if (id === 'campaigns') buildCampaigns();
+  if (id === 'overview') drawOverviewChart();
+}
+
+// ── DNA DATA ──
+var dnaSegments = [
+  { name: 'Refined Modern', pct: 38, count: 1082, color: '#B8E030', badge: 'bg:#ad0;color:#0A0B07', icon: '✦',
+    price: '$600K–800K', topRoom: 'Primary Suite, Kitchen', dom: '18d', intent: 'High', campaign: 'Spring Refresh' },
+  { name: 'Warm Organic', pct: 27, count: 769, color: '#60A5FA', badge: 'bg:#1e3a5f;color:#60A5FA', icon: '🌿',
+    price: '$400K–600K', topRoom: 'Living Room, Backyard', dom: '26d', intent: 'Medium', campaign: 'Kitchen & Bath' },
+  { name: 'Coastal Luxe', pct: 21, count: 598, color: '#F5A623', badge: 'bg:#3a2500;color:#F5A623', icon: '🌊',
+    price: '$800K–1.2M', topRoom: 'Kitchen, Pool Area', dom: '11d', intent: 'Very High', campaign: 'Luxury Staging' },
+  { name: 'Bold Eclectic', pct: 14, count: 398, color: '#A78BFA', badge: 'bg:#2d1f4e;color:#A78BFA', icon: '🎨',
+    price: '$400K–600K', topRoom: 'Backyard, Studio', dom: '31d', intent: 'Medium', campaign: '—' }
+];
+
+function buildDNACards() {
+  var left = document.getElementById('dna-cards-left');
+  var right = document.getElementById('dna-cards-right');
+  if (!left || left.children.length > 0) return;
+  dnaSegments.forEach(function (d, i) {
+    var card = document.createElement('div');
+    card.className = 'dna-card';
+    card.innerHTML = '<div class="dna-hero">'
+      + '<div class="dna-badge" style="' + d.badge + '">' + d.icon + ' ' + d.name.toUpperCase() + '</div>'
+      + '<div class="dna-name">' + d.name + '</div>'
+      + '<div class="dna-pct">' + d.pct + '%</div>'
+      + '<div class="dna-lbl">' + d.count.toLocaleString() + ' active buyer profiles</div>'
+      + '</div>'
+      + '<div class="dna-body">'
+      + '<div class="dna-trait"><div class="dna-trait-row"><span class="dna-trait-k">Price Range</span><span class="dna-trait-v">' + d.price + '</span></div></div>'
+      + '<div class="dna-trait"><div class="dna-trait-row"><span class="dna-trait-k">Top Rooms</span><span class="dna-trait-v">' + d.topRoom + '</span></div></div>'
+      + '<div class="dna-trait"><div class="dna-trait-row"><span class="dna-trait-k">Avg Days to Offer</span><span class="dna-trait-v">' + d.dom + '</span></div></div>'
+      + '<div class="dna-trait"><div class="dna-trait-row"><span class="dna-trait-k">Purchase Intent</span><span class="dna-trait-v">' + d.intent + '</span></div></div>'
+      + '<div class="dna-trait"><div class="dna-trait-row"><span class="dna-trait-k">Active Campaign</span><span class="dna-trait-v">' + d.campaign + '</span></div></div>'
+      + '<button class="btn bp" style="width:100%;justify-content:center;margin-top:6px;font-size:12px;" data-dna-target="' + i + '">Target This Segment</button>'
+      + '</div>';
+    card.addEventListener('click', function (e) {
+      if (e.target.closest('button')) return;
+      document.querySelectorAll('.dna-card').forEach(function (c) { c.classList.remove('sel'); });
+      card.classList.add('sel');
+      toast(d.name + ' · ' + d.count + ' profiles · ' + d.intent + ' intent', '');
+    });
+    card.querySelector('button').addEventListener('click', function (e) {
+      e.stopPropagation();
+      switchView('creator', 'Campaign Creator');
+      setTimeout(function () {
+        var opt = document.querySelector('.dna-option[data-dna="' + d.name + '"]');
+        if (opt) { document.querySelectorAll('.dna-option').forEach(function(o){o.classList.remove('picked');}); opt.classList.add('picked'); }
+        toast('Targeting ' + d.name + ' — complete campaign setup', '');
+      }, 200);
+    });
+    if (i < 2) left.appendChild(card); else right.appendChild(card);
+  });
+}
+
+// ── CAMPAIGN DATA ──
+var campaigns = [
+  { name: 'Spring Refresh', dna: 'Refined Modern', status: 'live', impressions: 18400, ctr: 7.2, leads: 94, budget: 3000, spent: 2400, start: 'Mar 1', end: 'Apr 15' },
+  { name: 'Kitchen & Bath', dna: 'Warm Organic', status: 'live', impressions: 14200, ctr: 5.8, leads: 62, budget: 2500, spent: 1800, start: 'Mar 8', end: 'Apr 30' },
+  { name: 'Luxury Staging', dna: 'Coastal Luxe', status: 'paused', impressions: 8600, ctr: 4.1, leads: 28, budget: 2000, spent: 600, start: 'Feb 14', end: 'Mar 31' },
+  { name: 'Move-In Ready', dna: 'All Segments', status: 'draft', impressions: 0, ctr: 0, leads: 0, budget: 5000, spent: 0, start: '—', end: '—' }
+];
+
+var cmpFilter = 'all';
+
+function buildCampaigns() {
+  var grid = document.getElementById('cmp-grid'); if (!grid) return;
+  grid.innerHTML = '';
+  campaigns.forEach(function (c, i) {
+    if (cmpFilter !== 'all' && c.status !== cmpFilter) return;
+    var card = document.createElement('div');
+    card.className = 'cmp-card';
+    var statusPill = c.status === 'live' ? '<span class="pill pg">● Live</span>' : c.status === 'paused' ? '<span class="pill pa">Paused</span>' : '<span class="pill pm">Draft</span>';
+    var budgetPct = c.budget > 0 ? Math.round((c.spent / c.budget) * 100) : 0;
+    card.innerHTML = '<div class="cmp-header"><div><div class="cmp-name">' + c.name + '</div><div class="cmp-dna">' + c.dna + '</div></div>' + statusPill + '</div>'
+      + '<div class="cmp-stats">'
+      + '<div class="cs"><div class="cs-val">' + (c.impressions ? c.impressions.toLocaleString() : '—') + '</div><div class="cs-lbl">Impressions</div></div>'
+      + '<div class="cs"><div class="cs-val">' + (c.ctr ? c.ctr + '%' : '—') + '</div><div class="cs-lbl">CTR</div></div>'
+      + '<div class="cs"><div class="cs-val">' + (c.leads || '—') + '</div><div class="cs-lbl">Leads</div></div>'
+      + '</div>'
+      + '<div class="cmp-bar-row"><span style="min-width:80px;">Budget ' + budgetPct + '%</span><div class="bb" style="flex:1;"><div class="bf" style="width:' + budgetPct + '%"></div></div><span class="cmp-budget">$' + c.spent.toLocaleString() + ' / $' + c.budget.toLocaleString() + '</span></div>'
+      + '<div style="display:flex;gap:8px;margin-top:4px;">'
+      + '<button class="btn bp" style="font-size:11px;padding:5px 12px;" data-cmp-edit="' + i + '">' + (c.status === 'draft' ? 'Edit Draft' : 'View Details') + '</button>'
+      + (c.status === 'live' ? '<button class="btn bg" style="font-size:11px;padding:5px 12px;" data-cmp-pause="' + i + '">Pause</button>' : '')
+      + (c.status === 'paused' ? '<button class="btn bg" style="font-size:11px;padding:5px 12px;" data-cmp-resume="' + i + '">Resume</button>' : '')
+      + (c.status === 'draft' ? '<button class="btn bg" style="font-size:11px;padding:5px 12px;" data-cmp-launch="' + i + '">Launch</button>' : '')
+      + '</div>';
+
+    card.querySelector('[data-cmp-edit]').addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (c.status === 'draft') { switchView('creator', 'Campaign Creator'); toast('Editing ' + c.name, ''); }
+      else { toast(c.name + ' · ' + c.impressions.toLocaleString() + ' impressions · ' + c.ctr + '% CTR · ' + c.leads + ' leads', ''); }
+    });
+    var pauseBtn = card.querySelector('[data-cmp-pause]');
+    if (pauseBtn) pauseBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      modal('Pause Campaign?', 'Pausing "' + c.name + '" will stop new impressions but preserve all performance data. Resume anytime.', 'Pause Campaign', function () {
+        c.status = 'paused'; buildCampaigns(); toast(c.name + ' paused', '');
+      });
+    });
+    var resumeBtn = card.querySelector('[data-cmp-resume]');
+    if (resumeBtn) resumeBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      c.status = 'live'; buildCampaigns(); toast(c.name + ' resumed ✓', 'success');
+    });
+    var launchBtn = card.querySelector('[data-cmp-launch]');
+    if (launchBtn) launchBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      modal('Launch Campaign?', 'Launch "' + c.name + '" to reach all 4 DNA segments across DFW. Estimated 8,400+ impressions in week one.', 'Launch Now', function () {
+        c.status = 'live'; buildCampaigns(); toast(c.name + ' is now live! ✓', 'success');
+      });
+    });
+    card.addEventListener('click', function () {
+      document.querySelectorAll('.cmp-card').forEach(function (cc) { cc.classList.remove('sel'); });
+      card.classList.add('sel');
+    });
+    grid.appendChild(card);
+  });
+}
+
+// ── CAMPAIGN CREATOR ──
+var crStep = 1;
+var crTotal = 4;
+
+function setCreatorStep(n) {
+  if (n < 1 || n > crTotal) return;
+  crStep = n;
+  document.querySelectorAll('.cr-step').forEach(function (s, i) {
+    s.classList.remove('active');
+    if (i + 1 < crStep) s.classList.add('done'); else s.classList.remove('done');
+    if (i + 1 === crStep) s.classList.add('active');
+  });
+  document.querySelectorAll('.cr-panel').forEach(function (p) { p.classList.remove('active'); });
+  var panel = document.getElementById('cr-panel-' + crStep);
+  if (panel) panel.classList.add('active');
+  document.getElementById('cr-step-label').textContent = 'Step ' + crStep + ' of ' + crTotal;
+  document.getElementById('cr-back').style.opacity = crStep === 1 ? '0.3' : '1';
+  document.getElementById('cr-back').disabled = crStep === 1;
+  document.getElementById('cr-next').textContent = crStep === crTotal ? 'Launch Campaign →' : 'Next Step →';
+}
+
+// DNA picker
+function wireDNAPicker() {
+  var picker = document.querySelectorAll('.dna-option');
+  var reachMap = { 'Refined Modern': 1082, 'Warm Organic': 769, 'Coastal Luxe': 598, 'Bold Eclectic': 398 };
+  picker.forEach(function (opt) {
+    opt.addEventListener('click', function () {
+      opt.classList.toggle('picked');
+      var total = 0;
+      document.querySelectorAll('.dna-option.picked').forEach(function (p) {
+        total += reachMap[p.getAttribute('data-dna')] || 0;
+      });
+      var re = document.getElementById('reach-est');
+      if (re) re.textContent = total.toLocaleString() + ' buyers';
+    });
+  });
+}
+
+// ── OVERVIEW CHART ──
+function drawOverviewChart() {
+  var canvas = document.getElementById('ov-chart'); if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var W = canvas.offsetWidth || 600, H = 140;
+  canvas.width = W; canvas.height = H;
+  ctx.clearRect(0, 0, W, H);
+  var imp = [880, 1020, 960, 1180, 1400, 1270, 1540, 1460, 1720, 1680, 1900, 1840, 2100, 1980, 2240, 2170, 2380, 2310, 2470, 2400, 2580, 2520, 2700, 2640, 2840, 2780, 2920, 2870, 3040, 2980];
+  var clk = [48, 58, 54, 68, 81, 73, 89, 84, 99, 96, 109, 105, 121, 114, 129, 125, 137, 133, 142, 138, 149, 145, 156, 152, 164, 159, 168, 165, 175, 172];
+  var max = Math.max.apply(null, imp);
+  var n = imp.length;
+  function px(i) { return (i / (n - 1)) * (W - 10) + 5; }
+  function py(v) { return H - 10 - ((v / max) * (H - 20)); }
+  // grid
+  ctx.strokeStyle = 'rgba(238,240,229,0.05)'; ctx.lineWidth = 1;
+  for (var g = 0; g < 4; g++) { var gy = H - 10 - (g / 3) * (H - 20); ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke(); }
+  // impressions fill
+  var grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, 'rgba(184,224,48,0.14)'); grad.addColorStop(1, 'rgba(184,224,48,0)');
+  ctx.beginPath(); ctx.moveTo(px(0), H);
+  imp.forEach(function (v, i) { ctx.lineTo(px(i), py(v)); });
+  ctx.lineTo(px(n - 1), H); ctx.closePath(); ctx.fillStyle = grad; ctx.fill();
+  // impressions line
+  ctx.beginPath(); imp.forEach(function (v, i) { i === 0 ? ctx.moveTo(px(i), py(v)) : ctx.lineTo(px(i), py(v)); });
+  ctx.strokeStyle = '#B8E030'; ctx.lineWidth = 2; ctx.lineJoin = 'round'; ctx.stroke();
+  // clicks line (scaled to same axis)
+  ctx.beginPath(); clk.forEach(function (v, i) { var sv = v * (max / 200); i === 0 ? ctx.moveTo(px(i), py(sv)) : ctx.lineTo(px(i), py(sv)); });
+  ctx.strokeStyle = '#60A5FA'; ctx.lineWidth = 1.5; ctx.setLineDash([4, 3]); ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+// ── PRICING TOGGLE ──
+var isAnnual = false;
+var prices = { launch: [499, 399], growth: [1499, 1199], scale: [2500, 2000] };
+function updatePrices() {
+  var i = isAnnual ? 1 : 0;
+  var mo = isAnnual ? ' / mo (billed annually)' : ' / mo';
+  var el;
+  el = document.getElementById('price-launch'); if (el) el.innerHTML = '$' + prices.launch[i] + '<span class="mo">' + mo + '</span>';
+  el = document.getElementById('price-growth'); if (el) el.innerHTML = '$' + prices.growth[i] + '<span class="mo">' + mo + '</span>';
+  el = document.getElementById('price-scale'); if (el) el.innerHTML = '$' + prices.scale[i] + '<span class="mo">' + (isAnnual ? ' / campaign (annual)' : ' / campaign') + '</span>';
+}
+
+// ══ DOM READY ══
+document.addEventListener('DOMContentLoaded', function () {
+
+  // Nav
+  document.querySelectorAll('[data-vid]').forEach(function (el) {
+    el.addEventListener('click', function (e) {
+      e.stopPropagation();
+      switchView(el.getAttribute('data-vid'), el.getAttribute('data-vlabel'));
+    });
+  });
+
+  // Initial chart
+  drawOverviewChart();
+  window.addEventListener('resize', drawOverviewChart);
+
+  // Topbar
+  document.getElementById('btn-analytics').addEventListener('click', function () { switchView('overview', 'Overview'); toast('Analytics view — showing Overview', ''); });
+  document.getElementById('btn-billing').addEventListener('click', function () { switchView('pricing', 'Pricing & Plans'); });
+  document.getElementById('btn-new-campaign').addEventListener('click', function () { switchView('creator', 'Campaign Creator'); });
+  document.getElementById('btn-notif').addEventListener('click', function () { toast('2 alerts · Spring Refresh budget 80% spent · Coastal Luxe segment growing', ''); });
+  document.getElementById('btn-ava').addEventListener('click', function () { toast('ACME Home Services · Growth Plan · Active', ''); });
+
+  // Overview
+  document.getElementById('ov-report').addEventListener('click', function () {
+    toast('Preparing Q1 report...', ''); setTimeout(function () { toast('vendor-report-q1-2026.pdf downloaded ✓', 'success'); }, 1200);
+  });
+  document.getElementById('ov-campaign').addEventListener('click', function () { switchView('creator', 'Campaign Creator'); });
+  document.getElementById('ov-cmp-link').addEventListener('click', function () { switchView('campaigns', 'Campaigns'); });
+  document.getElementById('ov-aud-link').addEventListener('click', function () { switchView('audience', 'Audience Intelligence'); });
+  document.getElementById('ov-cmp2-link').addEventListener('click', function () { switchView('campaigns', 'Campaigns'); });
+  document.querySelectorAll('#view-overview .trow:not(.thead)').forEach(function (row) {
+    row.addEventListener('click', function () { switchView('campaigns', 'Campaigns'); });
+  });
+
+  // Audience
+  document.getElementById('aud-export').addEventListener('click', function () {
+    toast('Exporting audience data...', ''); setTimeout(function () { toast('audience-segments-q1-2026.csv downloaded ✓', 'success'); }, 1100);
+  });
+  document.getElementById('aud-target').addEventListener('click', function () { switchView('creator', 'Campaign Creator'); });
+
+  // Campaigns
+  document.getElementById('cmp-create').addEventListener('click', function () { switchView('creator', 'Campaign Creator'); });
+  ['all', 'live', 'paused', 'draft'].forEach(function (f) {
+    var el = document.getElementById('cmp-' + f); if (!el) return;
+    el.addEventListener('click', function () {
+      cmpFilter = f;
+      document.querySelectorAll('#view-campaigns .chip').forEach(function (c) { c.classList.remove('active'); });
+      el.classList.add('active');
+      buildCampaigns();
+    });
+  });
+
+  // Creator
+  wireDNAPicker();
+  setCreatorStep(1);
+  document.getElementById('cr-next').addEventListener('click', function () {
+    if (crStep === crTotal) {
+      var name = document.getElementById('cr-name').value.trim() || 'New Campaign';
+      modal('Launch Campaign?', 'Launch "' + name + '" to your selected buyer segments? Impressions will begin within 15 minutes.', 'Launch Now', function () {
+        campaigns.push({ name: name, dna: 'Custom', status: 'live', impressions: 0, ctr: 0, leads: 0, budget: 2500, spent: 0, start: 'Today', end: '—' });
+        switchView('campaigns', 'Campaigns');
+        toast(name + ' launched! ✓', 'success');
+      });
+    } else {
+      setCreatorStep(crStep + 1);
+    }
+  });
+  document.getElementById('cr-back').addEventListener('click', function () { setCreatorStep(crStep - 1); });
+  document.getElementById('cr-save-draft').addEventListener('click', function () {
+    var name = document.getElementById('cr-name').value.trim() || 'Untitled Campaign';
+    toast('"' + name + '" saved as draft ✓', 'success');
+  });
+  document.querySelectorAll('.cr-step').forEach(function (s) {
+    s.addEventListener('click', function () { setCreatorStep(parseInt(s.getAttribute('data-step'))); });
+  });
+
+  // Pricing
+  document.getElementById('pt-monthly').addEventListener('click', function () {
+    isAnnual = false;
+    document.getElementById('pt-monthly').classList.add('active');
+    document.getElementById('pt-annual').classList.remove('active');
+    updatePrices();
+  });
+  document.getElementById('pt-annual').addEventListener('click', function () {
+    isAnnual = true;
+    document.getElementById('pt-annual').classList.add('active');
+    document.getElementById('pt-monthly').classList.remove('active');
+    updatePrices();
+    toast('Annual pricing applied — saving 20%', 'success');
+  });
+  document.getElementById('price-launch-btn').addEventListener('click', function () {
+    modal('Start Launch Plan', 'You\'re on the Growth plan. Downgrading to Launch will limit you to 1 campaign and 1 DNA segment.', 'Downgrade to Launch', function () { toast('Plan changed to Launch ✓', 'success'); });
+  });
+  document.getElementById('price-growth-btn').addEventListener('click', function () {
+    toast('You\'re already on the Growth plan ✓', 'success');
+  });
+  document.getElementById('price-scale-btn').addEventListener('click', function () {
+    modal('Contact Sales', 'Our enterprise team will reach out within 24 hours to discuss custom pricing, integrations, and white-label options.', 'Send Request', function () { toast('Sales request sent — expect contact within 24h ✓', 'success'); });
+  });
+
+  // KPI card clicks
+  document.querySelectorAll('.kpi').forEach(function (k) {
+    k.style.cursor = 'pointer';
+    k.addEventListener('click', function () {
+      var l = k.querySelector('.kl').textContent;
+      var v = k.querySelector('.kv').textContent;
+      toast(l.trim() + ': ' + v.trim(), '');
+    });
+  });
+
+});
+</script>
+<script src="chloeiq-nav.js"></script>
+</body>
+</html>

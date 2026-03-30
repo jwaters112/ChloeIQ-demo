@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ChloeIQ — Outreach Kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#0A0B07;--s1:#13160D;--s2:#1A1E12;--s3:#222818;--s4:#2A3020;--acc:#B8E030;--ad:rgba(184,224,48,.10);--am:rgba(184,224,48,.22);--tx:#EEF0E5;--txm:#8A8F7A;--txd:#4A5040;--br:rgba(184,224,48,.12);--bs:rgba(238,240,229,.06);--grn:#4ADE80;--red:#FF5A4A;--amb:#F5A623;--blu:#60A5FA;--pur:#A78BFA;}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:14px;overflow-x:hidden;}
+.topbar{height:56px;display:flex;align-items:center;padding:0 28px;border-bottom:1px solid var(--bs);background:var(--bg);gap:12px;position:sticky;top:0;z-index:20;}
+.lm{width:28px;height:28px;background:var(--acc);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:var(--bg);}
+.lt{font-family:'Fraunces',serif;font-size:17px;}.lt b{color:var(--acc);font-weight:400;}
+.pt{font-family:'Fraunces',serif;font-size:18px;font-weight:400;}.pt em{color:var(--acc);font-style:italic;}
+.sep{width:1px;height:20px;background:var(--bs);}
+.tr{margin-left:auto;display:flex;gap:8px;align-items:center;}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 15px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;border:none;transition:all .13s;}
+.bp{background:var(--acc);color:var(--bg);}.bp:hover{background:#c8f040;}
+.bs2{background:transparent;color:var(--txm);border:1px solid var(--bs);}.bs2:hover{border-color:var(--br);color:var(--tx);background:var(--s1);}
+.main{padding:28px 32px;display:flex;flex-direction:column;gap:22px;max-height:calc(100vh - 56px);overflow-y:auto;}
+.tab{padding:10px 20px;font-size:13px;font-weight:500;color:var(--txm);cursor:pointer;border-bottom:2px solid transparent;transition:all .13s;white-space:nowrap;}
+.tab:hover{color:var(--tx);}.tab.active{color:var(--acc);border-bottom-color:var(--acc);}
+.view{display:none;flex-direction:column;gap:20px;}.view.active{display:flex;animation:fu .18s ease;}
+@keyframes fu{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.panel{background:var(--s1);border:1px solid var(--bs);border-radius:11px;overflow:hidden;}
+.ph{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--bs);}
+.pht{font-size:13px;font-weight:600;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.kpi{background:var(--s1);border:1px solid var(--bs);border-radius:10px;padding:15px 17px;transition:border-color .13s;}
+.kpi:hover{border-color:var(--br);}.ka{border-left:2px solid var(--acc);}.ka .kv{color:var(--acc);}
+.kl{font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;}
+.kv{font-family:'Fraunces',serif;font-size:26px;line-height:1;}.kd{font-size:11px;margin-top:4px;}
+.up{color:var(--grn);}.dn{color:var(--red);}.ne{color:var(--txm);}
+.trow{display:grid;align-items:center;padding:10px 18px;border-bottom:1px solid var(--bs);cursor:pointer;transition:background .11s;gap:12px;}
+.trow:last-child{border-bottom:none;}.trow:hover{background:var(--s2);}
+.thead{font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:.5px;text-transform:uppercase;cursor:default!important;}
+.thead:hover{background:transparent!important;}
+.cn{display:flex;flex-direction:column;gap:1px;}.n{font-size:13px;font-weight:500;}.s{font-size:11px;color:var(--txm);}
+.pill{display:inline-flex;font-family:'DM Mono',monospace;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;}
+.pg{background:rgba(74,222,128,.10);color:var(--grn);}.pa{background:rgba(245,166,35,.10);color:var(--amb);}
+.pr{background:rgba(255,90,74,.10);color:var(--red);}.pb{background:rgba(96,165,250,.10);color:var(--blu);}
+.pac{background:var(--ad);color:var(--acc);}.pm{background:var(--s3);color:var(--txd);}
+.bb{height:5px;background:var(--s3);border-radius:3px;overflow:hidden;}
+.bf{height:5px;border-radius:3px;background:var(--acc);}
+.chip{padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--bs);background:var(--s2);color:var(--txm);transition:all .12s;}
+.chip:hover{border-color:var(--br);color:var(--tx);}.chip.active{background:var(--ad);border-color:var(--br);color:var(--acc);}
+input,select,textarea{background:var(--s2);border:1px solid var(--bs);border-radius:7px;padding:9px 12px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;width:100%;transition:border-color .13s;}
+input:focus,select:focus,textarea:focus{border-color:var(--br);}
+label{font-family:'DM Mono',monospace;font-size:10px;color:var(--txm);letter-spacing:.5px;display:block;margin-bottom:5px;}
+::-webkit-scrollbar{width:3px;height:3px;}</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="lm">C</div><div class="lt">Chloe<b>IQ</b></div>
+  <div class="sep"></div>
+  <div class="pt">Outreach <em>Kit</em></div><div class="tr"><button class="btn bs2" id="ok-preview">Preview</button><button class="btn bp" id="ok-export">Export All</button></div>
+</header>
+<div class="main">
+
+<div class="g4">
+  <div class="kpi ka"><div class="kl">Assets Ready</div><div class="kv">14</div><div class="kd up">All current</div></div>
+  <div class="kpi"><div class="kl">Templates</div><div class="kv">8</div><div class="kd ne">Email + SMS</div></div>
+  <div class="kpi"><div class="kl">Pitch Decks</div><div class="kv">3</div><div class="kd ne">Agent/Broker/Investor</div></div>
+  <div class="kpi"><div class="kl">Last Updated</div><div class="kv" style="font-size:16px;">Mar 28</div><div class="kd ne">3 days ago</div></div>
+</div>
+<div class="g2">
+  <div class="panel">
+    <div class="ph"><div class="pht">Email Templates</div></div>
+    <div id="email-tpls"></div>
+  </div>
+  <div class="panel">
+    <div class="ph"><div class="pht">Pitch Assets</div></div>
+    <div id="pitch-assets"></div>
+  </div>
+</div>
+<div class="panel">
+  <div class="ph"><div class="pht">One-Liner Library</div><span style="font-size:12px;color:var(--acc);cursor:pointer;" id="ok-copy-all">Copy All →</span></div>
+  <div id="oneliners" style="padding:16px 20px;display:grid;grid-template-columns:1fr 1fr;gap:12px;"></div>
+</div>
+
+</div>
+<script>
+function toast(msg,type){var o=document.getElementById('_t');if(o)o.remove();var t=document.createElement('div');t.id='_t';t.textContent=msg;var bg=type==='ok'?'#B8E030':'#1A1E12';var c=type==='ok'?'#0A0B07':'#EEF0E5';t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:'+bg+';color:'+c+';padding:10px 20px;border-radius:8px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all .2s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.4);border:1px solid rgba(184,224,48,.15);';document.body.appendChild(t);requestAnimationFrame(function(){t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';});clearTimeout(t._x);t._x=setTimeout(function(){t.style.opacity='0';},2600);}
+function modal(title,body,label,cb){var o=document.getElementById('_m');if(o)o.remove();var el=document.createElement('div');el.id='_m';el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9990;display:flex;align-items:center;justify-content:center;';el.innerHTML='<div style="background:#13160D;border:1px solid rgba(184,224,48,.15);border-radius:13px;padding:26px 28px;min-width:380px;max-width:460px;box-shadow:0 20px 60px rgba(0,0,0,.6);"><div style="font-family:Fraunces,serif;font-size:19px;margin-bottom:9px;">'+title+'</div><div style="font-size:13px;color:#8A8F7A;line-height:1.6;margin-bottom:20px;">'+body+'</div><div style="display:flex;gap:9px;justify-content:flex-end;"><button id="_mc" style="padding:7px 16px;border-radius:7px;border:1px solid rgba(238,240,229,.08);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:12px;cursor:pointer;">Cancel</button><button id="_mo" style="padding:7px 16px;border-radius:7px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:12px;font-weight:600;cursor:pointer;">'+(label||'OK')+'</button></div></div>';document.body.appendChild(el);el.querySelector('#_mc').onclick=function(){el.remove();};el.querySelector('#_mo').onclick=function(){el.remove();if(cb)cb();};el.onclick=function(e){if(e.target===el)el.remove();};}
+function tabs(containerSel,viewSel){document.querySelectorAll(containerSel).forEach(function(t){t.addEventListener('click',function(){document.querySelectorAll(containerSel).forEach(function(x){x.classList.remove('active');});document.querySelectorAll(viewSel).forEach(function(v){v.classList.remove('active');});t.classList.add('active');var v=document.getElementById('view-'+t.dataset.tab);if(v)v.classList.add('active');});});}
+
+var emailTpls=[
+  {name:'Agent Cold Outreach',desc:'Introduce ChloeIQ to a new agent',tag:'Cold'},
+  {name:'Broker Demo Request',desc:'Request a brokerage demo call',tag:'Demo'},
+  {name:'Follow-Up After Demo',desc:'Post-demo nurture sequence',tag:'Nurture'},
+  {name:'Investor Introduction',desc:'Seed round intro for PropTech VCs',tag:'Investor'},
+  {name:'Referral Request',desc:'Ask happy agents for referrals',tag:'Referral'},
+];
+var pitchAssets=[
+  {name:'Agent One-Pager',desc:'Single-page overview for agents',type:'PDF'},
+  {name:'Brokerage Pitch Deck',desc:'Full 10-slide brokerage deck',type:'PPTX'},
+  {name:'Investor Seed Deck',desc:'15-slide investor presentation',type:'PPTX'},
+];
+var oneliners=[
+  "ChloeIQ turns open houses into buyer intelligence events.",
+  "Every visitor leaves a fingerprint — we just help you read it.",
+  "Stop collecting sign-in sheets. Start collecting buyer DNA.",
+  "The first CRM built for the open house moment.",
+  "87% match scores before you ever pick up the phone.",
+  "Your next deal walked through the door — ChloeIQ found them.",
+  "Follow-up that feels personal because it actually is.",
+  "The agent who knows the buyer wins the deal.",
+];
+document.addEventListener('DOMContentLoaded',function(){
+  var et=document.getElementById('email-tpls');
+  emailTpls.forEach(function(t,i){
+    et.innerHTML+='<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 18px;border-bottom:1px solid var(--bs);cursor:pointer;transition:background .11s;" class="et-row">'
+      +'<div><div style="font-size:13px;font-weight:500;">'+t.name+'</div><div style="font-size:11px;color:var(--txm);">'+t.desc+'</div></div>'
+      +'<div style="display:flex;align-items:center;gap:7px;"><span class="pill pac">'+t.tag+'</span><button class="btn bs2" style="font-size:10px;padding:3px 9px;" data-et="'+i+'">Copy</button></div>'
+      +'</div>';
+  });
+  document.querySelectorAll('[data-et]').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();toast(emailTpls[parseInt(b.dataset.et)].name+' copied ✓','ok');});});
+  document.querySelectorAll('.et-row').forEach(function(r){r.addEventListener('click',function(){toast('Opening template editor...','');});});
+
+  var pa=document.getElementById('pitch-assets');
+  pitchAssets.forEach(function(a,i){
+    pa.innerHTML+='<div style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid var(--bs);">'
+      +'<div><div style="font-size:13px;font-weight:500;">'+a.name+'</div><div style="font-size:11px;color:var(--txm);">'+a.desc+'</div></div>'
+      +'<div style="display:flex;gap:7px;"><span class="pill pb">'+a.type+'</span><button class="btn bp" style="font-size:10px;padding:3px 9px;" data-pa="'+i+'">Download</button></div>'
+      +'</div>';
+  });
+  document.querySelectorAll('[data-pa]').forEach(function(b){b.addEventListener('click',function(){toast('Downloading '+pitchAssets[parseInt(b.dataset.pa)].name+' ✓','ok');});});
+
+  var ol=document.getElementById('oneliners');
+  oneliners.forEach(function(l,i){
+    ol.innerHTML+='<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:10px 12px;background:var(--s2);border:1px solid var(--bs);border-radius:8px;cursor:pointer;transition:border-color .12s;" class="ol-card" data-ol="'+i+'">'
+      +'<span style="font-size:13px;color:var(--txm);font-style:italic;line-height:1.5;">'+l+'</span>'
+      +'<button class="btn bs2" style="font-size:10px;padding:3px 8px;flex-shrink:0;" data-olc="'+i+'">Copy</button>'
+      +'</div>';
+  });
+  document.querySelectorAll('[data-olc]').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();toast('Copied: "'+oneliners[parseInt(b.dataset.olc)].substring(0,40)+'..."','ok');});});
+  document.querySelectorAll('.ol-card').forEach(function(c){c.addEventListener('click',function(){var i=parseInt(c.dataset.ol);toast('Copied ✓','ok');});});
+
+  document.getElementById('ok-export').addEventListener('click',function(){toast('Exporting all outreach assets...','');setTimeout(function(){toast('outreach-kit.zip downloaded ✓','ok');},1200);});
+  document.getElementById('ok-preview').addEventListener('click',function(){toast('Opening preview mode...','');});
+  document.getElementById('ok-copy-all').addEventListener('click',function(){toast('All one-liners copied to clipboard ✓','ok');});
+});
+
+</script>
+<script src="chloeiq-nav.js"></script>
+</body>
+</html>

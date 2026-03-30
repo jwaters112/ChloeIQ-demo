@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChloeIQ — Brokerage Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #0A0B07;
+  --surface:   #13160D;
+  --surface2:  #1A1E12;
+  --surface3:  #222818;
+  --surface4:  #2A3020;
+  --accent:    #B8E030;
+  --accent-dim: rgba(184,224,48,0.10);
+  --accent-mid: rgba(184,224,48,0.22);
+  --text:      #EEF0E5;
+  --text-muted:#8A8F7A;
+  --text-dim:  #4E5445;
+  --border:    rgba(184,224,48,0.12);
+  --border-s:  rgba(238,240,229,0.06);
+  --red:       #FF5A4A;
+  --amber:     #F5A623;
+  --green:     #4ADE80;
+  --blue:      #60A5FA;
+  --purple:    #A78BFA;
+  --sidebar-w: 210px;
+  --header-h:  58px;
+}
+
+html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; overflow: hidden; }
+
+/* ── SHELL ── */
+.shell { display: grid; grid-template-columns: var(--sidebar-w) 1fr; grid-template-rows: var(--header-h) 1fr; height: 100vh; }
+
+/* ── TOPBAR ── */
+.topbar {
+  grid-column: 1/-1;
+  display: flex; align-items: center;
+  padding: 0 24px; gap: 0;
+  border-bottom: 1px solid var(--border-s);
+  background: var(--bg);
+  position: relative; z-index: 20;
+}
+.tl { display: flex; align-items: center; gap: 10px; width: var(--sidebar-w); padding-right: 16px; flex-shrink: 0; }
+.logo-mark { width: 28px; height: 28px; background: var(--accent); border-radius: 7px; display: flex; align-items: center; justify-content: center; font-family: 'Fraunces', serif; font-size: 15px; font-weight: 600; color: var(--bg); }
+.logo-text { font-family: 'Fraunces', serif; font-size: 17px; color: var(--text); }
+.logo-text b { color: var(--accent); font-weight: 400; }
+.tc { flex: 1; display: flex; align-items: center; gap: 8px; }
+.breadcrumb { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+.breadcrumb .sep { opacity: 0.35; }
+.breadcrumb .cur { color: var(--text); font-weight: 500; }
+.brokerage-tag {
+  margin-left: 12px;
+  background: var(--accent-dim); border: 1px solid var(--border);
+  color: var(--accent); font-family: 'DM Mono', monospace; font-size: 10px;
+  padding: 3px 10px; border-radius: 20px; letter-spacing: 0.5px;
+}
+.tr { display: flex; align-items: center; gap: 10px; }
+.topbar-btn {
+  height: 32px; padding: 0 14px; border-radius: 7px;
+  border: 1px solid var(--border-s); background: var(--surface);
+  color: var(--text-muted); font-family: 'DM Sans', sans-serif; font-size: 12px;
+  cursor: pointer; display: flex; align-items: center; gap: 6px;
+  transition: all 0.14s;
+}
+.topbar-btn:hover { border-color: var(--border); color: var(--text); background: var(--surface2); }
+.topbar-btn.primary { background: var(--accent); color: var(--bg); border-color: var(--accent); font-weight: 600; }
+.topbar-btn.primary:hover { background: #c8f040; }
+.notif { width: 32px; height: 32px; border-radius: 7px; border: 1px solid var(--border-s); background: var(--surface); display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; }
+.notif-dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; position: absolute; top: 6px; right: 6px; border: 1.5px solid var(--bg); }
+.avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #7AB800, var(--accent)); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--bg); cursor: pointer; flex-shrink: 0; }
+.brok-name { font-size: 13px; font-weight: 500; text-align: right; line-height: 1.2; }
+.brok-role { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--accent); }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  border-right: 1px solid var(--border-s);
+  background: var(--surface);
+  display: flex; flex-direction: column;
+  overflow-y: auto;
+  padding: 12px 0 0;
+}
+.nav-sec { font-family: 'DM Mono', monospace; font-size: 9.5px; color: var(--text-dim); letter-spacing: 1px; text-transform: uppercase; padding: 14px 18px 5px; }
+.nav-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 18px; cursor: pointer;
+  font-size: 13px; color: var(--text-muted);
+  border-left: 2px solid transparent;
+  transition: all 0.12s;
+}
+.nav-item:hover { background: var(--surface2); color: var(--text); }
+.nav-item.active { background: var(--accent-dim); color: var(--accent); border-left-color: var(--accent); font-weight: 500; }
+.nav-icon { width: 15px; height: 15px; opacity: 0.6; flex-shrink: 0; }
+.nav-item.active .nav-icon { opacity: 1; }
+.nav-badge { margin-left: auto; font-family: 'DM Mono', monospace; font-size: 10px; background: var(--accent); color: var(--bg); padding: 1px 6px; border-radius: 8px; font-weight: 600; }
+.nav-badge.warn { background: rgba(245,166,35,0.15); color: var(--amber); }
+.nav-badge.muted { background: var(--surface3); color: var(--text-dim); }
+
+.sidebar-footer { margin-top: auto; padding: 14px 16px 16px; border-top: 1px solid var(--border-s); }
+.sf-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 12px; }
+.sf-label { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text-dim); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 8px; }
+.sf-stat { display: flex; justify-content: space-between; align-items: baseline; }
+.sf-val { font-family: 'Fraunces', serif; font-size: 26px; color: var(--accent); }
+.sf-sub { font-size: 11px; color: var(--text-muted); }
+.sf-bar-bg { height: 3px; background: var(--surface3); border-radius: 2px; margin-top: 8px; }
+.sf-bar { height: 3px; background: var(--accent); border-radius: 2px; }
+
+/* ── MAIN ── */
+.main { overflow-y: auto; background: var(--bg); }
+.view { display: none; padding: 26px 30px; flex-direction: column; gap: 22px; animation: fadeUp 0.18s ease; }
+.view.active { display: flex; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+/* ── SHARED COMPONENTS ── */
+.view-hd { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.view-title { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 400; line-height: 1.1; }
+.view-title em { color: var(--accent); font-style: italic; }
+.view-sub { font-size: 12.5px; color: var(--text-muted); margin-top: 3px; }
+.hd-actions { display: flex; gap: 8px; flex-shrink: 0; align-items: center; }
+
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 7px 15px; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 12.5px; font-weight: 500; cursor: pointer; border: none; transition: all 0.14s; }
+.btn-primary { background: var(--accent); color: var(--bg); }
+.btn-primary:hover { background: #c8f040; }
+.btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border-s); }
+.btn-ghost:hover { border-color: var(--border); color: var(--text); background: var(--surface); }
+
+.kpi-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
+.kpi-grid.four { grid-template-columns: repeat(4, 1fr); }
+.kpi-grid.six  { grid-template-columns: repeat(6, 1fr); }
+.kpi {
+  background: var(--surface); border: 1px solid var(--border-s);
+  border-radius: 11px; padding: 16px 18px; cursor: pointer;
+  transition: border-color 0.14s; position: relative; overflow: hidden;
+}
+.kpi:hover { border-color: var(--border); }
+.kpi-label { font-family: 'DM Mono', monospace; font-size: 9.5px; color: var(--text-dim); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 9px; }
+.kpi-val { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 400; line-height: 1; }
+.kpi-val .u { font-size: 14px; color: var(--text-muted); }
+.kpi-delta { font-size: 11px; margin-top: 5px; display: flex; align-items: center; gap: 3px; }
+.up { color: var(--green); } .dn { color: var(--red); } .neu { color: var(--text-muted); }
+.kpi-accent { border-left: 2px solid var(--accent); }
+.kpi-accent .kpi-val { color: var(--accent); }
+
+.panel { background: var(--surface); border: 1px solid var(--border-s); border-radius: 11px; overflow: hidden; }
+.ph { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--border-s); }
+.ph-title { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+.ph-count { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); background: var(--surface3); padding: 2px 7px; border-radius: 8px; }
+.ph-action { font-size: 12px; color: var(--accent); cursor: pointer; font-weight: 500; }
+.ph-action:hover { text-decoration: underline; }
+
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.two-col.wide { grid-template-columns: 2fr 1fr; }
+.two-col.narrow { grid-template-columns: 1fr 2fr; }
+.three-col { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+
+/* ── TABLE ROWS ── */
+.trow {
+  display: grid; align-items: center;
+  padding: 11px 18px; border-bottom: 1px solid var(--border-s);
+  cursor: pointer; transition: background 0.11s;
+  gap: 12px;
+}
+.trow:last-child { border-bottom: none; }
+.trow:hover { background: var(--surface2); }
+.trow.selected { background: var(--accent-dim); }
+.thead { font-family: 'DM Mono', monospace; font-size: 9.5px; color: var(--text-dim); letter-spacing: 0.5px; text-transform: uppercase; }
+.cell-name { display: flex; flex-direction: column; gap: 1px; }
+.cell-name .n { font-size: 13px; font-weight: 500; }
+.cell-name .s { font-size: 11px; color: var(--text-muted); }
+
+.pill { display: inline-flex; align-items: center; font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 600; padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
+.pill-green { background: rgba(74,222,128,0.10); color: var(--green); }
+.pill-amber { background: rgba(245,166,35,0.10); color: var(--amber); }
+.pill-red   { background: rgba(255,90,74,0.10);  color: var(--red); }
+.pill-blue  { background: rgba(96,165,250,0.10); color: var(--blue); }
+.pill-accent { background: var(--accent-dim); color: var(--accent); }
+.pill-muted { background: var(--surface3); color: var(--text-dim); }
+
+.mini-bar-bg { height: 5px; background: var(--surface3); border-radius: 3px; overflow: hidden; min-width: 60px; }
+.mini-bar    { height: 5px; border-radius: 3px; background: var(--accent); transition: width 1s cubic-bezier(.4,0,.2,1); }
+.mini-bar.amber { background: var(--amber); }
+.mini-bar.red   { background: var(--red); }
+.mini-bar.blue  { background: var(--blue); }
+
+.avatar-sm { width: 30px; height: 30px; border-radius: 50%; background: var(--surface3); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+.avatar-sm.accent { background: linear-gradient(135deg, var(--accent), #7AB800); color: var(--bg); }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 4px; }
+
+/* ── CHART CANVAS ── */
+canvas { display: block; }
+
+/* ── TOAST / MODAL ── */
+#ciq-toast {
+  position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--surface2); color: var(--text); padding: 10px 20px; border-radius: 8px;
+  font-size: 13px; font-weight: 500; z-index: 9999; opacity: 0;
+  transition: all 0.2s ease; pointer-events: none;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5); border: 1px solid var(--border);
+}
+#ciq-modal {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.72);
+  z-index: 9990; display: flex; align-items: center; justify-content: center;
+}
+.modal-box {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 28px 30px; min-width: 400px; max-width: 500px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+}
+.modal-title { font-family: 'Fraunces', serif; font-size: 20px; margin-bottom: 10px; }
+.modal-body { font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 22px; }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+/* ── CHIP ── */
+.chip-bar { display: flex; gap: 7px; flex-wrap: wrap; }
+.chip { padding: 5px 13px; border-radius: 20px; font-size: 12px; font-weight: 500; cursor: pointer; border: 1px solid var(--border-s); background: var(--surface2); color: var(--text-muted); transition: all 0.12s; }
+.chip:hover { border-color: var(--border); color: var(--text); }
+.chip.active { background: var(--accent-dim); border-color: rgba(184,224,48,0.3); color: var(--accent); }
+
+/* ── PROGRESS ── */
+.prog-item { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+.prog-row { display: flex; justify-content: space-between; font-size: 12px; }
+.prog-name { color: var(--text-muted); } .prog-val { font-family: 'DM Mono', monospace; color: var(--accent); font-size: 11px; }
+
+/* ── COACHING CARD ── */
+.coach-card {
+  background: var(--surface2); border: 1px solid var(--border-s);
+  border-radius: 10px; padding: 14px 16px;
+  display: flex; align-items: flex-start; gap: 12px;
+  cursor: pointer; transition: border-color 0.14s;
+}
+.coach-card:hover { border-color: var(--border); }
+.coach-card.urgent { border-left: 2px solid var(--amber); }
+.coach-info { flex: 1; }
+.coach-name { font-size: 13px; font-weight: 500; margin-bottom: 3px; }
+.coach-issue { font-size: 12px; color: var(--text-muted); line-height: 1.45; }
+.coach-meta { display: flex; gap: 7px; margin-top: 7px; align-items: center; }
+
+/* ── REVENUE BAR CHART ── */
+.rev-chart { padding: 18px 18px 10px; }
+.rev-bars { display: flex; align-items: flex-end; gap: 10px; height: 120px; }
+.rev-bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 5px; flex: 1; }
+.rev-bar { width: 100%; border-radius: 4px 4px 0 0; transition: height 1s cubic-bezier(.4,0,.2,1); cursor: pointer; position: relative; }
+.rev-bar:hover::after {
+  content: attr(data-val);
+  position: absolute; top: -22px; left: 50%; transform: translateX(-50%);
+  font-family: 'DM Mono', monospace; font-size: 10px; color: var(--accent);
+  background: var(--surface2); padding: 2px 6px; border-radius: 4px; white-space: nowrap;
+}
+.rev-label { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text-dim); }
+
+/* ── MARKET COMPARE ── */
+.mkt-row { display: flex; align-items: center; gap: 14px; padding: 10px 18px; border-bottom: 1px solid var(--border-s); }
+.mkt-row:last-child { border-bottom: none; }
+.mkt-label { font-size: 12.5px; color: var(--text-muted); min-width: 140px; }
+.mkt-bar-wrap { flex: 1; position: relative; }
+.mkt-bg { height: 8px; background: var(--surface3); border-radius: 4px; overflow: hidden; }
+.mkt-fill { height: 8px; border-radius: 4px; }
+.mkt-val { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text); min-width: 36px; text-align: right; }
+.mkt-bench { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-dim); min-width: 60px; text-align: right; }
+
+/* ── LEADERBOARD ── */
+.lb-row { display: flex; align-items: center; gap: 11px; padding: 9px 18px; border-bottom: 1px solid var(--border-s); cursor: pointer; transition: background 0.11s; }
+.lb-row:last-child { border-bottom: none; }
+.lb-row:hover { background: var(--surface2); }
+.lb-row.you { background: var(--accent-dim); }
+.lb-rank { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text-dim); width: 18px; text-align: center; flex-shrink: 0; }
+.lb-rank.top { color: var(--accent); font-weight: 600; }
+
+/* ── EXPORT ── */
+.export-item { display: flex; align-items: center; gap: 14px; padding: 13px 18px; border-bottom: 1px solid var(--border-s); cursor: pointer; transition: background 0.12s; }
+.export-item:last-child { border-bottom: none; }
+.export-item:hover { background: var(--surface2); }
+.export-icon { width: 36px; height: 36px; border-radius: 8px; background: var(--surface3); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.export-info { flex: 1; }
+.export-name { font-size: 13px; font-weight: 500; }
+.export-desc { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+.export-meta { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-dim); flex-shrink: 0; }
+
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ══ TOPBAR ══ -->
+<header class="topbar">
+  <div class="tl">
+    <div class="logo-mark">C</div>
+    <div class="logo-text">Chloe<b>IQ</b></div>
+  </div>
+  <div class="tc">
+    <div class="breadcrumb">
+      <span>Brokerage</span>
+      <span class="sep">›</span>
+      <span class="cur" id="bc">Overview</span>
+    </div>
+    <div class="brokerage-tag">REAL Broker · DFW</div>
+  </div>
+  <div class="tr">
+    <button class="topbar-btn" id="btn-export-top">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Export Report
+    </button>
+    <button class="topbar-btn primary" id="btn-coaching-top">Coaching Queue <span id="coaching-count" style="background:rgba(10,11,7,0.3);border-radius:10px;padding:1px 6px;margin-left:2px;font-size:10px;">3</span></button>
+    <div class="notif" id="btn-notif"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span class="notif-dot"></span></div>
+    <div style="text-align:right;">
+      <div class="brok-name">Josh Waters</div>
+      <div class="brok-role">● BROKER-OWNER</div>
+    </div>
+    <div class="avatar" id="btn-avatar">JW</div>
+  </div>
+</header>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar">
+  <div class="nav-sec">Command</div>
+  <div class="nav-item active" data-view="overview" data-label="Overview">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    Overview
+  </div>
+  <div class="nav-item" data-view="agents" data-label="Agents">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Agents
+    <span class="nav-badge">24</span>
+  </div>
+  <div class="nav-item" data-view="listings" data-label="Listings">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Listings
+    <span class="nav-badge">11</span>
+  </div>
+  <div class="nav-sec">Analytics</div>
+  <div class="nav-item" data-view="insights" data-label="Insights">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    Insights
+  </div>
+  <div class="nav-item" data-view="revenue" data-label="Revenue Attribution">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+    Revenue
+  </div>
+  <div class="nav-item" data-view="market" data-label="Market Comparison">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    Market Compare
+  </div>
+  <div class="nav-sec">Operations</div>
+  <div class="nav-item" data-view="coaching" data-label="Coaching Queue">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.95 15.4 19.79 19.79 0 0 1 1.91 6.86 2 2 0 0 1 3.88 4.68h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 12a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 18.92z"/></svg>
+    Coaching Queue
+    <span class="nav-badge warn">3</span>
+  </div>
+  <div class="nav-item" data-view="onboarding" data-label="Onboarding Progress">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+    Onboarding
+    <span class="nav-badge muted">6</span>
+  </div>
+  <div class="nav-item" data-view="leaderboard" data-label="Team Leaderboard">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+    Leaderboard
+  </div>
+  <div class="nav-item" data-view="export" data-label="Export Reports">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Export Reports
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="sf-card">
+      <div class="sf-label">Brokerage Score</div>
+      <div class="sf-stat">
+        <div class="sf-val">892</div>
+        <div class="sf-sub" style="font-size:11px;color:var(--accent);">Platinum</div>
+      </div>
+      <div class="sf-bar-bg"><div class="sf-bar" style="width:89%"></div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<main class="main">
+
+<!-- ▸ OVERVIEW ◂ -->
+<div class="view active" id="view-overview">
+  <div class="view-hd">
+    <div>
+      <div class="view-title">Brokerage <em>Command Center</em></div>
+      <div class="view-sub">REAL Broker · DFW Market · 24 agents · Updated just now</div>
+    </div>
+    <div class="hd-actions">
+      <button class="btn btn-ghost" id="ov-btn-insights">View Insights →</button>
+      <button class="btn btn-primary" id="ov-btn-report">Generate Report</button>
+    </div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi kpi-accent" data-goto="revenue">
+      <div class="kpi-label">Monthly Revenue</div>
+      <div class="kpi-val">$284<span class="u">K</span></div>
+      <div class="kpi-delta up">↑ 22% vs last month</div>
+    </div>
+    <div class="kpi" data-goto="agents">
+      <div class="kpi-label">Active Agents</div>
+      <div class="kpi-val">24</div>
+      <div class="kpi-delta up">↑ 3 new this quarter</div>
+    </div>
+    <div class="kpi" data-goto="listings">
+      <div class="kpi-label">Active Listings</div>
+      <div class="kpi-val">11</div>
+      <div class="kpi-delta neu">2 going live this week</div>
+    </div>
+    <div class="kpi" data-goto="insights">
+      <div class="kpi-label">Avg Host Score</div>
+      <div class="kpi-val">741</div>
+      <div class="kpi-delta up">↑ 28 pts this month</div>
+    </div>
+    <div class="kpi" data-goto="insights">
+      <div class="kpi-label">Buyer Matches</div>
+      <div class="kpi-val">1,847</div>
+      <div class="kpi-delta up">↑ 31% vs last month</div>
+    </div>
+  </div>
+
+  <div class="two-col wide">
+    <!-- Revenue trend -->
+    <div class="panel">
+      <div class="ph">
+        <div class="ph-title">Revenue Trend — Last 8 Months</div>
+        <span class="ph-action" id="ov-rev-detail">See Full Attribution →</span>
+      </div>
+      <div class="rev-chart">
+        <div class="rev-bars" id="rev-bars-overview"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:6px;padding:0 2px;">
+          <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dim);">AUG</span>
+          <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dim);">SEP</span>
+          <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dim);">OCT</span>
+          <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dim);">NOV</span>
+          <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dim);">DEC</span>
+          <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dim);">JAN</span>
+          <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dim);">FEB</span>
+          <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dim);">MAR</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top agents -->
+    <div class="panel">
+      <div class="ph">
+        <div class="ph-title">Top Agents <span class="ph-count">This Month</span></div>
+        <span class="ph-action" id="ov-agents-link">All Agents →</span>
+      </div>
+      <div class="trow thead" style="grid-template-columns:28px 1fr 60px 60px;cursor:default;">
+        <span></span><span>Agent</span><span>Score</span><span>Leads</span>
+      </div>
+      <div class="trow" style="grid-template-columns:28px 1fr 60px 60px;" data-goto="agents">
+        <div class="avatar-sm accent">MR</div>
+        <div class="cell-name"><span class="n">Marcus Rivera</span><span class="s">Gold · 8 OH</span></div>
+        <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--accent);">780</span>
+        <span style="font-size:13px;">47</span>
+      </div>
+      <div class="trow" style="grid-template-columns:28px 1fr 60px 60px;" data-goto="agents">
+        <div class="avatar-sm">SK</div>
+        <div class="cell-name"><span class="n">Sarah K.</span><span class="s">Platinum · 11 OH</span></div>
+        <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--accent);">920</span>
+        <span style="font-size:13px;">61</span>
+      </div>
+      <div class="trow" style="grid-template-columns:28px 1fr 60px 60px;" data-goto="agents">
+        <div class="avatar-sm">TB</div>
+        <div class="cell-name"><span class="n">Tyler B.</span><span class="s">Gold · 7 OH</span></div>
+        <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--accent);">898</span>
+        <span style="font-size:13px;">53</span>
+      </div>
+      <div class="trow" style="grid-template-columns:28px 1fr 60px 60px;" data-goto="agents">
+        <div class="avatar-sm">RM</div>
+        <div class="cell-name"><span class="n">Rosa M.</span><span class="s">Gold · 6 OH</span></div>
+        <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--accent);">847</span>
+        <span style="font-size:13px;">39</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="three-col">
+    <!-- Coaching alerts -->
+    <div class="panel">
+      <div class="ph">
+        <div class="ph-title">Coaching Alerts <span class="ph-count">3 urgent</span></div>
+        <span class="ph-action" id="ov-coaching-link">Coaching Queue →</span>
+      </div>
+      <div style="padding:12px 14px;display:flex;flex-direction:column;gap:10px;">
+        <div class="coach-card urgent" data-goto="coaching">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--amber);margin-top:3px;flex-shrink:0;"></div>
+          <div class="coach-info">
+            <div class="coach-name">Devon Clark</div>
+            <div class="coach-issue">Follow-up speed below 40% — 6 leads uncontacted &gt;48h</div>
+            <div class="coach-meta"><span class="pill pill-amber">Urgent</span><span style="font-size:10px;color:var(--text-dim);">3 days behind</span></div>
+          </div>
+        </div>
+        <div class="coach-card urgent" data-goto="coaching">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--amber);margin-top:3px;flex-shrink:0;"></div>
+          <div class="coach-info">
+            <div class="coach-name">Lisa Park</div>
+            <div class="coach-issue">Low StyleDNA completion rate (28%) — needs Chloe Code setup</div>
+            <div class="coach-meta"><span class="pill pill-amber">Urgent</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Onboarding -->
+    <div class="panel">
+      <div class="ph">
+        <div class="ph-title">Onboarding Progress <span class="ph-count">6 agents</span></div>
+        <span class="ph-action" id="ov-onboard-link">View All →</span>
+      </div>
+      <div style="padding:14px 18px;">
+        <div class="prog-item">
+          <div class="prog-row"><span class="prog-name">Chris Lang</span><span class="prog-val">Step 4/6</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar" style="width:66%"></div></div>
+        </div>
+        <div class="prog-item">
+          <div class="prog-row"><span class="prog-name">Nadia Bell</span><span class="prog-val">Step 2/6</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar amber" style="width:33%"></div></div>
+        </div>
+        <div class="prog-item">
+          <div class="prog-row"><span class="prog-name">Raj Patel</span><span class="prog-val">Step 6/6</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar" style="width:100%"></div></div>
+        </div>
+        <div class="prog-item">
+          <div class="prog-row"><span class="prog-name">Erin Moss</span><span class="prog-val">Step 1/6</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar red" style="width:16%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DNA distribution -->
+    <div class="panel">
+      <div class="ph">
+        <div class="ph-title">Buyer DNA Distribution</div>
+        <span class="ph-action" id="ov-insights-link">Full Insights →</span>
+      </div>
+      <div style="padding:14px 18px;display:flex;flex-direction:column;gap:11px;">
+        <div class="prog-item" style="margin-bottom:0;">
+          <div class="prog-row"><span class="prog-name">Refined Modern</span><span class="prog-val">38%</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar" style="width:38%"></div></div>
+        </div>
+        <div class="prog-item" style="margin-bottom:0;">
+          <div class="prog-row"><span class="prog-name">Warm Organic</span><span class="prog-val">27%</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar blue" style="width:27%"></div></div>
+        </div>
+        <div class="prog-item" style="margin-bottom:0;">
+          <div class="prog-row"><span class="prog-name">Coastal Luxe</span><span class="prog-val">21%</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar amber" style="width:21%"></div></div>
+        </div>
+        <div class="prog-item" style="margin-bottom:0;">
+          <div class="prog-row"><span class="prog-name">Bold Eclectic</span><span class="prog-val">14%</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar" style="width:14%;background:var(--purple)"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ▸ AGENTS ◂ -->
+<div class="view" id="view-agents">
+  <div class="view-hd">
+    <div><div class="view-title">Agent <em>Roster</em></div><div class="view-sub">24 agents active · 3 onboarding · DFW market</div></div>
+    <div class="hd-actions">
+      <div class="chip-bar">
+        <div class="chip active">All (24)</div>
+        <div class="chip">Platinum</div>
+        <div class="chip">Gold</div>
+        <div class="chip">Silver</div>
+        <div class="chip">Needs Coaching</div>
+      </div>
+      <button class="btn btn-primary" id="ag-invite">+ Invite Agent</button>
+    </div>
+  </div>
+  <div class="kpi-grid four">
+    <div class="kpi kpi-accent"><div class="kpi-label">Total Agents</div><div class="kpi-val">24</div><div class="kpi-delta up">↑ 3 this quarter</div></div>
+    <div class="kpi"><div class="kpi-label">Avg Host Score</div><div class="kpi-val">741</div><div class="kpi-delta up">↑ 28 pts</div></div>
+    <div class="kpi"><div class="kpi-label">Platinum Agents</div><div class="kpi-val">4</div><div class="kpi-delta neu">900+ score</div></div>
+    <div class="kpi"><div class="kpi-label">Needs Coaching</div><div class="kpi-val" style="color:var(--amber)">3</div><div class="kpi-delta dn">Action needed</div></div>
+  </div>
+  <div class="panel">
+    <div class="ph">
+      <div class="ph-title">All Agents <span class="ph-count">24</span></div>
+      <button class="btn btn-ghost" style="font-size:12px;" id="ag-export">Export CSV</button>
+    </div>
+    <div class="trow thead" style="grid-template-columns:30px 1fr 90px 70px 70px 80px 90px;cursor:default;padding:9px 18px;">
+      <span></span><span>Agent</span><span>Tier</span><span>Score</span><span>Open Houses</span><span>Leads</span><span>Status</span>
+    </div>
+    <div id="agents-list"></div>
+  </div>
+</div>
+
+<!-- ▸ LISTINGS ◂ -->
+<div class="view" id="view-listings">
+  <div class="view-hd">
+    <div><div class="view-title">Active <em>Listings</em></div><div class="view-sub">11 listings across DFW · 3 with live Chloe Code events</div></div>
+    <div class="hd-actions">
+      <div class="chip-bar">
+        <div class="chip active">All</div>
+        <div class="chip">Live Event</div>
+        <div class="chip">Upcoming</div>
+        <div class="chip">No Event</div>
+      </div>
+      <button class="btn btn-primary" id="ls-add">+ Add Listing</button>
+    </div>
+  </div>
+  <div class="kpi-grid four">
+    <div class="kpi kpi-accent"><div class="kpi-label">Active Listings</div><div class="kpi-val">11</div><div class="kpi-delta up">↑ 2 this week</div></div>
+    <div class="kpi"><div class="kpi-label">Avg Match Score</div><div class="kpi-val">71<span class="u">%</span></div><div class="kpi-delta up">↑ 6% vs last month</div></div>
+    <div class="kpi"><div class="kpi-label">Total Visitors</div><div class="kpi-val">892</div><div class="kpi-delta up">↑ 18% this month</div></div>
+    <div class="kpi"><div class="kpi-label">Buyer Reports Sent</div><div class="kpi-val">341</div><div class="kpi-delta up">↑ 44 this week</div></div>
+  </div>
+  <div class="panel">
+    <div class="ph"><div class="ph-title">Listings <span class="ph-count">11</span></div></div>
+    <div class="trow thead" style="grid-template-columns:1fr 130px 70px 70px 80px 90px;cursor:default;padding:9px 18px;">
+      <span>Property</span><span>Agent</span><span>Visitors</span><span>Avg Match</span><span>Status</span><span>Chloe Code</span>
+    </div>
+    <div id="listings-list"></div>
+  </div>
+</div>
+
+<!-- ▸ INSIGHTS ◂ -->
+<div class="view" id="view-insights">
+  <div class="view-hd">
+    <div><div class="view-title">Brokerage <em>Insights</em></div><div class="view-sub">Performance analytics across all agents and properties · Mar 2026</div></div>
+    <div class="hd-actions">
+      <button class="btn btn-ghost" id="ins-export">Export Insights</button>
+      <button class="btn btn-primary" id="ins-share">Share Dashboard</button>
+    </div>
+  </div>
+  <div class="kpi-grid six">
+    <div class="kpi kpi-accent"><div class="kpi-label">Total Visitors</div><div class="kpi-val">892</div><div class="kpi-delta up">↑ 18%</div></div>
+    <div class="kpi"><div class="kpi-label">Leads Captured</div><div class="kpi-val">341</div><div class="kpi-delta up">↑ 31%</div></div>
+    <div class="kpi"><div class="kpi-label">Conversion Rate</div><div class="kpi-val">38<span class="u">%</span></div><div class="kpi-delta up">↑ 4pts</div></div>
+    <div class="kpi"><div class="kpi-label">DNA Completions</div><div class="kpi-val">287</div><div class="kpi-delta up">↑ 22%</div></div>
+    <div class="kpi"><div class="kpi-label">Follow-Up Rate</div><div class="kpi-val">79<span class="u">%</span></div><div class="kpi-delta up">↑ 7pts</div></div>
+    <div class="kpi"><div class="kpi-label">Avg Match Score</div><div class="kpi-val">71<span class="u">%</span></div><div class="kpi-delta up">↑ 6pts</div></div>
+  </div>
+  <div class="two-col">
+    <div class="panel">
+      <div class="ph"><div class="ph-title">Monthly Lead Volume</div></div>
+      <div style="padding:18px 18px 10px;">
+        <canvas id="ins-canvas" width="500" height="140"></canvas>
+        <div style="display:flex;justify-content:space-between;margin-top:6px;">
+          <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dim);">OCT</span>
+          <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dim);">NOV</span>
+          <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dim);">DEC</span>
+          <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dim);">JAN</span>
+          <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dim);">FEB</span>
+          <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dim);">MAR</span>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><div class="ph-title">Engagement Breakdown</div></div>
+      <div style="padding:16px 18px;display:flex;flex-direction:column;gap:13px;">
+        <div class="prog-item" style="margin:0;"><div class="prog-row"><span class="prog-name">Chloe Code Scan Rate</span><span class="prog-val">84%</span></div><div class="mini-bar-bg"><div class="mini-bar" style="width:84%"></div></div></div>
+        <div class="prog-item" style="margin:0;"><div class="prog-row"><span class="prog-name">StyleDNA Completion</span><span class="prog-val">76%</span></div><div class="mini-bar-bg"><div class="mini-bar" style="width:76%"></div></div></div>
+        <div class="prog-item" style="margin:0;"><div class="prog-row"><span class="prog-name">Tour Completion Rate</span><span class="prog-val">61%</span></div><div class="mini-bar-bg"><div class="mini-bar blue" style="width:61%"></div></div></div>
+        <div class="prog-item" style="margin:0;"><div class="prog-row"><span class="prog-name">Follow-Up Open Rate</span><span class="prog-val">68%</span></div><div class="mini-bar-bg"><div class="mini-bar amber" style="width:68%"></div></div></div>
+        <div class="prog-item" style="margin:0;"><div class="prog-row"><span class="prog-name">Report Download Rate</span><span class="prog-val">44%</span></div><div class="mini-bar-bg"><div class="mini-bar" style="width:44%;background:var(--purple)"></div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ▸ REVENUE ◂ -->
+<div class="view" id="view-revenue">
+  <div class="view-hd">
+    <div><div class="view-title">Revenue <em>Attribution</em></div><div class="view-sub">ChloeIQ-sourced revenue breakdown · YTD 2026</div></div>
+    <div class="hd-actions">
+      <button class="btn btn-ghost" id="rev-export">Export Revenue Report</button>
+      <button class="btn btn-primary" id="rev-ytd">YTD Summary</button>
+    </div>
+  </div>
+  <div class="kpi-grid four">
+    <div class="kpi kpi-accent"><div class="kpi-label">YTD Revenue</div><div class="kpi-val">$1.2<span class="u">M</span></div><div class="kpi-delta up">↑ 34% vs 2025</div></div>
+    <div class="kpi"><div class="kpi-label">ChloeIQ-Attributed</div><div class="kpi-val">$487<span class="u">K</span></div><div class="kpi-delta up">41% of total</div></div>
+    <div class="kpi"><div class="kpi-label">Avg Deal Size</div><div class="kpi-val">$14<span class="u">K</span></div><div class="kpi-delta up">↑ 8% vs avg</div></div>
+    <div class="kpi"><div class="kpi-label">Deals Closed</div><div class="kpi-val">34</div><div class="kpi-delta up">↑ 11 vs last year</div></div>
+  </div>
+  <div class="two-col wide">
+    <div class="panel">
+      <div class="ph"><div class="ph-title">Revenue by Month — YTD 2026</div></div>
+      <div class="rev-chart">
+        <div class="rev-bars" id="rev-bars-main"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:6px;">
+          <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dim);">JAN</span>
+          <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dim);">FEB</span>
+          <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-dim);">MAR</span>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><div class="ph-title">Revenue by Agent</div></div>
+      <div class="trow thead" style="grid-template-columns:30px 1fr 80px 70px;cursor:default;padding:9px 18px;">
+        <span></span><span>Agent</span><span>Revenue</span><span>Deals</span>
+      </div>
+      <div class="trow" style="grid-template-columns:30px 1fr 80px 70px;">
+        <div class="avatar-sm accent">SK</div>
+        <div class="cell-name"><span class="n">Sarah K.</span><span class="s">Platinum</span></div>
+        <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--accent);">$98K</span>
+        <span class="pill pill-green">7 deals</span>
+      </div>
+      <div class="trow" style="grid-template-columns:30px 1fr 80px 70px;">
+        <div class="avatar-sm">MR</div>
+        <div class="cell-name"><span class="n">Marcus Rivera</span><span class="s">Gold</span></div>
+        <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--accent);">$84K</span>
+        <span class="pill pill-green">6 deals</span>
+      </div>
+      <div class="trow" style="grid-template-columns:30px 1fr 80px 70px;">
+        <div class="avatar-sm">TB</div>
+        <div class="cell-name"><span class="n">Tyler B.</span><span class="s">Gold</span></div>
+        <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--accent);">$71K</span>
+        <span class="pill pill-green">5 deals</span>
+      </div>
+      <div class="trow" style="grid-template-columns:30px 1fr 80px 70px;">
+        <div class="avatar-sm">RM</div>
+        <div class="cell-name"><span class="n">Rosa M.</span><span class="s">Gold</span></div>
+        <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--accent);">$59K</span>
+        <span class="pill pill-amber">4 deals</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ▸ MARKET COMPARISON ◂ -->
+<div class="view" id="view-market">
+  <div class="view-hd">
+    <div><div class="view-title">Market <em>Comparison</em></div><div class="view-sub">REAL Broker DFW vs market averages · Q1 2026</div></div>
+    <div class="hd-actions">
+      <button class="btn btn-ghost" id="mkt-export">Export Comparison</button>
+      <button class="btn btn-primary" id="mkt-share">Share Report</button>
+    </div>
+  </div>
+  <div class="kpi-grid four">
+    <div class="kpi kpi-accent"><div class="kpi-label">Market Rank</div><div class="kpi-val">#<span style="font-size:28px;">3</span></div><div class="kpi-delta up">↑ 2 spots vs Q4</div></div>
+    <div class="kpi"><div class="kpi-label">vs Market Avg Score</div><div class="kpi-val">+141</div><div class="kpi-delta up">↑ Well above avg</div></div>
+    <div class="kpi"><div class="kpi-label">Lead Conversion</div><div class="kpi-val">38<span class="u">%</span></div><div class="kpi-delta up">Market avg 22%</div></div>
+    <div class="kpi"><div class="kpi-label">Buyer Return Rate</div><div class="kpi-val">64<span class="u">%</span></div><div class="kpi-delta up">Market avg 41%</div></div>
+  </div>
+  <div class="two-col">
+    <div class="panel">
+      <div class="ph"><div class="ph-title">REAL Broker vs Market Benchmarks</div></div>
+      <div id="mkt-rows"></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><div class="ph-title">DFW Brokerage Rankings</div></div>
+      <div class="trow thead" style="grid-template-columns:24px 1fr 70px 70px;cursor:default;padding:9px 18px;">
+        <span>#</span><span>Brokerage</span><span>Score</span><span>Agents</span>
+      </div>
+      <div class="trow" style="grid-template-columns:24px 1fr 70px 70px;">
+        <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--accent);font-weight:600;">1</span>
+        <span>Compass DFW</span>
+        <span style="font-family:'DM Mono',monospace;font-size:12px;">961</span>
+        <span style="font-size:12px;color:var(--text-muted);">38</span>
+      </div>
+      <div class="trow" style="grid-template-columns:24px 1fr 70px 70px;">
+        <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--accent);font-weight:600;">2</span>
+        <span>Keller Williams FW</span>
+        <span style="font-family:'DM Mono',monospace;font-size:12px;">927</span>
+        <span style="font-size:12px;color:var(--text-muted);">52</span>
+      </div>
+      <div class="trow" style="grid-template-columns:24px 1fr 70px 70px;background:var(--accent-dim);">
+        <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--accent);font-weight:600;">3</span>
+        <span style="color:var(--accent);font-weight:500;">REAL Broker DFW ← us</span>
+        <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--accent);">892</span>
+        <span style="font-size:12px;color:var(--text-muted);">24</span>
+      </div>
+      <div class="trow" style="grid-template-columns:24px 1fr 70px 70px;">
+        <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-dim);">4</span>
+        <span>eXp Realty DFW</span>
+        <span style="font-family:'DM Mono',monospace;font-size:12px;">764</span>
+        <span style="font-size:12px;color:var(--text-muted);">41</span>
+      </div>
+      <div class="trow" style="grid-template-columns:24px 1fr 70px 70px;">
+        <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-dim);">5</span>
+        <span>Redfin Dallas</span>
+        <span style="font-family:'DM Mono',monospace;font-size:12px;">712</span>
+        <span style="font-size:12px;color:var(--text-muted);">29</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ▸ COACHING QUEUE ◂ -->
+<div class="view" id="view-coaching">
+  <div class="view-hd">
+    <div><div class="view-title">Coaching <em>Queue</em></div><div class="view-sub">3 agents need attention · Sorted by urgency</div></div>
+    <div class="hd-actions">
+      <button class="btn btn-ghost" id="cq-dismiss">Dismiss All</button>
+      <button class="btn btn-primary" id="cq-schedule">Schedule Coaching Calls</button>
+    </div>
+  </div>
+  <div class="kpi-grid four">
+    <div class="kpi"><div class="kpi-label">In Queue</div><div class="kpi-val" style="color:var(--amber)">3</div><div class="kpi-delta dn">Action needed</div></div>
+    <div class="kpi"><div class="kpi-label">Avg Score Drop</div><div class="kpi-val">-82</div><div class="kpi-delta dn">vs their peak</div></div>
+    <div class="kpi"><div class="kpi-label">Days Since Contact</div><div class="kpi-val">4.2</div><div class="kpi-delta dn">Avg uncontacted leads</div></div>
+    <div class="kpi"><div class="kpi-label">Resolved This Month</div><div class="kpi-val">5</div><div class="kpi-delta up">↑ improving</div></div>
+  </div>
+  <div class="two-col wide">
+    <div style="display:flex;flex-direction:column;gap:14px;" id="coaching-cards"></div>
+    <div class="panel">
+      <div class="ph"><div class="ph-title">Coaching Notes</div></div>
+      <div style="padding:16px 18px;">
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">Select an agent to view and add coaching notes.</div>
+        <div id="coaching-notes" style="font-size:13px;color:var(--text);line-height:1.6;min-height:120px;"></div>
+        <div style="margin-top:16px;border-top:1px solid var(--border-s);padding-top:14px;display:flex;gap:8px;">
+          <input id="coaching-input" type="text" placeholder="Add a coaching note..." style="flex:1;background:var(--surface2);border:1px solid var(--border-s);border-radius:7px;padding:8px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:12px;outline:none;" />
+          <button class="btn btn-primary" style="font-size:12px;" id="cq-add-note">Add Note</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ▸ ONBOARDING ◂ -->
+<div class="view" id="view-onboarding">
+  <div class="view-hd">
+    <div><div class="view-title">Onboarding <em>Progress</em></div><div class="view-sub">6 agents in onboarding flow · 1 completed this week</div></div>
+    <div class="hd-actions">
+      <button class="btn btn-ghost" id="ob-remind">Send Reminders</button>
+      <button class="btn btn-primary" id="ob-invite">Invite New Agent</button>
+    </div>
+  </div>
+  <div class="kpi-grid four">
+    <div class="kpi"><div class="kpi-label">In Progress</div><div class="kpi-val">6</div><div class="kpi-delta neu">Active this week</div></div>
+    <div class="kpi kpi-accent"><div class="kpi-label">Completed This Month</div><div class="kpi-val">3</div><div class="kpi-delta up">↑ On track</div></div>
+    <div class="kpi"><div class="kpi-label">Avg Completion Time</div><div class="kpi-val">4.2<span class="u">d</span></div><div class="kpi-delta up">↑ Faster than avg</div></div>
+    <div class="kpi"><div class="kpi-label">Drop-off Rate</div><div class="kpi-val">8<span class="u">%</span></div><div class="kpi-delta up">↓ vs 14% last mo</div></div>
+  </div>
+  <div class="panel">
+    <div class="ph"><div class="ph-title">Agents in Onboarding <span class="ph-count">6</span></div></div>
+    <div class="trow thead" style="grid-template-columns:30px 1fr 100px 1fr 80px;cursor:default;padding:9px 18px;">
+      <span></span><span>Agent</span><span>Step</span><span>Progress</span><span>Status</span>
+    </div>
+    <div id="onboarding-list"></div>
+  </div>
+</div>
+
+<!-- ▸ LEADERBOARD ◂ -->
+<div class="view" id="view-leaderboard">
+  <div class="view-hd">
+    <div><div class="view-title">Team <em>Leaderboard</em></div><div class="view-sub">DFW market rankings · Updated in real time</div></div>
+    <div class="hd-actions">
+      <button class="btn btn-ghost" id="lb-share">Share Leaderboard</button>
+      <button class="btn btn-primary" id="lb-announce">Announce Winners</button>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="panel">
+      <div class="ph"><div class="ph-title">Host Score Rankings <span class="ph-count">Top 10</span></div></div>
+      <div id="lb-scores"></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><div class="ph-title">Most Leads Captured</div></div>
+      <div id="lb-leads"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ▸ EXPORT ◂ -->
+<div class="view" id="view-export">
+  <div class="view-hd">
+    <div><div class="view-title">Export <em>Reports</em></div><div class="view-sub">Download, schedule, or share any brokerage report</div></div>
+    <div class="hd-actions">
+      <button class="btn btn-ghost" id="ex-schedule">Schedule Auto-Reports</button>
+      <button class="btn btn-primary" id="ex-all">Export All Reports</button>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="panel">
+      <div class="ph"><div class="ph-title">Available Reports</div></div>
+      <div class="export-item" id="ex-1">
+        <div class="export-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <div class="export-info"><div class="export-name">Full Brokerage Overview</div><div class="export-desc">KPIs, agent performance, revenue summary</div></div>
+        <span class="export-meta">PDF · ~2MB</span>
+      </div>
+      <div class="export-item" id="ex-2">
+        <div class="export-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+        <div class="export-info"><div class="export-name">Agent Performance Report</div><div class="export-desc">Host Scores, leads, follow-up rates per agent</div></div>
+        <span class="export-meta">CSV · ~120KB</span>
+      </div>
+      <div class="export-item" id="ex-3">
+        <div class="export-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        <div class="export-info"><div class="export-name">Revenue Attribution</div><div class="export-desc">ChloeIQ-sourced deals, commissions, ROI</div></div>
+        <span class="export-meta">XLSX · ~80KB</span>
+      </div>
+      <div class="export-item" id="ex-4">
+        <div class="export-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+        <div class="export-info"><div class="export-name">Buyer DNA Intelligence</div><div class="export-desc">DNA segment breakdown, preferences, trends</div></div>
+        <span class="export-meta">PDF · ~1.4MB</span>
+      </div>
+      <div class="export-item" id="ex-5">
+        <div class="export-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+        <div class="export-info"><div class="export-name">Market Comparison Report</div><div class="export-desc">DFW brokerage benchmarks, competitive analysis</div></div>
+        <span class="export-meta">PDF · ~900KB</span>
+      </div>
+      <div class="export-item" id="ex-6">
+        <div class="export-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+        <div class="export-info"><div class="export-name">Onboarding Status Report</div><div class="export-desc">Progress, completion rates, drop-off analysis</div></div>
+        <span class="export-meta">CSV · ~40KB</span>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="ph"><div class="ph-title">Scheduled Reports</div></div>
+      <div style="padding:16px 18px;display:flex;flex-direction:column;gap:14px;">
+        <div style="background:var(--surface2);border:1px solid var(--border-s);border-radius:10px;padding:13px 15px;display:flex;align-items:center;gap:12px;">
+          <div style="flex:1;"><div style="font-size:13px;font-weight:500;">Weekly Overview</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Every Monday 8 AM · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e882879b80a89a8d89848a9a87838d9ac68b8785">[email&#160;protected]</a></div></div>
+          <span class="pill pill-green">Active</span>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border-s);border-radius:10px;padding:13px 15px;display:flex;align-items:center;gap:12px;">
+          <div style="flex:1;"><div style="font-size:13px;font-weight:500;">Monthly Revenue</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">1st of each month · Finance team</div></div>
+          <span class="pill pill-green">Active</span>
+        </div>
+        <div style="background:var(--surface2);border:1px solid var(--border-s);border-radius:10px;padding:13px 15px;display:flex;align-items:center;gap:12px;">
+          <div style="flex:1;"><div style="font-size:13px;font-weight:500;">Agent Performance</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Every Friday 5 PM · Team leads</div></div>
+          <span class="pill pill-muted">Paused</span>
+        </div>
+        <button class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:6px;" id="ex-add-schedule">+ Add Scheduled Report</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ══════════════════════════════════════════
+// CHLOEIQ BROKERAGE DASHBOARD — INTERACTIONS
+// ══════════════════════════════════════════
+
+// ── TOAST ──
+function toast(msg, type) {
+  var t = document.getElementById('ciq-toast') || document.createElement('div');
+  t.id = 'ciq-toast';
+  t.textContent = msg;
+  var bg = type === 'success' ? '#B8E030' : type === 'error' ? '#FF5A4A' : '#1A1E12';
+  var col = type === 'success' ? '#0A0B07' : '#EEF0E5';
+  t.style.cssText = 'position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);background:' + bg + ';color:' + col + ';padding:10px 20px;border-radius:8px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all 0.2s ease;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,0.4);border:1px solid rgba(184,224,48,0.15);';
+  document.body.appendChild(t);
+  requestAnimationFrame(function() { t.style.opacity='1'; t.style.transform='translateX(-50%) translateY(0)'; });
+  clearTimeout(t._timer);
+  t._timer = setTimeout(function() { t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(10px)'; }, 2800);
+}
+
+// ── MODAL ──
+function modal(title, body, confirmLabel, onConfirm) {
+  var old = document.getElementById('ciq-modal'); if (old) old.remove();
+  var el = document.createElement('div'); el.id = 'ciq-modal';
+  el.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:9990;display:flex;align-items:center;justify-content:center;';
+  el.innerHTML = '<div class="modal-box"><div class="modal-title">'+title+'</div><div class="modal-body">'+body+'</div><div class="modal-actions"><button id="m-cancel" class="btn btn-ghost">Cancel</button><button id="m-ok" class="btn btn-primary">'+(confirmLabel||'Confirm')+'</button></div></div>';
+  document.body.appendChild(el);
+  el.querySelector('#m-cancel').onclick = function(){ el.remove(); };
+  el.querySelector('#m-ok').onclick = function(){ el.remove(); if(onConfirm) onConfirm(); };
+  el.onclick = function(e){ if(e.target===el) el.remove(); };
+}
+
+// ── SWITCH VIEW ──
+function switchView(id, label) {
+  document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
+  var t = document.getElementById('view-'+id); if(t) t.classList.add('active');
+  document.getElementById('bc').textContent = label;
+  document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
+  document.querySelectorAll('.nav-item[data-view="'+id+'"]').forEach(function(n){ n.classList.add('active'); });
+  if (id === 'insights') drawInsightsChart();
+  if (id === 'revenue')  drawRevBars('rev-bars-main', [142,198,284], ['$142K','$198K','$284K'], 284);
+  if (id === 'leaderboard') buildLeaderboard();
+  if (id === 'market') buildMarket();
+  if (id === 'coaching') buildCoachingCards();
+  if (id === 'onboarding') buildOnboarding();
+  if (id === 'agents') buildAgents();
+  if (id === 'listings') buildListings();
+}
+
+// ── DATA ──
+var agents = [
+  {init:'SK', name:'Sarah K.', tier:'Platinum', score:920, oh:11, leads:61, status:'Active'},
+  {init:'TB', name:'Tyler B.', tier:'Gold', score:898, oh:7, leads:53, status:'Active'},
+  {init:'RM', name:'Rosa M.', tier:'Gold', score:847, oh:6, leads:39, status:'Active'},
+  {init:'MR', name:'Marcus Rivera', tier:'Gold', score:780, oh:8, leads:47, status:'Active'},
+  {init:'JW', name:'James W.', tier:'Gold', score:822, oh:5, leads:34, status:'Active'},
+  {init:'ND', name:'Nina D.', tier:'Silver', score:731, oh:4, leads:28, status:'Active'},
+  {init:'CL', name:'Chris L.', tier:'Silver', score:764, oh:6, leads:31, status:'Active'},
+  {init:'AP', name:'Ana P.', tier:'Silver', score:709, oh:3, leads:22, status:'Active'},
+  {init:'DC', name:'Devon Clark', tier:'Silver', score:580, oh:3, leads:12, status:'Needs Coaching'},
+  {init:'LP', name:'Lisa Park', tier:'Silver', score:610, oh:2, leads:9, status:'Needs Coaching'},
+  {init:'RP', name:'Raj Patel', tier:'Silver', score:640, oh:1, leads:6, status:'Onboarding'},
+];
+
+var listings = [
+  {addr:'2847 Magnolia Drive', city:'Flower Mound TX', agent:'Marcus Rivera', visitors:24, match:87, status:'Live Event', code:true},
+  {addr:'1105 Ridgecrest Lane', city:'Southlake TX', agent:'Sarah K.', visitors:0, match:0, status:'Upcoming', code:true},
+  {addr:'504 Lakeview Court', city:'Grapevine TX', agent:'Marcus Rivera', visitors:31, match:68, status:'Completed', code:false},
+  {addr:'3310 Elmhurst Blvd', city:'Plano TX', agent:'Tyler B.', visitors:18, match:74, status:'Completed', code:false},
+  {addr:'7712 Crestview Pkwy', city:'Frisco TX', agent:'Rosa M.', visitors:0, match:0, status:'Upcoming', code:true},
+  {addr:'910 Willowbend Dr', city:'Irving TX', agent:'James W.', visitors:22, match:71, status:'Completed', code:false},
+];
+
+var onboardingData = [
+  {init:'CL', name:'Chris Lang', step:4, status:'In Progress'},
+  {init:'NB', name:'Nadia Bell', step:2, status:'Stalled'},
+  {init:'RP', name:'Raj Patel', step:6, status:'Completed'},
+  {init:'EM', name:'Erin Moss', step:1, status:'Just Started'},
+  {init:'TN', name:'Tom Ng', step:5, status:'In Progress'},
+  {init:'AV', name:'Aisha V.', step:3, status:'In Progress'},
+];
+
+var coachingData = [
+  {init:'DC', name:'Devon Clark', issue:'Follow-up speed below 40% — 6 leads uncontacted >48h', priority:'Urgent', score:580, tip:'Recommended: Review AI follow-up workflow. Set 24h reminder cadence for all open leads. Schedule 15-min check-in call.'},
+  {init:'LP', name:'Lisa Park', issue:'Low StyleDNA completion rate (28%) — Chloe Code not deployed at last 2 open houses', priority:'Urgent', score:610, tip:'Recommended: Walk through Chloe Code setup together. Ensure QR placement checklist is followed. Target 70%+ completion.'},
+  {init:'NB', name:'Nadia Bell', issue:'Onboarding stalled at step 2 for 6 days — no activity logged', priority:'Watch', score:0, tip:'Recommended: Send personal check-in message. Offer to do a live walkthrough of the platform onboarding steps.'},
+];
+
+var selectedCoach = 0;
+var coachingNotes = ['No notes yet. Select an agent and add your first coaching note above.', 'No notes yet.', 'No notes yet.'];
+
+// ── BUILDERS ──
+function buildAgents() {
+  var el = document.getElementById('agents-list'); if (!el) return;
+  el.innerHTML = '';
+  agents.forEach(function(a) {
+    var row = document.createElement('div');
+    row.className = 'trow';
+    row.style.gridTemplateColumns = '30px 1fr 90px 70px 70px 80px 90px';
+    var pill = a.status === 'Active' ? 'pill-green' : a.status === 'Needs Coaching' ? 'pill-amber' : 'pill-blue';
+    var tierPill = a.tier === 'Platinum' ? 'pill-accent' : a.tier === 'Gold' ? 'pill-amber' : 'pill-muted';
+    row.innerHTML = '<div class="avatar-sm'+(a.init==='MR'?' accent':'')+'">'+a.init+'</div>'
+      +'<div class="cell-name"><span class="n">'+a.name+'</span><span class="s">'+a.oh+' open houses</span></div>'
+      +'<span class="pill '+tierPill+'">'+a.tier+'</span>'
+      +'<span style="font-family:\'DM Mono\',monospace;font-size:12px;color:var(--accent)">'+a.score+'</span>'
+      +'<span style="font-size:13px;">'+a.oh+'</span>'
+      +'<span style="font-size:13px;">'+a.leads+'</span>'
+      +'<span class="pill '+pill+'">'+a.status+'</span>';
+    row.addEventListener('click', function() {
+      document.querySelectorAll('#agents-list .trow').forEach(function(r){ r.classList.remove('selected'); });
+      row.classList.add('selected');
+      toast(a.name + ' · Host Score ' + a.score, '');
+    });
+    el.appendChild(row);
+  });
+}
+
+function buildListings() {
+  var el = document.getElementById('listings-list'); if (!el) return;
+  el.innerHTML = '';
+  listings.forEach(function(l) {
+    var row = document.createElement('div');
+    row.className = 'trow';
+    row.style.gridTemplateColumns = '1fr 130px 70px 70px 80px 90px';
+    var statusPill = l.status === 'Live Event' ? 'pill-green' : l.status === 'Upcoming' ? 'pill-blue' : 'pill-muted';
+    row.innerHTML = '<div class="cell-name"><span class="n">'+l.addr+'</span><span class="s">'+l.city+'</span></div>'
+      +'<span style="font-size:12px;color:var(--text-muted)">'+l.agent+'</span>'
+      +'<span style="font-size:13px;">'+(l.visitors||'—')+'</span>'
+      +'<span style="font-family:\'DM Mono\',monospace;font-size:12px;color:var(--accent)">'+(l.match ? l.match+'%' : '—')+'</span>'
+      +'<span class="pill '+statusPill+'">'+l.status+'</span>'
+      +'<span class="pill '+(l.code?'pill-accent':'pill-muted')+'">'+(l.code?'● Active':'No Code')+'</span>';
+    row.addEventListener('click', function() {
+      document.querySelectorAll('#listings-list .trow').forEach(function(r){ r.classList.remove('selected'); });
+      row.classList.add('selected');
+      toast(l.addr + ' · ' + l.city, '');
+    });
+    el.appendChild(row);
+  });
+}
+
+function buildOnboarding() {
+  var el = document.getElementById('onboarding-list'); if (!el) return;
+  el.innerHTML = '';
+  onboardingData.forEach(function(o) {
+    var pct = Math.round((o.step/6)*100);
+    var barColor = o.status === 'Completed' ? 'var(--accent)' : o.status === 'Stalled' ? 'var(--amber)' : o.status === 'Just Started' ? 'var(--red)' : 'var(--blue)';
+    var pillClass = o.status === 'Completed' ? 'pill-green' : o.status === 'Stalled' ? 'pill-amber' : o.status === 'Just Started' ? 'pill-red' : 'pill-blue';
+    var row = document.createElement('div');
+    row.className = 'trow';
+    row.style.gridTemplateColumns = '30px 1fr 100px 1fr 80px';
+    row.innerHTML = '<div class="avatar-sm">'+o.init+'</div>'
+      +'<div class="cell-name"><span class="n">'+o.name+'</span></div>'
+      +'<span style="font-family:\'DM Mono\',monospace;font-size:12px;color:var(--text-muted)">Step '+o.step+'/6</span>'
+      +'<div class="mini-bar-bg" style="min-width:unset;"><div class="mini-bar" style="width:'+pct+'%;background:'+barColor+'"></div></div>'
+      +'<span class="pill '+pillClass+'">'+o.status+'</span>';
+    row.addEventListener('click', function() {
+      document.querySelectorAll('#onboarding-list .trow').forEach(function(r){ r.classList.remove('selected'); });
+      row.classList.add('selected');
+      if (o.step < 6) {
+        modal('Nudge '+o.name+'?', 'Send a reminder to '+o.name+' to continue their onboarding. They\'re on Step '+o.step+' of 6.', 'Send Reminder', function() { toast('Reminder sent to '+o.name, 'success'); });
+      } else {
+        toast(o.name+' has completed onboarding! 🎉', 'success');
+      }
+    });
+    el.appendChild(row);
+  });
+}
+
+function buildCoachingCards() {
+  var el = document.getElementById('coaching-cards'); if (!el) return;
+  el.innerHTML = '';
+  coachingData.forEach(function(c, i) {
+    var card = document.createElement('div');
+    card.className = 'panel';
+    card.style.cursor = 'pointer';
+    card.style.transition = 'border-color 0.14s';
+    var pillClass = c.priority === 'Urgent' ? 'pill-amber' : 'pill-blue';
+    card.innerHTML = '<div style="padding:16px 18px;">'
+      +'<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">'
+      +'<div class="avatar-sm">'+c.init+'</div>'
+      +'<div style="flex:1;"><div style="font-size:14px;font-weight:600;">'+c.name+'</div><div style="font-size:11px;color:var(--text-muted);">Host Score: '+(c.score||'Onboarding')+'</div></div>'
+      +'<span class="pill '+pillClass+'">'+c.priority+'</span>'
+      +'</div>'
+      +'<div style="font-size:13px;color:var(--text-muted);line-height:1.5;margin-bottom:12px;">'+c.issue+'</div>'
+      +'<div style="display:flex;gap:8px;">'
+      +'<button class="btn btn-primary" style="font-size:12px;" data-coach-call="'+i+'">Schedule Call</button>'
+      +'<button class="btn btn-ghost" style="font-size:12px;" data-coach-dismiss="'+i+'">Dismiss</button>'
+      +'</div></div>';
+    card.addEventListener('click', function(e) {
+      if (e.target.closest('[data-coach-call]')) {
+        var idx = parseInt(e.target.closest('[data-coach-call]').getAttribute('data-coach-call'));
+        modal('Schedule Coaching Call', 'Schedule a coaching call with <strong>'+coachingData[idx].name+'</strong>.<br><br>Recommended focus: '+coachingData[idx].tip, 'Book 30-min Call', function() { toast('Coaching call booked with '+coachingData[idx].name+' ✓', 'success'); });
+        return;
+      }
+      if (e.target.closest('[data-coach-dismiss]')) {
+        var idx2 = parseInt(e.target.closest('[data-coach-dismiss]').getAttribute('data-coach-dismiss'));
+        card.style.opacity = '0.4';
+        toast(coachingData[idx2].name+' dismissed from queue', '');
+        return;
+      }
+      selectedCoach = i;
+      document.getElementById('coaching-notes').textContent = coachingNotes[i];
+      document.querySelectorAll('#coaching-cards .panel').forEach(function(p){ p.style.borderColor=''; });
+      card.style.borderColor = 'rgba(184,224,48,0.3)';
+    });
+    el.appendChild(card);
+  });
+  document.getElementById('coaching-notes').textContent = coachingNotes[0];
+}
+
+function buildLeaderboard() {
+  var scores = [
+    {init:'SK',name:'Sarah K.',score:920,tier:'Platinum'},
+    {init:'TB',name:'Tyler B.',score:898,tier:'Platinum'},
+    {init:'RM',name:'Rosa M.',score:847,tier:'Gold'},
+    {init:'JW',name:'James W.',score:822,tier:'Gold'},
+    {init:'ND',name:'Nina D.',score:805,tier:'Gold'},
+    {init:'MR',name:'Marcus Rivera',score:780,tier:'Gold',you:true},
+    {init:'CL',name:'Chris L.',score:764,tier:'Gold'},
+    {init:'AP',name:'Ana P.',score:731,tier:'Silver'},
+    {init:'MH',name:'Mike H.',score:709,tier:'Silver'},
+    {init:'LF',name:'Lisa F.',score:695,tier:'Silver'},
+  ];
+  var leads = [
+    {init:'SK',name:'Sarah K.',leads:61},{init:'TB',name:'Tyler B.',leads:53},
+    {init:'MR',name:'Marcus Rivera',leads:47,you:true},{init:'JW',name:'James W.',leads:34},
+    {init:'RM',name:'Rosa M.',leads:39},{init:'CL',name:'Chris L.',leads:31},
+    {init:'ND',name:'Nina D.',leads:28},{init:'AP',name:'Ana P.',leads:22},
+  ];
+  function buildLB(containerId, data, valKey, prefix) {
+    var el = document.getElementById(containerId); if (!el) return;
+    el.innerHTML = '';
+    data.forEach(function(d,i) {
+      var row = document.createElement('div');
+      row.className = 'lb-row' + (d.you ? ' you' : '');
+      row.innerHTML = '<span class="lb-rank'+(i<3?' top':'')+'">'+( i<3 ? ['🥇','🥈','🥉'][i] : (i+1) )+'</span>'
+        +'<div class="avatar-sm'+(d.you?' accent':'')+'">'+d.init+'</div>'
+        +'<span style="flex:1;font-size:13px;'+(d.you?'color:var(--accent);font-weight:500;':'')+'">'+d.name+(d.you?' ← you':'')+'</span>'
+        +'<span style="font-family:\'DM Mono\',monospace;font-size:12px;color:'+(d.you?'var(--accent)':'var(--text-muted)')+';">'+(prefix||'')+d[valKey]+'</span>';
+      row.addEventListener('click', function() { toast(d.name+' · '+(prefix||'')+d[valKey], ''); });
+      el.appendChild(row);
+    });
+  }
+  buildLB('lb-scores', scores, 'score', '');
+  buildLB('lb-leads',  leads,  'leads', '');
+}
+
+function buildMarket() {
+  var metrics = [
+    {label:'Avg Host Score', ours:892, bench:600, ourPct:89, benchPct:60, color:'var(--accent)', ourVal:'892', benchVal:'Mkt avg: 600'},
+    {label:'Lead Conversion', ours:38, bench:22, ourPct:76, benchPct:44, color:'var(--green)', ourVal:'38%', benchVal:'Mkt avg: 22%'},
+    {label:'Buyer Return Rate', ours:64, bench:41, ourPct:64, benchPct:41, color:'var(--blue)', ourVal:'64%', benchVal:'Mkt avg: 41%'},
+    {label:'StyleDNA Completion', ours:76, bench:45, ourPct:76, benchPct:45, color:'var(--amber)', ourVal:'76%', benchVal:'Mkt avg: 45%'},
+    {label:'Follow-Up Speed', ours:72, bench:51, ourPct:72, benchPct:51, color:'var(--accent)', ourVal:'72%', benchVal:'Mkt avg: 51%'},
+    {label:'Open House / Agent', ours:6.1, bench:3.8, ourPct:61, benchPct:38, color:'var(--purple)', ourVal:'6.1 / mo', benchVal:'Mkt avg: 3.8'},
+  ];
+  var el = document.getElementById('mkt-rows'); if (!el) return;
+  el.innerHTML = '';
+  metrics.forEach(function(m) {
+    el.innerHTML += '<div class="mkt-row">'
+      +'<span class="mkt-label">'+m.label+'</span>'
+      +'<div class="mkt-bar-wrap">'
+        +'<div class="mkt-bg"><div class="mkt-fill" style="width:'+m.ourPct+'%;background:'+m.color+'"></div></div>'
+        +'<div class="mkt-bg" style="margin-top:3px;"><div class="mkt-fill" style="width:'+m.benchPct+'%;background:var(--surface4)"></div></div>'
+      +'</div>'
+      +'<span class="mkt-val">'+m.ourVal+'</span>'
+      +'<span class="mkt-bench">'+m.benchVal+'</span>'
+    +'</div>';
+  });
+}
+
+// ── CHART BUILDERS ──
+function drawRevBars(containerId, vals, labels, maxVal) {
+  var el = document.getElementById(containerId); if(!el) return;
+  el.innerHTML = '';
+  vals.forEach(function(v, i) {
+    var pct = Math.round((v/maxVal)*100);
+    var wrap = document.createElement('div');
+    wrap.className = 'rev-bar-wrap';
+    var bar = document.createElement('div');
+    bar.className = 'rev-bar';
+    bar.style.height = '0px';
+    bar.style.background = i === vals.length-1 ? 'var(--accent)' : 'var(--surface4)';
+    bar.setAttribute('data-val', labels[i]);
+    bar.style.minHeight = '4px';
+    wrap.appendChild(bar);
+    el.appendChild(wrap);
+    setTimeout(function(){ bar.style.transition='height 0.7s cubic-bezier(.4,0,.2,1)'; bar.style.height=(pct*1.1)+'px'; }, 80 + i*60);
+  });
+}
+
+function drawInsightsChart() {
+  var canvas = document.getElementById('ins-canvas'); if(!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var w = canvas.width, h = canvas.height;
+  ctx.clearRect(0,0,w,h);
+  var data = [180, 210, 168, 245, 290, 341];
+  var max = Math.max.apply(null,data);
+  var pts = data.map(function(v,i){ return {x: (i/(data.length-1))*(w-20)+10, y: h-10-((v/max)*(h-20))}; });
+
+  // fill
+  var g = ctx.createLinearGradient(0,0,0,h);
+  g.addColorStop(0,'rgba(184,224,48,0.16)');
+  g.addColorStop(1,'rgba(184,224,48,0)');
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x, h);
+  pts.forEach(function(p){ ctx.lineTo(p.x, p.y); });
+  ctx.lineTo(pts[pts.length-1].x, h);
+  ctx.closePath();
+  ctx.fillStyle = g; ctx.fill();
+
+  // line
+  ctx.beginPath();
+  pts.forEach(function(p,i){ i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y); });
+  ctx.strokeStyle='#B8E030'; ctx.lineWidth=2; ctx.lineJoin='round'; ctx.stroke();
+
+  // dots + labels
+  pts.forEach(function(p,i) {
+    ctx.beginPath(); ctx.arc(p.x,p.y,3.5,0,Math.PI*2);
+    ctx.fillStyle='#B8E030'; ctx.fill();
+    ctx.fillStyle='rgba(238,240,229,0.6)';
+    ctx.font='10px DM Mono';
+    ctx.textAlign='center';
+    ctx.fillText(data[i], p.x, p.y-10);
+  });
+}
+
+// ══ DOM READY ══
+document.addEventListener('DOMContentLoaded', function() {
+
+  // Nav items
+  document.querySelectorAll('[data-view]').forEach(function(el) {
+    el.addEventListener('click', function(e) {
+      e.stopPropagation();
+      switchView(el.getAttribute('data-view'), el.getAttribute('data-label'));
+    });
+  });
+
+  // data-goto on KPI cards & rows
+  document.addEventListener('click', function(e) {
+    var gt = e.target.closest('[data-goto]');
+    if (gt) {
+      var id = gt.getAttribute('data-goto');
+      var labels = {overview:'Overview',agents:'Agents',listings:'Listings',insights:'Insights',revenue:'Revenue Attribution',market:'Market Comparison',coaching:'Coaching Queue',onboarding:'Onboarding Progress',leaderboard:'Team Leaderboard',export:'Export Reports'};
+      switchView(id, labels[id]||id);
+    }
+  });
+
+  // Overview revenue chart
+  drawRevBars('rev-bars-overview', [148,162,177,155,201,231,256,284], ['$148K','$162K','$177K','$155K','$201K','$231K','$256K','$284K'], 284);
+
+  // Build initial agent/listing views (they render lazily but pre-build for speed)
+  setTimeout(buildAgents, 100);
+  setTimeout(buildListings, 120);
+
+  // ── TOPBAR BUTTONS ──
+  document.getElementById('btn-export-top').addEventListener('click', function(){ switchView('export','Export Reports'); });
+  document.getElementById('btn-coaching-top').addEventListener('click', function(){ switchView('coaching','Coaching Queue'); });
+  document.getElementById('btn-notif').addEventListener('click', function(){ toast('3 new alerts · Devon Clark · Lisa Park · Nadia Bell',''); });
+  document.getElementById('btn-avatar').addEventListener('click', function(){ toast('Logged in as Josh Waters · Broker-Owner',''); });
+
+  // ── OVERVIEW LINKS ──
+  document.getElementById('ov-btn-insights').addEventListener('click', function(){ switchView('insights','Insights'); });
+  document.getElementById('ov-btn-report').addEventListener('click', function(){
+    modal('Generate Brokerage Report', 'Generate a full PDF report covering all agents, revenue, and buyer intelligence for this month.', 'Generate & Download', function(){ toast('Generating report... download will start shortly ✓','success'); });
+  });
+  document.getElementById('ov-rev-detail').addEventListener('click', function(){ switchView('revenue','Revenue Attribution'); });
+  document.getElementById('ov-agents-link').addEventListener('click', function(){ switchView('agents','Agents'); });
+  document.getElementById('ov-coaching-link').addEventListener('click', function(){ switchView('coaching','Coaching Queue'); });
+  document.getElementById('ov-onboard-link').addEventListener('click', function(){ switchView('onboarding','Onboarding Progress'); });
+  document.getElementById('ov-insights-link').addEventListener('click', function(){ switchView('insights','Insights'); });
+
+  // ── AGENTS VIEW ──
+  document.getElementById('ag-invite').addEventListener('click', function(){
+    modal('Invite New Agent', 'Send a ChloeIQ onboarding invite to a new agent. They\'ll receive a link to create their account and complete the 6-step setup.', 'Send Invite', function(){ toast('Invite sent! Agent will receive an email within 2 minutes.','success'); });
+  });
+  document.getElementById('ag-export').addEventListener('click', function(){ toast('Exporting agent roster to CSV...',''); setTimeout(function(){ toast('agents-report.csv downloaded ✓','success'); },1200); });
+
+  // ── LISTINGS VIEW ──
+  document.getElementById('ls-add').addEventListener('click', function(){
+    modal('Add New Listing', 'Enter the property address to add it to the brokerage dashboard and optionally generate a Chloe Code for an upcoming open house.', 'Add Listing', function(){ toast('Listing added to dashboard ✓','success'); });
+  });
+
+  // ── INSIGHTS ──
+  document.getElementById('ins-export').addEventListener('click', function(){ toast('Exporting insights report...',''); setTimeout(function(){ toast('insights-march-2026.pdf downloaded ✓','success'); },1200); });
+  document.getElementById('ins-share').addEventListener('click', function(){ toast('Dashboard share link copied to clipboard ✓','success'); });
+
+  // ── REVENUE ──
+  document.getElementById('rev-export').addEventListener('click', function(){ toast('Exporting revenue report...',''); setTimeout(function(){ toast('revenue-ytd-2026.xlsx downloaded ✓','success'); },1200); });
+  document.getElementById('rev-ytd').addEventListener('click', function(){
+    modal('YTD Revenue Summary', '<strong>Total Revenue:</strong> $1.2M<br><strong>ChloeIQ Attributed:</strong> $487K (41%)<br><strong>Deals Closed:</strong> 34<br><strong>Best Month:</strong> March 2026 — $284K<br><strong>Top Agent:</strong> Sarah K. — $98K', 'Export Summary', function(){ toast('YTD summary exported ✓','success'); });
+  });
+
+  // ── MARKET ──
+  document.getElementById('mkt-export').addEventListener('click', function(){ toast('Exporting market comparison...',''); setTimeout(function(){ toast('market-comparison-q1-2026.pdf downloaded ✓','success'); },1200); });
+  document.getElementById('mkt-share').addEventListener('click', function(){ toast('Market comparison link copied ✓','success'); });
+
+  // ── COACHING ──
+  document.getElementById('cq-dismiss').addEventListener('click', function(){
+    modal('Dismiss All Coaching Alerts?', 'This will remove all 3 agents from the coaching queue. You can re-add them manually from the Agents view.', 'Dismiss All', function(){
+      document.querySelectorAll('#coaching-cards .panel').forEach(function(p){ p.style.opacity='0.3'; });
+      document.getElementById('coaching-count').textContent='0';
+      toast('All coaching alerts dismissed','');
+    });
+  });
+  document.getElementById('cq-schedule').addEventListener('click', function(){
+    modal('Schedule All Coaching Calls', 'Book 30-minute coaching calls with all 3 agents in the queue: Devon Clark, Lisa Park, and Nadia Bell.', 'Book All Calls', function(){ toast('3 coaching calls booked ✓','success'); });
+  });
+  document.getElementById('cq-add-note').addEventListener('click', function(){
+    var input = document.getElementById('coaching-input');
+    var val = input.value.trim();
+    if (!val) return;
+    coachingNotes[selectedCoach] = (coachingNotes[selectedCoach] === 'No notes yet. Select an agent and add your first coaching note above.' || coachingNotes[selectedCoach] === 'No notes yet.' ? '' : coachingNotes[selectedCoach] + '\n') + '• ' + val;
+    document.getElementById('coaching-notes').textContent = coachingNotes[selectedCoach];
+    input.value = '';
+    toast('Note saved ✓','success');
+  });
+
+  // ── ONBOARDING ──
+  document.getElementById('ob-remind').addEventListener('click', function(){
+    toast('Reminders sent to 5 agents in onboarding ✓','success');
+  });
+  document.getElementById('ob-invite').addEventListener('click', function(){
+    modal('Invite New Agent', 'Send a ChloeIQ onboarding invite. The agent will receive setup instructions and be added to your brokerage dashboard.', 'Send Invite', function(){ toast('Invite sent ✓','success'); });
+  });
+
+  // ── LEADERBOARD ──
+  document.getElementById('lb-share').addEventListener('click', function(){ toast('Leaderboard link copied to clipboard ✓','success'); });
+  document.getElementById('lb-announce').addEventListener('click', function(){
+    modal('Announce Monthly Winners', 'Send a congratulations message to the top 3 agents: Sarah K., Tyler B., and Rosa M. and share the leaderboard to your team Slack or email.', 'Send Announcement', function(){ toast('Team announcement sent! 🏆','success'); });
+  });
+
+  // ── EXPORT ──
+  document.getElementById('ex-all').addEventListener('click', function(){
+    toast('Preparing 6 reports as ZIP...','');
+    setTimeout(function(){ toast('chloeiq-reports-march-2026.zip downloaded ✓','success'); }, 1600);
+  });
+  document.getElementById('ex-schedule').addEventListener('click', function(){
+    modal('Schedule Auto-Reports', 'Set up automatic report delivery on a daily, weekly, or monthly cadence to any email address.', 'Set Schedule', function(){ toast('Report schedule saved ✓','success'); });
+  });
+  document.getElementById('ex-add-schedule').addEventListener('click', function(){
+    modal('Add Scheduled Report', 'Choose a report type, frequency, and recipients to add to your auto-delivery schedule.', 'Add Schedule', function(){ toast('New scheduled report added ✓','success'); });
+  });
+  [1,2,3,4,5,6].forEach(function(n){
+    var el = document.getElementById('ex-'+n);
+    if (el) el.addEventListener('click', function(){
+      toast('Downloading report...','');
+      setTimeout(function(){ toast('Report downloaded ✓','success'); },1000);
+    });
+  });
+
+  // ── CHIP FILTERS ──
+  document.querySelectorAll('.chip-bar').forEach(function(bar) {
+    bar.querySelectorAll('.chip').forEach(function(chip) {
+      chip.addEventListener('click', function

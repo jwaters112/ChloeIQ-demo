@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ChloeIQ — Follow-Up Queue</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#0A0B07;--s1:#13160D;--s2:#1A1E12;--s3:#222818;--acc:#B8E030;--ad:rgba(184,224,48,.10);--tx:#EEF0E5;--txm:#8A8F7A;--txd:#4A5040;--br:rgba(184,224,48,.12);--bs:rgba(238,240,229,.06);--grn:#4ADE80;--red:#FF5A4A;--amb:#F5A623;--blu:#60A5FA;--pur:#A78BFA;}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:14px;overflow-x:hidden;}
+.topbar{height:56px;display:flex;align-items:center;padding:0 28px;border-bottom:1px solid var(--bs);background:var(--bg);gap:12px;position:sticky;top:0;z-index:20;}
+.lm{width:28px;height:28px;background:var(--acc);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:var(--bg);}
+.lt{font-family:'Fraunces',serif;font-size:17px;}.lt b{color:var(--acc);font-weight:400;}
+.pt{font-family:'Fraunces',serif;font-size:18px;font-weight:400;}.pt em{color:var(--acc);font-style:italic;}
+.sep{width:1px;height:20px;background:var(--bs);}
+.tr{margin-left:auto;display:flex;gap:8px;align-items:center;}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 15px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;border:none;transition:all .13s;}
+.bp{background:var(--acc);color:var(--bg);}.bp:hover{background:#c8f040;}
+.bs2{background:transparent;color:var(--txm);border:1px solid var(--bs);}.bs2:hover{border-color:var(--br);color:var(--tx);background:var(--s1);}
+.main{padding:28px 32px;display:flex;flex-direction:column;gap:22px;max-height:calc(100vh - 56px);overflow-y:auto;}
+.view{display:none;flex-direction:column;gap:20px;}.view.active{display:flex;animation:fu .18s ease;}
+@keyframes fu{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.panel{background:var(--s1);border:1px solid var(--bs);border-radius:11px;overflow:hidden;}
+.ph{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--bs);}
+.pht{font-size:13px;font-weight:600;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.kpi{background:var(--s1);border:1px solid var(--bs);border-radius:10px;padding:15px 17px;transition:border-color .13s;}
+.kpi:hover{border-color:var(--br);}.ka{border-left:2px solid var(--acc);}.ka .kv{color:var(--acc);}
+.kl{font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;}
+.kv{font-family:'Fraunces',serif;font-size:26px;line-height:1;}.kd{font-size:11px;margin-top:4px;}
+.up{color:var(--grn);}.dn{color:var(--red);}.ne{color:var(--txm);}
+.pill{display:inline-flex;font-family:'DM Mono',monospace;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;}
+.pg{background:rgba(74,222,128,.10);color:var(--grn);}.pa{background:rgba(245,166,35,.10);color:var(--amb);}
+.pr{background:rgba(255,90,74,.10);color:var(--red);}.pb{background:rgba(96,165,250,.10);color:var(--blu);}
+.pac{background:var(--ad);color:var(--acc);}.pm{background:var(--s3);color:var(--txd);}
+.bb{height:5px;background:var(--s3);border-radius:3px;overflow:hidden;}
+.bf{height:5px;border-radius:3px;background:var(--acc);}
+input,select,textarea{background:var(--s2);border:1px solid var(--bs);border-radius:7px;padding:9px 12px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;width:100%;transition:border-color .13s;}
+input:focus,select:focus,textarea:focus{border-color:var(--br);}
+::-webkit-scrollbar{width:3px;height:3px;}</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="lm">C</div><div class="lt">Chloe<b>IQ</b></div>
+  <div class="sep"></div>
+  <div class="pt">Follow-Up <em>Queue</em></div><div class="tr"><button class="btn bs2" id="fu-sort">Sort: Match Score</button><button class="btn bp" id="fu-draft-all">Draft All with AI</button></div>
+</header>
+<div class="main">
+
+<div class="g4">
+  <div class="kpi ka"><div class="kl">Needs Follow-Up</div><div class="kv" style="color:var(--amb);">4</div><div class="kd dn">2 overdue</div></div>
+  <div class="kpi"><div class="kl">Sent This Week</div><div class="kv">11</div><div class="kd up">↑ 3 vs last week</div></div>
+  <div class="kpi"><div class="kl">Open Rate</div><div class="kv">68<span style="font-size:13px;color:var(--txm);">%</span></div><div class="kd up">↑ 8% vs avg</div></div>
+  <div class="kpi"><div class="kl">Reply Rate</div><div class="kv">24<span style="font-size:13px;color:var(--txm);">%</span></div><div class="kd ne">Industry 18%</div></div>
+</div>
+<div style="display:flex;gap:7px;" id="queue-chips">
+  <div class="chip active" data-qf="all">All (4)</div>
+  <div class="chip" data-qf="overdue">Overdue (2)</div>
+  <div class="chip" data-qf="today">Due Today</div>
+</div>
+<div class="g2">
+  <div class="panel">
+    <div class="ph"><div class="pht">Priority Queue</div></div>
+    <div style="display:grid;grid-template-columns:1fr 100px 70px 80px 90px;padding:9px 18px;border-bottom:1px solid var(--bs);">
+      <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:.5px;text-transform:uppercase;">Lead</span>
+      <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:.5px;text-transform:uppercase;">Property</span>
+      <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:.5px;text-transform:uppercase;">Match</span>
+      <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:.5px;text-transform:uppercase;">Priority</span>
+      <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:.5px;text-transform:uppercase;">Action</span>
+    </div>
+    <div id="queue-rows"></div>
+  </div>
+  <div class="panel">
+    <div class="ph">
+      <div class="pht">AI Draft — Jordan Lee</div>
+      <div style="display:flex;gap:5px;">
+        <div class="chip active" data-tone="warm">Warm</div>
+        <div class="chip" data-tone="direct">Direct</div>
+        <div class="chip" data-tone="pro">Pro</div>
+      </div>
+    </div>
+    <div style="padding:18px 20px;display:flex;flex-direction:column;gap:12px;">
+      <div id="draft-text" style="font-size:13px;color:var(--txm);line-height:1.7;background:var(--s2);border:1px solid var(--bs);border-radius:8px;padding:16px;min-height:120px;"></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn bp" style="flex:1;justify-content:center;" id="draft-send">Send Email</button>
+        <button class="btn bs2" style="flex:1;justify-content:center;" id="draft-regen">↺ Regenerate</button>
+      </div>
+      <div style="background:var(--s2);border:1px solid var(--bs);border-radius:8px;padding:12px 14px;display:flex;flex-direction:column;gap:6px;">
+        <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:.8px;margin-bottom:4px;">LEAD CONTEXT</div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:var(--txm);">DNA Type</span><span style="font-family:'DM Mono',monospace;font-size:11px;">Refined Modern</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:var(--txm);">Match Score</span><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--acc);">87%</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:var(--txm);">Visited</span><span style="font-family:'DM Mono',monospace;font-size:11px;">Today, 2:14 PM</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+<script>
+function toast(msg,type){var o=document.getElementById('_t');if(o)o.remove();var t=document.createElement('div');t.id='_t';t.textContent=msg;var bg=type==='ok'?'#B8E030':'#1A1E12';var c=type==='ok'?'#0A0B07':'#EEF0E5';t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:'+bg+';color:'+c+';padding:10px 20px;border-radius:8px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all .2s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.4);border:1px solid rgba(184,224,48,.15);';document.body.appendChild(t);requestAnimationFrame(function(){t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';});clearTimeout(t._x);t._x=setTimeout(function(){t.style.opacity='0';},2600);}
+function modal(title,body,label,cb){var o=document.getElementById('_m');if(o)o.remove();var el=document.createElement('div');el.id='_m';el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9990;display:flex;align-items:center;justify-content:center;';el.innerHTML='<div style="background:#13160D;border:1px solid rgba(184,224,48,.15);border-radius:13px;padding:26px 28px;min-width:380px;max-width:460px;box-shadow:0 20px 60px rgba(0,0,0,.6);"><div style="font-family:Fraunces,serif;font-size:19px;margin-bottom:9px;">'+title+'</div><div style="font-size:13px;color:#8A8F7A;line-height:1.6;margin-bottom:20px;">'+body+'</div><div style="display:flex;gap:9px;justify-content:flex-end;"><button id="_mc" style="padding:7px 16px;border-radius:7px;border:1px solid rgba(238,240,229,.08);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:12px;cursor:pointer;">Cancel</button><button id="_mo" style="padding:7px 16px;border-radius:7px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:12px;font-weight:600;cursor:pointer;">'+(label||'OK')+'</button></div></div>';document.body.appendChild(el);el.querySelector('#_mc').onclick=function(){el.remove();};el.querySelector('#_mo').onclick=function(){el.remove();if(cb)cb();};el.onclick=function(e){if(e.target===el)el.remove();};}
+
+var draftTones={
+  warm:"Hi Jordan — it was great having you at Magnolia Drive today! Based on your Refined Modern profile, I think the primary suite and open-concept kitchen are a perfect fit. Would love to answer any questions — are you free for a quick call this week?",
+  direct:"Hi Jordan — your 87% match on 2847 Magnolia Drive puts you at the top of my list. The primary suite is exactly what you're looking for. I have availability Thu 3 PM or Fri 10 AM — which works?",
+  pro:"Dear Jordan, thank you for visiting 2847 Magnolia Drive. Your Refined Modern assessment aligns strongly with the property at 87%. I would welcome the opportunity to discuss next steps at your convenience."
+};
+var queue=[
+  {name:'Jordan Lee',prop:'Magnolia Dr',match:87,dna:'Refined Modern',pri:'overdue'},
+  {name:'Maya Torres',prop:'Lakeview Ct',match:83,dna:'Refined Modern',pri:'overdue'},
+  {name:'Alex Kim',prop:'Magnolia Dr',match:72,dna:'Coastal Luxe',pri:'today'},
+  {name:'Priya Sharma',prop:'Magnolia Dr',match:61,dna:'Warm Organic',pri:'today'},
+];
+var currentTone='warm';
+function buildQueue(){
+  var el=document.getElementById('queue-rows');if(!el)return;el.innerHTML='';
+  queue.forEach(function(q,i){
+    var pill=q.pri==='overdue'?'<span class="pill pr">Overdue</span>':'<span class="pill pa">Due Today</span>';
+    el.innerHTML+='<div style="display:grid;grid-template-columns:1fr 100px 70px 80px 90px;align-items:center;padding:10px 18px;border-bottom:1px solid var(--bs);cursor:pointer;transition:background .11s;gap:12px;" class="qrow">'
+      +'<div><div style="font-size:13px;font-weight:500;">'+q.name+'</div><div style="font-size:11px;color:var(--txm);">'+q.dna+'</div></div>'
+      +'<span style="font-size:12px;color:var(--txm);">'+q.prop+'</span>'
+      +'<span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--acc);">'+q.match+'%</span>'
+      +pill
+      +'<button class="btn bp" style="font-size:10px;padding:3px 9px;" data-qi="'+i+'">Send Draft</button>'
+      +'</div>';
+  });
+  document.querySelectorAll('[data-qi]').forEach(function(b){
+    b.addEventListener('click',function(e){e.stopPropagation();b.textContent='Sent ✓';b.disabled=true;b.classList.remove('bp');b.classList.add('bs2');toast('Follow-up sent to '+queue[parseInt(b.dataset.qi)].name+' ✓','ok');});
+  });
+}
+function setDraft(tone){
+  var el=document.getElementById('draft-text');if(el)el.textContent=draftTones[tone]||'';
+}
+document.addEventListener('DOMContentLoaded',function(){
+  buildQueue();setDraft('warm');
+  document.querySelectorAll('[data-tone]').forEach(function(c){
+    c.addEventListener('click',function(){
+      document.querySelectorAll('[data-tone]').forEach(function(x){x.classList.remove('active');});
+      c.classList.add('active');currentTone=c.dataset.tone;setDraft(currentTone);
+    });
+  });
+  document.querySelectorAll('[data-qf]').forEach(function(c){
+    c.addEventListener('click',function(){document.querySelectorAll('[data-qf]').forEach(function(x){x.classList.remove('active');});c.classList.add('active');});
+  });
+  document.getElementById('fu-draft-all').addEventListener('click',function(){toast('Generating AI drafts for 4 leads...','');setTimeout(function(){toast('4 drafts ready ✓','ok');},1400);});
+  document.getElementById('fu-sort').addEventListener('click',function(){toast('Sorted by match score','');});
+  document.getElementById('draft-send').addEventListener('click',function(){toast('Email sent to Jordan Lee ✓','ok');});
+  document.getElementById('draft-regen').addEventListener('click',function(){toast('Regenerating...','');setTimeout(function(){toast('New draft ready ✓','ok');},800);});
+});
+
+</script>
+<script src="chloeiq-nav.js"></script>
+</body>
+</html>

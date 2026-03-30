@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ChloeIQ — Property Tour</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#0A0B07;--s1:#13160D;--s2:#1A1E12;--s3:#222818;--acc:#B8E030;--ad:rgba(184,224,48,.10);--tx:#EEF0E5;--txm:#8A8F7A;--txd:#4A5040;--br:rgba(184,224,48,.12);--bs:rgba(238,240,229,.06);--grn:#4ADE80;--red:#FF5A4A;--amb:#F5A623;--blu:#60A5FA;--pur:#A78BFA;}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:14px;overflow-x:hidden;}
+.topbar{height:56px;display:flex;align-items:center;padding:0 28px;border-bottom:1px solid var(--bs);background:var(--bg);gap:12px;position:sticky;top:0;z-index:20;}
+.lm{width:28px;height:28px;background:var(--acc);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:var(--bg);}
+.lt{font-family:'Fraunces',serif;font-size:17px;}.lt b{color:var(--acc);font-weight:400;}
+.pt{font-family:'Fraunces',serif;font-size:18px;font-weight:400;}.pt em{color:var(--acc);font-style:italic;}
+.sep{width:1px;height:20px;background:var(--bs);}
+.tr{margin-left:auto;display:flex;gap:8px;align-items:center;}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 15px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;border:none;transition:all .13s;}
+.bp{background:var(--acc);color:var(--bg);}.bp:hover{background:#c8f040;}
+.bs2{background:transparent;color:var(--txm);border:1px solid var(--bs);}.bs2:hover{border-color:var(--br);color:var(--tx);background:var(--s1);}
+.main{padding:28px 32px;display:flex;flex-direction:column;gap:22px;max-height:calc(100vh - 56px);overflow-y:auto;}
+.panel{background:var(--s1);border:1px solid var(--bs);border-radius:11px;overflow:hidden;}
+.ph{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--bs);}
+.pht{font-size:13px;font-weight:600;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.kpi{background:var(--s1);border:1px solid var(--bs);border-radius:10px;padding:15px 17px;transition:border-color .13s;}
+.kpi:hover{border-color:var(--br);}.ka{border-left:2px solid var(--acc);}.ka .kv{color:var(--acc);}
+.kl{font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;}
+.kv{font-family:'Fraunces',serif;font-size:26px;line-height:1;}.kd{font-size:11px;margin-top:4px;}
+.up{color:var(--grn);}.ne{color:var(--txm);}
+::-webkit-scrollbar{width:3px;}</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="lm">C</div><div class="lt">Chloe<b>IQ</b></div>
+  <div class="sep"></div>
+  <div class="pt">Property <em>Tour</em></div><div style="font-size:12px;color:var(--txm);">2847 Magnolia Drive · Live Tour</div><div class="tr"><button class="btn bs2" id="tour-qr">Show QR Code</button><button class="btn bp" id="tour-end">End Tour</button></div>
+</header>
+<div class="main">
+
+<div class="g2" style="align-items:start;">
+  <div style="display:flex;flex-direction:column;gap:16px;">
+    <div style="background:var(--s1);border:1px solid var(--br);border-radius:12px;padding:20px;">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--acc);letter-spacing:.8px;margin-bottom:10px;">● LIVE TOUR</div>
+      <div style="font-size:15px;font-weight:600;margin-bottom:3px;">2847 Magnolia Drive</div>
+      <div style="font-size:12px;color:var(--txm);margin-bottom:14px;">Flower Mound, TX 75022</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">
+        <div style="text-align:center;"><div style="font-family:'Fraunces',serif;font-size:28px;color:var(--acc);" id="tour-visitors">24</div><div style="font-size:11px;color:var(--txm);">Visitors</div></div>
+        <div style="text-align:center;"><div style="font-family:'Fraunces',serif;font-size:28px;color:var(--acc);" id="tour-leads">8</div><div style="font-size:11px;color:var(--txm);">Leads</div></div>
+        <div style="text-align:center;"><div style="font-family:'Fraunces',serif;font-size:28px;color:var(--acc);" id="tour-avg">79</div><div style="font-size:11px;color:var(--txm);">Avg Match</div></div>
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--txd);margin-bottom:6px;">LIVE FEED</div>
+      <div id="live-feed" style="display:flex;flex-direction:column;gap:6px;max-height:180px;overflow-y:auto;"></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><div class="pht">Chloe Code</div></div>
+      <div style="padding:18px;text-align:center;">
+        <div style="width:140px;height:140px;background:var(--s2);border:2px solid var(--br);border-radius:10px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--txm);">[ LIVE QR ]</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--acc);">MAGNOLIA-2025-FM</div>
+        <div style="font-size:11px;color:var(--txm);margin-top:4px;">24 scans · Active</div>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:16px;">
+    <div class="panel">
+      <div class="ph"><div class="pht">Live Visitors</div></div>
+      <div id="visitor-list"></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><div class="pht">Room Activity</div></div>
+      <div style="padding:14px 18px;display:flex;flex-direction:column;gap:10px;" id="room-activity"></div>
+    </div>
+  </div>
+</div>
+
+</div>
+<script>
+function toast(msg,type){var o=document.getElementById('_t');if(o)o.remove();var t=document.createElement('div');t.id='_t';t.textContent=msg;var bg=type==='ok'?'#B8E030':'#1A1E12';var c=type==='ok'?'#0A0B07':'#EEF0E5';t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:'+bg+';color:'+c+';padding:10px 20px;border-radius:8px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all .2s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.4);border:1px solid rgba(184,224,48,.15);';document.body.appendChild(t);requestAnimationFrame(function(){t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';});clearTimeout(t._x);t._x=setTimeout(function(){t.style.opacity='0';},2600);}
+function modal(title,body,label,cb){var o=document.getElementById('_m');if(o)o.remove();var el=document.createElement('div');el.id='_m';el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9990;display:flex;align-items:center;justify-content:center;';el.innerHTML='<div style="background:#13160D;border:1px solid rgba(184,224,48,.15);border-radius:13px;padding:26px 28px;min-width:380px;max-width:460px;box-shadow:0 20px 60px rgba(0,0,0,.6);"><div style="font-family:Fraunces,serif;font-size:19px;margin-bottom:9px;">'+title+'</div><div style="font-size:13px;color:#8A8F7A;line-height:1.6;margin-bottom:20px;">'+body+'</div><div style="display:flex;gap:9px;justify-content:flex-end;"><button id="_mc" style="padding:7px 16px;border-radius:7px;border:1px solid rgba(238,240,229,.08);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:12px;cursor:pointer;">Cancel</button><button id="_mo" style="padding:7px 16px;border-radius:7px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:12px;font-weight:600;cursor:pointer;">'+(label||'OK')+'</button></div></div>';document.body.appendChild(el);el.querySelector('#_mc').onclick=function(){el.remove();};el.querySelector('#_mo').onclick=function(){el.remove();if(cb)cb();};el.onclick=function(e){if(e.target===el)el.remove();};}
+
+var visitors=[
+  {name:'Jordan Lee',match:87,dna:'Refined Modern',room:'Primary Suite',time:'14 min',hot:true},
+  {name:'Maya Torres',match:83,dna:'Refined Modern',room:'Kitchen',time:'9 min',hot:true},
+  {name:'Alex Kim',match:72,dna:'Coastal Luxe',room:'Living Room',time:'6 min',hot:false},
+  {name:'Sam Peterson',match:64,dna:'Warm Organic',room:'Backyard',time:'11 min',hot:false},
+  {name:'Riley Chen',match:58,dna:'Bold Eclectic',room:'Office',time:'4 min',hot:false},
+];
+var rooms=[
+  {room:'Primary Suite',active:2,total:14,pct:64},
+  {room:'Kitchen',active:3,total:12,pct:58},
+  {room:'Living Room',active:1,total:11,pct:51},
+  {room:'Backyard',active:2,total:9,pct:44},
+  {room:'Office/Flex',active:0,total:6,pct:31},
+];
+var feedMsgs=["Jordan Lee just scanned Chloe Code","Maya Torres completed StyleDNA — Refined Modern","New visitor arrived — 87% match on entry","Alex Kim viewed the kitchen for 8+ minutes","Sam Peterson asked about the lot size","Chloe sent follow-up draft for Maya Torres"];
+var feedIdx=0;
+function buildVisitors(){
+  var el=document.getElementById('visitor-list');if(!el)return;el.innerHTML='';
+  visitors.forEach(function(v){
+    el.innerHTML+='<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid var(--bs);cursor:pointer;transition:background .11s;gap:12px;" class="vrow">'
+      +'<div><div style="font-size:13px;font-weight:500;'+(v.hot?'color:var(--acc);':'')+'">'+v.name+(v.hot?' 🔥':'')+'</div><div style="font-size:11px;color:var(--txm);">'+v.dna+' · In '+v.room+'</div></div>'
+      +'<div style="display:flex;align-items:center;gap:8px;"><span style="font-family:'DM Mono',monospace;font-size:13px;color:var(--acc);">'+v.match+'%</span><span style="font-size:11px;color:var(--txm);">'+v.time+'</span><button class="btn bp" style="font-size:10px;padding:3px 8px;" data-vn="'+v.name+'">Draft</button></div>'
+      +'</div>';
+  });
+  document.querySelectorAll('[data-vn]').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();toast('AI follow-up draft ready for '+b.dataset.vn+' ✓','ok');});});
+  document.querySelectorAll('.vrow').forEach(function(r){r.addEventListener('mouseover',function(){r.style.background='var(--s2)';});r.addEventListener('mouseout',function(){r.style.background='';});});
+}
+function buildRooms(){
+  var el=document.getElementById('room-activity');if(!el)return;el.innerHTML='';
+  rooms.forEach(function(r){
+    el.innerHTML+='<div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--txm);">'+r.room+'</span><span style="font-family:'DM Mono',monospace;font-size:11px;color:'+(r.active>1?'var(--acc)':'var(--txm)')+';">'+r.active+' active · '+r.total+' total</span></div><div style="height:4px;background:var(--s3);border-radius:2px;overflow:hidden;"><div style="height:4px;background:'+(r.active>1?'var(--acc)':'var(--blu)')+';border-radius:2px;width:'+r.pct+'%;"></div></div></div>';
+  });
+}
+function addFeedItem(){
+  var feed=document.getElementById('live-feed');if(!feed)return;
+  var msg=feedMsgs[feedIdx%feedMsgs.length];feedIdx++;
+  var item=document.createElement('div');
+  item.style.cssText='font-size:11px;color:var(--txm);padding:6px 8px;background:var(--s2);border-radius:6px;border-left:2px solid var(--acc);animation:fu .3s ease;';
+  item.textContent='● '+msg;
+  feed.insertBefore(item,feed.firstChild);
+  if(feed.children.length>8)feed.removeChild(feed.lastChild);
+  // bump counters
+  var vc=document.getElementById('tour-visitors');
+  var lc=document.getElementById('tour-leads');
+  if(vc&&Math.random()>.7){vc.textContent=parseInt(vc.textContent)+1;}
+  if(lc&&Math.random()>.8){lc.textContent=parseInt(lc.textContent)+1;}
+}
+document.addEventListener('DOMContentLoaded',function(){
+  buildVisitors();buildRooms();
+  setInterval(addFeedItem,3500);addFeedItem();
+  document.getElementById('tour-qr').addEventListener('click',function(){toast('QR code displayed — MAGNOLIA-2025-FM','');});
+  document.getElementById('tour-end').addEventListener('click',function(){
+    if(window.ChloeIQ){ChloeIQ.handoff({title:'Tour Complete — View Lead Report',body:'Your open house at 2847 Magnolia Drive is complete. 24 visitors, 8 qualified leads. Open the Agent Dashboard to review leads and send follow-ups.',destApp:'agent',destParams:{from:'tour',view:'leads'},confirmLabel:'View Leads in Dashboard →'});}
+    else{toast('Tour ended — viewing lead report...','');}
+  });
+});
+
+</script>
+<script src="chloeiq-nav.js"></script>
+</body>
+</html>

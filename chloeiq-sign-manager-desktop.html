@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ChloeIQ — Sign Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#0A0B07;--s1:#13160D;--s2:#1A1E12;--s3:#222818;--s4:#2A3020;--acc:#B8E030;--ad:rgba(184,224,48,.10);--am:rgba(184,224,48,.22);--tx:#EEF0E5;--txm:#8A8F7A;--txd:#4A5040;--br:rgba(184,224,48,.12);--bs:rgba(238,240,229,.06);--grn:#4ADE80;--red:#FF5A4A;--amb:#F5A623;--blu:#60A5FA;--pur:#A78BFA;}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:14px;overflow-x:hidden;}
+.topbar{height:56px;display:flex;align-items:center;padding:0 28px;border-bottom:1px solid var(--bs);background:var(--bg);gap:12px;position:sticky;top:0;z-index:20;}
+.lm{width:28px;height:28px;background:var(--acc);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:var(--bg);}
+.lt{font-family:'Fraunces',serif;font-size:17px;}.lt b{color:var(--acc);font-weight:400;}
+.pt{font-family:'Fraunces',serif;font-size:18px;font-weight:400;}.pt em{color:var(--acc);font-style:italic;}
+.sep{width:1px;height:20px;background:var(--bs);}
+.tr{margin-left:auto;display:flex;gap:8px;align-items:center;}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 15px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;border:none;transition:all .13s;}
+.bp{background:var(--acc);color:var(--bg);}.bp:hover{background:#c8f040;}
+.bs2{background:transparent;color:var(--txm);border:1px solid var(--bs);}.bs2:hover{border-color:var(--br);color:var(--tx);background:var(--s1);}
+.main{padding:28px 32px;display:flex;flex-direction:column;gap:22px;max-height:calc(100vh - 56px);overflow-y:auto;}
+.tab{padding:10px 20px;font-size:13px;font-weight:500;color:var(--txm);cursor:pointer;border-bottom:2px solid transparent;transition:all .13s;white-space:nowrap;}
+.tab:hover{color:var(--tx);}.tab.active{color:var(--acc);border-bottom-color:var(--acc);}
+.view{display:none;flex-direction:column;gap:20px;}.view.active{display:flex;animation:fu .18s ease;}
+@keyframes fu{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.panel{background:var(--s1);border:1px solid var(--bs);border-radius:11px;overflow:hidden;}
+.ph{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--bs);}
+.pht{font-size:13px;font-weight:600;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.kpi{background:var(--s1);border:1px solid var(--bs);border-radius:10px;padding:15px 17px;transition:border-color .13s;}
+.kpi:hover{border-color:var(--br);}.ka{border-left:2px solid var(--acc);}.ka .kv{color:var(--acc);}
+.kl{font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;}
+.kv{font-family:'Fraunces',serif;font-size:26px;line-height:1;}.kd{font-size:11px;margin-top:4px;}
+.up{color:var(--grn);}.dn{color:var(--red);}.ne{color:var(--txm);}
+.trow{display:grid;align-items:center;padding:10px 18px;border-bottom:1px solid var(--bs);cursor:pointer;transition:background .11s;gap:12px;}
+.trow:last-child{border-bottom:none;}.trow:hover{background:var(--s2);}
+.thead{font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:.5px;text-transform:uppercase;cursor:default!important;}
+.thead:hover{background:transparent!important;}
+.cn{display:flex;flex-direction:column;gap:1px;}.n{font-size:13px;font-weight:500;}.s{font-size:11px;color:var(--txm);}
+.pill{display:inline-flex;font-family:'DM Mono',monospace;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;}
+.pg{background:rgba(74,222,128,.10);color:var(--grn);}.pa{background:rgba(245,166,35,.10);color:var(--amb);}
+.pr{background:rgba(255,90,74,.10);color:var(--red);}.pb{background:rgba(96,165,250,.10);color:var(--blu);}
+.pac{background:var(--ad);color:var(--acc);}.pm{background:var(--s3);color:var(--txd);}
+.bb{height:5px;background:var(--s3);border-radius:3px;overflow:hidden;}
+.bf{height:5px;border-radius:3px;background:var(--acc);}
+.chip{padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--bs);background:var(--s2);color:var(--txm);transition:all .12s;}
+.chip:hover{border-color:var(--br);color:var(--tx);}.chip.active{background:var(--ad);border-color:var(--br);color:var(--acc);}
+input,select,textarea{background:var(--s2);border:1px solid var(--bs);border-radius:7px;padding:9px 12px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;width:100%;transition:border-color .13s;}
+input:focus,select:focus,textarea:focus{border-color:var(--br);}
+label{font-family:'DM Mono',monospace;font-size:10px;color:var(--txm);letter-spacing:.5px;display:block;margin-bottom:5px;}
+::-webkit-scrollbar{width:3px;height:3px;}
+.sign-pin{position:absolute;transform:translate(-50%,-100%);cursor:pointer;z-index:5;}
+.sign-pin:hover{z-index:10;}
+.sp-body{display:flex;flex-direction:column;align-items:center;}
+.sp-flag{padding:4px 9px;border-radius:6px;font-family:'DM Mono',monospace;font-size:10px;font-weight:600;border:1.5px solid rgba(255,255,255,.15);}
+.sp-tail{width:2px;height:6px;}.sp-dot{width:5px;height:5px;border-radius:50%;}
+.sp-active .sp-flag{background:var(--acc);color:var(--bg);}
+.sp-active .sp-tail,.sp-active .sp-dot{background:var(--acc);}
+.sp-pending .sp-flag{background:var(--amb);color:var(--bg);}
+.sp-pending .sp-tail,.sp-pending .sp-dot{background:var(--amb);}
+.sp-down .sp-flag{background:var(--red);color:#fff;}
+.sp-down .sp-tail,.sp-down .sp-dot{background:var(--red);}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="lm">C</div><div class="lt">Chloe<b>IQ</b></div>
+  <div class="sep"></div>
+  <div class="pt">Sign <em>Manager</em></div><div class="tr"><button class="btn bs2" id="sm-route">Optimize Route</button><button class="btn bp" id="sm-add">+ Add Sign</button></div>
+</header>
+<div class="main">
+
+<div class="g4">
+  <div class="kpi ka"><div class="kl">Active Signs</div><div class="kv">12</div><div class="kd up">↑ 3 this week</div></div>
+  <div class="kpi"><div class="kl">Pending Placement</div><div class="kv">4</div><div class="kd ne">Route pending</div></div>
+  <div class="kpi"><div class="kl">Avg Scan Rate</div><div class="kv">18<span style="font-size:13px;color:var(--txm);">/day</span></div><div class="kd up">↑ 24% this week</div></div>
+  <div class="kpi"><div class="kl">Top Performing</div><div class="kv" style="font-size:16px;">Magnolia Dr</div><div class="kd up">↑ 42 scans today</div></div>
+</div>
+<div class="g2">
+  <div class="panel" style="overflow:hidden;">
+    <div class="ph"><div class="pht">Sign Locations — Flower Mound</div><span style="font-size:12px;color:var(--acc);cursor:pointer;" id="sm-fullmap">Full Map →</span></div>
+    <div style="background:var(--s2);height:320px;position:relative;" id="sign-map">
+      <svg width="100%" height="100%" viewBox="0 0 500 320" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+        <rect width="500" height="320" fill="#1A1E12"/>
+        <g stroke="#222818" stroke-width="1.5">
+          <line x1="0" y1="80" x2="500" y2="80"/><line x1="0" y1="160" x2="500" y2="160"/><line x1="0" y1="240" x2="500" y2="240"/>
+          <line x1="100" y1="0" x2="100" y2="320"/><line x1="200" y1="0" x2="200" y2="320"/><line x1="300" y1="0" x2="300" y2="320"/><line x1="400" y1="0" x2="400" y2="320"/>
+        </g>
+        <path d="M 0 120 Q 120 130 250 110 Q 380 90 500 120" fill="none" stroke="#2A3020" stroke-width="3"/>
+        <path d="M 0 200 Q 150 195 300 210 Q 400 220 500 200" fill="none" stroke="#2A3020" stroke-width="3"/>
+        <text x="30" y="260" fill="#2A3020" font-family="DM Mono" font-size="10" letter-spacing="1">FLOWER MOUND</text>
+        <text x="320" y="60" fill="#2A3020" font-family="DM Mono" font-size="10" letter-spacing="1">HIGHLAND VLG</text>
+      </svg>
+      <div id="sign-pins"></div>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="ph"><div class="pht">Sign Inventory</div><span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--txm);background:var(--s3);padding:2px 7px;border-radius:7px;">16 total</span></div>
+    <div class="trow thead" style="grid-template-columns:1fr 80px 70px 80px;"><span>Location</span><span>Status</span><span>Scans</span><span>Action</span></div>
+    <div id="sign-rows"></div>
+  </div>
+</div>
+
+</div>
+<script>
+function toast(msg,type){var o=document.getElementById('_t');if(o)o.remove();var t=document.createElement('div');t.id='_t';t.textContent=msg;var bg=type==='ok'?'#B8E030':'#1A1E12';var c=type==='ok'?'#0A0B07':'#EEF0E5';t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:'+bg+';color:'+c+';padding:10px 20px;border-radius:8px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all .2s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.4);border:1px solid rgba(184,224,48,.15);';document.body.appendChild(t);requestAnimationFrame(function(){t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';});clearTimeout(t._x);t._x=setTimeout(function(){t.style.opacity='0';},2600);}
+function modal(title,body,label,cb){var o=document.getElementById('_m');if(o)o.remove();var el=document.createElement('div');el.id='_m';el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9990;display:flex;align-items:center;justify-content:center;';el.innerHTML='<div style="background:#13160D;border:1px solid rgba(184,224,48,.15);border-radius:13px;padding:26px 28px;min-width:380px;max-width:460px;box-shadow:0 20px 60px rgba(0,0,0,.6);"><div style="font-family:Fraunces,serif;font-size:19px;margin-bottom:9px;">'+title+'</div><div style="font-size:13px;color:#8A8F7A;line-height:1.6;margin-bottom:20px;">'+body+'</div><div style="display:flex;gap:9px;justify-content:flex-end;"><button id="_mc" style="padding:7px 16px;border-radius:7px;border:1px solid rgba(238,240,229,.08);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:12px;cursor:pointer;">Cancel</button><button id="_mo" style="padding:7px 16px;border-radius:7px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:12px;font-weight:600;cursor:pointer;">'+(label||'OK')+'</button></div></div>';document.body.appendChild(el);el.querySelector('#_mc').onclick=function(){el.remove();};el.querySelector('#_mo').onclick=function(){el.remove();if(cb)cb();};el.onclick=function(e){if(e.target===el)el.remove();};}
+function tabs(containerSel,viewSel){document.querySelectorAll(containerSel).forEach(function(t){t.addEventListener('click',function(){document.querySelectorAll(containerSel).forEach(function(x){x.classList.remove('active');});document.querySelectorAll(viewSel).forEach(function(v){v.classList.remove('active');});t.classList.add('active');var v=document.getElementById('view-'+t.dataset.tab);if(v)v.classList.add('active');});});}
+
+var signs=[
+  {loc:'Magnolia Dr & FM2499',status:'active',scans:42,x:18,y:55},
+  {loc:'Ridgecrest & SH114',status:'active',scans:28,x:58,y:30},
+  {loc:'Lakeview & Main',status:'active',scans:19,x:38,y:70},
+  {loc:'Elmhurst & Belt Line',status:'pending',scans:0,x:72,y:48},
+  {loc:'Heritage & Josey',status:'active',scans:14,x:82,y:65},
+  {loc:'Willowbend & Valley',status:'active',scans:9,x:25,y:38},
+  {loc:'Crestview & Preston',status:'down',scans:0,x:52,y:62},
+  {loc:'Park Forest & MacArthur',status:'pending',scans:0,x:65,y:78},
+];
+function buildSignMap(){
+  var el=document.getElementById('sign-pins');if(!el)return;el.innerHTML='';
+  var map=document.getElementById('sign-map');
+  var W=map.offsetWidth||400,H=map.offsetHeight||320;
+  signs.forEach(function(s,i){
+    var pin=document.createElement('div');
+    pin.className='sign-pin sp-'+s.status;
+    pin.style.left=(s.x/100*W)+'px';pin.style.top=(s.y/100*H)+'px';
+    pin.innerHTML='<div class="sp-body"><div class="sp-flag">'+s.scans+'</div><div class="sp-tail"></div><div class="sp-dot"></div></div>';
+    pin.title=s.loc+' — '+s.status;
+    pin.addEventListener('click',function(){toast(s.loc+' · '+s.status+' · '+s.scans+' scans today','');});
+    el.appendChild(pin);
+  });
+}
+function buildSignRows(){
+  var el=document.getElementById('sign-rows');if(!el)return;el.innerHTML='';
+  signs.forEach(function(s,i){
+    var pill=s.status==='active'?'<span class="pill pg">Active</span>':s.status==='pending'?'<span class="pill pa">Pending</span>':'<span class="pill pr">Down</span>';
+    var action=s.status==='down'?'<button class="btn bp" style="font-size:10px;padding:3px 9px;" data-fix="'+i+'">Fix</button>':'<button class="btn bs2" style="font-size:10px;padding:3px 9px;" data-mv="'+i+'">Move</button>';
+    el.innerHTML+='<div class="trow" style="grid-template-columns:1fr 80px 70px 80px;"><span class="n" style="font-size:12.5px;">'+s.loc+'</span>'+pill+'<span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--acc);">'+s.scans+'</span>'+action+'</div>';
+  });
+  document.querySelectorAll('[data-fix]').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();var i=parseInt(b.dataset.fix);signs[i].status='active';buildSignRows();buildSignMap();toast(signs[i].loc+' — marked as fixed ✓','ok');});});
+  document.querySelectorAll('[data-mv]').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();var i=parseInt(b.dataset.mv);modal('Move Sign','Select a new location for the sign at '+signs[i].loc+'.','Confirm Move',function(){toast('Sign move scheduled ✓','ok');});});});
+}
+document.addEventListener('DOMContentLoaded',function(){
+  buildSignMap();buildSignRows();
+  document.getElementById('sm-add').addEventListener('click',function(){modal('Add New Sign','Enter the intersection or address where you want to place a new sign.','Add Sign',function(){toast('Sign added to placement queue ✓','ok');});});
+  document.getElementById('sm-route').addEventListener('click',function(){toast('Optimizing sign placement route...','');setTimeout(function(){toast('Route ready — 12 stops, 28 min ✓','ok');},1200);});
+  document.getElementById('sm-fullmap').addEventListener('click',function(){toast('Opening full map view...','');});
+  window.addEventListener('resize',function(){buildSignMap();});
+});
+
+</script>
+<script src="chloeiq-nav.js"></script>
+</body>
+</html>

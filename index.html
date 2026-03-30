@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChloeIQ</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;background:#0A0B07;display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;}
+  .loader{display:flex;flex-direction:column;align-items:center;gap:16px;}
+  .logo{width:52px;height:52px;background:#B8E030;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#0A0B07;font-family:Georgia,serif;}
+  .wordmark{font-size:22px;color:#EEF0E5;letter-spacing:-.5px;}
+  .wordmark span{color:#B8E030;}
+  .dot{display:flex;gap:6px;}
+  .dot div{width:6px;height:6px;border-radius:50%;background:#B8E030;opacity:.3;animation:pulse 1.2s ease-in-out infinite;}
+  .dot div:nth-child(2){animation-delay:.2s;}
+  .dot div:nth-child(3){animation-delay:.4s;}
+  @keyframes pulse{0%,100%{opacity:.3;}50%{opacity:1;}}
+</style>
+</head>
+<body>
+<div class="loader">
+  <div class="logo">C</div>
+  <div class="wordmark">Chloe<span>IQ</span></div>
+  <div class="dot"><div></div><div></div><div></div></div>
+</div>
+<script>
+  // Breakpoint: 1024px — below goes mobile, at or above goes desktop
+  var DESKTOP_BREAKPOINT = 1024;
+  var DESKTOP_ENTRY = 'chloeiq-demo-hub.html';
+  var MOBILE_ENTRY  = 'chloeiq-dot-com.html'; // replace with your actual mobile entry filename
+
+  function route() {
+    var w = window.innerWidth || document.documentElement.clientWidth || screen.width;
+    if (w >= DESKTOP_BREAKPOINT) {
+      window.location.replace(DESKTOP_ENTRY);
+    } else {
+      window.location.replace(MOBILE_ENTRY);
+    }
+  }
+
+  // Small delay so the loader renders before redirect
+  setTimeout(route, 400);
+</script>
+</body>
+</html>

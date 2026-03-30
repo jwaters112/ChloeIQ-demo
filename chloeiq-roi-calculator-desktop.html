@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChloeIQ — ROI Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#0A0B07;--s1:#13160D;--s2:#1A1E12;--s3:#222818;--acc:#B8E030;--ad:rgba(184,224,48,.10);--tx:#EEF0E5;--txm:#8A8F7A;--txd:#4A5040;--br:rgba(184,224,48,.12);--bs:rgba(238,240,229,.06);--grn:#4ADE80;--red:#FF5A4A;--amb:#F5A623;--blu:#60A5FA;}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:14px;overflow:hidden;}
+.shell{display:grid;grid-template-rows:56px 1fr;height:100vh;}
+.topbar{display:flex;align-items:center;padding:0 28px;border-bottom:1px solid var(--bs);background:var(--bg);gap:14px;}
+.lm{width:28px;height:28px;background:var(--acc);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:var(--bg);}
+.lt{font-family:'Fraunces',serif;font-size:17px;}.lt b{color:var(--acc);font-weight:400;}
+.page-title{font-family:'Fraunces',serif;font-size:18px;font-weight:400;}.page-title em{color:var(--acc);font-style:italic;}
+.sep{width:1px;height:20px;background:var(--bs);}
+.tabs{display:flex;gap:0;border-bottom:none;margin-left:16px;}
+.tab{padding:8px 18px;font-size:13px;font-weight:500;color:var(--txm);cursor:pointer;border-bottom:2px solid transparent;transition:all .13s;}
+.tab:hover{color:var(--tx);}
+.tab.active{color:var(--acc);border-bottom-color:var(--acc);}
+.tr{margin-left:auto;display:flex;gap:8px;align-items:center;}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 15px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;border:none;transition:all .13s;}
+.bp{background:var(--acc);color:var(--bg);}.bp:hover{background:#c8f040;}
+.bg{background:transparent;color:var(--txm);border:1px solid var(--bs);}.bg:hover{border-color:var(--br);color:var(--tx);background:var(--s1);}
+.main{overflow-y:auto;padding:28px 32px;}
+.view{display:none;flex-direction:column;gap:24px;}.view.active{display:flex;animation:fu .18s ease;}
+@keyframes fu{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.panel{background:var(--s1);border:1px solid var(--bs);border-radius:11px;overflow:hidden;}
+.ph{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--bs);}
+.pht{font-size:13px;font-weight:600;}
+.kpi{background:var(--s1);border:1px solid var(--bs);border-radius:10px;padding:16px 18px;}
+.ka .kv{color:var(--acc);}.ka{border-left:2px solid var(--acc);}
+.kl{font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;}
+.kv{font-family:'Fraunces',serif;font-size:28px;font-weight:400;line-height:1;}
+.kv .u{font-size:13px;color:var(--txm);}
+.kd{font-size:11px;margin-top:4px;}
+.up{color:var(--grn);}.dn{color:var(--red);}.ne{color:var(--txm);}
+/* Slider inputs */
+.slider-group{display:flex;flex-direction:column;gap:6px;padding:16px 20px;border-bottom:1px solid var(--bs);}
+.slider-group:last-child{border-bottom:none;}
+.sl-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.sl-label{font-size:13px;color:var(--tx);}
+.sl-val{font-family:'DM Mono',monospace;font-size:13px;color:var(--acc);font-weight:600;min-width:70px;text-align:right;}
+input[type=range]{width:100%;accent-color:var(--acc);cursor:pointer;height:4px;}
+.result-card{background:var(--s2);border:1px solid var(--br);border-radius:10px;padding:20px;text-align:center;}
+.rc-val{font-family:'Fraunces',serif;font-size:48px;color:var(--acc);line-height:1;}
+.rc-label{font-size:12px;color:var(--txm);margin-top:4px;}
+.rc-delta{font-size:13px;color:var(--grn);margin-top:8px;}
+/* Bar chart */
+.bar-chart{display:flex;align-items:flex-end;gap:14px;height:160px;padding:0 20px 16px;}
+.bc-col{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;}
+.bc-bar{width:100%;border-radius:4px 4px 0 0;transition:height .8s cubic-bezier(.4,0,.2,1);position:relative;}
+.bc-bar:hover::after{content:attr(data-v);position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-family:'DM Mono',monospace;font-size:10px;color:var(--acc);background:var(--s2);padding:2px 6px;border-radius:4px;white-space:nowrap;}
+.bc-lbl{font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);text-align:center;}
+/* Projection table */
+.proj-row{display:grid;grid-template-columns:80px repeat(4,1fr);gap:12px;padding:10px 20px;border-bottom:1px solid var(--bs);font-size:12.5px;align-items:center;}
+.proj-row:last-child{border-bottom:none;}
+.proj-head{font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:.5px;text-transform:uppercase;cursor:default;}
+.proj-row.highlight{background:var(--ad);}
+/* Plans */
+.plan-card{background:var(--s1);border:1px solid var(--bs);border-radius:11px;padding:20px;display:flex;flex-direction:column;gap:10px;}
+.plan-card.featured{border-color:var(--acc);}
+.plan-name{font-family:'Fraunces',serif;font-size:18px;}
+.plan-price{font-family:'Fraunces',serif;font-size:36px;color:var(--acc);line-height:1;}
+.plan-price .mo{font-size:13px;color:var(--txm);font-family:'DM Sans',sans-serif;}
+.plan-feat{font-size:12px;color:var(--txm);display:flex;align-items:center;gap:7px;}
+.plan-feat::before{content:'✓';color:var(--grn);font-size:12px;}
+::-webkit-scrollbar{width:3px;}.:-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px;}
+</style>
+</head>
+<body>
+<div class="shell">
+<header class="topbar">
+  <div class="lm">C</div><div class="lt">Chloe<b>IQ</b></div>
+  <div class="sep"></div>
+  <div class="page-title">ROI <em>Calculator</em></div>
+  <div class="tabs">
+    <div class="tab active" data-tab="calc">Calculator</div>
+    <div class="tab" data-tab="results">Results</div>
+    <div class="tab" data-tab="benchmark">Benchmark</div>
+    <div class="tab" data-tab="projection">Projection</div>
+    <div class="tab" data-tab="plans">Plans</div>
+  </div>
+  <div class="tr">
+    <button class="btn bg" id="btn-reset">Reset</button>
+    <button class="btn bg" id="btn-share">Share Results</button>
+    <button class="btn bp" id="btn-getstarted">Get Started →</button>
+  </div>
+</header>
+<div class="main">
+
+<!-- CALCULATOR TAB -->
+<div class="view active" id="view-calc">
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px;">
+    <div><div style="font-family:'Fraunces',serif;font-size:24px;font-weight:400;">Your <em style="color:var(--acc);font-style:italic;">ChloeIQ ROI</em></div><div style="font-size:12.5px;color:var(--txm);margin-top:3px;">Adjust the sliders to match your business — see your ROI update in real time</div></div>
+  </div>
+  <div class="g2">
+    <div>
+      <div class="panel">
+        <div class="ph"><div class="pht">Your Current Business</div></div>
+        <div class="slider-group">
+          <div class="sl-row"><span class="sl-label">Open Houses per Month</span><span class="sl-val" id="v-oh">8</span></div>
+          <input type="range" id="sl-oh" min="1" max="30" value="8">
+        </div>
+        <div class="slider-group">
+          <div class="sl-row"><span class="sl-label">Avg Visitors per Open House</span><span class="sl-val" id="v-vis">25</span></div>
+          <input type="range" id="sl-vis" min="5" max="80" value="25">
+        </div>
+        <div class="slider-group">
+          <div class="sl-row"><span class="sl-label">Current Lead Conversion Rate</span><span class="sl-val" id="v-conv">18<span style="font-size:10px;">%</span></span></div>
+          <input type="range" id="sl-conv" min="5" max="40" value="18">
+        </div>
+        <div class="slider-group">
+          <div class="sl-row"><span class="sl-label">Avg Commission per Deal</span><span class="sl-val" id="v-comm">$8,500</span></div>
+          <input type="range" id="sl-comm" min="2000" max="25000" step="500" value="8500">
+        </div>
+        <div class="slider-group">
+          <div class="sl-row"><span class="sl-label">Deals Closed per Month</span><span class="sl-val" id="v-deals">3</span></div>
+          <input type="range" id="sl-deals" min="1" max="20" value="3">
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div class="g2">
+        <div class="result-card">
+          <div class="rc-val" id="r-extra-leads">+18</div>
+          <div class="rc-label">Extra leads / month with ChloeIQ</div>
+          <div class="rc-delta" id="r-conv-rate">38% vs 18% conversion</div>
+        </div>
+        <div class="result-card">
+          <div class="rc-val" id="r-extra-deals">+2.2</div>
+          <div class="rc-label">Extra deals / month</div>
+          <div class="rc-delta" id="r-deal-delta">↑ 73% more closings</div>
+        </div>
+      </div>
+      <div class="result-card" style="background:var(--s1);border-color:var(--br);">
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--acc);letter-spacing:.8px;margin-bottom:8px;">MONTHLY ROI</div>
+        <div class="rc-val" id="r-monthly-roi" style="font-size:56px;">$18,700</div>
+        <div class="rc-label">Additional monthly revenue from ChloeIQ</div>
+        <div style="display:flex;justify-content:center;gap:24px;margin-top:14px;">
+          <div style="text-align:center;"><div style="font-family:'DM Mono',monospace;font-size:13px;color:var(--acc);" id="r-annual-roi">$224,400</div><div style="font-size:11px;color:var(--txm);">Annual ROI</div></div>
+          <div style="width:1px;background:var(--bs);"></div>
+          <div style="text-align:center;"><div style="font-family:'DM Mono',monospace;font-size:13px;color:var(--acc);" id="r-payback">0.6 days</div><div style="font-size:11px;color:var(--txm);">Payback period</div></div>
+          <div style="width:1px;background:var(--bs);"></div>
+          <div style="text-align:center;"><div style="font-family:'DM Mono',monospace;font-size:13px;color:var(--acc);" id="r-roi-pct">1,870×</div><div style="font-size:11px;color:var(--txm);">Return on investment</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS TAB -->
+<div class="view" id="view-results">
+  <div style="font-family:'Fraunces',serif;font-size:24px;">Detailed <em style="color:var(--acc);font-style:italic;">Results</em></div>
+  <div class="g4" id="results-kpis"></div>
+  <div class="g2">
+    <div class="panel">
+      <div class="ph"><div class="pht">Before vs After ChloeIQ</div></div>
+      <div class="bar-chart" id="results-chart"></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><div class="pht">Revenue Breakdown</div></div>
+      <div style="padding:20px;display:flex;flex-direction:column;gap:14px;" id="results-breakdown"></div>
+    </div>
+  </div>
+</div>
+
+<!-- BENCHMARK TAB -->
+<div class="view" id="view-benchmark">
+  <div style="font-family:'Fraunces',serif;font-size:24px;">Market <em style="color:var(--acc);font-style:italic;">Benchmarks</em></div>
+  <div class="g4">
+    <div class="kpi"><div class="kl">Industry Avg Conversion</div><div class="kv">18<span class="u">%</span></div><div class="kd ne">Standard open house</div></div>
+    <div class="kpi ka"><div class="kl">ChloeIQ Avg Conversion</div><div class="kv">38<span class="u">%</span></div><div class="kd up">↑ 2.1× industry avg</div></div>
+    <div class="kpi"><div class="kl">Avg Follow-Up Speed</div><div class="kv">3.2<span class="u">d</span></div><div class="kd ne">Industry standard</div></div>
+    <div class="kpi ka"><div class="kl">ChloeIQ Follow-Up Speed</div><div class="kv">4.1<span class="u">h</span></div><div class="kd up">↑ 18× faster</div></div>
+  </div>
+  <div class="g2">
+    <div class="panel">
+      <div class="ph"><div class="pht">Your Stats vs DFW Market</div></div>
+      <div style="padding:16px 20px;display:flex;flex-direction:column;gap:13px;" id="bench-bars"></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><div class="pht">DFW Agent Benchmarks</div></div>
+      <div style="padding:0;">
+        <div class="proj-row proj-head" style="grid-template-columns:1fr 100px 100px;"><span>Metric</span><span>Industry</span><span>ChloeIQ</span></div>
+        <div class="proj-row" style="grid-template-columns:1fr 100px 100px;"><span style="color:var(--txm);">Lead Conversion</span><span>18%</span><span style="color:var(--acc);">38%</span></div>
+        <div class="proj-row" style="grid-template-columns:1fr 100px 100px;"><span style="color:var(--txm);">Leads per OH</span><span>4.5</span><span style="color:var(--acc);">9.5</span></div>
+        <div class="proj-row" style="grid-template-columns:1fr 100px 100px;"><span style="color:var(--txm);">Follow-Up Open Rate</span><span>24%</span><span style="color:var(--acc);">68%</span></div>
+        <div class="proj-row" style="grid-template-columns:1fr 100px 100px;"><span style="color:var(--txm);">Avg Match Score</span><span>N/A</span><span style="color:var(--acc);">71%</span></div>
+        <div class="proj-row" style="grid-template-columns:1fr 100px 100px;"><span style="color:var(--txm);">Buyer Retention (2nd visit)</span><span>14%</span><span style="color:var(--acc);">41%</span></div>
+        <div class="proj-row" style="grid-template-columns:1fr 100px 100px;"><span style="color:var(--txm);">Time to Qualified Lead</span><span>4.2d</span><span style="color:var(--acc);">Real-time</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROJECTION TAB -->
+<div class="view" id="view-projection">
+  <div style="font-family:'Fraunces',serif;font-size:24px;">12-Month <em style="color:var(--acc);font-style:italic;">Projection</em></div>
+  <div class="g4" id="proj-kpis"></div>
+  <div class="panel">
+    <div class="ph"><div class="pht">Monthly Revenue Projection — With vs Without ChloeIQ</div>
+      <div style="display:flex;gap:12px;align-items:center;">
+        <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--txm);"><span style="display:inline-block;width:10px;height:3px;background:var(--acc);border-radius:2px;"></span>With ChloeIQ</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--txm);"><span style="display:inline-block;width:10px;height:3px;background:var(--s3);border-radius:2px;"></span>Without</div>
+      </div>
+    </div>
+    <div style="padding:10px 20px 4px;"><canvas id="proj-chart" width="900" height="160"></canvas></div>
+    <div style="display:flex;justify-content:space-between;padding:0 20px 12px;">
+      <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);">JAN</span><span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);">FEB</span><span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);">MAR</span><span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);">APR</span><span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);">MAY</span><span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);">JUN</span><span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);">JUL</span><span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);">AUG</span><span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);">SEP</span><span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);">OCT</span><span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);">NOV</span><span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);">DEC</span>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="ph"><div class="pht">Monthly Detail</div></div>
+    <div class="proj-row proj-head"><span>Month</span><span>Without ChloeIQ</span><span>With ChloeIQ</span><span>Extra Revenue</span><span>Cumulative Gain</span></div>
+    <div id="proj-table"></div>
+  </div>
+</div>
+
+<!-- PLANS TAB -->
+<div class="view" id="view-plans">
+  <div style="font-family:'Fraunces',serif;font-size:24px;">Choose Your <em style="color:var(--acc);font-style:italic;">Plan</em></div>
+  <div class="g3">
+    <div class="plan-card">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--txm);letter-spacing:.5px;background:var(--s3);padding:3px 9px;border-radius:10px;display:inline-block;width:fit-content;">AGENT</div>
+      <div class="plan-name">Solo Agent</div>
+      <div class="plan-price">$99<span class="mo"> / mo</span></div>
+      <div style="font-size:12px;color:var(--txm);">Full platform for individual agents. Unlimited Chloe Codes, AI follow-up, Host Score.</div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px;">
+        <div class="plan-feat">Unlimited Chloe Code events</div>
+        <div class="plan-feat">StyleDNA buyer profiling</div>
+        <div class="plan-feat">AI follow-up drafts</div>
+        <div class="plan-feat">Host Score + leaderboard</div>
+        <div class="plan-feat">Lead dashboard</div>
+      </div>
+      <button class="btn bg" style="width:100%;justify-content:center;margin-top:8px;" id="plan-agent-btn">Get Started</button>
+    </div>
+    <div class="plan-card featured">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--bg);letter-spacing:.5px;background:var(--acc);padding:3px 9px;border-radius:10px;display:inline-block;width:fit-content;">MOST POPULAR</div>
+      <div class="plan-name">Brokerage</div>
+      <div class="plan-price">$1,499<span class="mo"> / mo</span></div>
+      <div style="font-size:12px;color:var(--txm);">Unlimited agents, brokerage intelligence, coaching queue, and market data.</div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px;">
+        <div class="plan-feat">Everything in Solo Agent</div>
+        <div class="plan-feat">Unlimited agents</div>
+        <div class="plan-feat">Brokerage command center</div>
+        <div class="plan-feat">Market Intelligence suite</div>
+        <div class="plan-feat">Revenue attribution</div>
+        <div class="plan-feat">Coaching queue + leaderboard</div>
+      </div>
+      <button class="btn bp" style="width:100%;justify-content:center;margin-top:8px;" id="plan-brokerage-btn">Start Free Trial</button>
+    </div>
+    <div class="plan-card">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--acc);letter-spacing:.5px;background:var(--ad);border:1px solid var(--br);padding:3px 9px;border-radius:10px;display:inline-block;width:fit-content;">ENTERPRISE</div>
+      <div class="plan-name">Enterprise</div>
+      <div class="plan-price" style="font-size:28px;">Custom</div>
+      <div style="font-size:12px;color:var(--txm);">White-label, API access, custom integrations, and dedicated success manager.</div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px;">
+        <div class="plan-feat">Everything in Brokerage</div>
+        <div class="plan-feat">White-label platform</div>
+        <div class="plan-feat">API + CRM integration</div>
+        <div class="plan-feat">Dedicated success manager</div>
+        <div class="plan-feat">Custom SLA</div>
+      </div>
+      <button class="btn bg" style="width:100%;justify-content:center;margin-top:8px;" id="plan-enterprise-btn">Contact Sales</button>
+    </div>
+  </div>
+  <div class="panel" style="padding:20px 24px;">
+    <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--acc);letter-spacing:.8px;margin-bottom:10px;">YOUR PERSONALIZED ROI SUMMARY</div>
+    <div class="g4" id="plans-summary"></div>
+  </div>
+</div>
+
+</div>
+</div>
+<script>
+// STATE
+var state = { oh:8, vis:25, conv:18, comm:8500, deals:3 };
+var CHLOEIQ_CONV = 38;
+var PLAN_COST = 99;
+
+function fmt(n){ if(n>=1000000) return '$'+(n/1000000).toFixed(1)+'M'; if(n>=1000) return '$'+(n/1000).toFixed(0)+'K'; return '$'+Math.round(n); }
+function fmtn(n){ if(n>=1000) return (n/1000).toFixed(1)+'K'; return n.toFixed(1); }
+
+function calc(){
+  var totalVisitors = state.oh * state.vis;
+  var currentLeads = totalVisitors * (state.conv/100);
+  var chloeiqLeads = totalVisitors * (CHLOEIQ_CONV/100);
+  var extraLeads = chloeiqLeads - currentLeads;
+  var convRatio = CHLOEIQ_CONV / state.conv;
+  var extraDeals = state.deals * (convRatio - 1);
+  var monthlyExtra = extraDeals * state.comm;
+  var annualExtra = monthlyExtra * 12;
+  var paybackDays = (PLAN_COST / (monthlyExtra/30)).toFixed(1);
+  var roiPct = (monthlyExtra / PLAN_COST).toFixed(0);
+  return { totalVisitors, currentLeads, chloeiqLeads, extraLeads, convRatio, extraDeals, monthlyExtra, annualExtra, paybackDays, roiPct };
+}
+
+function updateCalc(){
+  var r = calc();
+  document.getElementById('r-extra-leads').textContent = '+'+Math.round(r.extraLeads);
+  document.getElementById('r-conv-rate').textContent = CHLOEIQ_CONV+'% vs '+state.conv+'% conversion';
+  document.getElementById('r-extra-deals').textContent = '+'+r.extraDeals.toFixed(1);
+  document.getElementById('r-deal-delta').textContent = '↑ '+Math.round((r.convRatio-1)*100)+'% more closings';
+  document.getElementById('r-monthly-roi').textContent = fmt(r.monthlyExtra);
+  document.getElementById('r-annual-roi').textContent = fmt(r.annualExtra);
+  document.getElementById('r-payback').textContent = r.paybackDays+' days';
+  document.getElementById('r-roi-pct').textContent = r.roiPct+'×';
+}
+
+function updateResults(){
+  var r = calc();
+  var kpis = [
+    {l:'Monthly Visitors',v:fmtn(r.totalVisitors),d:'Open house traffic'},
+    {l:'Leads Without ChloeIQ',v:Math.round(r.currentLeads).toString(),d:state.conv+'% conversion rate'},
+    {l:'Leads With ChloeIQ',v:Math.round(r.chloeiqLeads).toString(),d:'38% conversion rate',acc:true},
+    {l:'Extra Revenue / Month',v:fmt(r.monthlyExtra),d:'Additional closings',acc:true},
+  ];
+  var el = document.getElementById('results-kpis'); el.innerHTML='';
+  kpis.forEach(function(k){
+    el.innerHTML += '<div class="kpi'+(k.acc?' ka':'')+'"><div class="kl">'+k.l+'</div><div class="kv">'+k.v+'</div><div class="kd ne">'+k.d+'</div></div>';
+  });
+  // Chart
+  var chart = document.getElementById('results-chart'); chart.innerHTML='';
+  var bars = [
+    {l:'Visitors',before:r.totalVisitors,after:r.totalVisitors},
+    {l:'Leads',before:r.currentLeads,after:r.chloeiqLeads},
+    {l:'Deals',before:state.deals,after:state.deals*r.convRatio},
+    {l:'Revenue',before:state.deals*state.comm,after:state.deals*state.comm+r.monthlyExtra},
+  ];
+  var maxV = Math.max(r.totalVisitors, r.chloeiqLeads, state.deals*r.convRatio, (state.deals*state.comm+r.monthlyExtra)/1000);
+  bars.forEach(function(b){
+    var bH = Math.round((b.before / r.totalVisitors) * 140);
+    var aH = Math.round((b.after / r.totalVisitors) * 140);
+    chart.innerHTML += '<div class="bc-col">'
+      +'<div class="bc-bar" style="height:'+bH+'px;background:var(--s3);" data-v="'+Math.round(b.before)+'"></div>'
+      +'</div>'
+      +'<div class="bc-col">'
+      +'<div class="bc-bar" style="height:'+aH+'px;background:var(--acc);" data-v="'+Math.round(b.after)+'"></div>'
+      +'<div class="bc-lbl">'+b.l+'</div>'
+      +'</div>';
+  });
+  // Breakdown
+  var bd = document.getElementById('results-breakdown'); bd.innerHTML='';
+  var items=[
+    {k:'Base monthly revenue',v:fmt(state.deals*state.comm)},
+    {k:'Extra leads from ChloeIQ',v:'+'+Math.round(r.extraLeads)+' leads'},
+    {k:'Extra deals from higher conversion',v:'+'+r.extraDeals.toFixed(1)+' deals'},
+    {k:'Extra revenue from ChloeIQ',v:fmt(r.monthlyExtra),acc:true},
+    {k:'ChloeIQ subscription cost',v:'-$'+PLAN_COST+'/mo'},
+    {k:'Net monthly gain',v:fmt(r.monthlyExtra-PLAN_COST),acc:true},
+  ];
+  items.forEach(function(i){
+    bd.innerHTML+='<div style="display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--bs);"><span style="color:var(--txm);">'+i.k+'</span><span style="font-family:\'DM Mono\',monospace;font-size:12px;color:'+(i.acc?'var(--acc)':'var(--tx)')+';">'+i.v+'</span></div>';
+  });
+}
+
+function updateBenchmark(){
+  var r = calc();
+  var el = document.getElementById('bench-bars'); el.innerHTML='';
+  var metrics=[
+    {k:'Your conversion rate',yours:state.conv,bench:38,max:50},
+    {k:'Leads per open house',yours:(r.currentLeads/state.oh).toFixed(1),yoursN:r.currentLeads/state.oh,bench:9.5,max:15},
+    {k:'Monthly deals',yours:state.deals,yoursN:state.deals,bench:state.deals*r.convRatio,max:state.deals*r.convRatio*1.2},
+  ];
+  metrics.forEach(function(m){
+    var yPct = Math.round((m.yoursN||m.yours)/m.max*100);
+    var bPct = Math.round(m.bench/m.max*100);
+    el.innerHTML+='<div style="display:flex;flex-direction:column;gap:6px;">'
+      +'<div style="display:flex;justify-content:space-between;font-size:12px;"><span style="color:var(--txm);">'+m.k+'</span><span style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--txm);">You: '+(m.yoursN||m.yours)+' → ChloeIQ: '+m.bench+'</span></div>'
+      +'<div style="height:6px;background:var(--s3);border-radius:3px;overflow:hidden;position:relative;">'
+      +'<div style="height:6px;background:var(--s3);border-radius:3px;width:'+yPct+'%;position:absolute;"></div>'
+      +'<div style="height:6px;background:var(--acc);border-radius:3px;width:'+bPct+'%;"></div>'
+      +'</div></div>';
+  });
+}
+
+function updateProjection(){
+  var r = calc();
+  var baseMonthly = state.deals * state.comm;
+  var withMonthly = baseMonthly + r.monthlyExtra;
+  var kpis=[
+    {l:'12-Month Base Revenue',v:fmt(baseMonthly*12),d:'Without ChloeIQ'},
+    {l:'12-Month With ChloeIQ',v:fmt(withMonthly*12),d:'With ChloeIQ',acc:true},
+    {l:'Total Annual Gain',v:fmt(r.annualExtra),d:'Additional revenue',acc:true},
+    {l:'ROI Multiple',v:r.roiPct+'×',d:'Return on investment',acc:true},
+  ];
+  var el=document.getElementById('proj-kpis'); el.innerHTML='';
+  kpis.forEach(function(k){
+    el.innerHTML+='<div class="kpi'+(k.acc?' ka':'')+'"><div class="kl">'+k.l+'</div><div class="kv" style="font-size:22px;">'+k.v+'</div><div class="kd ne">'+k.d+'</div></div>';
+  });
+  // Draw chart
+  var canvas=document.getElementById('proj-chart'); if(!canvas)return;
+  var ctx=canvas.getContext('2d');
+  var W=canvas.offsetWidth||900,H=160;
+  canvas.width=W;canvas.height=H;
+  ctx.clearRect(0,0,W,H);
+  var withVals=[], baseVals=[];
+  var growth=1.02;
+  for(var i=0;i<12;i++){
+    baseVals.push(baseMonthly*Math.pow(growth,i));
+    withVals.push(withMonthly*Math.pow(growth,i));
+  }
+  var maxV=Math.max.apply(null,withVals);
+  function px(i){return (i/11)*(W-20)+10;}
+  function py(v){return H-10-((v/maxV)*(H-20));}
+  // fill
+  var g=ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0,'rgba(184,224,48,.15)');g.addColorStop(1,'rgba(184,224,48,0)');
+  ctx.beginPath();ctx.moveTo(px(0),H);
+  withVals.forEach(function(v,i){ctx.lineTo(px(i),py(v));});
+  ctx.lineTo(px(11),H);ctx.closePath();ctx.fillStyle=g;ctx.fill();
+  // lines
+  function drawLine(vals,color,dash){
+    ctx.beginPath();vals.forEach(function(v,i){i===0?ctx.moveTo(px(i),py(v)):ctx.lineTo(px(i),py(v));});
+    ctx.strokeStyle=color;ctx.lineWidth=2;ctx.setLineDash(dash||[]);ctx.lineJoin='round';ctx.stroke();ctx.setLineDash([]);
+  }
+  drawLine(baseVals,'rgba(238,240,229,.2)',[4,4]);
+  drawLine(withVals,'#B8E030');
+  // dots
+  withVals.forEach(function(v,i){
+    ctx.beginPath();ctx.arc(px(i),py(v),3,0,Math.PI*2);ctx.fillStyle='#B8E030';ctx.fill();
+  });
+  // Table
+  var tbl=document.getElementById('proj-table');tbl.innerHTML='';
+  var cumGain=0;
+  for(var m=0;m<12;m++){
+    var bv=baseVals[m],wv=withVals[m],ex=wv-bv;
+    cumGain+=ex;
+    var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    tbl.innerHTML+='<div class="proj-row'+(m===new Date().getMonth()?' highlight':'')+'"><span style="font-family:\'DM Mono\',monospace;font-size:11px;color:var(--txd);">'+months[m]+'</span><span style="color:var(--txm);">'+fmt(bv)+'</span><span style="color:var(--acc);">'+fmt(wv)+'</span><span style="color:var(--grn);">+'+fmt(ex)+'</span><span style="color:var(--acc);font-weight:600;">'+fmt(cumGain)+'</span></div>';
+  }
+}
+
+function updatePlans(){
+  var r=calc();
+  var el=document.getElementById('plans-summary');el.innerHTML='';
+  var items=[
+    {l:'Your Monthly ROI',v:fmt(r.monthlyExtra)},
+    {l:'Annual Revenue Gain',v:fmt(r.annualExtra)},
+    {l:'Payback Period',v:r.paybackDays+' days'},
+    {l:'ROI Multiple',v:r.roiPct+'×'},
+  ];
+  items.forEach(function(i){
+    el.innerHTML+='<div><div style="font-family:\'DM Mono\',monospace;font-size:9px;color:var(--txd);letter-spacing:.8px;margin-bottom:6px;">'+i.l.toUpperCase()+'</div><div style="font-family:\'Fraunces\',serif;font-size:24px;color:var(--acc);">'+i.v+'</div></div>';
+  });
+}
+
+function updateAll(){
+  updateCalc();
+  var activeTab=document.querySelector('.tab.active');
+  if(activeTab){
+    var t=activeTab.getAttribute('data-tab');
+    if(t==='results')updateResults();
+    if(t==='benchmark')updateBenchmark();
+    if(t==='projection')updateProjection();
+    if(t==='plans')updatePlans();
+  }
+}
+
+function toast(msg,type){
+  var old=document.getElementById('roi-toast');if(old)old.remove();
+  var t=document.createElement('div');t.id='roi-toast';t.textContent=msg;
+  var bg=type==='success'?'#B8E030':'#1A1E12';var col=type==='success'?'#0A0B07':'#EEF0E5';
+  t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:'+bg+';color:'+col+';padding:10px 20px;border-radius:8px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all .2s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.4);border:1px solid rgba(184,224,48,.15);';
+  document.body.appendChild(t);
+  requestAnimationFrame(function(){t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';});
+  clearTimeout(t._x);t._x=setTimeout(function(){t.style.opacity='0';},2600);
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  // Sliders
+  function wireSlider(id,valId,key,fmt,min,max){
+    var sl=document.getElementById(id);
+    var vl=document.getElementById(valId);
+    sl.addEventListener('input',function(){
+      state[key]=parseInt(this.value);
+      vl.textContent=fmt?fmt(state[key]):state[key];
+      updateAll();
+    });
+  }
+  wireSlider('sl-oh','v-oh','oh',null);
+  wireSlider('sl-vis','v-vis','vis',null);
+  wireSlider('sl-conv','v-conv','conv',function(v){return v+'%';});
+  wireSlider('sl-comm','v-comm','comm',function(v){return '$'+v.toLocaleString();});
+  wireSlider('sl-deals','v-deals','deals',null);
+
+  // Tabs
+  document.querySelectorAll('.tab').forEach(function(tab){
+    tab.addEventListener('click',function(){
+      document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+      document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active');});
+      tab.classList.add('active');
+      var id='view-'+tab.getAttribute('data-tab');
+      var v=document.getElementById(id);if(v)v.classList.add('active');
+      var t=tab.getAttribute('data-tab');
+      if(t==='results')updateResults();
+      if(t==='benchmark')updateBenchmark();
+      if(t==='projection'){updateProjection();setTimeout(function(){updateProjection();},100);}
+      if(t==='plans')updatePlans();
+    });
+  });
+
+  // Buttons
+  document.getElementById('btn-reset').addEventListener('click',function(){
+    state={oh:8,vis:25,conv:18,comm:8500,deals:3};
+    document.getElementById('sl-oh').value=8;document.getElementById('v-oh').textContent=8;
+    document.getElementById('sl-vis').value=25;document.getElementById('v-vis').textContent=25;
+    document.getElementById('sl-conv').value=18;document.getElementById('v-conv').textContent='18%';
+    document.getElementById('sl-comm').value=8500;document.getElementById('v-comm').textContent='$8,500';
+    document.getElementById('sl-deals').value=3;document.getElementById('v-deals').textContent=3;
+    updateAll();toast('Calculator reset','');
+  });
+  document.getElementById('btn-share').addEventListener('click',function(){toast('ROI report link copied ✓','success');});
+  document.getElementById('btn-getstarted').addEventListener('click',function(){
+    document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+    document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active');});
+    document.querySelector('[data-tab="plans"]').classList.add('active');
+    document.getElementById('view-plans').classList.add('active');
+    updatePlans();
+  });
+  document.getElementById('plan-agent-btn').addEventListener('click',function(){toast('Starting Solo Agent plan — $99/mo ✓','success');});
+  document.getElementById('plan-brokerage-btn').addEventListener('click',function(){toast('Starting free trial — Brokerage plan ✓','success');});
+  document.getElementById('plan-enterprise-btn').addEventListener('click',function(){toast('Opening enterprise contact form...','');});
+
+  updateAll();
+  window.addEventListener('resize',function(){
+    if(document.querySelector('[data-tab="projection"].active'))updateProjection();
+  });
+});
+</script>
+<script src="chloeiq-nav.js"></script>
+</body>
+</html>
