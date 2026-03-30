@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ChloeIQ — Market Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,300;1,600&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0A0B07;
+  --accent: #B8E030;
+  --accent-dim: rgba(184,224,48,0.10);
+  --surface: #13160D;
+  --border: rgba(184,224,48,0.12);
+  --border2: rgba(255,255,255,0.07);
+  --text: #EEF0E5;
+  --text-dim: rgba(238,240,229,0.55);
+  --text-muted: rgba(238,240,229,0.32);
+  --warm: #1A1C12;
+  --warm2: #222418;
+  --green: #4ADE80;
+  --amber: #FBBF24;
+  --red: #F87171;
+  --blue: #60A5FA;
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body {
+  background: #0D0D0D;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  font-family: 'DM Sans', sans-serif;
+  padding: 24px 16px; gap: 20px;
+}
+.outer-label { font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);opacity:0.6; }
+.phone {
+  width:375px; height:812px; background:var(--bg);
+  border-radius:44px; overflow:hidden; position:relative;
+  box-shadow:0 0 0 1px rgba(255,255,255,0.07),0 0 0 2px rgba(0,0,0,0.6),0 32px 64px rgba(0,0,0,0.7);
+  display:flex; flex-direction:column;
+}
+.notch { position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:30px;background:#080808;border-radius:0 0 20px 20px;z-index:20; }
+.status-bar { display:flex;justify-content:space-between;align-items:center;padding:18px 28px 0;font-family:'DM Mono',monospace;font-size:12px;color:rgba(238,240,229,0.6);flex-shrink:0;z-index:10;background:var(--bg);position:relative; }
+.screen { flex:1;display:none;flex-direction:column;overflow:hidden; }
+.screen.active { display:flex; }
+
+/* HEADER */
+.pg-hdr { padding:14px 20px 12px;border-bottom:1px solid var(--border2);flex-shrink:0; }
+.pg-hdr-row { display:flex;align-items:center;justify-content:space-between;margin-bottom:10px; }
+.pg-eyebrow { font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:3px; }
+.pg-title { font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--text); }
+.pg-badge { background:var(--accent-dim);border:1px solid var(--border);border-radius:100px;padding:5px 12px;font-family:'DM Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:1px; }
+
+.tab-row { display:flex;border-bottom:1px solid var(--border2); }
+.tab { flex:1;padding:10px 4px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s; }
+.tab.active { color:var(--accent);border-bottom-color:var(--accent); }
+
+.pg-scroll { flex:1;overflow-y:auto;scrollbar-width:none;padding:14px 16px; }
+.pg-scroll::-webkit-scrollbar { display:none; }
+.sec-lbl { font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px; }
+
+/* HERO */
+.hero-card { background:var(--accent);border-radius:18px;padding:18px;margin-bottom:12px;display:flex;align-items:center;gap:14px; }
+.hc-val { font-family:'Fraunces',serif;font-size:48px;font-weight:700;color:var(--bg);line-height:1;flex-shrink:0; }
+.hc-info { flex:1; }
+.hc-label { font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(10,11,7,0.5);margin-bottom:4px; }
+.hc-title { font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:var(--bg); }
+.hc-sub { font-size:12px;color:rgba(10,11,7,0.55);margin-top:3px; }
+
+/* KPI */
+.kpi-grid { display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px; }
+.kpi { background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:14px; }
+.kpi-val { font-family:'Fraunces',serif;font-size:24px;font-weight:700;color:var(--accent);margin-bottom:3px; }
+.kpi-lbl { font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted); }
+.kpi-change { font-size:11px;margin-top:4px; }
+.up { color:var(--green); } .down { color:var(--red); } .neutral { color:var(--text-muted); }
+
+/* BAR CHART */
+.bar-section { background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:14px;margin-bottom:12px; }
+.bar-row { display:flex;align-items:center;gap:10px;margin-bottom:8px; }
+.bar-row:last-child { margin-bottom:0; }
+.bar-label { font-size:12px;color:var(--text-dim);width:90px;flex-shrink:0; }
+.bar-track { flex:1;height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden; }
+.bar-fill { height:100%;border-radius:3px; }
+.bar-fill-accent { background:var(--accent); }
+.bar-fill-dim    { background:rgba(255,255,255,0.2); }
+.bar-fill-blue   { background:var(--blue); }
+.bar-val { font-family:'DM Mono',monospace;font-size:11px;color:var(--accent);width:36px;text-align:right;flex-shrink:0; }
+
+/* MINI CHART (sparkline-style bars) */
+.spark-chart { display:flex;align-items:flex-end;gap:4px;height:60px;margin-bottom:8px; }
+.spark-bar { flex:1;border-radius:3px 3px 0 0;transition:height 0.4s ease; }
+.spark-bar.accent-bar { background:var(--accent); }
+.spark-bar.dim-bar    { background:rgba(255,255,255,0.12); }
+.spark-bar.highlight  { background:var(--accent);box-shadow:0 0 8px rgba(184,224,48,0.4); }
+.spark-labels { display:flex;gap:4px; }
+.spark-lbl { flex:1;text-align:center;font-family:'DM Mono',monospace;font-size:8px;color:var(--text-muted);letter-spacing:0.5px; }
+
+/* TREND ROW */
+.trend-row { background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:13px 14px;display:flex;align-items:center;gap:12px;margin-bottom:8px;cursor:pointer;transition:all 0.2s; }
+.trend-row:hover { border-color:rgba(184,224,48,0.2); }
+.trend-icon { width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0; }
+.trend-info { flex:1; }
+.trend-name { font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px; }
+.trend-meta { font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted); }
+.trend-right { display:flex;flex-direction:column;align-items:flex-end;gap:4px; }
+.trend-val { font-family:'Fraunces',serif;font-size:17px;font-weight:700;color:var(--accent); }
+.trend-delta { font-family:'DM Mono',monospace;font-size:10px; }
+
+/* ZIP TABLE */
+.zip-table { background:var(--surface);border:1px solid var(--border2);border-radius:14px;overflow:hidden;margin-bottom:12px; }
+.zip-header { display:grid;grid-template-columns:auto 1fr auto auto;gap:8px;padding:10px 14px;border-bottom:1px solid var(--border2);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);align-items:center; }
+.zip-row { display:grid;grid-template-columns:auto 1fr auto auto;gap:8px;padding:11px 14px;border-bottom:1px solid var(--border2);align-items:center;cursor:pointer;transition:background 0.2s; }
+.zip-row:last-child { border-bottom:none; }
+.zip-row:hover { background:rgba(255,255,255,0.02); }
+.zip-rank { font-family:'Fraunces',serif;font-size:14px;font-weight:700;color:var(--text-muted);width:20px; }
+.zip-code { font-family:'DM Mono',monospace;font-size:12px;color:var(--accent); }
+.zip-name { font-size:12px;color:var(--text-dim); }
+.zip-demand { font-family:'Fraunces',serif;font-size:14px;font-weight:700;color:var(--accent);text-align:right; }
+.zip-delta { font-family:'DM Mono',monospace;font-size:10px;text-align:right; }
+
+/* DNA FLOW */
+.dna-flow { display:flex;flex-direction:column;gap:8px;margin-bottom:12px; }
+.dna-row-item { display:flex;align-items:center;gap:10px; }
+.dna-row-label { font-size:12px;color:var(--text-dim);width:110px;flex-shrink:0; }
+.dna-row-bars { flex:1;display:flex;flex-direction:column;gap:3px; }
+.dna-mini-row { display:flex;align-items:center;gap:6px; }
+.dna-mini-track { flex:1;height:5px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden; }
+.dna-mini-fill { height:100%;border-radius:3px; }
+.dna-mini-lbl { font-family:'DM Mono',monospace;font-size:9px;width:24px;text-align:right;flex-shrink:0; }
+
+/* INSIGHT */
+.insight-card { background:rgba(184,224,48,0.06);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px; }
+.ic-hdr { font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px; }
+.ic-point { display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--text-dim);line-height:1.55;margin-bottom:7px; }
+.ic-point:last-child { margin-bottom:0; }
+.ic-dot { width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:5px; }
+
+/* BOTTOM NAV */
+.bottom-nav { display:flex;border-top:1px solid var(--border2);padding:10px 0 20px;background:var(--bg);flex-shrink:0; }
+.nav-item { flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0; }
+.nav-icon { font-size:20px; }
+.nav-label { font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.5px;color:var(--text-muted);text-transform:uppercase; }
+.nav-item.active .nav-label { color:var(--accent); }
+
+/* SHEET */
+.sheet-backdrop { position:absolute;inset:0;background:rgba(0,0,0,0.65);z-index:49;opacity:0;pointer-events:none;transition:opacity 0.3s;backdrop-filter:blur(3px); }
+.sheet-backdrop.open { opacity:1;pointer-events:all; }
+.detail-sheet { position:absolute;bottom:0;left:0;right:0;background:var(--surface);border-radius:22px 22px 0 0;border-top:1px solid var(--border2);padding:0 20px 32px;transform:translateY(100%);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);z-index:50;max-height:85%;overflow-y:auto;scrollbar-width:none; }
+.detail-sheet::-webkit-scrollbar { display:none; }
+.detail-sheet.open { transform:translateY(0); }
+.ds-handle { width:36px;height:4px;background:var(--border2);border-radius:2px;margin:12px auto 16px; }
+</style>
+</head>
+<body>
+
+<div class="outer-label">ChloeIQ · Market Intelligence · DFW</div>
+
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status-bar"><span>9:41</span><span>●●● 5G 🔋</span></div>
+
+  <!-- ══ DEMAND ══ -->
+  <div class="screen active" id="s-demand">
+    <div class="pg-hdr">
+      <div class="pg-hdr-row">
+        <div>
+          <div class="pg-eyebrow">DFW Market · March 2026</div>
+          <div class="pg-title">Buyer Demand</div>
+        </div>
+        <div class="pg-badge" id="live-badge">Live</div>
+      </div>
+      <div class="tab-row">
+        <div class="tab active" id="tab-de" onclick="switchTab('demand')">Demand</div>
+        <div class="tab" id="tab-dn" onclick="switchTab('dna')">DNA Trends</div>
+        <div class="tab" id="tab-zi" onclick="switchTab('zip')">By ZIP</div>
+        <div class="tab" id="tab-fo" onclick="switchTab('forecast')">Forecast</div>
+      </div>
+    </div>
+    <div class="pg-scroll">
+
+      <div class="hero-card">
+        <div class="hc-val">79</div>
+        <div class="hc-info">
+          <div class="hc-label">DFW Avg Demand Score</div>
+          <div class="hc-title">Market heating up</div>
+          <div class="hc-sub">↑ +6 pts vs February · 3-year high</div>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi"><div class="kpi-val">1,847</div><div class="kpi-lbl">Active Buyers</div><div class="kpi-change up">↑ +12% this month</div></div>
+        <div class="kpi"><div class="kpi-val">74</div><div class="kpi-lbl">Avg Events / Week</div><div class="kpi-change up">↑ +9 vs last month</div></div>
+        <div class="kpi"><div class="kpi-val">8.4</div><div class="kpi-lbl">Buyers per Event</div><div class="kpi-change up">↑ +1.2 vs avg</div></div>
+        <div class="kpi"><div class="kpi-val">68%</div><div class="kpi-lbl">Follow-Up Rate</div><div class="kpi-change neutral">→ Market avg</div></div>
+      </div>
+
+      <div class="sec-lbl">Demand — Last 8 Weeks</div>
+      <div class="bar-section">
+        <div class="spark-chart" id="demand-spark">
+          <div class="spark-bar dim-bar" style="height:52%"></div>
+          <div class="spark-bar dim-bar" style="height:58%"></div>
+          <div class="spark-bar dim-bar" style="height:55%"></div>
+          <div class="spark-bar dim-bar" style="height:62%"></div>
+          <div class="spark-bar dim-bar" style="height:68%"></div>
+          <div class="spark-bar dim-bar" style="height:72%"></div>
+          <div class="spark-bar dim-bar" style="height:76%"></div>
+          <div class="spark-bar highlight" style="height:88%"></div>
+        </div>
+        <div class="spark-labels">
+          <div class="spark-lbl">W1</div><div class="spark-lbl">W2</div><div class="spark-lbl">W3</div><div class="spark-lbl">W4</div>
+          <div class="spark-lbl">W5</div><div class="spark-lbl">W6</div><div class="spark-lbl">W7</div><div class="spark-lbl" style="color:var(--accent);">NOW</div>
+        </div>
+      </div>
+
+      <div class="sec-lbl">Demand by Price Tier</div>
+      <div class="bar-section">
+        <div class="bar-row"><div class="bar-label">$500K – $800K</div><div class="bar-track"><div class="bar-fill bar-fill-dim" style="width:61%"></div></div><div class="bar-val" style="color:var(--text-muted);">61</div></div>
+        <div class="bar-row"><div class="bar-label">$800K – $1.2M</div><div class="bar-track"><div class="bar-fill bar-fill-accent" style="width:84%"></div></div><div class="bar-val">84</div></div>
+        <div class="bar-row"><div class="bar-label">$1.2M – $1.8M</div><div class="bar-track"><div class="bar-fill bar-fill-accent" style="width:91%"></div></div><div class="bar-val">91</div></div>
+        <div class="bar-row"><div class="bar-label">$1.8M – $3M</div><div class="bar-track"><div class="bar-fill bar-fill-dim" style="width:74%"></div></div><div class="bar-val" style="color:var(--text-muted);">74</div></div>
+        <div class="bar-row"><div class="bar-label">$3M+</div><div class="bar-track"><div class="bar-fill bar-fill-dim" style="width:48%"></div></div><div class="bar-val" style="color:var(--text-muted);">48</div></div>
+      </div>
+
+      <div class="insight-card">
+        <div class="ic-hdr">✨ Market Read</div>
+        <div class="ic-point"><div class="ic-dot" style="background:var(--green);"></div><div>The $1.2M–$1.8M tier is your hottest segment at demand score 91 — the highest it has been in 18 months. Listing agents in this range are seeing 2× buyer traffic vs January.</div></div>
+        <div class="ic-point"><div class="ic-dot" style="background:var(--amber);"></div><div>Sub-$800K demand has softened slightly amid rate sensitivity. Buyers in this range are taking longer to commit — follow-up timing is more critical than ever.</div></div>
+        <div class="ic-point"><div class="ic-dot" style="background:var(--accent);"></div><div>Spring open house season is 3 weeks out. Historical data shows a 22% demand spike in Flower Mound and Southlake in the first two weeks of April.</div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ DNA TRENDS ══ -->
+  <div class="screen" id="s-dna">
+    <div class="pg-hdr">
+      <div class="pg-hdr-row">
+        <div><div class="pg-eyebrow">DFW Market · March 2026</div><div class="pg-title">DNA Trends</div></div>
+        <div class="pg-badge">4 profiles</div>
+      </div>
+      <div class="tab-row">
+        <div class="tab" id="tab-de2" onclick="switchTab('demand')">Demand</div>
+        <div class="tab active" id="tab-dn2" onclick="switchTab('dna')">DNA Trends</div>
+        <div class="tab" id="tab-zi2" onclick="switchTab('zip')">By ZIP</div>
+        <div class="tab" id="tab-fo2" onclick="switchTab('forecast')">Forecast</div>
+      </div>
+    </div>
+    <div class="pg-scroll">
+
+      <div class="sec-lbl">StyleDNA Share · DFW Market</div>
+      <div class="bar-section" style="margin-bottom:12px;">
+        <div class="bar-row">
+          <div class="bar-label">Refined Modern</div>
+          <div class="bar-track"><div class="bar-fill bar-fill-accent" style="width:41%"></div></div>
+          <div class="bar-val">41%</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Warm Organic</div>
+          <div class="bar-track"><div class="bar-fill bar-fill-accent" style="width:26%"></div></div>
+          <div class="bar-val">26%</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Coastal Luxe</div>
+          <div class="bar-track"><div class="bar-fill bar-fill-accent" style="width:19%"></div></div>
+          <div class="bar-val">19%</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Bold Eclectic</div>
+          <div class="bar-track"><div class="bar-fill bar-fill-accent" style="width:14%"></div></div>
+          <div class="bar-val">14%</div>
+        </div>
+      </div>
+
+      <div class="sec-lbl">DNA Mix Shift · Last 6 Months</div>
+      <div class="bar-section" style="margin-bottom:12px;">
+        <div style="display:flex;gap:12px;margin-bottom:10px;">
+          <div style="display:flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:9px;color:var(--accent);"><div style="width:8px;height:8px;border-radius:50%;background:var(--accent);"></div>Now</div>
+          <div style="display:flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:9px;color:var(--text-muted);"><div style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.2);"></div>6 Months Ago</div>
+        </div>
+        <div class="dna-flow">
+          <div class="dna-row-item">
+            <div class="dna-row-label">Refined Modern</div>
+            <div class="dna-row-bars">
+              <div class="dna-mini-row"><div class="dna-mini-track"><div class="dna-mini-fill" style="width:41%;background:var(--accent);"></div></div><div class="dna-mini-lbl" style="color:var(--accent);">41%</div></div>
+              <div class="dna-mini-row"><div class="dna-mini-track"><div class="dna-mini-fill" style="width:35%;background:rgba(255,255,255,0.2);"></div></div><div class="dna-mini-lbl" style="color:var(--text-muted);">35%</div></div>
+            </div>
+          </div>
+          <div class="dna-row-item">
+            <div class="dna-row-label">Warm Organic</div>
+            <div class="dna-row-bars">
+              <div class="dna-mini-row"><div class="dna-mini-track"><div class="dna-mini-fill" style="width:26%;background:var(--accent);"></div></div><div class="dna-mini-lbl" style="color:var(--accent);">26%</div></div>
+              <div class="dna-mini-row"><div class="dna-mini-track"><div class="dna-mini-fill" style="width:29%;background:rgba(255,255,255,0.2);"></div></div><div class="dna-mini-lbl" style="color:var(--text-muted);">29%</div></div>
+            </div>
+          </div>
+          <div class="dna-row-item">
+            <div class="dna-row-label">Coastal Luxe</div>
+            <div class="dna-row-bars">
+              <div class="dna-mini-row"><div class="dna-mini-track"><div class="dna-mini-fill" style="width:19%;background:var(--accent);"></div></div><div class="dna-mini-lbl" style="color:var(--accent);">19%</div></div>
+              <div class="dna-mini-row"><div class="dna-mini-track"><div class="dna-mini-fill" style="width:21%;background:rgba(255,255,255,0.2);"></div></div><div class="dna-mini-lbl" style="color:var(--text-muted);">21%</div></div>
+            </div>
+          </div>
+          <div class="dna-row-item">
+            <div class="dna-row-label">Bold Eclectic</div>
+            <div class="dna-row-bars">
+              <div class="dna-mini-row"><div class="dna-mini-track"><div class="dna-mini-fill" style="width:14%;background:var(--accent);"></div></div><div class="dna-mini-lbl" style="color:var(--accent);">14%</div></div>
+              <div class="dna-mini-row"><div class="dna-mini-track"><div class="dna-mini-fill" style="width:15%;background:rgba(255,255,255,0.2);"></div></div><div class="dna-mini-lbl" style="color:var(--text-muted);">15%</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-lbl">Avg Budget by DNA · DFW</div>
+      <div class="bar-section" style="margin-bottom:12px;">
+        <div class="bar-row"><div class="bar-label">Coastal Luxe</div><div class="bar-track"><div class="bar-fill bar-fill-accent" style="width:95%"></div></div><div class="bar-val">$1.8M</div></div>
+        <div class="bar-row"><div class="bar-label">Refined Modern</div><div class="bar-track"><div class="bar-fill bar-fill-accent" style="width:74%"></div></div><div class="bar-val">$1.4M</div></div>
+        <div class="bar-row"><div class="bar-label">Warm Organic</div><div class="bar-track"><div class="bar-fill bar-fill-accent" style="width:58%"></div></div><div class="bar-val">$1.1M</div></div>
+        <div class="bar-row"><div class="bar-label">Bold Eclectic</div><div class="bar-track"><div class="bar-fill bar-fill-accent" style="width:48%"></div></div><div class="bar-val">$920K</div></div>
+      </div>
+
+      <div class="insight-card">
+        <div class="ic-hdr">✨ DNA Market Insight</div>
+        <div class="ic-point"><div class="ic-dot" style="background:var(--green);"></div><div>Refined Modern is the fastest-growing DNA segment in DFW — up 6 percentage points in 6 months. Listings with clean lines, premium finishes, and open plans are seeing the strongest absorption rates.</div></div>
+        <div class="ic-point"><div class="ic-dot" style="background:var(--amber);"></div><div>Warm Organic has slightly contracted. Family buyers in this segment are showing more price sensitivity — homes in the $900K–$1.1M range are sitting 12 days longer than six months ago.</div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ BY ZIP ══ -->
+  <div class="screen" id="s-zip">
+    <div class="pg-hdr">
+      <div class="pg-hdr-row">
+        <div><div class="pg-eyebrow">DFW Market · March 2026</div><div class="pg-title">By ZIP Code</div></div>
+        <div class="pg-badge">Top 8 ZIPs</div>
+      </div>
+      <div class="tab-row">
+        <div class="tab" id="tab-de3" onclick="switchTab('demand')">Demand</div>
+        <div class="tab" id="tab-dn3" onclick="switchTab('dna')">DNA Trends</div>
+        <div class="tab active" id="tab-zi3" onclick="switchTab('zip')">By ZIP</div>
+        <div class="tab" id="tab-fo3" onclick="switchTab('forecast')">Forecast</div>
+      </div>
+    </div>
+    <div class="pg-scroll">
+
+      <div class="sec-lbl">Demand Score by ZIP · DFW</div>
+      <div class="zip-table">
+        <div class="zip-header">
+          <div></div>
+          <div>ZIP / Area</div>
+          <div>Score</div>
+          <div>Trend</div>
+        </div>
+        <div class="zip-row" onclick="openZipSheet('76226')">
+          <div class="zip-rank">1</div>
+          <div><div class="zip-code">76226</div><div class="zip-name">Flower Mound</div></div>
+          <div class="zip-demand">91</div>
+          <div class="zip-delta up">↑ +8</div>
+        </div>
+        <div class="zip-row" onclick="openZipSheet('76092')">
+          <div class="zip-rank">2</div>
+          <div><div class="zip-code">76092</div><div class="zip-name">Southlake</div></div>
+          <div class="zip-demand">88</div>
+          <div class="zip-delta up">↑ +5</div>
+        </div>
+        <div class="zip-row" onclick="openZipSheet('76051')">
+          <div class="zip-rank">3</div>
+          <div><div class="zip-code">76051</div><div class="zip-name">Grapevine</div></div>
+          <div class="zip-demand">84</div>
+          <div class="zip-delta up">↑ +4</div>
+        </div>
+        <div class="zip-row" onclick="openZipSheet('76034')">
+          <div class="zip-rank">4</div>
+          <div><div class="zip-code">76034</div><div class="zip-name">Colleyville</div></div>
+          <div class="zip-demand">81</div>
+          <div class="zip-delta up">↑ +3</div>
+        </div>
+        <div class="zip-row" onclick="openZipSheet('76262')">
+          <div class="zip-rank">5</div>
+          <div><div class="zip-code">76262</div><div class="zip-name">Roanoke / Trophy Club</div></div>
+          <div class="zip-demand">77</div>
+          <div class="zip-delta neutral">→ flat</div>
+        </div>
+        <div class="zip-row" onclick="openZipSheet('76226b')">
+          <div class="zip-rank">6</div>
+          <div><div class="zip-code">76028</div><div class="zip-name">Burleson</div></div>
+          <div class="zip-demand">69</div>
+          <div class="zip-delta down">↓ −2</div>
+        </div>
+        <div class="zip-row" onclick="openZipSheet('75022')">
+          <div class="zip-rank">7</div>
+          <div><div class="zip-code">75022</div><div class="zip-name">Flower Mound S.</div></div>
+          <div class="zip-demand">66</div>
+          <div class="zip-delta neutral">→ flat</div>
+        </div>
+        <div class="zip-row" onclick="openZipSheet('76226c')">
+          <div class="zip-rank">8</div>
+          <div><div class="zip-code">76049</div><div class="zip-name">Granbury</div></div>
+          <div class="zip-demand">58</div>
+          <div class="zip-delta down">↓ −4</div>
+        </div>
+      </div>
+
+      <div class="insight-card">
+        <div class="ic-hdr">✨ ZIP Intelligence</div>
+        <div class="ic-point"><div class="ic-dot" style="background:var(--green);"></div><div>76226 (Flower Mound) leads DFW at demand score 91 — the highest single ZIP in the dataset. Refined Modern buyers are concentrating here. Your listings in this ZIP are optimally positioned.</div></div>
+        <div class="ic-point"><div class="ic-dot" style="background:var(--accent);"></div><div>The Southlake-Grapevine-Colleyville corridor (ZIPs 76092, 76051, 76034) is showing synchronized demand growth — a cluster effect driven by school district quality and Refined Modern supply shortage.</div></div>
+        <div class="ic-point"><div class="ic-dot" style="background:var(--red);"></div><div>76049 (Granbury) is softening — down 4 points. Rural luxury properties are seeing longer days-on-market. Agents with listings here should prioritize open house frequency and aggressive digital follow-up.</div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ FORECAST ══ -->
+  <div class="screen" id="s-forecast">
+    <div class="pg-hdr">
+      <div class="pg-hdr-row">
+        <div><div class="pg-eyebrow">DFW Market · March 2026</div><div class="pg-title">30-Day Forecast</div></div>
+        <div class="pg-badge">AI Model</div>
+      </div>
+      <div class="tab-row">
+        <div class="tab" id="tab-de4" onclick="switchTab('demand')">Demand</div>
+        <div class="tab" id="tab-dn4" onclick="switchTab('dna')">DNA Trends</div>
+        <div class="tab" id="tab-zi4" onclick="switchTab('zip')">By ZIP</div>
+        <div class="tab active" id="tab-fo4" onclick="switchTab('forecast')">Forecast</div>
+      </div>
+    </div>
+    <div class="pg-scroll">
+
+      <div class="hero-card" style="background:var(--surface);border:1px solid rgba(184,224,48,0.2);">
+        <div style="text-align:center;flex-shrink:0;">
+          <div style="font-family:'Fraunces',serif;font-size:44px;font-weight:700;color:var(--accent);line-height:1;">↑</div>
+        </div>
+        <div class="hc-info">
+          <div class="hc-label" style="color:var(--text-muted);">30-Day Market Direction</div>
+          <div class="hc-title" style="color:var(--text);">Strong upward momentum</div>
+          <div class="hc-sub" style="color:var(--text-muted);">87% confidence · Spring season effect</div>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi"><div class="kpi-val">+14%</div><div class="kpi-lbl">Expected Buyer Volume</div><div class="kpi-change up">April vs March</div></div>
+        <div class="kpi"><div class="kpi-val">+8 pts</div><div class="kpi-lbl">Projected Demand Score</div><div class="kpi-change up">DFW avg → 87</div></div>
+        <div class="kpi"><div class="kpi-val">−4d</div><div class="kpi-lbl">Days on Market</div><div class="kpi-change up">Listings moving faster</div></div>
+        <div class="kpi"><div class="kpi-val">+2.3%</div><div class="kpi-lbl">Avg Price Pressure</div><div class="kpi-change up">Upward pressure</div></div>
+      </div>
+
+      <div class="sec-lbl">Projected Demand — Next 8 Weeks</div>
+      <div class="bar-section" style="margin-bottom:12px;">
+        <div class="spark-chart">
+          <div class="spark-bar highlight" style="height:88%"></div>
+          <div class="spark-bar accent-bar" style="height:91%;opacity:0.7;"></div>
+          <div class="spark-bar accent-bar" style="height:94%;opacity:0.6;"></div>
+          <div class="spark-bar accent-bar" style="height:97%;opacity:0.55;"></div>
+          <div class="spark-bar accent-bar" style="height:100%;opacity:0.5;"></div>
+          <div class="spark-bar accent-bar" style="height:96%;opacity:0.45;"></div>
+          <div class="spark-bar accent-bar" style="height:92%;opacity:0.4;"></div>
+          <div class="spark-bar accent-bar" style="height:88%;opacity:0.35;"></div>
+        </div>
+        <div class="spark-labels">
+          <div class="spark-lbl" style="color:var(--accent);">NOW</div>
+          <div class="spark-lbl">W+1</div><div class="spark-lbl">W+2</div><div class="spark-lbl">W+3</div>
+          <div class="spark-lbl">W+4</div><div class="spark-lbl">W+5</div><div class="spark-lbl">W+6</div><div class="spark-lbl">W+7</div>
+        </div>
+      </div>
+
+      <div class="sec-lbl">Hot ZIPs Next 30 Days</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
+        <div class="trend-row" onclick="openZipSheet('76226')">
+          <div class="trend-icon" style="background:rgba(184,224,48,0.1);">🔥</div>
+          <div class="trend-info"><div class="trend-name">76226 · Flower Mound</div><div class="trend-meta">Refined Modern surge · Spring peak</div></div>
+          <div class="trend-right"><div class="trend-val">+11</div><div class="trend-delta up">pts projected</div></div>
+        </div>
+        <div class="trend-row" onclick="openZipSheet('76092')">
+          <div class="trend-icon" style="background:rgba(184,224,48,0.1);">📈</div>
+          <div class="trend-info"><div class="trend-name">76092 · Southlake</div><div class="trend-meta">Luxury tier accelerating</div></div>
+          <div class="trend-right"><div class="trend-val">+8</div><div class="trend-delta up">pts projected</div></div>
+        </div>
+        <div class="trend-row" onclick="openZipSheet('76051')">
+          <div class="trend-icon" style="background:rgba(184,224,48,0.1);">📈</div>
+          <div class="trend-info"><div class="trend-name">76051 · Grapevine</div><div class="trend-meta">Lakefront listings heating up</div></div>
+          <div class="trend-right"><div class="trend-val">+6</div><div class="trend-delta up">pts projected</div></div>
+        </div>
+      </div>
+
+      <div class="sec-lbl">Watch List — Softening</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
+        <div class="trend-row">
+          <div class="trend-icon" style="background:rgba(248,113,113,0.1);">⚠️</div>
+          <div class="trend-info"><div class="trend-name">76049 · Granbury</div><div class="trend-meta">Rural luxury cooling · Monitor closely</div></div>
+          <div class="trend-right"><div class="trend-val">−6</div><div class="trend-delta down">pts projected</div></div>
+        </div>
+        <div class="trend-row">
+          <div class="trend-icon" style="background:rgba(251,191,36,0.1);">⚡</div>
+          <div class="trend-info"><div class="trend-name">76028 · Burleson</div><div class="trend-meta">Price sensitivity increasing</div></div>
+          <div class="trend-right"><div class="trend-val">−3</div><div class="trend-delta down">pts projected</div></div>
+        </div>
+      </div>
+
+      <div class="insight-card">
+        <div class="ic-hdr">✨ Forecast Confidence Factors</div>
+        <div class="ic-point"><div class="ic-dot" style="background:var(--green);"></div><div>Spring seasonality is the primary driver — DFW has shown a consistent 18–24% buyer volume increase in April–May for the past 4 years. This year's pattern is tracking above average.</div></div>
+        <div class="ic-point"><div class="ic-dot" style="background:var(--accent);"></div><div>Mortgage rate stability (holding at current levels per Fed signals) removes the largest downside risk. Buyers who were waiting on rates are re-entering the market.</div></div>
+        <div class="ic-point"><div class="ic-dot" style="background:var(--amber);"></div><div>Inventory remains tight in the $1.2M–$1.8M tier. Demand is building faster than supply in Flower Mound and Southlake — a seller's market dynamic that will sustain through Q2.</div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <div class="nav-item active" id="nav-demand"   onclick="switchTab('demand')"><div class="nav-icon">📈</div><div class="nav-label">Demand</div></div>
+    <div class="nav-item" id="nav-dna"      onclick="switchTab('dna')"><div class="nav-icon">🧬</div><div class="nav-label">DNA</div></div>
+    <div class="nav-item" id="nav-zip"      onclick="switchTab('zip')"><div class="nav-icon">📍</div><div class="nav-label">By ZIP</div></div>
+    <div class="nav-item" id="nav-forecast" onclick="switchTab('forecast')"><div class="nav-icon">🔮</div><div class="nav-label">Forecast</div></div>
+  </div>
+
+  <!-- SHEET -->
+  <div class="sheet-backdrop" id="sheet-backdrop" onclick="closeSheet()"></div>
+  <div class="detail-sheet" id="detail-sheet">
+    <div class="ds-handle"></div>
+    <div id="sheet-content"></div>
+  </div>
+
+</div>
+
+<script>
+// ── THEME ──
+(function(){
+  const p=new URLSearchParams(window.location.search),root=document.documentElement;
+  const h=k=>p.get(k)?'#'+p.get(k):null;
+  const sv=(k,v)=>v&&root.style.setProperty(k,v);
+  const bg=h('bg'),ac=h('accent'),tx=h('text'),sf=h('surface');
+  sv('--bg',bg);sv('--accent',ac);sv('--text',tx);sv('--surface',sf);
+  if(ac){const r=parseInt(ac.slice(1,3),16),g=parseInt(ac.slice(3,5),16),b=parseInt(ac.slice(5,7),16);
+    root.style.setProperty('--accent-dim',`rgba(${r},${g},${b},0.10)`);
+    root.style.setProperty('--border',`rgba(${r},${g},${b},0.12)`);}
+  if(tx){const r=parseInt(tx.slice(1,3),16),g=parseInt(tx.slice(3,5),16),b=parseInt(tx.slice(5,7),16);
+    root.style.setProperty('--text-dim',`rgba(${r},${g},${b},0.55)`);
+    root.style.setProperty('--text-muted',`rgba(${r},${g},${b},0.32)`);}
+  if(bg){root.style.setProperty('--warm',bg);root.style.setProperty('--warm2',bg);}
+  const font=p.get('font')?decodeURIComponent(p.get('font')):null;
+  if(font){const l=document.createElement('link');l.rel='stylesheet';
+    l.href=`https://fonts.googleapis.com/css2?family=${font.replace(/ /g,'+')}:wght@400;600;700&display=swap`;
+    document.head.appendChild(l);}
+})();
+
+// ── NAV ──
+const tabMap = {
+  demand:   {screen:'s-demand',   nav:'nav-demand'},
+  dna:      {screen:'s-dna',      nav:'nav-dna'},
+  zip:      {screen:'s-zip',      nav:'nav-zip'},
+  forecast: {screen:'s-forecast', nav:'nav-forecast'},
+};
+function switchTab(key) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById(tabMap[key].screen).classList.add('active');
+  document.getElementById(tabMap[key].nav).classList.add('active');
+}
+
+// ── ZIP DATA ──
+const zipData = {
+  '76226': { zip:'76226', area:'Flower Mound', score:91, trend:'+8', buyers:312, events:18, dna:'Refined Modern (48%)', avgPrice:'$1.35M', daysOnMarket:'16d', note:'The hottest ZIP in DFW right now. Refined Modern buyers are concentrating here — 48% of active buyers match this profile. Spring season historically adds 22% buyer volume in April. Agents with listings in 76226 should host at least 2 events in the next 30 days.' },
+  '76092': { zip:'76092', area:'Southlake',    score:88, trend:'+5', buyers:241, events:14, dna:'Coastal Luxe (39%)',   avgPrice:'$1.92M', daysOnMarket:'19d', note:'Southlake is sustaining premium demand despite higher price points. Coastal Luxe and Refined Modern buyers are split almost evenly. Ultra-luxury ($2M+) is moving faster than at any point in the past 12 months.' },
+  '76051': { zip:'76051', area:'Grapevine',    score:84, trend:'+4', buyers:198, events:11, dna:'Refined Modern (44%)', avgPrice:'$1.48M', daysOnMarket:'18d', note:'Lakefront properties are the primary demand driver in 76051. Buyers from 76226 and 76092 are spilling into Grapevine as inventory tightens in those ZIPs. A strong secondary market with significant upside in the next 60 days.' },
+  '76034': { zip:'76034', area:'Colleyville',  score:81, trend:'+3', buyers:176, events:10, dna:'Warm Organic (42%)',   avgPrice:'$1.18M', daysOnMarket:'22d', note:'Colleyville is showing steady family buyer demand. Warm Organic profiles are dominant — school district quality and community features are the primary purchase drivers. Days on market is slightly elevated vs the rest of the corridor.' },
+  '76262': { zip:'76262', area:'Roanoke / Trophy Club', score:77, trend:'flat', buyers:143, events:8, dna:'Mixed (even split)', avgPrice:'$920K', daysOnMarket:'24d', note:'Trophy Club is holding steady. Mixed DNA profiles suggest a transitional buyer base. This ZIP tends to attract first-time luxury buyers trading up from lower price points — more price-sensitive than the Flower Mound corridor.' },
+  '76226b':{ zip:'76028', area:'Burleson',     score:69, trend:'−2', buyers:112, events:6,  dna:'Bold Eclectic (38%)', avgPrice:'$740K',  daysOnMarket:'31d', note:'Burleson is showing early signs of softening. Bold Eclectic buyers are price-sensitive and this ZIP has seen a small inventory uptick. Agents here should prioritize aggressive follow-up and competitive pricing.' },
+  '75022': { zip:'75022', area:'Flower Mound S.', score:66, trend:'flat', buyers:98, events:5, dna:'Warm Organic (44%)', avgPrice:'$875K', daysOnMarket:'28d', note:'Southern Flower Mound is holding but not accelerating. Family buyers dominate. Good fundamentals but the northern ZIP (76226) is capturing most of the market heat.' },
+  '76226c':{ zip:'76049', area:'Granbury',     score:58, trend:'−4', buyers:74,  events:4,  dna:'Bold Eclectic (51%)', avgPrice:'$690K',  daysOnMarket:'38d', note:'Granbury is the watch list ZIP for DFW. Rural luxury is softening across Texas and this market is early in a correction. Days on market has increased 12 days since January. Agents with listings here should consider reducing list price or increasing open house frequency.' },
+};
+
+function openZipSheet(key) {
+  const d = zipData[key];
+  if(!d) return;
+  const warm2 = getComputedStyle(document.documentElement).getPropertyValue('--warm2').trim()||'#222418';
+  const tc = getComputedStyle(document.documentElement).getPropertyValue('--text').trim()||'#EEF0E5';
+  const td = getComputedStyle(document.documentElement).getPropertyValue('--text-dim').trim()||'rgba(238,240,229,0.55)';
+  const tm = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim()||'rgba(238,240,229,0.32)';
+  const ac = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#B8E030';
+  const trendColor = d.trend.startsWith('+') ? '#4ADE80' : d.trend === 'flat' ? tm : '#F87171';
+
+  document.getElementById('sheet-content').innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <div style="flex:1;">
+        <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:${tc};">${d.area}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:${ac};margin-top:2px;">ZIP ${d.zip}</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'Fraunces',serif;font-size:32px;font-weight:700;color:${ac};">${d.score}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;font-weight:600;color:${trendColor};">${d.trend} pts this month</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+      <div style="background:${warm2};border-radius:10px;padding:10px;"><div style="font-family:'DM Mono',monospace;font-size:9px;color:${tm};text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Active Buyers</div><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:${ac};">${d.buyers}</div></div>
+      <div style="background:${warm2};border-radius:10px;padding:10px;"><div style="font-family:'DM Mono',monospace;font-size:9px;color:${tm};text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Events / Mo</div><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:${ac};">${d.events}</div></div>
+      <div style="background:${warm2};border-radius:10px;padding:10px;"><div style="font-family:'DM Mono',monospace;font-size:9px;color:${tm};text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Avg List Price</div><div style="font-size:14px;font-weight:600;color:${tc};">${d.avgPrice}</div></div>
+      <div style="background:${warm2};border-radius:10px;padding:10px;"><div style="font-family:'DM Mono',monospace;font-size:9px;color:${tm};text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Days on Market</div><div style="font-size:14px;font-weight:600;color:${tc};">${d.daysOnMarket}</div></div>
+    </div>
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:${tm};margin-bottom:6px;">Dominant Buyer DNA</div>
+    <div style="font-size:13px;color:${td};margin-bottom:14px;">${d.dna}</div>
+    <div style="background:rgba(184,224,48,0.06);border:1px solid rgba(184,224,48,0.15);border-radius:12px;padding:13px;margin-bottom:14px;">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:${ac};margin-bottom:6px;">✨ Market Intelligence</div>
+      <div style="font-size:13px;color:${td};line-height:1.6;">${d.note}</div>
+    </div>
+    <button onclick="closeSheet()" style="width:100%;background:${warm2};border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:13px;color:${tm};font-size:14px;cursor:pointer;">Close</button>`;
+
+  document.getElementById('sheet-backdrop').classList.add('open');
+  document.getElementById('detail-sheet').classList.add('open');
+}
+
+function closeSheet() {
+  document.getElementById('sheet-backdrop').classList.remove('open');
+  document.getElementById('detail-sheet').classList.remove('open');
+}
+
+// ── LIVE BADGE ──
+setInterval(()=>{
+  const el = document.getElementById('live-badge');
+  if(el) el.textContent = Math.random() < 0.5 ? 'Live' : 'Live ·';
+}, 1800);
+</script>
+</body>
+</html>

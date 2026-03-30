@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ChloeIQ — Agent Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,300;1,600&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0A0B07;
+  --accent: #B8E030;
+  --accent-dim: rgba(184,224,48,0.10);
+  --surface: #13160D;
+  --surface2: #1C1F14;
+  --border: rgba(184,224,48,0.12);
+  --border2: rgba(255,255,255,0.07);
+  --text: #EEF0E5;
+  --text-dim: rgba(238,240,229,0.55);
+  --text-muted: rgba(238,240,229,0.32);
+  --warm: #1A1C12;
+  --warm2: #222418;
+  --green: #4ADE80;
+  --amber: #FBBF24;
+  --red: #F87171;
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body {
+  background: #0D0D0D;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Sans', sans-serif;
+  padding: 24px 16px;
+  gap: 20px;
+}
+.outer-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--accent); opacity: 0.6;
+}
+.phone {
+  width: 375px; height: 812px;
+  background: var(--bg);
+  border-radius: 44px; overflow: hidden; position: relative;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.07), 0 0 0 2px rgba(0,0,0,0.6), 0 32px 64px rgba(0,0,0,0.7);
+  display: flex; flex-direction: column;
+}
+.notch {
+  position: absolute; top:0; left:50%;
+  transform: translateX(-50%);
+  width:120px; height:30px; background:#080808;
+  border-radius:0 0 20px 20px; z-index:20;
+}
+.status-bar {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:18px 28px 0;
+  font-family:'DM Mono',monospace; font-size:12px;
+  color:rgba(238,240,229,0.6); flex-shrink:0; z-index:10;
+}
+
+/* SCREENS */
+.screen { flex:1; display:none; flex-direction:column; overflow:hidden; }
+.screen.active { display:flex; }
+
+/* ══ SCREEN: HOME ══ */
+#s-home { background: var(--bg); }
+
+.home-header {
+  padding: 14px 20px 16px;
+  border-bottom: 1px solid var(--border2);
+  flex-shrink: 0;
+}
+.home-header-top {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom: 14px;
+}
+.agent-info { display:flex; align-items:center; gap:10px; }
+.agent-avatar {
+  width:38px; height:38px; border-radius:12px;
+  background: var(--accent-dim);
+  border: 1px solid rgba(184,224,48,0.25);
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; flex-shrink:0;
+}
+.agent-name { font-size:14px; font-weight:500; color:var(--text); }
+.agent-tier {
+  font-family:'DM Mono',monospace; font-size:9px;
+  letter-spacing:1.5px; text-transform:uppercase;
+  color:var(--accent);
+}
+.notif-btn {
+  width:36px; height:36px; border-radius:10px;
+  background:var(--surface); border:1px solid var(--border2);
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; cursor:pointer; position:relative;
+}
+.notif-dot {
+  position:absolute; top:6px; right:6px;
+  width:7px; height:7px; border-radius:50%;
+  background:var(--red); border:1.5px solid var(--bg);
+}
+
+/* STAT ROW */
+.stat-row {
+  display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;
+}
+.stat-chip {
+  background:var(--surface); border:1px solid var(--border2);
+  border-radius:12px; padding:10px 12px;
+  display:flex; flex-direction:column; gap:3px;
+}
+.stat-val {
+  font-family:'Fraunces',serif; font-size:20px; font-weight:700;
+  color:var(--accent);
+}
+.stat-lbl {
+  font-family:'DM Mono',monospace; font-size:9px;
+  letter-spacing:1.5px; text-transform:uppercase; color:var(--text-muted);
+}
+
+/* HOT LEAD BANNER */
+.hot-banner {
+  margin: 14px 20px 0;
+  background: linear-gradient(135deg, rgba(255,107,107,0.15), rgba(255,107,107,0.05));
+  border: 1px solid rgba(255,107,107,0.3);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex; align-items: center; gap: 12px;
+  cursor: pointer; flex-shrink:0;
+  animation: hotGlow 2s ease-in-out infinite;
+}
+@keyframes hotGlow {
+  0%,100% { box-shadow:0 0 0 rgba(255,107,107,0); }
+  50% { box-shadow:0 0 16px rgba(255,107,107,0.15); }
+}
+.hot-pulse {
+  width:10px; height:10px; border-radius:50%;
+  background:#FF6B6B; flex-shrink:0;
+  animation: hotPulse 1.2s ease-in-out infinite;
+}
+@keyframes hotPulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:0.6} }
+.hot-text { flex:1; }
+.hot-title { font-size:13px; font-weight:600; color:#FF6B6B; margin-bottom:1px; }
+.hot-sub { font-size:12px; color:var(--text-dim); }
+.hot-action {
+  font-family:'DM Mono',monospace; font-size:10px;
+  color:#FF6B6B; letter-spacing:1px;
+}
+
+/* HOME SCROLL */
+.home-scroll {
+  flex:1; overflow-y:auto; scrollbar-width:none;
+  padding: 16px 20px;
+}
+.home-scroll::-webkit-scrollbar { display:none; }
+
+.section-label {
+  font-family:'DM Mono',monospace; font-size:9px;
+  letter-spacing:2px; text-transform:uppercase;
+  color:var(--text-muted); margin-bottom:10px;
+}
+
+/* LEAD CARDS */
+.lead-cards { display:flex; flex-direction:column; gap:8px; margin-bottom:20px; }
+
+.lead-card {
+  background:var(--surface); border:1px solid var(--border2);
+  border-radius:14px; padding:13px 14px;
+  display:flex; align-items:center; gap:12px;
+  cursor:pointer; transition:all 0.2s; position:relative; overflow:hidden;
+}
+.lead-card:hover { border-color:rgba(184,224,48,0.2); }
+.lead-card.hot { border-color:rgba(255,107,107,0.3); }
+
+.lead-card-bar {
+  position:absolute; left:0; top:0; bottom:0; width:3px;
+  border-radius:2px 0 0 2px;
+}
+.lead-avatar {
+  width:38px; height:38px; border-radius:50%;
+  background:var(--warm2); border:1.5px solid var(--border2);
+  display:flex; align-items:center; justify-content:center;
+  font-size:17px; flex-shrink:0;
+}
+.lead-info { flex:1; }
+.lead-name { font-size:14px; font-weight:500; color:var(--text); margin-bottom:2px; }
+.lead-meta { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); }
+.lead-right { display:flex; flex-direction:column; align-items:flex-end; gap:4px; flex-shrink:0; }
+.lead-score {
+  font-family:'Fraunces',serif; font-size:18px; font-weight:700; color:var(--accent);
+}
+.lead-signal {
+  font-size:10px; font-weight:600; padding:3px 8px;
+  border-radius:100px;
+}
+.sig-hot  { background:rgba(255,107,107,0.12); color:#FF6B6B; }
+.sig-warm { background:rgba(251,191,36,0.12);  color:var(--amber); }
+.sig-cool { background:var(--accent-dim);       color:var(--accent); }
+
+/* TODAY CARD */
+.today-card {
+  background:var(--surface); border:1px solid var(--border2);
+  border-radius:16px; padding:16px; margin-bottom:20px;
+}
+.today-address {
+  font-family:'Fraunces',serif; font-size:16px; font-weight:700;
+  color:var(--text); margin-bottom:4px;
+}
+.today-meta { font-size:12px; color:var(--text-muted); margin-bottom:14px; }
+.today-stats { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.ts { background:var(--warm2); border-radius:10px; padding:10px; }
+.ts-val { font-family:'Fraunces',serif; font-size:18px; font-weight:700; color:var(--accent); }
+.ts-lbl { font-family:'DM Mono',monospace; font-size:9px; color:var(--text-muted); letter-spacing:1px; text-transform:uppercase; margin-top:2px; }
+
+/* SCORE CARD */
+.score-card {
+  background:var(--accent); border-radius:16px;
+  padding:16px; margin-bottom:20px;
+  display:flex; align-items:center; gap:14px;
+}
+.score-ring-wrap {
+  width:64px; height:64px; position:relative;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.score-ring-wrap svg { position:absolute; inset:0; transform:rotate(-90deg); }
+.sr-bg { fill:none; stroke:rgba(10,11,7,0.15); stroke-width:5; }
+.sr-fg { fill:none; stroke:var(--bg); stroke-width:5; stroke-linecap:round;
+  stroke-dasharray:176; stroke-dashoffset:44; }
+.score-num {
+  font-family:'Fraunces',serif; font-size:20px; font-weight:700; color:var(--bg);
+}
+.score-info { flex:1; }
+.score-title { font-family:'Fraunces',serif; font-size:15px; font-weight:700; color:var(--bg); }
+.score-sub { font-size:12px; color:rgba(10,11,7,0.55); margin-top:2px; }
+.score-tier {
+  font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1.5px;
+  color:rgba(10,11,7,0.5); text-transform:uppercase; margin-top:6px;
+}
+
+/* ══ SCREEN: LEADS ══ */
+#s-leads { background: var(--bg); }
+
+.leads-header {
+  padding:14px 20px 14px; border-bottom:1px solid var(--border2); flex-shrink:0;
+}
+.leads-title {
+  font-family:'Fraunces',serif; font-size:18px; font-weight:700; color:var(--text);
+  margin-bottom:12px;
+}
+.filter-row { display:flex; gap:6px; overflow-x:auto; scrollbar-width:none; }
+.filter-row::-webkit-scrollbar { display:none; }
+.filter-chip {
+  padding:6px 14px; border-radius:100px;
+  border:1px solid var(--border2); background:var(--surface);
+  font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px;
+  color:var(--text-muted); white-space:nowrap; cursor:pointer; transition:all 0.2s;
+}
+.filter-chip.active {
+  background:var(--accent-dim); border-color:rgba(184,224,48,0.3); color:var(--accent);
+}
+
+.leads-list {
+  flex:1; overflow-y:auto; scrollbar-width:none; padding:14px 20px;
+}
+.leads-list::-webkit-scrollbar { display:none; }
+
+/* Expanded lead card */
+.lead-full {
+  background:var(--surface); border:1px solid var(--border2);
+  border-radius:16px; padding:16px; margin-bottom:10px; cursor:pointer;
+  transition:all 0.2s;
+}
+.lead-full:hover { border-color:rgba(184,224,48,0.2); }
+.lead-full.hot { border-color:rgba(255,107,107,0.3); }
+
+.lf-top { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+.lf-avatar {
+  width:44px; height:44px; border-radius:50%;
+  background:var(--warm2); border:2px solid var(--border2);
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px; flex-shrink:0; position:relative;
+}
+.lf-hot-dot {
+  position:absolute; top:-2px; right:-2px;
+  width:12px; height:12px; border-radius:50%;
+  background:#FF6B6B; border:2px solid var(--surface);
+  animation:hotPulse 1.2s ease-in-out infinite;
+}
+.lf-info { flex:1; }
+.lf-name { font-size:15px; font-weight:600; color:var(--text); margin-bottom:2px; }
+.lf-dna { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); }
+.lf-score-wrap { display:flex; flex-direction:column; align-items:flex-end; gap:4px; }
+.lf-score { font-family:'Fraunces',serif; font-size:24px; font-weight:700; color:var(--accent); }
+.lf-signal { font-size:10px; font-weight:600; padding:3px 9px; border-radius:100px; }
+
+.lf-rooms { display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap; }
+.lf-room-tag {
+  background:var(--warm2); border-radius:100px;
+  padding:4px 10px;
+  font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted);
+}
+.lf-room-tag.peak { background:var(--accent-dim); color:var(--accent); }
+
+.lf-actions { display:flex; gap:8px; }
+.lf-btn {
+  flex:1; border-radius:10px; padding:10px;
+  font-family:'DM Mono',monospace; font-size:10px;
+  letter-spacing:1px; text-transform:uppercase;
+  cursor:pointer; text-align:center; transition:all 0.2s;
+}
+.lf-btn-primary { background:var(--accent); color:var(--bg); border:none; font-weight:600; }
+.lf-btn-secondary { background:transparent; color:var(--text-muted); border:1px solid var(--border2); }
+.lf-btn-secondary:hover { color:var(--text); border-color:rgba(255,255,255,0.15); }
+
+/* ══ SCREEN: SCORE ══ */
+#s-score { background: var(--bg); overflow-y:auto; scrollbar-width:none; }
+#s-score::-webkit-scrollbar { display:none; }
+
+.score-header {
+  padding:20px 20px 0; margin-bottom:20px;
+}
+.score-page-title {
+  font-family:'Fraunces',serif; font-size:22px; font-weight:700; color:var(--text);
+  margin-bottom:4px;
+}
+.score-page-sub { font-size:13px; color:var(--text-muted); }
+
+.big-score-ring {
+  width:160px; height:160px; position:relative;
+  display:flex; align-items:center; justify-content:center;
+  margin:0 auto 20px;
+}
+.big-score-ring svg { position:absolute; inset:0; transform:rotate(-90deg); }
+.bsr-bg { fill:none; stroke:rgba(255,255,255,0.06); stroke-width:10; }
+.bsr-fg { fill:none; stroke:var(--accent); stroke-width:10; stroke-linecap:round;
+  stroke-dasharray:440; stroke-dashoffset:110;
+  filter:drop-shadow(0 0 6px var(--accent)); }
+.big-score-num {
+  font-family:'Fraunces',serif; font-size:52px; font-weight:700; color:var(--accent); line-height:1;
+}
+.big-score-lbl {
+  font-family:'DM Mono',monospace; font-size:9px; letter-spacing:2px;
+  color:var(--text-muted); text-transform:uppercase; text-align:center;
+}
+
+.tier-badge {
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  background:var(--accent-dim); border:1px solid var(--border);
+  border-radius:100px; padding:8px 20px; width:fit-content; margin:0 auto 24px;
+}
+.tier-badge-dot {
+  width:8px; height:8px; border-radius:50%; background:var(--accent);
+}
+.tier-badge-text {
+  font-family:'DM Mono',monospace; font-size:11px;
+  letter-spacing:2px; text-transform:uppercase; color:var(--accent);
+}
+
+.breakdown-card {
+  margin:0 20px 14px;
+  background:var(--surface); border:1px solid var(--border2); border-radius:16px; overflow:hidden;
+}
+.bc-row {
+  display:flex; align-items:center; padding:12px 16px; gap:12px;
+  border-bottom:1px solid var(--border2);
+}
+.bc-row:last-child { border-bottom:none; }
+.bc-label { font-size:13px; color:var(--text); flex:1; }
+.bc-bar-wrap { width:80px; height:4px; background:rgba(255,255,255,0.06); border-radius:2px; overflow:hidden; }
+.bc-bar { height:100%; background:var(--accent); border-radius:2px; }
+.bc-val { font-family:'DM Mono',monospace; font-size:12px; color:var(--accent); width:28px; text-align:right; }
+
+.leaderboard {
+  margin:0 20px 24px;
+  background:var(--surface); border:1px solid var(--border2); border-radius:16px; overflow:hidden;
+}
+.lb-header {
+  padding:12px 16px; border-bottom:1px solid var(--border2);
+  font-family:'DM Mono',monospace; font-size:9px; letter-spacing:2px;
+  text-transform:uppercase; color:var(--text-muted);
+}
+.lb-row {
+  display:flex; align-items:center; padding:11px 16px; gap:12px;
+  border-bottom:1px solid var(--border2);
+}
+.lb-row:last-child { border-bottom:none; }
+.lb-row.me { background:rgba(184,224,48,0.04); }
+.lb-rank {
+  font-family:'Fraunces',serif; font-size:15px; font-weight:700;
+  color:var(--text-muted); width:20px;
+}
+.lb-row.me .lb-rank { color:var(--accent); }
+.lb-name { font-size:13px; color:var(--text); flex:1; }
+.lb-row.me .lb-name { color:var(--accent); font-weight:600; }
+.lb-score-val { font-family:'DM Mono',monospace; font-size:12px; color:var(--text-dim); }
+.lb-row.me .lb-score-val { color:var(--accent); }
+
+/* BOTTOM NAV */
+.bottom-nav {
+  display:flex; border-top:1px solid var(--border2);
+  padding:10px 0 20px; background:var(--bg); flex-shrink:0;
+}
+.nav-item {
+  flex:1; display:flex; flex-direction:column;
+  align-items:center; gap:3px; cursor:pointer; padding:4px 0;
+}
+.nav-icon { font-size:20px; }
+.nav-label {
+  font-family:'DM Mono',monospace; font-size:9px;
+  letter-spacing:0.5px; color:var(--text-muted); text-transform:uppercase;
+}
+.nav-item.active .nav-label { color:var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="outer-label">ChloeIQ · Agent Dashboard · Marcus Rivera</div>
+
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status-bar"><span>9:41</span><span>●●● 5G 🔋</span></div>
+
+  <!-- ══ HOME SCREEN ══ -->
+  <div class="screen active" id="s-home">
+    <div class="home-header">
+      <div class="home-header-top">
+        <div class="agent-info">
+          <div class="agent-avatar">👤</div>
+          <div>
+            <div class="agent-name">Marcus Rivera</div>
+            <div class="agent-tier">Gold · Host Score 780</div>
+          </div>
+        </div>
+        <div class="notif-btn">🔔<div class="notif-dot"></div></div>
+      </div>
+      <div class="stat-row">
+        <div class="stat-chip">
+          <div class="stat-val" id="stat-buyers">12</div>
+          <div class="stat-lbl">Buyers In</div>
+        </div>
+        <div class="stat-chip">
+          <div class="stat-val">3</div>
+          <div class="stat-lbl">Hot Leads</div>
+        </div>
+        <div class="stat-chip">
+          <div class="stat-val" id="stat-time">41m</div>
+          <div class="stat-lbl">Live</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOT LEAD BANNER -->
+    <div class="hot-banner" onclick="goScreen('s-leads')">
+      <div class="hot-pulse"></div>
+      <div class="hot-text">
+        <div class="hot-title">🔥 Hot Lead — Jordan Lee</div>
+        <div class="hot-sub">87% match · 34m dwell · 4 questions asked</div>
+      </div>
+      <div class="hot-action">View →</div>
+    </div>
+
+    <div class="home-scroll">
+      <div class="section-label" style="margin-top:4px;">Recent Leads</div>
+      <div class="lead-cards">
+        <div class="lead-card hot" onclick="goScreen('s-leads')">
+          <div class="lead-card-bar" style="background:#FF6B6B;"></div>
+          <div class="lead-avatar">👤</div>
+          <div class="lead-info">
+            <div class="lead-name">Jordan Lee</div>
+            <div class="lead-meta">Refined Modern · Kitchen 14m</div>
+          </div>
+          <div class="lead-right">
+            <div class="lead-score">87%</div>
+            <div class="lead-signal sig-hot">🔥 Hot</div>
+          </div>
+        </div>
+        <div class="lead-card" onclick="goScreen('s-leads')">
+          <div class="lead-card-bar" style="background:var(--amber);"></div>
+          <div class="lead-avatar">👤</div>
+          <div class="lead-info">
+            <div class="lead-name">Alex & Sam Chen</div>
+            <div class="lead-meta">Warm Organic · Primary 18m</div>
+          </div>
+          <div class="lead-right">
+            <div class="lead-score">82%</div>
+            <div class="lead-signal sig-warm">⚡ Warm</div>
+          </div>
+        </div>
+        <div class="lead-card" onclick="goScreen('s-leads')">
+          <div class="lead-card-bar" style="background:var(--accent);"></div>
+          <div class="lead-avatar">👤</div>
+          <div class="lead-info">
+            <div class="lead-name">Morgan Rivera</div>
+            <div class="lead-meta">Coastal Luxe · Backyard 12m</div>
+          </div>
+          <div class="lead-right">
+            <div class="lead-score">79%</div>
+            <div class="lead-signal sig-cool">✓ Active</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label">Today's Event</div>
+      <div class="today-card">
+        <div class="today-address">2847 Magnolia Drive</div>
+        <div class="today-meta">Flower Mound, TX · $1,295,000 · 1–4pm</div>
+        <div class="today-stats">
+          <div class="ts">
+            <div class="ts-val">12</div>
+            <div class="ts-lbl">Buyers</div>
+          </div>
+          <div class="ts">
+            <div class="ts-val">87%</div>
+            <div class="ts-lbl">Top Match</div>
+          </div>
+          <div class="ts">
+            <div class="ts-val">4</div>
+            <div class="ts-lbl">Questions</div>
+          </div>
+          <div class="ts">
+            <div class="ts-val">52m</div>
+            <div class="ts-lbl">Total Dwell</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label">Your Host Score</div>
+      <div class="score-card" onclick="goScreen('s-score')">
+        <div class="score-ring-wrap">
+          <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+            <circle class="sr-bg" cx="32" cy="32" r="28"/>
+            <circle class="sr-fg" cx="32" cy="32" r="28"/>
+          </svg>
+          <div class="score-num">780</div>
+        </div>
+        <div class="score-info">
+          <div class="score-title">Host Score</div>
+          <div class="score-sub">Top 12% in DFW · +24 this month</div>
+          <div class="score-tier">Gold Tier · 3rd consecutive</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ LEADS SCREEN ══ -->
+  <div class="screen" id="s-leads">
+    <div class="leads-header">
+      <div class="leads-title">Leads</div>
+      <div class="filter-row">
+        <div class="filter-chip active" onclick="filterLeads(this,'all')">All (12)</div>
+        <div class="filter-chip" onclick="filterLeads(this,'hot')">🔥 Hot (3)</div>
+        <div class="filter-chip" onclick="filterLeads(this,'warm')">⚡ Warm (5)</div>
+        <div class="filter-chip" onclick="filterLeads(this,'active')">✓ Active (4)</div>
+      </div>
+    </div>
+    <div class="leads-list">
+      <div class="lead-full hot">
+        <div class="lf-top">
+          <div class="lf-avatar">👤<div class="lf-hot-dot"></div></div>
+          <div class="lf-info">
+            <div class="lf-name">Jordan Lee</div>
+            <div class="lf-dna">Refined Modern · First-time buyer</div>
+          </div>
+          <div class="lf-score-wrap">
+            <div class="lf-score">87%</div>
+            <div class="lf-signal sig-hot">🔥 Hot</div>
+          </div>
+        </div>
+        <div class="lf-rooms">
+          <div class="lf-room-tag peak">🍳 Kitchen 14m</div>
+          <div class="lf-room-tag peak">🛁 Primary 11m</div>
+          <div class="lf-room-tag">🌿 Yard 9m</div>
+          <div class="lf-room-tag">💬 4 questions</div>
+        </div>
+        <div class="lf-actions">
+          <div class="lf-btn lf-btn-primary">✨ Draft Follow-Up</div>
+          <div class="lf-btn lf-btn-secondary">View Profile</div>
+        </div>
+      </div>
+
+      <div class="lead-full hot">
+        <div class="lf-top">
+          <div class="lf-avatar">👤<div class="lf-hot-dot"></div></div>
+          <div class="lf-info">
+            <div class="lf-name">Alex & Sam Chen</div>
+            <div class="lf-dna">Warm Organic · Family buyer</div>
+          </div>
+          <div class="lf-score-wrap">
+            <div class="lf-score">82%</div>
+            <div class="lf-signal sig-warm">⚡ Warm</div>
+          </div>
+        </div>
+        <div class="lf-rooms">
+          <div class="lf-room-tag peak">🛁 Primary 18m</div>
+          <div class="lf-room-tag">🍳 Kitchen 8m</div>
+          <div class="lf-room-tag">💼 Office 6m</div>
+        </div>
+        <div class="lf-actions">
+          <div class="lf-btn lf-btn-primary">✨ Draft Follow-Up</div>
+          <div class="lf-btn lf-btn-secondary">View Profile</div>
+        </div>
+      </div>
+
+      <div class="lead-full">
+        <div class="lf-top">
+          <div class="lf-avatar">👤</div>
+          <div class="lf-info">
+            <div class="lf-name">Morgan Rivera</div>
+            <div class="lf-dna">Coastal Luxe · Repeat buyer</div>
+          </div>
+          <div class="lf-score-wrap">
+            <div class="lf-score">79%</div>
+            <div class="lf-signal sig-warm">⚡ Warm</div>
+          </div>
+        </div>
+        <div class="lf-rooms">
+          <div class="lf-room-tag peak">🌿 Backyard 12m</div>
+          <div class="lf-room-tag">🍳 Kitchen 6m</div>
+          <div class="lf-room-tag">🛋️ Living 4m</div>
+        </div>
+        <div class="lf-actions">
+          <div class="lf-btn lf-btn-primary">✨ Draft Follow-Up</div>
+          <div class="lf-btn lf-btn-secondary">View Profile</div>
+        </div>
+      </div>
+
+      <div class="lead-full">
+        <div class="lf-top">
+          <div class="lf-avatar">👤</div>
+          <div class="lf-info">
+            <div class="lf-name">Taylor Kim</div>
+            <div class="lf-dna">Bold Eclectic · First-time buyer</div>
+          </div>
+          <div class="lf-score-wrap">
+            <div class="lf-score">64%</div>
+            <div class="lf-signal sig-cool">✓ Active</div>
+          </div>
+        </div>
+        <div class="lf-rooms">
+          <div class="lf-room-tag">🛋️ Living 5m</div>
+          <div class="lf-room-tag">🍽️ Dining 4m</div>
+          <div class="lf-room-tag">🍳 Kitchen 3m</div>
+        </div>
+        <div class="lf-actions">
+          <div class="lf-btn lf-btn-primary">✨ Draft Follow-Up</div>
+          <div class="lf-btn lf-btn-secondary">View Profile</div>
+        </div>
+      </div>
+
+      <div class="lead-full">
+        <div class="lf-top">
+          <div class="lf-avatar">👤</div>
+          <div class="lf-info">
+            <div class="lf-name">Casey Nguyen</div>
+            <div class="lf-dna">Refined Modern · First-time buyer</div>
+          </div>
+          <div class="lf-score-wrap">
+            <div class="lf-score">71%</div>
+            <div class="lf-signal sig-cool">✓ Active</div>
+          </div>
+        </div>
+        <div class="lf-rooms">
+          <div class="lf-room-tag">🍳 Kitchen 4m</div>
+          <div class="lf-room-tag">🛁 Primary 3m</div>
+        </div>
+        <div class="lf-actions">
+          <div class="lf-btn lf-btn-primary">✨ Draft Follow-Up</div>
+          <div class="lf-btn lf-btn-secondary">View Profile</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCORE SCREEN ══ -->
+  <div class="screen" id="s-score" style="overflow-y:auto;scrollbar-width:none;">
+    <div class="score-header">
+      <div class="score-page-title">Host Score</div>
+      <div class="score-page-sub">Marcus Rivera · DFW Market</div>
+    </div>
+
+    <div class="big-score-ring">
+      <svg viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+        <circle class="bsr-bg" cx="80" cy="80" r="70"/>
+        <circle class="bsr-fg" cx="80" cy="80" r="70"/>
+      </svg>
+      <div class="big-score-num">780</div>
+    </div>
+    <div class="big-score-lbl" style="margin-bottom:16px;">Host Score</div>
+
+    <div class="tier-badge">
+      <div class="tier-badge-dot"></div>
+      <div class="tier-badge-text">Gold Tier · Top 12% DFW</div>
+    </div>
+
+    <div class="breakdown-card">
+      <div class="bc-row">
+        <div class="bc-label">Follow-Up Rate</div>
+        <div class="bc-bar-wrap"><div class="bc-bar" style="width:98%"></div></div>
+        <div class="bc-val">98%</div>
+      </div>
+      <div class="bc-row">
+        <div class="bc-label">Buyer Satisfaction</div>
+        <div class="bc-bar-wrap"><div class="bc-bar" style="width:94%"></div></div>
+        <div class="bc-val">94%</div>
+      </div>
+      <div class="bc-row">
+        <div class="bc-label">Data Accuracy</div>
+        <div class="bc-bar-wrap"><div class="bc-bar" style="width:91%"></div></div>
+        <div class="bc-val">91%</div>
+      </div>
+      <div class="bc-row">
+        <div class="bc-label">Events Hosted</div>
+        <div class="bc-bar-wrap"><div class="bc-bar" style="width:85%"></div></div>
+        <div class="bc-val">42</div>
+      </div>
+      <div class="bc-row">
+        <div class="bc-label">Avg Lead Score</div>
+        <div class="bc-bar-wrap"><div class="bc-bar" style="width:79%"></div></div>
+        <div class="bc-val">79%</div>
+      </div>
+    </div>
+
+    <div class="section-label" style="padding:0 20px 10px;">DFW Leaderboard</div>
+    <div class="leaderboard">
+      <div class="lb-header">Top Hosts This Month</div>
+      <div class="lb-row">
+        <div class="lb-rank">1</div>
+        <div class="lb-name">Sarah Okonkwo</div>
+        <div class="lb-score-val">812</div>
+      </div>
+      <div class="lb-row">
+        <div class="lb-rank">2</div>
+        <div class="lb-name">Daniel Park</div>
+        <div class="lb-score-val">801</div>
+      </div>
+      <div class="lb-row me">
+        <div class="lb-rank">3</div>
+        <div class="lb-name">Marcus Rivera ← You</div>
+        <div class="lb-score-val">780</div>
+      </div>
+      <div class="lb-row">
+        <div class="lb-rank">4</div>
+        <div class="lb-name">Priya Nair</div>
+        <div class="lb-score-val">764</div>
+      </div>
+      <div class="lb-row">
+        <div class="lb-rank">5</div>
+        <div class="lb-name">James Whitfield</div>
+        <div class="lb-score-val">751</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <div class="nav-item active" id="nav-home" onclick="goScreen('s-home');setNav('nav-home')">
+      <div class="nav-icon">🏠</div>
+      <div class="nav-label">Home</div>
+    </div>
+    <div class="nav-item" id="nav-leads" onclick="goScreen('s-leads');setNav('nav-leads')">
+      <div class="nav-icon">👥</div>
+      <div class="nav-label">Leads</div>
+    </div>
+    <div class="nav-item" id="nav-heat" onclick="goHeatMap()">
+      <div class="nav-icon">🔥</div>
+      <div class="nav-label">Heat Map</div>
+    </div>
+    <div class="nav-item" id="nav-score" onclick="goScreen('s-score');setNav('nav-score')">
+      <div class="nav-icon">⭐</div>
+      <div class="nav-label">Score</div>
+    </div>
+  </div>
+
+</div><!-- end phone -->
+
+<script>
+// ── THEME ──
+(function(){
+  const p=new URLSearchParams(window.location.search),root=document.documentElement;
+  const h=k=>p.get(k)?'#'+p.get(k):null;
+  const sv=(k,v)=>v&&root.style.setProperty(k,v);
+  const bg=h('bg'),ac=h('accent'),tx=h('text'),sf=h('surface');
+  sv('--bg',bg);sv('--accent',ac);sv('--text',tx);sv('--surface',sf);
+  if(ac){const r=parseInt(ac.slice(1,3),16),g=parseInt(ac.slice(3,5),16),b=parseInt(ac.slice(5,7),16);
+    root.style.setProperty('--accent-dim',`rgba(${r},${g},${b},0.10)`);
+    root.style.setProperty('--border',`rgba(${r},${g},${b},0.12)`);}
+  if(tx){const r=parseInt(tx.slice(1,3),16),g=parseInt(tx.slice(3,5),16),b=parseInt(tx.slice(5,7),16);
+    root.style.setProperty('--text-dim',`rgba(${r},${g},${b},0.55)`);
+    root.style.setProperty('--text-muted',`rgba(${r},${g},${b},0.32)`);}
+  if(bg){root.style.setProperty('--warm',bg);root.style.setProperty('--warm2',bg);}
+  const font=p.get('font')?decodeURIComponent(p.get('font')):null;
+  if(font){const l=document.createElement('link');l.rel='stylesheet';
+    l.href=`https://fonts.googleapis.com/css2?family=${font.replace(/ /g,'+')}:wght@400;600;700&display=swap`;
+    document.head.appendChild(l);
+    l.onload=()=>document.querySelectorAll('.agent-name,.leads-title,.score-page-title,.today-address,.lf-name,.big-score-num,.score-num').forEach(e=>e.style.fontFamily=`'${font}',serif`);}
+})();
+
+// ── NAV ──
+function goScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function setNav(id){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ── HEAT MAP NAV — show toast linking to heat map artifact ──
+function goHeatMap(){
+  setNav('nav-heat');
+  showToast('🔥 Heat Map', 'This opens the standalone Buyer Heat Map artifact in the demo hub.');
+}
+
+// ── FILTER LEADS ──
+function filterLeads(el, type) {
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+
+  document.querySelectorAll('.lead-full').forEach(card => {
+    const sig = card.querySelector('.lf-signal');
+    if (!sig) { card.style.display = ''; return; }
+    const sigText = sig.textContent.toLowerCase();
+
+    if (type === 'all') {
+      card.style.display = '';
+    } else if (type === 'hot') {
+      card.style.display = sigText.includes('hot') ? '' : 'none';
+    } else if (type === 'warm') {
+      card.style.display = sigText.includes('warm') ? '' : 'none';
+    } else if (type === 'active') {
+      card.style.display = sigText.includes('active') ? '' : 'none';
+    }
+  });
+}
+
+const followUpDrafts = {
+  'Jordan Lee': `Hi Jordan,\n\nGreat meeting you at 2847 Magnolia Drive today. I noticed you spent significant time in the kitchen — the Wolf range and slab cabinetry seemed to resonate with your Refined Modern aesthetic.\n\nThe primary suite's spa finish and the southwest-facing backyard also align closely with your StyleDNA profile. I'd love to schedule a private showing so you can revisit the game room and media room you didn't get to see.\n\nWould Thursday or Friday work for a 30-minute private tour?\n\nBest,\nMarcus Rivera`,
+  'Alex & Sam Chen': `Hi Alex and Sam,\n\nWonderful to meet you both at the open house today. Your 18 minutes in the primary suite was the longest of any buyer — I think that spa bath and the Jack-and-Jill connection to the kids' wing really clicked for you.\n\nThe home office with its separate entrance is perfect for working from home, which I know is a priority for your family. The Flower Mound school district is also one of the strongest in DFW.\n\nI'd love to get you back in for a private showing — would this weekend work?\n\nBest,\nMarcus Rivera`,
+  'Morgan Rivera': `Hi Morgan,\n\nGreat to meet you today at Magnolia Drive. I noticed you spent the most time in the backyard — that southwest orientation means afternoon pool time from 2pm until sunset, and the covered lanai is 800 sq ft with a built-in Lynx grill. Perfect for your lifestyle.\n\nYour Coastal Luxe profile pairs well with the open-plan main level and the indoor-outdoor flow here. I think this one has real potential for you.\n\nUp for a second look?\n\nBest,\nMarcus Rivera`,
+  'Taylor Kim': `Hi Taylor,\n\nThanks for stopping by 2847 Magnolia Drive today. Your time in the living and dining rooms showed some interest — I think the volume ceilings and the flow from the kitchen are the strongest features for your eye.\n\nThe home has real bones for a Bold Eclectic approach — the formal dining room in particular has the ceiling height and millwork for a strong design statement.\n\nLet me know if you'd like to take a second look.\n\nBest,\nMarcus Rivera`,
+};
+
+function draftFollowUp(name) {
+  const draft = followUpDrafts[name] || `Hi ${name},\n\nGreat meeting you at 2847 Magnolia Drive today. Based on your tour, I think there's a strong match here. Would you like to schedule a private showing?\n\nBest,\nMarcus Rivera`;
+
+  // Create modal
+  const existing = document.getElementById('followup-modal');
+  if (existing) existing.remove();
+
+  const modal = document.createElement('div');
+  modal.id = 'followup-modal';
+  modal.style.cssText = `
+    position:absolute;inset:0;background:rgba(0,0,0,0.7);z-index:200;
+    display:flex;align-items:flex-end;
+    backdrop-filter:blur(4px);
+  `;
+  modal.innerHTML = `
+    <div style="
+      background:var(--surface);border-radius:22px 22px 0 0;
+      border-top:1px solid var(--border2);
+      padding:0 20px 32px;width:100%;
+      animation:slideUp 0.3s cubic-bezier(0.4,0,0.2,1);
+    ">
+      <div style="width:36px;height:4px;background:var(--border2);border-radius:2px;margin:12px auto 16px;"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <div>
+          <div style="font-family:'Fraunces',serif;font-size:17px;font-weight:700;color:var(--text);">✨ AI Draft Ready</div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:1px;margin-top:2px;">Personalized for ${name}</div>
+        </div>
+        <button onclick="document.getElementById('followup-modal').remove()" style="background:var(--warm2);border:1px solid var(--border2);border-radius:8px;padding:6px 12px;color:var(--text-muted);font-size:13px;cursor:pointer;">✕</button>
+      </div>
+      <div style="
+        background:var(--warm2);border:1px solid var(--border2);border-radius:12px;
+        padding:14px;margin-bottom:14px;
+        font-size:12px;color:var(--text-dim);line-height:1.65;
+        max-height:220px;overflow-y:auto;scrollbar-width:none;
+        white-space:pre-line;font-family:'DM Sans',sans-serif;
+      ">${draft}</div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="copyDraft(this,'${name.replace(/'/g,"\\'")}');return false;" style="
+          flex:1;background:var(--accent);color:var(--bg);border:none;
+          border-radius:11px;padding:13px;
+          font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;
+          text-transform:uppercase;font-weight:600;cursor:pointer;
+        ">Copy Draft</button>
+        <button onclick="document.getElementById('followup-modal').remove()" style="
+          flex:1;background:transparent;color:var(--text-muted);
+          border:1px solid var(--border2);border-radius:11px;padding:13px;
+          font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;
+          text-transform:uppercase;cursor:pointer;
+        ">Edit in Email</button>
+      </div>
+    </div>
+    <style>@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}</style>
+  `;
+  modal.onclick = (e) => { if(e.target===modal) modal.remove(); };
+  document.querySelector('.phone').appendChild(modal);
+}
+
+function copyDraft(btn, name) {
+  const draft = followUpDrafts[name] || '';
+  navigator.clipboard.writeText(draft).catch(()=>{});
+  btn.textContent = '✓ Copied!';
+  setTimeout(()=>btn.textContent='Copy Draft', 2000);
+}
+
+// ── VIEW PROFILE ──
+const profiles = {
+  'Jordan Lee': {
+    emoji:'👤',score:'87%',signal:'🔥 Hot',dna:'Refined Modern',status:'First-time buyer',
+    budget:'$1.2M – $1.8M',timeline:'Within 3 months',
+    priorities:['Kitchen Finishes','Primary Suite','School District','Finishes & Detail'],
+    rooms:[{icon:'🍳',name:'Kitchen',time:'14m',pct:100},{icon:'🛁',name:'Primary Suite',time:'11m',pct:78},{icon:'🌿',name:'Backyard',time:'9m',pct:64},{icon:'🛋️',name:'Living Room',time:'6m',pct:43}],
+    questions:['Kitchen appliances?','Primary suite size?','School district?','Backyard orientation?'],
+    chloe:'Jordan is your strongest lead. 4 questions asked — all property-specific. Dwell pattern shows genuine interest. Follow up within 2 hours for best conversion odds.'
+  },
+  'Alex & Sam Chen': {
+    emoji:'👤',score:'82%',signal:'⚡ Warm',dna:'Warm Organic',status:'Family buyer',
+    budget:'$1.0M – $1.5M',timeline:'Within 3 months',
+    priorities:['Primary Suite','School District','Home Office','Storage'],
+    rooms:[{icon:'🛁',name:'Primary Suite',time:'18m',pct:100},{icon:'🍳',name:'Kitchen',time:'8m',pct:44},{icon:'💼',name:'Home Office',time:'6m',pct:33}],
+    questions:[],
+    chloe:"Alex and Sam spent 18 minutes in the primary suite — the longest of any buyer today. Strong candidate for a private showing."
+  },
+  'Morgan Rivera': {
+    emoji:'👤',score:'79%',signal:'⚡ Warm',dna:'Coastal Luxe',status:'Repeat buyer',
+    budget:'$1.0M – $1.6M',timeline:'3–6 months',
+    priorities:['Outdoor Space','Kitchen Finishes','Indoor–Outdoor Flow','Pool'],
+    rooms:[{icon:'🌿',name:'Backyard',time:'12m',pct:100},{icon:'🍳',name:'Kitchen',time:'6m',pct:50},{icon:'🛋️',name:'Living Room',time:'4m',pct:33}],
+    questions:[],
+    chloe:"Morgan's backyard dwell was the longest of any buyer in that room. Lead with the pool and lanai angle in follow-up."
+  },
+  'Taylor Kim': {
+    emoji:'👤',score:'64%',signal:'✓ Active',dna:'Bold Eclectic',status:'First-time buyer',
+    budget:'$900K – $1.3M',timeline:'6+ months',
+    priorities:['Layout & Flow','Bold Finishes','Living Space','Natural Light'],
+    rooms:[{icon:'🛋️',name:'Living Room',time:'5m',pct:100},{icon:'🍽️',name:'Dining Room',time:'4m',pct:80},{icon:'🍳',name:'Kitchen',time:'3m',pct:60}],
+    questions:[],
+    chloe:'Lower match score — Bold Eclectic profile is earlier in their search. A lighter-touch follow-up is appropriate.'
+  },
+  'Casey Nguyen': {
+    emoji:'👤',score:'71%',signal:'✓ Active',dna:'Refined Modern',status:'First-time buyer',
+    budget:'$1.1M – $1.5M',timeline:'Within 3 months',
+    priorities:['Kitchen Finishes','Primary Suite','Finishes & Detail','Layout & Flow'],
+    rooms:[{icon:'🍳',name:'Kitchen',time:'4m',pct:100},{icon:'🛁',name:'Primary Suite',time:'3m',pct:75}],
+    questions:[],
+    chloe:'Brief but targeted tour — kitchen and primary only. Short dwell may mean they have seen similar properties. Worth a quick check-in.'
+  },
+};
+
+function viewProfile(name) {
+  const p = profiles[name]; if(!p) return;
+  const existing = document.getElementById('profile-modal'); if(existing) existing.remove();
+  const sigColor = p.signal.includes('🔥')?'#FF6B6B':p.signal.includes('⚡')?'#FBBF24':'var(--accent)';
+  const sigBg    = p.signal.includes('🔥')?'rgba(255,107,107,0.12)':p.signal.includes('⚡')?'rgba(251,191,36,0.12)':'var(--accent-dim)';
+  const roomsHtml = p.rooms.map(r=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><div style="font-size:15px;width:22px;text-align:center;">${r.icon}</div><div style="font-size:13px;color:var(--text-dim);flex:1;">${r.name}</div><div style="width:70px;height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;"><div style="width:${r.pct}%;height:100%;background:var(--accent);border-radius:2px;"></div></div><div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--accent);width:28px;text-align:right;">${r.time}</div></div>`).join('');
+  const priHtml   = p.priorities.map(pr=>`<div style="background:var(--warm2);border-radius:100px;padding:5px 12px;font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);">${pr}</div>`).join('');
+  const qHtml     = p.questions.length ? p.questions.map(q=>`<div style="font-size:12px;color:var(--text-dim);padding:7px 0;border-bottom:1px solid var(--border2);">💬 ${q}</div>`).join('') : `<div style="font-size:12px;color:var(--text-muted);font-style:italic;padding:4px 0;">No questions asked via Chloe</div>`;
+  const safeName  = name.replace(/'/g,"\\'");
+  const modal = document.createElement('div');
+  modal.id = 'profile-modal';
+  modal.style.cssText = 'position:absolute;inset:0;background:rgba(0,0,0,0.75);z-index:200;display:flex;align-items:flex-end;backdrop-filter:blur(4px);';
+  modal.innerHTML = `
+    <div style="background:var(--surface);border-radius:22px 22px 0 0;border-top:1px solid var(--border2);padding:0 20px 32px;width:100%;max-height:88%;overflow-y:auto;scrollbar-width:none;animation:slideUpP 0.3s cubic-bezier(0.4,0,0.2,1);">
+      <div style="width:36px;height:4px;background:var(--border2);border-radius:2px;margin:12px auto 16px;"></div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+        <div style="width:48px;height:48px;border-radius:50%;background:var(--warm2);border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">${p.emoji}</div>
+        <div style="flex:1;"><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--text);">${name}</div><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);margin-top:2px;">${p.dna} · ${p.status}</div></div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;"><div style="font-family:'Fraunces',serif;font-size:24px;font-weight:700;color:var(--accent);">${p.score}</div><div style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:100px;background:${sigBg};color:${sigColor};">${p.signal}</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;">
+        <div style="background:var(--warm2);border-radius:10px;padding:10px;text-align:center;"><div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Budget</div><div style="font-size:10px;font-weight:500;color:var(--text);">${p.budget}</div></div>
+        <div style="background:var(--warm2);border-radius:10px;padding:10px;text-align:center;"><div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Timeline</div><div style="font-size:10px;font-weight:500;color:var(--text);">${p.timeline}</div></div>
+        <div style="background:var(--warm2);border-radius:10px;padding:10px;text-align:center;"><div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Rooms</div><div style="font-size:10px;font-weight:500;color:var(--text);">${p.rooms.length} visited</div></div>
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">Priorities</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;">${priHtml}</div>
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">Room Dwell</div>
+      <div style="margin-bottom:16px;">${roomsHtml}</div>
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">Chloe Questions</div>
+      <div style="margin-bottom:16px;">${qHtml}</div>
+      <div style="background:rgba(184,224,48,0.06);border:1px solid var(--border);border-radius:12px;padding:13px 14px;margin-bottom:16px;">
+        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;">✨ Chloe's Read</div>
+        <div style="font-size:13px;color:var(--text-dim);line-height:1.6;">${p.chloe}</div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="document.getElementById('profile-modal').remove();draftFollowUp('${safeName}');" style="flex:1;background:var(--accent);color:var(--bg);border:none;border-radius:11px;padding:13px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:600;cursor:pointer;">✨ Draft Follow-Up</button>
+        <button onclick="document.getElementById('profile-modal').remove();" style="flex:1;background:transparent;color:var(--text-muted);border:1px solid var(--border2);border-radius:11px;padding:13px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;">Close</button>
+      </div>
+    </div>
+    <style>@keyframes slideUpP{from{transform:translateY(100%)}to{transform:translateY(0)}}</style>`;
+  modal.onclick = e=>{ if(e.target===modal) modal.remove(); };
+  document.querySelector('.phone').appendChild(modal);
+}
+
+// ── WIRE UP ALL LEAD BUTTONS ──
+document.addEventListener('DOMContentLoaded', () => {
+  const names = ['Jordan Lee','Alex & Sam Chen','Morgan Rivera','Taylor Kim','Casey Nguyen'];
+  document.querySelectorAll('.lf-btn-primary').forEach((btn,i)   => { if(names[i]) btn.onclick = ()=>draftFollowUp(names[i]); });
+  document.querySelectorAll('.lf-btn-secondary').forEach((btn,i)  => { if(names[i]) btn.onclick = ()=>viewProfile(names[i]); });
+});
+
+// ── TOAST ──
+function showToast(title, msg) {
+  const existing = document.getElementById('agent-toast');
+  if (existing) existing.remove();
+  const t = document.createElement('div');
+  t.id = 'agent-toast';
+  t.style.cssText = `
+    position:absolute;bottom:90px;left:16px;right:16px;
+    background:var(--surface);border:1px solid var(--border2);
+    border-radius:14px;padding:14px 16px;z-index:150;
+    display:flex;gap:10px;align-items:flex-start;
+    box-shadow:0 8px 24px rgba(0,0,0,0.4);
+    animation:toastIn 0.3s ease;
+  `;
+  t.innerHTML = `
+    <div style="font-size:18px;">${title.split(' ')[0]}</div>
+    <div style="flex:1;">
+      <div style="font-size:13px;font-weight:500;color:var(--text);">${title.substring(2)}</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">${msg}</div>
+    </div>
+    <div onclick="document.getElementById('agent-toast').remove()" style="color:var(--text-muted);cursor:pointer;font-size:16px;">✕</div>
+    <style>@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}</style>
+  `;
+  document.querySelector('.phone').appendChild(t);
+  setTimeout(() => t.remove(), 4000);
+}
+
+// ── LIVE STATS ──
+let elapsed=41, buyerCount=12;
+setInterval(()=>{
+  elapsed++;
+  const m=Math.floor(elapsed/60),s=elapsed%60;
+  document.getElementById('stat-time').textContent=elapsed<60?`${elapsed}m`:`${m}h ${s}m`;
+  if(Math.random()<0.2){
+    buyerCount=Math.max(8,Math.min(18,buyerCount+(Math.random()<0.55?1:-1)));
+    document.getElementById('stat-buyers').textContent=buyerCount;
+  }
+},1000);
+</script>
+</body>
+</html>

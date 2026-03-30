@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ChloeIQ — Open House Setup</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,300;1,600&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0A0B07;
+  --accent: #B8E030;
+  --accent-dim: rgba(184,224,48,0.10);
+  --surface: #13160D;
+  --surface2: #1C1F14;
+  --border: rgba(184,224,48,0.12);
+  --border2: rgba(255,255,255,0.07);
+  --text: #EEF0E5;
+  --text-dim: rgba(238,240,229,0.55);
+  --text-muted: rgba(238,240,229,0.32);
+  --warm: #1A1C12;
+  --warm2: #222418;
+  --green: #4ADE80;
+  --red: #F87171;
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body {
+  background: #0D0D0D;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Sans', sans-serif;
+  padding: 24px 16px;
+  gap: 20px;
+}
+.outer-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--accent); opacity: 0.6;
+}
+.phone {
+  width: 375px; height: 812px;
+  background: var(--bg);
+  border-radius: 44px; overflow: hidden; position: relative;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.07), 0 0 0 2px rgba(0,0,0,0.6), 0 32px 64px rgba(0,0,0,0.7);
+  display: flex; flex-direction: column;
+}
+.notch { position:absolute; top:0; left:50%; transform:translateX(-50%); width:120px; height:30px; background:#080808; border-radius:0 0 20px 20px; z-index:20; }
+.status-bar { display:flex; justify-content:space-between; align-items:center; padding:18px 28px 0; font-family:'DM Mono',monospace; font-size:12px; color:rgba(238,240,229,0.6); flex-shrink:0; z-index:10; }
+
+/* SCREENS */
+.screen { flex:1; display:none; flex-direction:column; overflow:hidden; }
+.screen.active { display:flex; }
+
+/* SHARED PROGRESS BAR */
+.setup-progress {
+  padding: 12px 20px 0;
+  flex-shrink: 0;
+}
+.progress-track {
+  height: 3px; background: var(--border2); border-radius: 2px; overflow: hidden; margin-bottom: 6px;
+}
+.progress-fill {
+  height: 100%; background: var(--accent); border-radius: 2px;
+  transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+.progress-label {
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted);
+}
+
+/* SHARED STEP HEADER */
+.step-hdr {
+  padding: 16px 20px 14px;
+  border-bottom: 1px solid var(--border2);
+  flex-shrink: 0;
+}
+.step-eyebrow { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin-bottom:4px; }
+.step-title { font-family:'Fraunces',serif; font-size:20px; font-weight:700; color:var(--text); margin-bottom:2px; }
+.step-sub { font-size:13px; color:var(--text-muted); }
+
+/* SCROLL BODY */
+.step-body { flex:1; overflow-y:auto; scrollbar-width:none; padding:16px 20px; }
+.step-body::-webkit-scrollbar { display:none; }
+
+/* FOOTER */
+.step-footer {
+  padding: 12px 20px 28px;
+  border-top: 1px solid var(--border2);
+  display: flex; gap: 10px; flex-shrink: 0;
+}
+.btn-back {
+  width: 48px; height: 48px; border-radius: 13px;
+  background: var(--surface); border: 1px solid var(--border2);
+  color: var(--text-dim); font-size: 18px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.btn-next {
+  flex: 1; background: var(--accent); color: var(--bg);
+  border: none; border-radius: 13px; padding: 14px;
+  font-family: 'Fraunces', serif; font-size: 16px; font-weight: 700;
+  cursor: pointer; transition: opacity 0.15s;
+}
+.btn-next:active { opacity: 0.85; }
+.btn-next:disabled { opacity: 0.35; pointer-events: none; }
+
+/* FORM ELEMENTS */
+.field-label {
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 6px; margin-top: 14px;
+}
+.field-label:first-child { margin-top: 0; }
+
+.text-input {
+  width: 100%; background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 12px; padding: 13px 14px;
+  font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text);
+  outline: none; transition: border-color 0.2s;
+}
+.text-input:focus { border-color: rgba(184,224,48,0.35); }
+.text-input::placeholder { color: var(--text-muted); }
+
+.input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+/* TIME PICKER */
+.time-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 4px;
+}
+.time-option {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 12px; padding: 12px;
+  text-align: center; cursor: pointer; transition: all 0.2s;
+}
+.time-option.selected {
+  background: var(--accent-dim); border-color: rgba(184,224,48,0.35); color: var(--accent);
+}
+.time-option-val { font-family:'Fraunces',serif; font-size:16px; font-weight:700; color:var(--text); }
+.time-option.selected .time-option-val { color: var(--accent); }
+.time-option-lbl { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); margin-top:2px; }
+
+/* ROOM CHIPS */
+.rooms-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+}
+.room-chip {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 12px; padding: 13px 12px;
+  display: flex; align-items: center; gap: 10px;
+  cursor: pointer; transition: all 0.2s; position: relative;
+}
+.room-chip.selected {
+  background: var(--accent-dim); border-color: rgba(184,224,48,0.3);
+}
+.room-chip-icon { font-size: 22px; }
+.room-chip-label { font-size: 13px; font-weight: 500; color: var(--text); }
+.room-chip-check {
+  position: absolute; top: 8px; right: 8px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--accent); display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: var(--bg);
+  opacity: 0; transition: opacity 0.2s;
+}
+.room-chip.selected .room-chip-check { opacity: 1; }
+
+/* TOGGLE ROW */
+.toggle-row {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 12px; padding: 13px 14px; margin-bottom: 8px;
+}
+.toggle-info { flex: 1; }
+.toggle-title { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 1px; }
+.toggle-sub { font-size: 12px; color: var(--text-muted); }
+.toggle {
+  width: 44px; height: 26px; border-radius: 13px;
+  background: var(--border2); position: relative;
+  cursor: pointer; transition: background 0.25s; flex-shrink: 0;
+}
+.toggle.on { background: var(--accent); }
+.toggle-knob {
+  position: absolute; top: 3px; left: 3px;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: #fff; transition: transform 0.25s;
+}
+.toggle.on .toggle-knob { transform: translateX(18px); }
+
+/* CHLOE CODE SCREEN */
+.code-display {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 18px; padding: 24px; text-align: center; margin-bottom: 16px;
+}
+.code-label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--text-muted); margin-bottom:16px; }
+.code-qr {
+  width: 140px; height: 140px; margin: 0 auto 16px;
+  background: rgba(255,255,255,0.03); border: 2px solid rgba(184,224,48,0.2);
+  border-radius: 16px; display: flex; align-items: center; justify-content: center;
+  font-size: 64px; position: relative; overflow: hidden;
+}
+.code-word {
+  font-family: 'Fraunces', serif; font-size: 32px; font-weight: 700;
+  color: var(--accent); letter-spacing: 6px; margin-bottom: 6px;
+}
+.code-url { font-family:'DM Mono',monospace; font-size:11px; color:var(--text-muted); }
+
+.checklist { display: flex; flex-direction: column; gap: 8px; }
+.check-item {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 12px; padding: 12px 14px;
+}
+.check-icon { font-size: 18px; flex-shrink: 0; }
+.check-text { flex: 1; font-size: 13px; color: var(--text-dim); line-height: 1.4; }
+.check-status {
+  font-size: 14px; flex-shrink: 0;
+}
+
+/* LAUNCH SCREEN */
+#s-launch {
+  background: var(--bg);
+  align-items: center;
+  justify-content: center;
+  padding: 32px 28px 48px;
+  text-align: center;
+}
+.launch-glow {
+  position: absolute;
+  width: 280px; height: 280px;
+  background: radial-gradient(circle, rgba(184,224,48,0.1) 0%, transparent 70%);
+  top: 35%; left: 50%; transform: translate(-50%,-50%);
+  pointer-events: none;
+}
+.launch-ring {
+  width: 104px; height: 104px; border-radius: 50%;
+  background: var(--accent-dim); border: 2px solid rgba(184,224,48,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 48px; margin-bottom: 22px;
+  animation: launchPop 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  position: relative; z-index: 1;
+}
+@keyframes launchPop { from{transform:scale(0.5);opacity:0} to{transform:scale(1);opacity:1} }
+.launch-title {
+  font-family: 'Fraunces', serif; font-size: 28px; font-weight: 700;
+  color: var(--text); margin-bottom: 8px; line-height: 1.2; position: relative; z-index: 1;
+}
+.launch-code {
+  font-family: 'Fraunces', serif; font-size: 36px; font-weight: 700;
+  color: var(--accent); letter-spacing: 6px; margin-bottom: 6px; position: relative; z-index: 1;
+}
+.launch-sub {
+  font-size: 14px; color: var(--text-dim); line-height: 1.65;
+  max-width: 280px; margin: 0 auto 28px; position: relative; z-index: 1;
+}
+.launch-stats {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px; width: 100%; margin-bottom: 24px; position: relative; z-index: 1;
+}
+.ls { background: var(--surface); border: 1px solid var(--border2); border-radius: 12px; padding: 12px; }
+.ls-val { font-family:'Fraunces',serif; font-size:18px; font-weight:700; color:var(--accent); }
+.ls-lbl { font-family:'DM Mono',monospace; font-size:9px; color:var(--text-muted); letter-spacing:1px; text-transform:uppercase; margin-top:2px; }
+.launch-btn {
+  width: 100%; background: var(--accent); color: var(--bg);
+  border: none; border-radius: 14px; padding: 16px;
+  font-family: 'Fraunces', serif; font-size: 17px; font-weight: 700;
+  cursor: pointer; margin-bottom: 10px; position: relative; z-index: 1;
+}
+.launch-btn-sec {
+  width: 100%; background: transparent; color: var(--text-muted);
+  border: 1px solid var(--border2); border-radius: 14px; padding: 13px;
+  font-size: 13px; cursor: pointer; position: relative; z-index: 1;
+}
+</style>
+</head>
+<body>
+
+<div class="outer-label">ChloeIQ · Open House Setup · Marcus Rivera</div>
+
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status-bar"><span>9:41</span><span>●●● 5G 🔋</span></div>
+
+  <!-- ══ STEP 1: PROPERTY ══ -->
+  <div class="screen active" id="s-step1">
+    <div class="setup-progress">
+      <div class="progress-track"><div class="progress-fill" style="width:20%"></div></div>
+      <div class="progress-label">Step 1 of 5 — Property Details</div>
+    </div>
+    <div class="step-hdr">
+      <div class="step-eyebrow">New Event Setup</div>
+      <div class="step-title">What property are you hosting?</div>
+      <div class="step-sub">Enter the listing details for this open house.</div>
+    </div>
+    <div class="step-body">
+      <div class="field-label">Street Address</div>
+      <input class="text-input" type="text" placeholder="e.g. 2847 Magnolia Drive" value="2847 Magnolia Drive">
+
+      <div class="input-row" style="margin-top:14px;">
+        <div>
+          <div class="field-label" style="margin-top:0;">City</div>
+          <input class="text-input" type="text" placeholder="City" value="Flower Mound">
+        </div>
+        <div>
+          <div class="field-label" style="margin-top:0;">ZIP</div>
+          <input class="text-input" type="text" placeholder="ZIP" value="76226">
+        </div>
+      </div>
+
+      <div class="field-label">List Price</div>
+      <input class="text-input" type="text" placeholder="e.g. $1,295,000" value="$1,295,000">
+
+      <div class="input-row" style="margin-top:14px;">
+        <div>
+          <div class="field-label" style="margin-top:0;">Beds</div>
+          <input class="text-input" type="text" placeholder="4" value="4">
+        </div>
+        <div>
+          <div class="field-label" style="margin-top:0;">Baths</div>
+          <input class="text-input" type="text" placeholder="3.5" value="3.5">
+        </div>
+      </div>
+
+      <div class="field-label">Square Footage</div>
+      <input class="text-input" type="text" placeholder="e.g. 3,840" value="3,840">
+
+      <div class="field-label">MLS Number</div>
+      <input class="text-input" type="text" placeholder="Optional" value="MLS-20240847">
+    </div>
+    <div class="step-footer">
+      <button class="btn-next" onclick="nextStep(2)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- ══ STEP 2: SCHEDULE ══ -->
+  <div class="screen" id="s-step2">
+    <div class="setup-progress">
+      <div class="progress-track"><div class="progress-fill" style="width:40%"></div></div>
+      <div class="progress-label">Step 2 of 5 — Date & Time</div>
+    </div>
+    <div class="step-hdr">
+      <div class="step-eyebrow">Schedule</div>
+      <div class="step-title">When is the open house?</div>
+      <div class="step-sub">Chloe will predict demand based on timing.</div>
+    </div>
+    <div class="step-body">
+      <div class="field-label">Date</div>
+      <input class="text-input" type="date" value="2026-03-29">
+
+      <div class="field-label">Start Time</div>
+      <div class="time-grid" id="start-time-grid">
+        <div class="time-option" onclick="selectTime(this,'start')"><div class="time-option-val">10:00 AM</div><div class="time-option-lbl">Morning</div></div>
+        <div class="time-option selected" onclick="selectTime(this,'start')"><div class="time-option-val">1:00 PM</div><div class="time-option-lbl">Afternoon</div></div>
+        <div class="time-option" onclick="selectTime(this,'start')"><div class="time-option-val">2:00 PM</div><div class="time-option-lbl">Afternoon</div></div>
+        <div class="time-option" onclick="selectTime(this,'start')"><div class="time-option-val">4:00 PM</div><div class="time-option-lbl">Late Afternoon</div></div>
+      </div>
+
+      <div class="field-label">Duration</div>
+      <div class="time-grid" id="duration-grid">
+        <div class="time-option" onclick="selectDuration(this)"><div class="time-option-val">1.5 hrs</div><div class="time-option-lbl">90 min</div></div>
+        <div class="time-option selected" onclick="selectDuration(this)"><div class="time-option-val">2 hrs</div><div class="time-option-lbl">120 min</div></div>
+        <div class="time-option" onclick="selectDuration(this)"><div class="time-option-val">2.5 hrs</div><div class="time-option-lbl">150 min</div></div>
+        <div class="time-option" onclick="selectDuration(this)"><div class="time-option-val">3 hrs</div><div class="time-option-lbl">180 min</div></div>
+      </div>
+
+      <!-- Demand preview -->
+      <div style="background:rgba(184,224,48,0.06);border:1px solid var(--border);border-radius:14px;padding:14px;margin-top:16px;">
+        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;">✨ Chloe's Demand Forecast</div>
+        <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--text);margin-bottom:4px;">High Demand Expected</div>
+        <div style="font-size:13px;color:var(--text-dim);line-height:1.6;">Sunday 1–3pm is the peak window for Flower Mound luxury listings. Expect 10–16 buyers. Comparable listings at this time slot averaged a 79% demand score.</div>
+      </div>
+    </div>
+    <div class="step-footer">
+      <button class="btn-back" onclick="nextStep(1)">←</button>
+      <button class="btn-next" onclick="nextStep(3)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- ══ STEP 3: ROOMS ══ -->
+  <div class="screen" id="s-step3">
+    <div class="setup-progress">
+      <div class="progress-track"><div class="progress-fill" style="width:60%"></div></div>
+      <div class="progress-label">Step 3 of 5 — Room Setup</div>
+    </div>
+    <div class="step-hdr">
+      <div class="step-eyebrow">Room Labels</div>
+      <div class="step-title">Which rooms will buyers tour?</div>
+      <div class="step-sub">Chloe tracks dwell time per room. Select all that are open.</div>
+    </div>
+    <div class="step-body">
+      <div class="rooms-grid" id="rooms-grid">
+        <div class="room-chip selected" onclick="toggleRoom(this)">
+          <div class="room-chip-check">✓</div>
+          <div class="room-chip-icon">🍳</div>
+          <div class="room-chip-label">Kitchen</div>
+        </div>
+        <div class="room-chip selected" onclick="toggleRoom(this)">
+          <div class="room-chip-check">✓</div>
+          <div class="room-chip-icon">🛋️</div>
+          <div class="room-chip-label">Living Room</div>
+        </div>
+        <div class="room-chip selected" onclick="toggleRoom(this)">
+          <div class="room-chip-check">✓</div>
+          <div class="room-chip-icon">🍽️</div>
+          <div class="room-chip-label">Dining Room</div>
+        </div>
+        <div class="room-chip selected" onclick="toggleRoom(this)">
+          <div class="room-chip-check">✓</div>
+          <div class="room-chip-icon">🛁</div>
+          <div class="room-chip-label">Primary Suite</div>
+        </div>
+        <div class="room-chip selected" onclick="toggleRoom(this)">
+          <div class="room-chip-check">✓</div>
+          <div class="room-chip-icon">🛏️</div>
+          <div class="room-chip-label">Bedroom 2</div>
+        </div>
+        <div class="room-chip selected" onclick="toggleRoom(this)">
+          <div class="room-chip-check">✓</div>
+          <div class="room-chip-icon">🌿</div>
+          <div class="room-chip-label">Backyard</div>
+        </div>
+        <div class="room-chip" onclick="toggleRoom(this)">
+          <div class="room-chip-check">✓</div>
+          <div class="room-chip-icon">💼</div>
+          <div class="room-chip-label">Home Office</div>
+        </div>
+        <div class="room-chip" onclick="toggleRoom(this)">
+          <div class="room-chip-check">✓</div>
+          <div class="room-chip-icon">🎮</div>
+          <div class="room-chip-label">Game Room</div>
+        </div>
+        <div class="room-chip" onclick="toggleRoom(this)">
+          <div class="room-chip-check">✓</div>
+          <div class="room-chip-icon">🏊</div>
+          <div class="room-chip-label">Pool Area</div>
+        </div>
+        <div class="room-chip" onclick="toggleRoom(this)">
+          <div class="room-chip-check">✓</div>
+          <div class="room-chip-icon">🚗</div>
+          <div class="room-chip-label">Garage</div>
+        </div>
+      </div>
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);text-align:center;margin-top:12px;" id="room-count-label">6 rooms selected</div>
+    </div>
+    <div class="step-footer">
+      <button class="btn-back" onclick="nextStep(2)">←</button>
+      <button class="btn-next" onclick="nextStep(4)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- ══ STEP 4: SETTINGS ══ -->
+  <div class="screen" id="s-step4">
+    <div class="setup-progress">
+      <div class="progress-track"><div class="progress-fill" style="width:80%"></div></div>
+      <div class="progress-label">Step 4 of 5 — Event Settings</div>
+    </div>
+    <div class="step-hdr">
+      <div class="step-eyebrow">Settings</div>
+      <div class="step-title">Configure your event.</div>
+      <div class="step-sub">These can be changed any time before the event starts.</div>
+    </div>
+    <div class="step-body">
+      <div class="field-label">Host Agent Name</div>
+      <input class="text-input" type="text" value="Marcus Rivera">
+
+      <div class="field-label" style="margin-top:16px;">Buyer Experience</div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-title">StyleDNA Quiz</div>
+          <div class="toggle-sub">Buyers complete profile before touring</div>
+        </div>
+        <div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-title">Ask Chloe AI Guide</div>
+          <div class="toggle-sub">Buyers can ask questions room-by-room</div>
+        </div>
+        <div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-title">VisionMatch</div>
+          <div class="toggle-sub">Buyers see rooms in their aesthetic</div>
+        </div>
+        <div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div>
+      </div>
+
+      <div class="field-label" style="margin-top:16px;">Agent Alerts</div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-title">Hot Lead Notifications</div>
+          <div class="toggle-sub">Alert when a buyer hits urgency signals</div>
+        </div>
+        <div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-title">Real-Time Dwell Alerts</div>
+          <div class="toggle-sub">Notify when buyer spends 10+ min in a room</div>
+        </div>
+        <div class="toggle" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div>
+      </div>
+
+      <div class="field-label" style="margin-top:16px;">Seller Report</div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-title">Auto-Send to Listing Agent</div>
+          <div class="toggle-sub">Deliver report to Elena Reyes after event</div>
+        </div>
+        <div class="toggle on" onclick="this.classList.toggle('on')"><div class="toggle-knob"></div></div>
+      </div>
+    </div>
+    <div class="step-footer">
+      <button class="btn-back" onclick="nextStep(3)">←</button>
+      <button class="btn-next" onclick="nextStep(5)">Generate Chloe Code →</button>
+    </div>
+  </div>
+
+  <!-- ══ STEP 5: CHLOE CODE ══ -->
+  <div class="screen" id="s-step5">
+    <div class="setup-progress">
+      <div class="progress-track"><div class="progress-fill" style="width:100%"></div></div>
+      <div class="progress-label">Step 5 of 5 — Chloe Code</div>
+    </div>
+    <div class="step-hdr">
+      <div class="step-eyebrow">Ready</div>
+      <div class="step-title">Your Chloe Code is ready.</div>
+      <div class="step-sub">Place this QR at the front door before buyers arrive.</div>
+    </div>
+    <div class="step-body">
+      <div class="code-display">
+        <div class="code-label">Chloe Code™</div>
+        <div class="code-qr">⬛</div>
+        <div class="code-word">MAGNOLIA</div>
+        <div class="code-url">chloe.io/MAGNOLIA</div>
+      </div>
+
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">Pre-Event Checklist</div>
+      <div class="checklist">
+        <div class="check-item">
+          <div class="check-icon">🖨️</div>
+          <div class="check-text">Print QR sign and place at front door before buyers arrive</div>
+          <div class="check-status">⬜</div>
+        </div>
+        <div class="check-item">
+          <div class="check-icon">📶</div>
+          <div class="check-text">Confirm Wi-Fi is accessible or cellular signal is strong</div>
+          <div class="check-status">⬜</div>
+        </div>
+        <div class="check-item">
+          <div class="check-icon">🏷️</div>
+          <div class="check-text">Room labels match what you entered in setup (6 rooms)</div>
+          <div class="check-status">⬜</div>
+        </div>
+        <div class="check-item">
+          <div class="check-icon">📱</div>
+          <div class="check-text">Open your ChloeIQ dashboard before the first buyer arrives</div>
+          <div class="check-status">⬜</div>
+        </div>
+      </div>
+    </div>
+    <div class="step-footer">
+      <button class="btn-back" onclick="nextStep(4)">←</button>
+      <button class="btn-next" onclick="goLaunch()">Launch Event →</button>
+    </div>
+  </div>
+
+  <!-- ══ LAUNCH ══ -->
+  <div class="screen" id="s-launch">
+    <div class="launch-glow"></div>
+    <div class="launch-ring">🏠</div>
+    <div class="launch-title">Event is live,<br><em style="color:var(--accent);font-style:italic;">Marcus.</em></div>
+    <div class="launch-code">MAGNOLIA</div>
+    <div class="launch-sub">Buyers can scan the Chloe Code at the door. Your dashboard is live and ready.</div>
+    <div class="launch-stats">
+      <div class="ls"><div class="ls-val">6</div><div class="ls-lbl">Rooms</div></div>
+      <div class="ls"><div class="ls-val">3h</div><div class="ls-lbl">Window</div></div>
+      <div class="ls"><div class="ls-val">Live</div><div class="ls-lbl">Status</div></div>
+    </div>
+    <button class="launch-btn" onclick="showLaunchToast('dashboard')">Open Dashboard →</button>
+    <button class="launch-btn-sec" onclick="showLaunchToast('print')">Print QR Code</button>
+  </div>
+
+</div>
+
+<script>
+// ── THEME ──
+(function(){
+  const p=new URLSearchParams(window.location.search),root=document.documentElement;
+  const h=k=>p.get(k)?'#'+p.get(k):null;
+  const sv=(k,v)=>v&&root.style.setProperty(k,v);
+  const bg=h('bg'),ac=h('accent'),tx=h('text'),sf=h('surface');
+  sv('--bg',bg);sv('--accent',ac);sv('--text',tx);sv('--surface',sf);
+  if(ac){const r=parseInt(ac.slice(1,3),16),g=parseInt(ac.slice(3,5),16),b=parseInt(ac.slice(5,7),16);
+    root.style.setProperty('--accent-dim',`rgba(${r},${g},${b},0.10)`);
+    root.style.setProperty('--border',`rgba(${r},${g},${b},0.12)`);}
+  if(tx){const r=parseInt(tx.slice(1,3),16),g=parseInt(tx.slice(3,5),16),b=parseInt(tx.slice(5,7),16);
+    root.style.setProperty('--text-dim',`rgba(${r},${g},${b},0.55)`);
+    root.style.setProperty('--text-muted',`rgba(${r},${g},${b},0.32)`);}
+  if(bg){root.style.setProperty('--warm',bg);root.style.setProperty('--warm2',bg);}
+  const font=p.get('font')?decodeURIComponent(p.get('font')):null;
+  if(font){const l=document.createElement('link');l.rel='stylesheet';
+    l.href=`https://fonts.googleapis.com/css2?family=${font.replace(/ /g,'+')}:wght@400;600;700&display=swap`;
+    document.head.appendChild(l);
+    l.onload=()=>document.querySelectorAll('.step-title,.launch-title,.launch-code,.code-word,.btn-next').forEach(e=>e.style.fontFamily=`'${font}',serif`);}
+})();
+
+// ── NAV ──
+function nextStep(n){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s-step'+n)?.classList.add('active');
+}
+function goLaunch(){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s-launch').classList.add('active');
+}
+
+// ── TIME SELECTION ──
+function selectTime(el, group){
+  el.closest('.time-grid').querySelectorAll('.time-option').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function selectDuration(el){
+  el.closest('.time-grid').querySelectorAll('.time-option').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ── ROOM TOGGLE ──
+function toggleRoom(el){
+  el.classList.toggle('selected');
+  updateRoomCount();
+}
+function updateRoomCount(){
+  const count = document.querySelectorAll('.room-chip.selected').length;
+  const label = document.getElementById('room-count-label');
+  if(label) label.textContent = `${count} room${count!==1?'s':''} selected`;
+}
+
+// ── LAUNCH TOASTS ──
+function showLaunchToast(action) {
+  const existing = document.getElementById('launch-toast');
+  if (existing) existing.remove();
+
+  const config = {
+    dashboard: { icon:'📊', title:'Dashboard Opening', msg:'Your live agent dashboard is now active. Buyers scanning MAGNOLIA will appear in real time.' },
+    print:     { icon:'🖨️', title:'Sending to Print',  msg:'QR sign for MAGNOLIA is queued. Pick it up or download the PDF to print on-site.' },
+  }[action];
+
+  const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#B8E030';
+  const surfaceBg   = getComputedStyle(document.documentElement).getPropertyValue('--surface').trim() || '#13160D';
+  const textColor   = getComputedStyle(document.documentElement).getPropertyValue('--text').trim() || '#EEF0E5';
+  const textDim     = getComputedStyle(document.documentElement).getPropertyValue('--text-dim').trim() || 'rgba(238,240,229,0.55)';
+  const textMuted   = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim() || 'rgba(238,240,229,0.32)';
+
+  const t = document.createElement('div');
+  t.id = 'launch-toast';
+  t.style.position   = 'absolute';
+  t.style.bottom     = '32px';
+  t.style.left       = '20px';
+  t.style.right      = '20px';
+  t.style.background = surfaceBg;
+  t.style.border     = '1px solid rgba(255,255,255,0.1)';
+  t.style.borderRadius = '14px';
+  t.style.padding    = '14px 16px';
+  t.style.zIndex     = '150';
+  t.style.display    = 'flex';
+  t.style.gap        = '12px';
+  t.style.alignItems = 'flex-start';
+  t.style.boxShadow  = '0 8px 24px rgba(0,0,0,0.5)';
+  t.style.animation  = 'toastUp 0.3s ease';
+
+  t.innerHTML = `
+    <div style="font-size:22px;">${config.icon}</div>
+    <div style="flex:1;">
+      <div style="font-family:'Fraunces',serif;font-size:14px;font-weight:700;color:${textColor};margin-bottom:3px;">${config.title}</div>
+      <div style="font-size:12px;color:${textDim};line-height:1.5;">${config.msg}</div>
+    </div>
+    <div id="toast-close-btn" style="color:${textMuted};cursor:pointer;font-size:16px;flex-shrink:0;">✕</div>
+    <style>@keyframes toastUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}</style>
+  `;
+
+  document.querySelector('.phone').appendChild(t);
+  document.getElementById('toast-close-btn').onclick = () => t.remove();
+  setTimeout(() => { if(t.parentNode) t.remove(); }, 4000);
+}
+
+// ── CHECKLIST ──
+document.querySelectorAll('.check-status').forEach(el=>{
+  el.style.cursor='pointer';
+  el.onclick=()=>{
+    el.textContent = el.textContent==='⬜' ? '✅' : '⬜';
+  };
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ChloeIQ — Investor Outreach Kit</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:#0D0D0D;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px 16px;gap:16px;font-family:'DM Sans',sans-serif}
+.lbl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#B8E030;opacity:0.6}
+.phone{width:375px;height:812px;background:#0A0B07;border-radius:44px;overflow:hidden;position:relative;box-shadow:0 0 0 1px rgba(255,255,255,0.07),0 32px 64px rgba(0,0,0,0.7);display:flex;flex-direction:column}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:30px;background:#080808;border-radius:0 0 20px 20px;z-index:20}
+.sbar{display:flex;justify-content:space-between;padding:18px 28px 0;font-family:'DM Mono',monospace;font-size:12px;color:rgba(238,240,229,0.5);flex-shrink:0;background:#0A0B07;position:relative;z-index:10}
+
+/* SCREENS */
+.screen{flex:1;display:none;flex-direction:column;overflow:hidden}
+.screen.on{display:flex}
+
+/* HEADER */
+.hdr{padding:14px 18px 0;flex-shrink:0}
+.hdr-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.eye{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#B8E030;margin-bottom:3px}
+.htitle{font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:#EEF0E5}
+.hbadge{background:rgba(184,224,48,0.1);border:1px solid rgba(184,224,48,0.15);border-radius:100px;padding:5px 11px;font-family:'DM Mono',monospace;font-size:9px;color:#B8E030;letter-spacing:1px;white-space:nowrap}
+.tab-row{display:flex;border-bottom:1px solid rgba(255,255,255,0.07)}
+.tab{flex:1;padding:9px 6px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(238,240,229,0.35);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.18s}
+.tab.on{color:#B8E030;border-bottom-color:#B8E030}
+
+/* SCROLL */
+.scroll{flex:1;overflow-y:auto;scrollbar-width:none;padding:12px 18px}
+.scroll::-webkit-scrollbar{display:none}
+.sec{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(238,240,229,0.32);margin-bottom:10px;margin-top:4px}
+
+/* CARDS */
+.card{background:#13160D;border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:13px 14px;margin-bottom:8px;cursor:pointer;transition:border-color 0.18s}
+.card:hover{border-color:rgba(184,224,48,0.2)}
+.card-row{display:flex;gap:11px;align-items:flex-start}
+.ci{font-size:20px;flex-shrink:0;margin-top:1px}
+.ct{font-size:13px;font-weight:600;color:#EEF0E5;margin-bottom:2px}
+.cd{font-size:12px;color:rgba(238,240,229,0.5);line-height:1.5}
+
+/* INVESTOR ROW */
+.inv-row{background:#13160D;border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:11px;margin-bottom:8px;cursor:pointer;transition:border-color 0.18s}
+.inv-row:hover{border-color:rgba(184,224,48,0.2)}
+.inv-av{width:40px;height:40px;border-radius:12px;background:rgba(184,224,48,0.08);border:1px solid rgba(184,224,48,0.15);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.inv-name{font-size:13px;font-weight:600;color:#EEF0E5;margin-bottom:2px}
+.inv-firm{font-family:'DM Mono',monospace;font-size:10px;color:#B8E030;margin-bottom:2px;letter-spacing:0.5px}
+.inv-focus{font-size:11px;color:rgba(238,240,229,0.4)}
+.inv-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+.inv-status{font-size:10px;font-weight:600;padding:3px 8px;border-radius:100px}
+.st-warm{background:rgba(251,191,36,0.12);color:#FBBF24}
+.st-hot{background:rgba(248,113,113,0.12);color:#F87171}
+.st-cold{background:rgba(255,255,255,0.06);color:rgba(238,240,229,0.35)}
+.st-meeting{background:rgba(74,222,128,0.12);color:#4ADE80}
+.st-passed{background:rgba(255,255,255,0.05);color:rgba(238,240,229,0.25)}
+.inv-fit{font-family:'DM Mono',monospace;font-size:10px;color:rgba(238,240,229,0.35)}
+
+/* MESSAGE COMPOSER */
+.compose-wrap{background:#13160D;border:1px solid rgba(255,255,255,0.07);border-radius:14px;overflow:hidden;margin-bottom:10px}
+.compose-hdr{padding:11px 13px;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:space-between}
+.compose-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(238,240,229,0.32)}
+.compose-tone{font-family:'DM Mono',monospace;font-size:9px;color:#B8E030;cursor:pointer;letter-spacing:1px}
+.compose-body{padding:13px;font-size:12px;color:rgba(238,240,229,0.65);line-height:1.7;white-space:pre-wrap;min-height:120px}
+.compose-footer{padding:10px 13px;border-top:1px solid rgba(255,255,255,0.07);display:flex;gap:7px}
+.btn-send{flex:1;background:#B8E030;color:#0A0B07;border:none;border-radius:9px;padding:10px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:600;cursor:pointer}
+.btn-copy{background:#222418;border:1px solid rgba(255,255,255,0.07);border-radius:9px;padding:10px 13px;color:rgba(238,240,229,0.4);font-size:12px;cursor:pointer}
+
+/* TONE CHIPS */
+.tone-row{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.tone-chip{background:#13160D;border:1px solid rgba(255,255,255,0.07);border-radius:100px;padding:6px 12px;font-family:'DM Mono',monospace;font-size:10px;color:rgba(238,240,229,0.4);cursor:pointer;transition:all 0.15s;letter-spacing:0.5px}
+.tone-chip.on{background:rgba(184,224,48,0.1);border-color:rgba(184,224,48,0.3);color:#B8E030}
+
+/* STATS */
+.stat-row{display:flex;gap:7px;margin-bottom:12px}
+.stat-chip{flex:1;background:#13160D;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:11px;text-align:center}
+.stat-v{font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:#B8E030}
+.stat-l{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(238,240,229,0.3);margin-top:3px}
+
+/* CHECKLIST */
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.check-item:last-child{border-bottom:none}
+.check-box{width:20px;height:20px;border-radius:6px;border:1.5px solid rgba(255,255,255,0.15);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.18s}
+.check-box.done{background:#B8E030;border-color:#B8E030}
+.check-text{flex:1}
+.check-title{font-size:13px;color:#EEF0E5;margin-bottom:2px}
+.check-sub{font-size:11px;color:rgba(238,240,229,0.4)}
+
+/* INSIGHT */
+.ins{background:rgba(184,224,48,0.06);border:1px solid rgba(184,224,48,0.12);border-radius:13px;padding:12px;margin-bottom:10px}
+.ih{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#B8E030;margin-bottom:7px}
+.ip{font-size:12px;color:rgba(238,240,229,0.5);line-height:1.6;margin-bottom:6px}
+.ip:last-child{margin-bottom:0}
+
+/* BOTTOM NAV */
+.nav{display:flex;border-top:1px solid rgba(255,255,255,0.07);padding:10px 0 18px;background:#0A0B07;flex-shrink:0}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0}
+.ni-icon{font-size:20px}
+.ni-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.5px;color:rgba(238,240,229,0.32);text-transform:uppercase}
+.ni.on .ni-label{color:#B8E030}
+
+/* SHEET */
+.bd{position:absolute;inset:0;background:rgba(0,0,0,0.65);z-index:49;opacity:0;pointer-events:none;transition:opacity 0.28s;backdrop-filter:blur(3px)}
+.bd.on{opacity:1;pointer-events:all}
+.sh{position:absolute;bottom:0;left:0;right:0;background:#13160D;border-radius:22px 22px 0 0;border-top:1px solid rgba(255,255,255,0.07);padding:0 18px 30px;transform:translateY(100%);transition:transform 0.32s cubic-bezier(0.4,0,0.2,1);z-index:50;max-height:84%;overflow-y:auto;scrollbar-width:none}
+.sh::-webkit-scrollbar{display:none}
+.sh.on{transform:translateY(0)}
+.sh-handle{width:36px;height:4px;background:rgba(255,255,255,0.07);border-radius:2px;margin:12px auto 14px}
+
+/* TOAST */
+.toast{position:absolute;bottom:88px;left:14px;right:14px;background:#13160D;border:1px solid rgba(255,255,255,0.08);border-radius:13px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,0.5);animation:tin 0.3s ease}
+@keyframes tin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div class="lbl">ChloeIQ · Investor Outreach Kit</div>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="sbar"><span>9:41</span><span>●●● 5G 🔋</span></div>
+
+  <!-- ══ SCREEN: TARGETS ══ -->
+  <div class="screen on" id="s-targets">
+    <div class="hdr">
+      <div class="hdr-row">
+        <div><div class="eye">Seed Round · $1.5M</div><div class="htitle">Investor Targets</div></div>
+        <div class="hbadge">12 targets</div>
+      </div>
+      <div class="tab-row">
+        <div class="tab on" onclick="filterInv(this,'all')">All</div>
+        <div class="tab" onclick="filterInv(this,'hot')">Hot</div>
+        <div class="tab" onclick="filterInv(this,'warm')">Warm</div>
+        <div class="tab" onclick="filterInv(this,'meeting')">Meeting</div>
+      </div>
+    </div>
+    <div class="scroll" id="inv-scroll">
+
+      <div class="stat-row">
+        <div class="stat-chip"><div class="stat-v">1</div><div class="stat-l">Meeting Set</div></div>
+        <div class="stat-chip"><div class="stat-v">3</div><div class="stat-l">Hot</div></div>
+        <div class="stat-chip"><div class="stat-v">5</div><div class="stat-l">Warm</div></div>
+        <div class="stat-chip"><div class="stat-v">3</div><div class="stat-l">Cold</div></div>
+      </div>
+
+      <div id="inv-list"></div>
+
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: MESSAGES ══ -->
+  <div class="screen" id="s-messages">
+    <div class="hdr">
+      <div class="hdr-row">
+        <div><div class="eye">Outreach Kit</div><div class="htitle">Message Templates</div></div>
+      </div>
+    </div>
+    <div class="scroll">
+
+      <div class="sec">Select Tone</div>
+      <div class="tone-row" id="tone-row">
+        <div class="tone-chip on" data-tone="warm" onclick="selectTone(this,'warm')">Warm Intro</div>
+        <div class="tone-chip" data-tone="direct" onclick="selectTone(this,'direct')">Direct Ask</div>
+        <div class="tone-chip" data-tone="follow" onclick="selectTone(this,'follow')">Follow-Up</div>
+        <div class="tone-chip" data-tone="cold" onclick="selectTone(this,'cold')">Cold Outreach</div>
+      </div>
+
+      <div class="sec">Email Draft</div>
+      <div class="compose-wrap">
+        <div class="compose-hdr">
+          <div class="compose-label" id="tone-label">Warm Intro · Email</div>
+          <div class="compose-tone" onclick="selectTone(document.querySelector('.tone-chip.on'), document.querySelector('.tone-chip.on').dataset.tone)">↻ Regenerate</div>
+        </div>
+        <div class="compose-body" id="compose-body"></div>
+        <div class="compose-footer">
+          <button class="btn-send" onclick="showToast('✉️','Email Copied','Draft copied to clipboard — ready to send.')">Copy & Send</button>
+          <button class="btn-copy" onclick="showToast('📋','Saved','Template saved to your outreach library.')">Save</button>
+        </div>
+      </div>
+
+      <div class="sec">LinkedIn Version</div>
+      <div class="compose-wrap">
+        <div class="compose-hdr">
+          <div class="compose-label" id="li-label">Warm Intro · LinkedIn DM</div>
+        </div>
+        <div class="compose-body" id="li-body"></div>
+        <div class="compose-footer">
+          <button class="btn-send" onclick="showToast('💼','LinkedIn Message Copied','DM draft copied — open LinkedIn to paste and send.')">Copy for LinkedIn</button>
+        </div>
+      </div>
+
+      <div class="ins">
+        <div class="ih">✨ Outreach Insight</div>
+        <div class="ip">PropTech investors respond best to messages that lead with a specific data point — not just "we're disrupting real estate." Your 87% follow-up rate vs 38% industry average is your strongest hook.</div>
+        <div class="ip">Best send window for investor cold outreach: Tuesday–Thursday, 7–9am. Response rates drop 40% on Fridays and weekends.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: MATERIALS ══ -->
+  <div class="screen" id="s-materials">
+    <div class="hdr">
+      <div class="hdr-row">
+        <div><div class="eye">Outreach Kit</div><div class="htitle">Deal Materials</div></div>
+      </div>
+    </div>
+    <div class="scroll">
+
+      <div class="sec">Ready to Share</div>
+
+      <div class="card" onclick="openMaterial('deck')">
+        <div class="card-row">
+          <div class="ci">📊</div>
+          <div style="flex:1">
+            <div class="ct">Seed Deck</div>
+            <div class="cd">10-slide investor deck · Problem, Solution, Traction, Market, Team, Ask</div>
+          </div>
+          <div style="font-size:10px;font-weight:600;padding:3px 8px;border-radius:100px;background:rgba(74,222,128,0.12);color:#4ADE80;flex-shrink:0;align-self:flex-start">Ready</div>
+        </div>
+      </div>
+
+      <div class="card" onclick="openMaterial('onepager')">
+        <div class="card-row">
+          <div class="ci">📄</div>
+          <div style="flex:1">
+            <div class="ct">One-Pager</div>
+            <div class="cd">Single-page summary for first-touch outreach and warm intros</div>
+          </div>
+          <div style="font-size:10px;font-weight:600;padding:3px 8px;border-radius:100px;background:rgba(74,222,128,0.12);color:#4ADE80;flex-shrink:0;align-self:flex-start">Ready</div>
+        </div>
+      </div>
+
+      <div class="card" onclick="openMaterial('dataroom')">
+        <div class="card-row">
+          <div class="ci">🗄️</div>
+          <div style="flex:1">
+            <div class="ct">Data Room</div>
+            <div class="cd">Cap table, financials, legal docs, beta metrics — investor-ready Notion</div>
+          </div>
+          <div style="font-size:10px;font-weight:600;padding:3px 8px;border-radius:100px;background:rgba(251,191,36,0.12);color:#FBBF24;flex-shrink:0;align-self:flex-start">In Progress</div>
+        </div>
+      </div>
+
+      <div class="card" onclick="openMaterial('demo')">
+        <div class="card-row">
+          <div class="ci">📱</div>
+          <div style="flex:1">
+            <div class="ct">Interactive Demo</div>
+            <div class="cd">Live buyer flow, agent dashboard, and brokerage view — shareable link</div>
+          </div>
+          <div style="font-size:10px;font-weight:600;padding:3px 8px;border-radius:100px;background:rgba(74,222,128,0.12);color:#4ADE80;flex-shrink:0;align-self:flex-start">Ready</div>
+        </div>
+      </div>
+
+      <div class="card" onclick="openMaterial('model')">
+        <div class="card-row">
+          <div class="ci">📈</div>
+          <div style="flex:1">
+            <div class="ct">Financial Model</div>
+            <div class="cd">18-month P&L, unit economics, cohort analysis, Series A milestones</div>
+          </div>
+          <div style="font-size:10px;font-weight:600;padding:3px 8px;border-radius:100px;background:rgba(251,191,36,0.12);color:#FBBF24;flex-shrink:0;align-self:flex-start">In Progress</div>
+        </div>
+      </div>
+
+      <div class="card" onclick="openMaterial('refs')">
+        <div class="card-row">
+          <div class="ci">💬</div>
+          <div style="flex:1">
+            <div class="ct">Customer References</div>
+            <div class="cd">3 beta agents and 2 brokers available for investor reference calls</div>
+          </div>
+          <div style="font-size:10px;font-weight:600;padding:3px 8px;border-radius:100px;background:rgba(74,222,128,0.12);color:#4ADE80;flex-shrink:0;align-self:flex-start">Ready</div>
+        </div>
+      </div>
+
+      <div class="sec" style="margin-top:4px">Key Metrics to Lead With</div>
+      <div style="background:#13160D;border:1px solid rgba(255,255,255,0.07);border-radius:14px;overflow:hidden;margin-bottom:12px">
+        <div style="padding:11px 13px;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:12px;color:rgba(238,240,229,0.55)">Industry follow-up rate</div>
+          <div style="font-family:'DM Mono',monospace;font-size:12px;color:#F87171">38%</div>
+        </div>
+        <div style="padding:11px 13px;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;justify-content:space-between;align-items:center;background:rgba(184,224,48,0.03)">
+          <div style="font-size:12px;color:rgba(238,240,229,0.55)">ChloeIQ follow-up rate</div>
+          <div style="font-family:'DM Mono',monospace;font-size:12px;color:#4ADE80">87%</div>
+        </div>
+        <div style="padding:11px 13px;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:12px;color:rgba(238,240,229,0.55)">Conversion lift vs control</div>
+          <div style="font-family:'DM Mono',monospace;font-size:12px;color:#B8E030">4.2×</div>
+        </div>
+        <div style="padding:11px 13px;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:12px;color:rgba(238,240,229,0.55)">LTV / CAC ratio</div>
+          <div style="font-family:'DM Mono',monospace;font-size:12px;color:#B8E030">34.7×</div>
+        </div>
+        <div style="padding:11px 13px;display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:12px;color:rgba(238,240,229,0.55)">Direct competitors</div>
+          <div style="font-family:'DM Mono',monospace;font-size:12px;color:#B8E030">0</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: PREP ══ -->
+  <div class="screen" id="s-prep">
+    <div class="hdr">
+      <div class="hdr-row">
+        <div><div class="eye">Outreach Kit</div><div class="htitle">Meeting Prep</div></div>
+        <div class="hbadge" id="prep-badge">3 / 12 done</div>
+      </div>
+    </div>
+    <div class="scroll">
+
+      <div class="sec">Before You Reach Out</div>
+      <div style="background:#13160D;border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:13px;margin-bottom:12px" id="checklist-pre"></div>
+
+      <div class="sec">Before a Meeting</div>
+      <div style="background:#13160D;border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:13px;margin-bottom:12px" id="checklist-mtg"></div>
+
+      <div class="sec">Common Investor Questions</div>
+      <div id="qa-list"></div>
+
+      <div class="ins" style="margin-top:4px">
+        <div class="ih">✨ Pitch Tip</div>
+        <div class="ip">PropTech investors have seen a hundred "Zillow for X" pitches. Lead with the behavioral data angle — "we are building the buyer intelligence layer that doesn't exist in residential real estate" is a stronger frame than "we make open houses smarter."</div>
+        <div class="ip">When asked about competition, name Spacio first and dismiss it fast: "Spacio is a digital sign-in sheet. We are a buyer intelligence platform. Different category."</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="nav">
+    <div class="ni on" id="ni-targets" onclick="switchScreen('targets')"><div class="ni-icon">🎯</div><div class="ni-label">Targets</div></div>
+    <div class="ni" id="ni-messages" onclick="switchScreen('messages')"><div class="ni-icon">✉️</div><div class="ni-label">Messages</div></div>
+    <div class="ni" id="ni-materials" onclick="switchScreen('materials')"><div class="ni-icon">📁</div><div class="ni-label">Materials</div></div>
+    <div class="ni" id="ni-prep" onclick="switchScreen('prep')"><div class="ni-icon">🎤</div><div class="ni-label">Prep</div></div>
+  </div>
+
+  <!-- SHEET -->
+  <div class="bd" id="bd" onclick="closeSheet()"></div>
+  <div class="sh" id="sheet"><div class="sh-handle"></div><div id="sheet-body"></div></div>
+
+</div>
+
+<script>
+// ── INVESTORS ──
+var investors = [
+  {id:1, name:'Sarah Chen', firm:'Moderne Ventures', focus:'PropTech · FinTech · RE Software', fit:'98%', status:'meeting', icon:'🏢', thesis:'Largest dedicated PropTech fund. Portfolio includes HouseCanary, Dealpath, and Side. Sarah has publicly written about the gap in open house tech and buyer experience data. Perfect fit.', contact:'sarah@moderneventures.com', linkedin:'linkedin.com/in/sarahchen'},
+  {id:2, name:'Marcus Bell', firm:'MetaProp NYC', focus:'Early-stage PropTech', fit:'94%', status:'hot', icon:'🗽', thesis:'Most active early-stage PropTech fund in the US. Run the MetaProp accelerator — connections to every major brokerage in the country. Marcus specifically focuses on data and AI in residential real estate.', contact:'marcus@metaprop.vc', linkedin:'linkedin.com/in/marcusbell'},
+  {id:3, name:'Priya Anand', firm:'Fifth Wall', focus:'RE Tech · Climate · PropTech', fit:'91%', status:'hot', icon:'🏙️', thesis:'Largest PropTech-focused VC globally. Backed by major real estate firms. Priya leads their early-stage RE software practice. They have made multiple investments in open house and buyer engagement tech adjacent companies.', contact:'priya@fifthwall.com', linkedin:'linkedin.com/in/priyanand'},
+  {id:4, name:'James Wu', firm:'Navitas Capital', focus:'B2B SaaS · RE Tech', fit:'88%', status:'warm', icon:'💼', thesis:'Boutique fund focused on B2B SaaS with strong unit economics. James has written about LTV/CAC as his primary screening metric — our 34.7× ratio leads the conversation. Check size $500K–$2M.', contact:'james@navitascapital.com', linkedin:'linkedin.com/in/jameswu'},
+  {id:5, name:'Aisha Thompson', firm:'Concrete Rose VC', focus:'Diverse founders · PropTech', fit:'85%', status:'warm', icon:'🌹', thesis:'Focus on underrepresented founders in PropTech and FinTech. Josh and Sarah\'s operator background in real estate is exactly the founder-market fit story they back. Check size $250K–$1M.', contact:'aisha@concreterosevc.com', linkedin:'linkedin.com/in/aishathompson'},
+  {id:6, name:'David Park', firm:'Founders Fund', focus:'Deep tech · Consumer', fit:'72%', status:'warm', icon:'🚀', thesis:'Long shot but worth a shot. Founders Fund has backed some RE tech. David is the partner most likely to engage based on the data moat angle — StyleDNA as a proprietary behavioral dataset is the hook.', contact:'david@foundersfund.com', linkedin:'linkedin.com/in/davidpark'},
+  {id:7, name:'Elena Vasquez', firm:'Raven One Ventures', focus:'TX-based startups · PropTech', fit:'89%', status:'warm', icon:'🤠', thesis:'Texas-focused early-stage fund. DFW roots give ChloeIQ an immediate advantage — local investors understand the market and the problem. Elena was a RE agent before pivoting to venture. Strong founder empathy.', contact:'elena@ravenone.vc', linkedin:'linkedin.com/in/elenavasquez'},
+  {id:8, name:'Chris Morgan', firm:'TechNexus Ventures', focus:'B2B SaaS · Marketplaces', fit:'81%', status:'cold', icon:'🔷', thesis:'Midwest-based fund that has been expanding into TX. Marketplace model is in their wheelhouse. The two-sided host marketplace is the most compelling angle for Chris based on his portfolio thesis.', contact:'chris@technexus.vc', linkedin:'linkedin.com/in/chrismorgan'},
+  {id:9, name:'Rachel Kim', firm:'Initialized Capital', focus:'Early-stage consumer + B2B', fit:'76%', status:'cold', icon:'⚡', thesis:'Garry Tan\'s fund. Strong network effects thesis. StyleDNA data flywheel story could resonate. Rachel has invested in marketplace businesses with strong data moats. Cold but worth the outreach.', contact:'rachel@initialized.com', linkedin:'linkedin.com/in/rachelkim'},
+  {id:10, name:'Tom Bauer', firm:'Lux Capital', focus:'Deep science · Data', fit:'68%', status:'cold', icon:'🔬', thesis:'More of a stretch. Lux focuses on deep science but has made some data platform plays. The buyer behavioral dataset angle is the only hook here. Low probability but Tom is an influential voice.', contact:'tom@luxcapital.com', linkedin:'linkedin.com/in/tombauer'},
+  {id:11, name:'Angel Investor', firm:'RE Operator — DFW', focus:'Real estate operations', fit:'95%', status:'hot', icon:'👤', thesis:'Former top-producing RE broker in DFW. Domain expertise + check writing. These angels close fast, add operational value, and often open brokerage doors. Target $100–$250K checks from 3–4 angels to fill the round.', contact:'Via warm intro', linkedin:'Network referral'},
+  {id:12, name:'Strategic LP', firm:'National Brokerage', focus:'Strategic investment', fit:'87%', status:'warm', icon:'🏬', thesis:'Several national brokerages run venture programs (RE/MAX, Compass, Anywhere). A strategic investment from a brokerage would validate the product and open immediate distribution. Requires warm intro from a board member or advisor.', contact:'Via board intro', linkedin:'Network referral'},
+];
+
+var curFilter = 'all';
+function filterInv(el, f) {
+  document.querySelectorAll('#s-targets .tab').forEach(function(t){t.classList.remove('on')});
+  el.classList.add('on');
+  curFilter = f;
+  renderInvList();
+}
+
+function renderInvList() {
+  var list = document.getElementById('inv-list');
+  var filtered = investors.filter(function(i){
+    return curFilter === 'all' || i.status === curFilter;
+  });
+  var html = '';
+  filtered.forEach(function(inv) {
+    var stClass = {meeting:'st-meeting',hot:'st-hot',warm:'st-warm',cold:'st-cold',passed:'st-passed'}[inv.status] || 'st-cold';
+    var stLabel = {meeting:'📅 Meeting',hot:'🔥 Hot',warm:'🌡 Warm',cold:'❄️ Cold',passed:'— Passed'}[inv.status] || inv.status;
+    html += '<div class="inv-row" onclick="openInvSheet('+inv.id+')">';
+    html += '<div class="inv-av">'+inv.icon+'</div>';
+    html += '<div style="flex:1"><div class="inv-name">'+inv.name+'</div><div class="inv-firm">'+inv.firm+'</div><div class="inv-focus">'+inv.focus+'</div></div>';
+    html += '<div class="inv-right"><div class="inv-status '+stClass+'">'+stLabel+'</div><div class="inv-fit">'+inv.fit+' fit</div></div>';
+    html += '</div>';
+  });
+  list.innerHTML = html;
+}
+
+function openInvSheet(id) {
+  var inv = investors.find(function(i){return i.id===id});
+  if(!inv) return;
+  var stClass = {meeting:'st-meeting',hot:'st-hot',warm:'st-warm',cold:'st-cold'}[inv.status]||'st-cold';
+  var stLabel = {meeting:'📅 Meeting Set',hot:'🔥 Hot Lead',warm:'🌡 Warm',cold:'❄️ Cold'}[inv.status]||inv.status;
+  document.getElementById('sheet-body').innerHTML =
+    '<div style="display:flex;align-items:center;gap:11px;margin-bottom:14px">' +
+      '<div style="width:46px;height:46px;border-radius:13px;background:rgba(184,224,48,0.08);border:1px solid rgba(184,224,48,0.15);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">'+inv.icon+'</div>' +
+      '<div style="flex:1"><div style="font-family:\'Fraunces\',serif;font-size:17px;font-weight:700;color:#EEF0E5;margin-bottom:2px">'+inv.name+'</div><div style="font-family:\'DM Mono\',monospace;font-size:10px;color:#B8E030;letter-spacing:0.5px">'+inv.firm+'</div></div>' +
+      '<div class="inv-status '+stClass+'" style="font-size:10px;font-weight:600;padding:4px 10px;border-radius:100px;flex-shrink:0">'+stLabel+'</div>' +
+    '</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:13px">' +
+      '<div style="background:#0A0B07;border:1px solid rgba(255,255,255,0.07);border-radius:11px;padding:11px"><div style="font-family:\'DM Mono\',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(238,240,229,0.3);margin-bottom:3px">Portfolio Fit</div><div style="font-family:\'Fraunces\',serif;font-size:20px;font-weight:700;color:#B8E030">'+inv.fit+'</div></div>' +
+      '<div style="background:#0A0B07;border:1px solid rgba(255,255,255,0.07);border-radius:11px;padding:11px"><div style="font-family:\'DM Mono\',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(238,240,229,0.3);margin-bottom:3px">Focus</div><div style="font-size:12px;font-weight:500;color:#EEF0E5;line-height:1.4">'+inv.focus+'</div></div>' +
+    '</div>' +
+    '<div style="background:rgba(184,224,48,0.06);border:1px solid rgba(184,224,48,0.12);border-radius:12px;padding:12px;margin-bottom:12px">' +
+      '<div style="font-family:\'DM Mono\',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#B8E030;margin-bottom:6px">✨ Why This Investor</div>' +
+      '<div style="font-size:12px;color:rgba(238,240,229,0.55);line-height:1.65">'+inv.thesis+'</div>' +
+    '</div>' +
+    '<div style="background:#0A0B07;border:1px solid rgba(255,255,255,0.07);border-radius:11px;padding:11px;margin-bottom:12px">' +
+      '<div style="font-family:\'DM Mono\',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(238,240,229,0.3);margin-bottom:6px">Contact</div>' +
+      '<div style="font-size:12px;color:#B8E030;margin-bottom:3px">'+inv.contact+'</div>' +
+      '<div style="font-size:11px;color:rgba(238,240,229,0.35)">'+inv.linkedin+'</div>' +
+    '</div>' +
+    '<div style="display:flex;gap:7px">' +
+      '<button onclick="closeSheet();switchScreen(\'messages\');showToast(\'✉️\',\'Draft Ready\',\'Outreach message drafted for '+inv.name+'\')" style="flex:1;background:#B8E030;color:#0A0B07;border:none;border-radius:11px;padding:13px;font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:600;cursor:pointer">Draft Message</button>' +
+      '<button onclick="closeSheet()" style="background:#222418;border:1px solid rgba(255,255,255,0.07);border-radius:11px;padding:13px 15px;color:rgba(238,240,229,0.4);font-size:13px;cursor:pointer">Close</button>' +
+    '</div>';
+  document.getElementById('bd').classList.add('on');
+  document.getElementById('sheet').classList.add('on');
+}
+
+// ── MESSAGE TEMPLATES ──
+var tones = {
+  warm: {
+    label: 'Warm Intro · Email',
+    liLabel: 'Warm Intro · LinkedIn DM',
+    email: 'Subject: ChloeIQ — Intro via [Mutual Contact]\n\nHi [First Name],\n\n[Mutual Contact] suggested I reach out — I think ChloeIQ might be right in your wheelhouse.\n\nWe\'re building the buyer intelligence layer for residential real estate. The problem: agents host 4+ open houses a month and walk away with a paper sign-in sheet. We fix that.\n\nEight weeks into beta in DFW:\n· 312 agents, 18 brokerages\n· 87% follow-up rate (vs 38% industry avg)\n· 4.2× conversion lift\n· $0 in churn\n\nWe\'re raising a $1.5M seed. Happy to share the deck or set up a quick call.\n\nJosh & Sarah Waters\nCo-Founders, ChloeIQ\njosh@chloeiq.com',
+    li: 'Hi [First Name] — [Mutual Contact] connected us. I\'m co-founding ChloeIQ with my wife Sarah — we\'re building the buyer intelligence layer for open houses. 8 weeks in DFW: 87% agent follow-up rate vs 38% industry avg. Raising $1.5M seed. Would love to share a quick deck if PropTech is still on your radar?'
+  },
+  direct: {
+    label: 'Direct Ask · Email',
+    liLabel: 'Direct Ask · LinkedIn DM',
+    email: 'Subject: ChloeIQ — $1.5M Seed · PropTech · DFW\n\nHi [First Name],\n\nI\'ll be direct — I\'m raising a $1.5M seed for ChloeIQ and your fund is at the top of my list.\n\nThe pitch: real estate agents host 4.8M open houses per year in the US and generate essentially zero usable buyer data. We fix that with a QR-triggered AI experience that profiles buyers, guides the tour, and delivers personalized follow-ups before the event ends.\n\nBeta metrics (8 weeks, DFW):\n· 87% follow-up rate vs 38% industry avg\n· 4.2× conversion lift\n· LTV/CAC: 34.7×\n· 0 direct competitors\n\nDeck: chloeiq.com/investors\n\nWorth 20 minutes?\n\nJosh Waters\nCo-Founder & CEO, ChloeIQ',
+    li: 'Hi [First Name] — raising $1.5M seed for ChloeIQ. We\'re building buyer intelligence for open houses — 87% agent follow-up rate vs 38% industry average in 8-week DFW beta. LTV/CAC of 34.7×, zero direct competitors. Your fund\'s PropTech thesis seems like a strong fit. Worth 20 minutes?'
+  },
+  follow: {
+    label: 'Follow-Up · Email',
+    liLabel: 'Follow-Up · LinkedIn DM',
+    email: 'Subject: Re: ChloeIQ — Following up\n\nHi [First Name],\n\nFollowing up on my note from [X days] ago about ChloeIQ.\n\nI know your inbox is full — just wanted to surface two things that happened since I last wrote:\n\n1. We added our 18th brokerage to the beta. Epting Realty (DFW) went from 38% to 87% follow-up rate in 6 weeks.\n\n2. First MRR crossed $4,200 this month with zero sales motion — pure word-of-mouth from the beta.\n\nIf the timing works, I\'d love 20 minutes. If PropTech isn\'t a fit right now, totally understood — just wanted to make sure you had the latest numbers.\n\nJosh\nCo-Founder, ChloeIQ',
+    li: 'Hi [First Name] — following up on ChloeIQ. Quick update since my last message: just hit $4,200 MRR with zero sales effort and added our 18th brokerage. Still raising the $1.5M seed. Worth a quick call if PropTech is still on your radar?'
+  },
+  cold: {
+    label: 'Cold Outreach · Email',
+    liLabel: 'Cold Outreach · LinkedIn DM',
+    email: 'Subject: Open house intelligence — $1.5M seed · ChloeIQ\n\nHi [First Name],\n\nI saw your piece on [specific content] and wanted to reach out directly.\n\nI\'m Josh Waters — co-founding ChloeIQ with my wife Sarah. We\'re both operators in the DFW real estate market (I\'m an active agent at REAL Broker; Sarah runs BD at Tiago Title). We built the product we wished existed.\n\nChloeIQ turns open houses into buyer intelligence events. Buyers scan a QR sign, get an AI-guided tour, and agents receive live lead scores and personalized follow-up drafts before the event ends.\n\nBeta in DFW — 8 weeks:\n· 87% follow-up rate vs 38% industry avg\n· 4.2× conversion lift in beta cohort\n· LTV/CAC of 34.7×\n\nRaising $1.5M seed. Full deck at chloeiq.com/investors.\n\nAppreciate any signal — even a quick "not a fit" helps.\n\nJosh',
+    li: 'Hi [First Name] — cold outreach, apologies. I\'m co-founding ChloeIQ, a buyer intelligence platform for open houses. Operator-founders (agent + title), DFW beta showing 87% follow-up rate vs 38% industry avg, 34.7× LTV/CAC. Raising $1.5M seed. Is PropTech early-stage on your radar?'
+  }
+};
+
+var curTone = 'warm';
+function selectTone(el, tone) {
+  document.querySelectorAll('.tone-chip').forEach(function(c){c.classList.remove('on')});
+  el.classList.add('on');
+  curTone = tone;
+  var t = tones[tone];
+  document.getElementById('tone-label').textContent = t.label;
+  document.getElementById('li-label').textContent = t.liLabel;
+  document.getElementById('compose-body').textContent = t.email;
+  document.getElementById('li-body').textContent = t.li;
+}
+
+// ── MATERIALS ──
+var materials = {
+  deck:     {icon:'📊', title:'Seed Deck', desc:'Your 10-slide investor deck covering the full narrative: problem, solution, traction, market size, business model, competition, team, and ask. Formatted for both in-person presentation and async sharing.', actions:['Share Link','Download PDF']},
+  onepager: {icon:'📄', title:'One-Pager', desc:'Single-page summary designed for first-touch outreach. Leads with the 87% vs 38% follow-up stat, the 4.2× conversion lift, and the $1.5M raise. Fits in the body of a cold email.', actions:['Share Link','Download PDF']},
+  dataroom: {icon:'🗄️', title:'Data Room', desc:'Investor-ready Notion data room. Contains: cap table, 18-month financial model, legal docs (formation, IP assignment), beta metrics dashboard, and customer reference contacts. Currently 70% complete.', actions:['Open Notion','Copy Link']},
+  demo:     {icon:'📱', title:'Interactive Demo', desc:'Shareable link to the full interactive prototype — buyer flow (QR scan → StyleDNA → Ask Chloe → VisionMatch), agent dashboard, and brokerage view. No login required. Works on mobile and desktop.', actions:['Copy Demo Link','Open Demo']},
+  model:    {icon:'📈', title:'Financial Model', desc:'18-month P&L with three scenarios (base, upside, downside). Includes unit economics, cohort retention assumptions, CAC by channel, and Series A readiness milestones. Currently in review.', actions:['Open Sheets','Download XLSX']},
+  refs:     {icon:'💬', title:'Customer References', desc:'3 beta agents (including Marcus Rivera, Epting Realty) and 2 brokerage principals available for investor reference calls. All have agreed to speak on record about ChloeIQ\'s impact on their business.', actions:['View Contacts','Request Intro']},
+};
+
+function openMaterial(key) {
+  var m = materials[key];
+  document.getElementById('sheet-body').innerHTML =
+    '<div style="display:flex;align-items:center;gap:11px;margin-bottom:14px">' +
+      '<div style="width:44px;height:44px;border-radius:12px;background:rgba(184,224,48,0.08);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">'+m.icon+'</div>' +
+      '<div style="font-family:\'Fraunces\',serif;font-size:17px;font-weight:700;color:#EEF0E5;flex:1">'+m.title+'</div>' +
+    '</div>' +
+    '<div style="font-size:13px;color:rgba(238,240,229,0.55);line-height:1.65;margin-bottom:14px">'+m.desc+'</div>' +
+    '<div style="display:flex;flex-direction:column;gap:7px;margin-bottom:14px">' +
+      m.actions.map(function(a,i){
+        var isPrimary = i===0;
+        return '<button onclick="closeSheet();showToast(\''+m.icon+'\',\''+a+'\',\''+m.title+' — '+a+' action triggered.\')" style="width:100%;background:'+(isPrimary?'#B8E030':'#222418')+';color:'+(isPrimary?'#0A0B07':'rgba(238,240,229,0.5)')+';border:'+(isPrimary?'none':'1px solid rgba(255,255,255,0.07)')+';border-radius:11px;padding:13px;font-family:\'DM Mono\',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:600;cursor:pointer">'+a+'</button>';
+      }).join('') +
+    '</div>' +
+    '<button onclick="closeSheet()" style="width:100%;background:#222418;border:1px solid rgba(255,255,255,0.07);border-radius:11px;padding:12px;color:rgba(238,240,229,0.4);font-size:13px;cursor:pointer">Close</button>';
+  document.getElementById('bd').classList.add('on');
+  document.getElementById('sheet').classList.add('on');
+}
+
+// ── PREP CHECKLISTS ──
+var preChecks = [
+  {id:'p1', done:true,  title:'Deck finalized and link live', sub:'chloeiq.com/investors updated'},
+  {id:'p2', done:true,  title:'One-pager drafted', sub:'Fits in a cold email body'},
+  {id:'p3', done:true,  title:'Beta metrics locked', sub:'87% follow-up, 4.2× lift, LTV/CAC 34.7×'},
+  {id:'p4', done:false, title:'Data room 100% complete', sub:'Cap table, financials, legal docs'},
+  {id:'p5', done:false, title:'Financial model reviewed', sub:'18-month P&L, three scenarios'},
+  {id:'p6', done:false, title:'3 reference customers briefed', sub:'Aligned on what to say to investors'},
+];
+var mtgChecks = [
+  {id:'m1', done:false, title:'Research the partner specifically', sub:'Read their recent tweets, blog posts, investments'},
+  {id:'m2', done:false, title:'Know their portfolio', sub:'Name 2–3 portfolio companies and why you\'re different'},
+  {id:'m3', done:false, title:'Prepare your 2-minute pitch', sub:'Problem → Solution → Traction → Ask'},
+  {id:'m4', done:false, title:'Print or pull up demo on phone', sub:'Have the live buyer flow ready to show'},
+  {id:'m5', done:false, title:'Know your numbers cold', sub:'87%, 4.2×, 34.7×, $1.5M, 500 agents, $68K MRR'},
+  {id:'m6', done:false, title:'Prepare for the comp question', sub:'"Spacio is a sign-in sheet. We are a buyer intelligence platform."'},
+];
+
+var checkState = {};
+function initChecks() {
+  preChecks.forEach(function(c){ checkState[c.id] = c.done; });
+  mtgChecks.forEach(function(c){ checkState[c.id] = c.done; });
+  renderChecks();
+}
+function toggleCheck(id) {
+  checkState[id] = !checkState[id];
+  renderChecks();
+}
+function renderChecks() {
+  var done = Object.values(checkState).filter(Boolean).length;
+  var total = Object.keys(checkState).length;
+  document.getElementById('prep-badge').textContent = done + ' / ' + total + ' done';
+  function renderList(items, elId) {
+    var html = '';
+    items.forEach(function(c) {
+      var isDone = checkState[c.id];
+      html += '<div class="check-item">';
+      html += '<div class="check-box'+(isDone?' done':'')+'" onclick="toggleCheck(\''+c.id+'\')">'+(isDone?'<svg width="11" height="9" viewBox="0 0 11 9" fill="none"><path d="M1 4L4 7.5L10 1" stroke="#0A0B07" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>':'')+'</div>';
+      html += '<div class="check-text"><div class="check-title" style="'+(isDone?'text-decoration:line-through;color:rgba(238,240,229,0.35)':'')+'">'+c.title+'</div><div class="check-sub">'+c.sub+'</div></div>';
+      html += '</div>';
+    });
+    document.getElementById(elId).innerHTML = html;
+  }
+  renderList(preChecks, 'checklist-pre');
+  renderList(mtgChecks, 'checklist-mtg');
+}
+
+var qaItems = [
+  {q:'Why haven\'t the big portals (Zillow, Realtor) done this?', a:'They monetize the listing, not the buyer. Their incentive is to sell leads to agents, not build buyer intelligence. We sit between the listing and the transaction — a category they\'ve never owned.'},
+  {q:'What stops an agent from just using a CRM?', a:'CRMs require data input. We generate the data automatically during the event. An agent using Follow Up Boss still walks away from an open house with nothing — unless they manually enter 15 leads. We eliminate that friction entirely.'},
+  {q:'How do you think about the data moat?', a:'StyleDNA gets smarter with every event. Each buyer interaction retrains the model. After 10,000 events, our DNA classification will be more accurate than anything a competitor can build from scratch. This is the flywheel.'},
+  {q:'What\'s the path to Series A?', a:'500 active agents, $68K MRR, 5 markets, and demonstrable NPS above 70. At that scale we can show the data licensing potential to a Series A investor with a credible enterprise growth story.'},
+  {q:'How do you acquire agents?', a:'Top-down through brokerages (brokerage deal = 10–50 agents) and bottom-up through referrals. In beta, 80% of new agents came from referrals from existing agents. CAC has stayed under $100.'},
+];
+
+function renderQA() {
+  var html = '';
+  qaItems.forEach(function(item, i) {
+    html += '<div class="card" onclick="toggleQA('+i+')" style="margin-bottom:8px">';
+    html += '<div style="font-size:13px;font-weight:600;color:#EEF0E5;margin-bottom:0" id="q-'+i+'">Q: '+item.q+'</div>';
+    html += '<div id="a-'+i+'" style="display:none;font-size:12px;color:rgba(238,240,229,0.5);line-height:1.6;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06)">'+item.a+'</div>';
+    html += '</div>';
+  });
+  document.getElementById('qa-list').innerHTML = html;
+}
+function toggleQA(i) {
+  var el = document.getElementById('a-'+i);
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+// ── SCREEN NAV ──
+function switchScreen(key) {
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('on')});
+  document.querySelectorAll('.ni').forEach(function(n){n.classList.remove('on')});
+  document.getElementById('s-'+key).classList.add('on');
+  document.getElementById('ni-'+key).classList.add('on');
+}
+
+function closeSheet() {
+  document.getElementById('bd').classList.remove('on');
+  document.getElementById('sheet').classList.remove('on');
+}
+
+function showToast(icon, title, msg) {
+  var old = document.getElementById('tt');
+  if(old) old.remove();
+  var t = document.createElement('div');
+  t.id = 'tt';
+  t.className = 'toast';
+  t.innerHTML = '<div style="font-size:19px">'+icon+'</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#EEF0E5;margin-bottom:2px">'+title+'</div><div style="font-size:12px;color:rgba(238,240,229,0.5);">'+(msg||'')+'</div></div><div onclick="document.getElementById(\'tt\').remove()" style="color:rgba(238,240,229,0.3);cursor:pointer;font-size:16px;flex-shrink:0">✕</div>';
+  document.querySelector('.phone').appendChild(t);
+  setTimeout(function(){ var el=document.getElementById('tt'); if(el) el.remove(); }, 4500);
+}
+
+// ── INIT ──
+renderInvList();
+selectTone(document.querySelector('.tone-chip'), 'warm');
+initChecks();
+renderQA();
+</script>
+</body>
+</html>

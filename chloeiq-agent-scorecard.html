@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ChloeIQ — Agent Scorecard</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,300;1,600&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0A0B07;
+  --accent: #B8E030;
+  --accent-dim: rgba(184,224,48,0.10);
+  --surface: #13160D;
+  --surface2: #1C1F14;
+  --border: rgba(184,224,48,0.12);
+  --border2: rgba(255,255,255,0.07);
+  --text: #EEF0E5;
+  --text-dim: rgba(238,240,229,0.55);
+  --text-muted: rgba(238,240,229,0.32);
+  --warm: #1A1C12;
+  --warm2: #222418;
+  --green: #4ADE80;
+  --amber: #FBBF24;
+  --gold: #F0C040;
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body {
+  background: #0D0D0D;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Sans', sans-serif;
+  padding: 24px 16px;
+  gap: 20px;
+}
+.outer-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--accent); opacity: 0.6;
+}
+.phone {
+  width: 375px; height: 812px;
+  background: var(--bg);
+  border-radius: 44px; overflow: hidden; position: relative;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.07), 0 0 0 2px rgba(0,0,0,0.6), 0 32px 64px rgba(0,0,0,0.7);
+  display: flex; flex-direction: column;
+}
+.notch { position:absolute; top:0; left:50%; transform:translateX(-50%); width:120px; height:30px; background:#080808; border-radius:0 0 20px 20px; z-index:20; }
+.status-bar { display:flex; justify-content:space-between; align-items:center; padding:18px 28px 0; font-family:'DM Mono',monospace; font-size:12px; color:rgba(238,240,229,0.6); flex-shrink:0; z-index:10; background:var(--bg); position:relative; }
+
+/* SCREENS */
+.screen { flex:1; display:none; flex-direction:column; overflow:hidden; }
+.screen.active { display:flex; }
+
+/* ── SCREEN: PUBLIC CARD ── */
+#s-card {
+  background: var(--bg);
+  overflow-y: auto;
+  scrollbar-width: none;
+  /* Override flex column so content stacks naturally and scrolls */
+  flex-direction: column;
+}
+#s-card::-webkit-scrollbar { display: none; }
+
+/* HERO */
+.card-hero {
+  background: linear-gradient(160deg, #0E1208 0%, #0A0B07 60%);
+  padding: 28px 24px 24px;
+  position: relative; overflow: hidden;
+  flex-shrink: 0;
+  /* Ensure hero always has room to show score ring */
+  min-height: 190px;
+}
+.card-hero::before {
+  content: '';
+  position: absolute;
+  width: 260px; height: 260px;
+  background: radial-gradient(circle, rgba(184,224,48,0.09) 0%, transparent 65%);
+  top: -60px; right: -60px;
+}
+.card-hero-top {
+  display: flex; align-items: flex-start; gap: 14px; margin-bottom: 20px;
+}
+.card-avatar {
+  width: 72px; height: 72px; border-radius: 20px;
+  background: var(--accent-dim);
+  border: 2px solid rgba(184,224,48,0.25);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px; flex-shrink: 0; position: relative;
+}
+.card-tier-badge {
+  position: absolute; bottom: -8px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--gold);
+  color: #1A1000;
+  border-radius: 100px;
+  padding: 2px 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: 8px; font-weight: 700; letter-spacing: 1px; white-space: nowrap;
+}
+.card-identity { flex: 1; padding-top: 4px; }
+.card-name { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.card-brokerage { font-size: 13px; color: var(--text-muted); margin-bottom: 6px; }
+.card-market {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 100px; padding: 4px 10px;
+  font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted);
+}
+
+/* BIG SCORE */
+.score-section {
+  display: flex; align-items: center; gap: 20px;
+}
+.score-ring-big {
+  width: 100px; height: 100px; position: relative;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.score-ring-big svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+.srb-bg { fill:none; stroke: rgba(255,255,255,0.06); stroke-width: 8; }
+.srb-fg { fill:none; stroke: var(--accent); stroke-width: 8; stroke-linecap: round;
+  stroke-dasharray: 283; stroke-dashoffset: 57;
+  filter: drop-shadow(0 0 6px var(--accent)); }
+.score-num-big {
+  font-family: 'Fraunces', serif; font-size: 36px; font-weight: 700;
+  color: var(--accent); line-height: 1; text-align: center;
+}
+.score-lbl-big {
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text-muted); text-align: center; margin-top: 3px;
+}
+.score-meta { flex: 1; }
+.score-meta-title {
+  font-family: 'Fraunces', serif; font-size: 16px; font-weight: 700;
+  color: var(--text); margin-bottom: 6px;
+}
+.score-meta-pills { display: flex; flex-direction: column; gap: 5px; }
+.score-pill {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 12px; color: var(--text-dim);
+}
+.score-pill-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+
+/* STATS ROW */
+.stats-strip {
+  display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 1px; background: var(--border2);
+  border-top: 1px solid var(--border2);
+  border-bottom: 1px solid var(--border2);
+}
+.stat-block {
+  background: var(--bg); padding: 14px 10px; text-align: center;
+}
+.stat-block-val {
+  font-family: 'Fraunces', serif; font-size: 20px; font-weight: 700;
+  color: var(--accent);
+}
+.stat-block-lbl {
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-top: 3px;
+}
+
+/* SECTION */
+.scorecard-section { padding: 18px 20px 0; }
+.section-hdr {
+  font-family: 'DM Mono', monospace; font-size: 9px;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 12px;
+}
+
+/* BREAKDOWN BARS */
+.breakdown-card {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 16px; overflow: hidden; margin-bottom: 16px;
+}
+.br-row {
+  display: flex; align-items: center; padding: 12px 16px; gap: 12px;
+  border-bottom: 1px solid var(--border2);
+}
+.br-row:last-child { border-bottom: none; }
+.br-label { font-size: 13px; color: var(--text); flex: 1; }
+.br-bar-wrap { width: 80px; height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+.br-bar { height: 100%; background: var(--accent); border-radius: 2px; }
+.br-val { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--accent); width: 32px; text-align: right; }
+
+/* BADGES */
+.badges-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+.badge-card {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 14px; padding: 14px 10px; text-align: center;
+  cursor: pointer; transition: all 0.2s;
+}
+.badge-card:hover { border-color: rgba(184,224,48,0.25); }
+.badge-card.earned { border-color: rgba(184,224,48,0.2); background: rgba(184,224,48,0.04); }
+.badge-icon { font-size: 28px; margin-bottom: 6px; }
+.badge-name { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); line-height: 1.3; }
+.badge-card.earned .badge-name { color: var(--accent); }
+.badge-locked { font-size: 10px; color: var(--text-muted); opacity: 0.4; margin-top: 3px; }
+
+/* RECENT EVENTS */
+.event-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.event-row {
+  background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 14px; padding: 13px 14px;
+  display: flex; align-items: center; gap: 12px;
+  cursor: pointer; transition: all 0.2s;
+}
+.event-row:hover { border-color: rgba(184,224,48,0.2); }
+.event-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--warm2); display: flex; align-items: center; justify-content: center;
+  font-size: 17px; flex-shrink: 0;
+}
+.event-info { flex: 1; }
+.event-address { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+.event-meta { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); }
+.event-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.event-score { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 700; color: var(--accent); }
+.event-buyers { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); }
+
+/* LEADERBOARD */
+.leaderboard { background: var(--surface); border: 1px solid var(--border2); border-radius: 16px; overflow: hidden; margin-bottom: 24px; }
+.lb-header { padding: 12px 16px; border-bottom: 1px solid var(--border2); font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted); }
+.lb-row { display: flex; align-items: center; padding: 11px 16px; gap: 12px; border-bottom: 1px solid var(--border2); }
+.lb-row:last-child { border-bottom: none; }
+.lb-row.me { background: rgba(184,224,48,0.04); }
+.lb-rank { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 700; color: var(--text-muted); width: 22px; }
+.lb-row.me .lb-rank { color: var(--accent); }
+.lb-avatar { width: 28px; height: 28px; border-radius: 8px; background: var(--warm2); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+.lb-row.me .lb-avatar { background: var(--accent-dim); border: 1px solid rgba(184,224,48,0.2); }
+.lb-name { font-size: 13px; color: var(--text); flex: 1; }
+.lb-row.me .lb-name { color: var(--accent); font-weight: 600; }
+.lb-score { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-dim); }
+.lb-row.me .lb-score { color: var(--accent); }
+.lb-tier { font-size: 10px; }
+
+/* BOTTOM NAV */
+.bottom-nav { display: flex; border-top: 1px solid var(--border2); padding: 10px 0 20px; background: var(--bg); flex-shrink: 0; }
+.nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; padding: 4px 0; }
+.nav-icon { font-size: 20px; }
+.nav-label { font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.5px; color: var(--text-muted); text-transform: uppercase; }
+.nav-item.active .nav-label { color: var(--accent); }
+
+/* SHARE SHEET */
+.share-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.6); z-index: 49; opacity: 0; pointer-events: none; transition: opacity 0.3s; backdrop-filter: blur(3px); }
+.share-backdrop.open { opacity: 1; pointer-events: all; }
+.share-sheet { position: absolute; bottom: 0; left: 0; right: 0; background: var(--surface); border-radius: 22px 22px 0 0; border-top: 1px solid var(--border2); padding: 0 20px 32px; transform: translateY(100%); transition: transform 0.35s cubic-bezier(0.4,0,0.2,1); z-index: 50; }
+.share-sheet.open { transform: translateY(0); }
+.share-handle { width: 36px; height: 4px; background: var(--border2); border-radius: 2px; margin: 12px auto 16px; }
+.share-title { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.share-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+.share-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.share-option { background: var(--warm2); border: 1px solid var(--border2); border-radius: 14px; padding: 14px; text-align: center; cursor: pointer; transition: all 0.2s; }
+.share-option:hover { border-color: rgba(184,224,48,0.25); }
+.share-option-icon { font-size: 24px; margin-bottom: 6px; }
+.share-option-label { font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); }
+.share-close { width: 100%; background: transparent; border: 1px solid var(--border2); border-radius: 12px; padding: 13px; color: var(--text-muted); font-size: 14px; cursor: pointer; }
+</style>
+</head>
+<body>
+
+<div class="outer-label">ChloeIQ · Agent Scorecard · Marcus Rivera</div>
+
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status-bar"><span>9:41</span><span>●●● 5G 🔋</span></div>
+
+  <!-- ══ MAIN SCORECARD ══ -->
+  <div class="screen active" id="s-card">
+
+    <!-- HERO -->
+    <div class="card-hero">
+      <div class="card-hero-top">
+        <div class="card-avatar">
+          👤
+          <div class="card-tier-badge">GOLD</div>
+        </div>
+        <div class="card-identity">
+          <div class="card-name">Marcus Rivera</div>
+          <div class="card-brokerage">Epting Realty · DFW</div>
+          <div class="card-market">📍 Flower Mound, TX</div>
+        </div>
+      </div>
+
+      <div class="score-section">
+        <div class="score-ring-big">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle class="srb-bg" cx="50" cy="50" r="45"/>
+            <circle class="srb-fg" id="score-ring" cx="50" cy="50" r="45"/>
+          </svg>
+          <div>
+            <div class="score-num-big">780</div>
+            <div class="score-lbl-big">Score</div>
+          </div>
+        </div>
+        <div class="score-meta">
+          <div class="score-meta-title">Gold Tier Agent</div>
+          <div class="score-meta-pills">
+            <div class="score-pill"><div class="score-pill-dot"></div>Top 12% in DFW</div>
+            <div class="score-pill"><div class="score-pill-dot"></div>+24 pts this month</div>
+            <div class="score-pill"><div class="score-pill-dot"></div>3rd consecutive Gold</div>
+            <div class="score-pill"><div class="score-pill-dot"></div>42 events hosted</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATS STRIP -->
+    <div class="stats-strip">
+      <div class="stat-block">
+        <div class="stat-block-val">42</div>
+        <div class="stat-block-lbl">Events</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-block-val">98%</div>
+        <div class="stat-block-lbl">Follow-Up</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-block-val">4.9★</div>
+        <div class="stat-block-lbl">Rating</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-block-val">312</div>
+        <div class="stat-block-lbl">Leads</div>
+      </div>
+    </div>
+
+    <!-- BREAKDOWN -->
+    <div class="scorecard-section">
+      <div class="section-hdr">Score Breakdown</div>
+      <div class="breakdown-card">
+        <div class="br-row">
+          <div class="br-label">Follow-Up Rate</div>
+          <div class="br-bar-wrap"><div class="br-bar" style="width:98%"></div></div>
+          <div class="br-val">98%</div>
+        </div>
+        <div class="br-row">
+          <div class="br-label">Buyer Satisfaction</div>
+          <div class="br-bar-wrap"><div class="br-bar" style="width:94%"></div></div>
+          <div class="br-val">94%</div>
+        </div>
+        <div class="br-row">
+          <div class="br-label">Data Accuracy</div>
+          <div class="br-bar-wrap"><div class="br-bar" style="width:91%"></div></div>
+          <div class="br-val">91%</div>
+        </div>
+        <div class="br-row">
+          <div class="br-label">Lead Quality</div>
+          <div class="br-bar-wrap"><div class="br-bar" style="width:85%"></div></div>
+          <div class="br-val">85%</div>
+        </div>
+        <div class="br-row">
+          <div class="br-label">Avg Match Score</div>
+          <div class="br-bar-wrap"><div class="br-bar" style="width:79%"></div></div>
+          <div class="br-val">79%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BADGES -->
+    <div class="scorecard-section">
+      <div class="section-hdr">Badges Earned</div>
+      <div class="badges-grid">
+        <div class="badge-card earned" onclick="showBadge('closer')">
+          <div class="badge-icon">🔥</div>
+          <div class="badge-name">Hot Lead Closer</div>
+        </div>
+        <div class="badge-card earned" onclick="showBadge('streak')">
+          <div class="badge-icon">⚡</div>
+          <div class="badge-name">Follow-Up Streak</div>
+        </div>
+        <div class="badge-card earned" onclick="showBadge('gold')">
+          <div class="badge-icon">🥇</div>
+          <div class="badge-name">Gold Tier x3</div>
+        </div>
+        <div class="badge-card earned" onclick="showBadge('top')">
+          <div class="badge-icon">📍</div>
+          <div class="badge-name">Local Expert</div>
+        </div>
+        <div class="badge-card earned" onclick="showBadge('data')">
+          <div class="badge-icon">🧬</div>
+          <div class="badge-name">DNA Whisperer</div>
+        </div>
+        <div class="badge-card" onclick="showBadge('locked')">
+          <div class="badge-icon" style="opacity:0.3;">🏆</div>
+          <div class="badge-name" style="opacity:0.4;">Platinum Tier</div>
+          <div class="badge-locked">820+ needed</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECENT EVENTS -->
+    <div class="scorecard-section">
+      <div class="section-hdr">Recent Events</div>
+      <div class="event-list">
+        <div class="event-row" onclick="showEventDetail('magnolia')">
+          <div class="event-icon">🏡</div>
+          <div class="event-info">
+            <div class="event-address">2847 Magnolia Drive</div>
+            <div class="event-meta">Today · 12 buyers</div>
+          </div>
+          <div class="event-right">
+            <div class="event-score">87</div>
+            <div class="event-buyers">3 hot leads</div>
+          </div>
+        </div>
+        <div class="event-row" onclick="showEventDetail('elmwood')">
+          <div class="event-icon">🏡</div>
+          <div class="event-info">
+            <div class="event-address">412 Elmwood Court</div>
+            <div class="event-meta">Last Sat · 9 buyers</div>
+          </div>
+          <div class="event-right">
+            <div class="event-score">81</div>
+            <div class="event-buyers">2 hot leads</div>
+          </div>
+        </div>
+        <div class="event-row" onclick="showEventDetail('cedar')">
+          <div class="event-icon">🏡</div>
+          <div class="event-info">
+            <div class="event-address">1104 Cedar Ridge Ln</div>
+            <div class="event-meta">Mar 15 · 14 buyers</div>
+          </div>
+          <div class="event-right">
+            <div class="event-score">74</div>
+            <div class="event-buyers">1 hot lead</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LEADERBOARD -->
+    <div class="scorecard-section">
+      <div class="section-hdr">DFW Leaderboard · This Month</div>
+      <div class="leaderboard">
+        <div class="lb-header">Top Host Agents</div>
+        <div class="lb-row">
+          <div class="lb-rank">1</div>
+          <div class="lb-avatar">👤</div>
+          <div class="lb-name">Sarah Okonkwo</div>
+          <div class="lb-score">812</div>
+          <div class="lb-tier">🥇</div>
+        </div>
+        <div class="lb-row">
+          <div class="lb-rank">2</div>
+          <div class="lb-avatar">👤</div>
+          <div class="lb-name">Daniel Park</div>
+          <div class="lb-score">801</div>
+          <div class="lb-tier">🥇</div>
+        </div>
+        <div class="lb-row me">
+          <div class="lb-rank">3</div>
+          <div class="lb-avatar">👤</div>
+          <div class="lb-name">Marcus Rivera · You</div>
+          <div class="lb-score">780</div>
+          <div class="lb-tier">🥇</div>
+        </div>
+        <div class="lb-row">
+          <div class="lb-rank">4</div>
+          <div class="lb-avatar">👤</div>
+          <div class="lb-name">Priya Nair</div>
+          <div class="lb-score">764</div>
+          <div class="lb-tier">🥈</div>
+        </div>
+        <div class="lb-row">
+          <div class="lb-rank">5</div>
+          <div class="lb-avatar">👤</div>
+          <div class="lb-name">James Whitfield</div>
+          <div class="lb-score">751</div>
+          <div class="lb-tier">🥈</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end s-card scroll -->
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <div class="nav-item active" id="nav-score">
+      <div class="nav-icon">⭐</div>
+      <div class="nav-label">Score</div>
+    </div>
+    <div class="nav-item" onclick="showShare()">
+      <div class="nav-icon">📤</div>
+      <div class="nav-label">Share</div>
+    </div>
+    <div class="nav-item" onclick="showToast('📊','Insights','Your score is projected to reach 800 within 3 events at your current follow-up rate.')">
+      <div class="nav-icon">📊</div>
+      <div class="nav-label">Insights</div>
+    </div>
+    <div class="nav-item" onclick="showToast('⚙️','Settings','Scorecard settings — notification preferences and visibility controls coming soon.')">
+      <div class="nav-icon">⚙️</div>
+      <div class="nav-label">Settings</div>
+    </div>
+  </div>
+
+  <!-- SHARE SHEET -->
+  <div class="share-backdrop" id="share-backdrop" onclick="closeShare()"></div>
+  <div class="share-sheet" id="share-sheet">
+    <div class="share-handle"></div>
+    <div class="share-title">Share Your Scorecard</div>
+    <div class="share-sub">Let listing agents know what you bring to every open house.</div>
+    <div class="share-options">
+      <div class="share-option" onclick="shareAction('link')">
+        <div class="share-option-icon">🔗</div>
+        <div class="share-option-label">Copy Link</div>
+      </div>
+      <div class="share-option" onclick="shareAction('email')">
+        <div class="share-option-icon">✉️</div>
+        <div class="share-option-label">Send Email</div>
+      </div>
+      <div class="share-option" onclick="shareAction('text')">
+        <div class="share-option-icon">💬</div>
+        <div class="share-option-label">Text Message</div>
+      </div>
+      <div class="share-option" onclick="shareAction('pdf')">
+        <div class="share-option-icon">📄</div>
+        <div class="share-option-label">Download PDF</div>
+      </div>
+    </div>
+    <button class="share-close" onclick="closeShare()">Cancel</button>
+  </div>
+
+  <!-- DETAIL OVERLAY (badges + events) -->
+  <div class="share-backdrop" id="detail-backdrop" onclick="closeDetail()"></div>
+  <div class="share-sheet" id="detail-sheet">
+    <div class="share-handle"></div>
+    <div id="detail-content"></div>
+  </div>
+
+</div>
+
+<script>
+// ── THEME ──
+(function(){
+  const p=new URLSearchParams(window.location.search),root=document.documentElement;
+  const h=k=>p.get(k)?'#'+p.get(k):null;
+  const sv=(k,v)=>v&&root.style.setProperty(k,v);
+  const bg=h('bg'),ac=h('accent'),tx=h('text'),sf=h('surface');
+  sv('--bg',bg);sv('--accent',ac);sv('--text',tx);sv('--surface',sf);
+  if(ac){const r=parseInt(ac.slice(1,3),16),g=parseInt(ac.slice(3,5),16),b=parseInt(ac.slice(5,7),16);
+    root.style.setProperty('--accent-dim',`rgba(${r},${g},${b},0.10)`);
+    root.style.setProperty('--border',`rgba(${r},${g},${b},0.12)`);}
+  if(tx){const r=parseInt(tx.slice(1,3),16),g=parseInt(tx.slice(3,5),16),b=parseInt(tx.slice(5,7),16);
+    root.style.setProperty('--text-dim',`rgba(${r},${g},${b},0.55)`);
+    root.style.setProperty('--text-muted',`rgba(${r},${g},${b},0.32)`);}
+  if(bg){root.style.setProperty('--warm',bg);root.style.setProperty('--warm2',bg);}
+  const font=p.get('font')?decodeURIComponent(p.get('font')):null;
+  if(font){const l=document.createElement('link');l.rel='stylesheet';
+    l.href=`https://fonts.googleapis.com/css2?family=${font.replace(/ /g,'+')}:wght@400;600;700&display=swap`;
+    document.head.appendChild(l);
+    l.onload=()=>document.querySelectorAll('.card-name,.score-num-big,.share-title').forEach(e=>e.style.fontFamily=`'${font}',serif`);}
+})();
+
+// ── SHARE ──
+function showShare(){
+  closeDetail(); // ensure detail isn't open at same time
+  document.getElementById('share-backdrop').classList.add('open');
+  document.getElementById('share-sheet').classList.add('open');
+}
+function closeShare(){
+  document.getElementById('share-backdrop').classList.remove('open');
+  document.getElementById('share-sheet').classList.remove('open');
+}
+function shareAction(type){
+  closeShare();
+  const msgs = {
+    link:  {icon:'🔗', title:'Link Copied', msg:'chloeiq.com/marcus-rivera — share with any listing agent.'},
+    email: {icon:'✉️', title:'Email Draft Ready', msg:'Pre-filled email with your scorecard link is ready to send.'},
+    text:  {icon:'💬', title:'Text Ready', msg:'Message drafted with your scorecard link. Open in Messages to send.'},
+    pdf:   {icon:'📄', title:'PDF Generating', msg:'Your ChloeIQ Scorecard PDF will be ready in a few seconds.'},
+  }[type];
+  setTimeout(()=>showToast(msgs.icon, msgs.title, msgs.msg), 300);
+}
+
+// ── BADGES ──
+const badgeData = {
+  closer:  {icon:'🔥', name:'Hot Lead Closer',    desc:'Converted 3+ hot leads (80%+ match) into private showings in a single month. Your highest-intent buyers are responding.'},
+  streak:  {icon:'⚡', name:'Follow-Up Streak',   desc:'100% follow-up rate for 30 consecutive days. Every lead heard from you within 24 hours of their open house visit.'},
+  gold:    {icon:'🥇', name:'Gold Tier ×3',       desc:'Achieved Gold Tier status (750+ score) for three consecutive months. Consistent excellence, not a fluke.'},
+  top:     {icon:'📍', name:'Local Expert',       desc:'Hosted 10+ open houses in a single ZIP code. Flower Mound listing agents know your name and track record.'},
+  data:    {icon:'🧬', name:'DNA Whisperer',      desc:'Average buyer match score above 78% across 20+ events. You attract the right buyers to the right properties.'},
+  locked:  {icon:'🏆', name:'Platinum Tier',      desc:"Requires a Host Score of 820 or above. You're currently at 780 — approximately 3 high-quality events away at your current trajectory."},
+};
+
+function showBadge(key){
+  const d = badgeData[key];
+  const surf = getComputedStyle(document.documentElement).getPropertyValue('--surface').trim() || '#13160D';
+  const warm2 = getComputedStyle(document.documentElement).getPropertyValue('--warm2').trim() || '#222418';
+  const textCol = getComputedStyle(document.documentElement).getPropertyValue('--text').trim() || '#EEF0E5';
+  const textDimCol = getComputedStyle(document.documentElement).getPropertyValue('--text-dim').trim() || 'rgba(238,240,229,0.55)';
+  const accentCol = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#B8E030';
+  openDetail(`
+    <div style="text-align:center;margin-bottom:16px;">
+      <div style="font-size:52px;margin-bottom:10px;">${d.icon}</div>
+      <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:${textCol};margin-bottom:6px;">${d.name}</div>
+    </div>
+    <div style="background:rgba(184,224,48,0.06);border:1px solid rgba(184,224,48,0.15);border-radius:12px;padding:14px;margin-bottom:16px;font-size:13px;color:${textDimCol};line-height:1.65;">${d.desc}</div>
+    <button onclick="closeDetail()" style="width:100%;background:${warm2};border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:13px;color:${textDimCol};font-size:14px;cursor:pointer;">Close</button>
+  `);
+}
+
+// ── EVENTS ──
+const eventData = {
+  magnolia: {addr:'2847 Magnolia Drive', date:'Today · 1–4pm',  score:87, buyers:12, hot:3, dna:'Refined Modern dominant', note:'Your strongest event of the month. 3 hot leads including Jordan Lee (87% match) who asked 4 questions through Chloe.'},
+  elmwood:  {addr:'412 Elmwood Court',   date:'Last Saturday',   score:81, buyers:9,  hot:2, dna:'Warm Organic dominant',   note:'Strong event with a surprising backyard dwell time. Two buyers requested second showings within 48 hours.'},
+  cedar:    {addr:'1104 Cedar Ridge Ln', date:'March 15',        score:74, buyers:14, hot:1, dna:'Mixed profiles',           note:'High traffic but lower match scores. The listing skewed older demographic — consider this when reviewing buyer profile fit for future events.'},
+};
+
+function showEventDetail(key){
+  const d = eventData[key];
+  const warm2 = getComputedStyle(document.documentElement).getPropertyValue('--warm2').trim() || '#222418';
+  const textCol = getComputedStyle(document.documentElement).getPropertyValue('--text').trim() || '#EEF0E5';
+  const textDimCol = getComputedStyle(document.documentElement).getPropertyValue('--text-dim').trim() || 'rgba(238,240,229,0.55)';
+  const textMutedCol = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim() || 'rgba(238,240,229,0.32)';
+  const accentCol = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#B8E030';
+  openDetail(`
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+      <div style="width:44px;height:44px;border-radius:13px;background:${warm2};display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🏡</div>
+      <div style="flex:1;">
+        <div style="font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:${textCol};">${d.addr}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:${textMutedCol};margin-top:2px;">${d.date}</div>
+      </div>
+      <div style="font-family:'Fraunces',serif;font-size:28px;font-weight:700;color:${accentCol};">${d.score}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
+      <div style="background:${warm2};border-radius:10px;padding:10px;text-align:center;"><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:${accentCol};">${d.buyers}</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:${textMutedCol};letter-spacing:1px;text-transform:uppercase;margin-top:2px;">Buyers</div></div>
+      <div style="background:${warm2};border-radius:10px;padding:10px;text-align:center;"><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:${accentCol};">${d.hot}</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:${textMutedCol};letter-spacing:1px;text-transform:uppercase;margin-top:2px;">Hot Leads</div></div>
+      <div style="background:${warm2};border-radius:10px;padding:10px;text-align:center;"><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:${accentCol};">${d.score}</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:${textMutedCol};letter-spacing:1px;text-transform:uppercase;margin-top:2px;">Score</div></div>
+    </div>
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:${textMutedCol};margin-bottom:6px;">Buyer DNA Mix</div>
+    <div style="font-size:13px;color:${textDimCol};margin-bottom:14px;">${d.dna}</div>
+    <div style="background:rgba(184,224,48,0.06);border:1px solid rgba(184,224,48,0.15);border-radius:12px;padding:13px;margin-bottom:14px;">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:${accentCol};margin-bottom:6px;">✨ Chloe's Note</div>
+      <div style="font-size:13px;color:${textDimCol};line-height:1.6;">${d.note}</div>
+    </div>
+    <button onclick="closeDetail()" style="width:100%;background:${warm2};border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:13px;color:${textDimCol};font-size:14px;cursor:pointer;">Close</button>
+  `);
+}
+
+// ── DETAIL SHEET ──
+function openDetail(html){
+  document.getElementById('detail-content').innerHTML = html;
+  document.getElementById('detail-backdrop').classList.add('open');
+  document.getElementById('detail-sheet').classList.add('open');
+}
+function closeDetail(){
+  document.getElementById('detail-backdrop').classList.remove('open');
+  document.getElementById('detail-sheet').classList.remove('open');
+}
+
+// ── TOAST ──
+function showToast(icon, title, msg){
+  const existing = document.getElementById('sc-toast');
+  if(existing) existing.remove();
+  const textColor   = getComputedStyle(document.documentElement).getPropertyValue('--text').trim() || '#EEF0E5';
+  const textDim     = getComputedStyle(document.documentElement).getPropertyValue('--text-dim').trim() || 'rgba(238,240,229,0.55)';
+  const surfaceBg   = getComputedStyle(document.documentElement).getPropertyValue('--surface').trim() || '#13160D';
+  const t = document.createElement('div');
+  t.id = 'sc-toast';
+  t.style.cssText = `position:absolute;bottom:88px;left:16px;right:16px;border-radius:14px;padding:14px 16px;z-index:150;display:flex;gap:12px;align-items:flex-start;box-shadow:0 8px 24px rgba(0,0,0,0.5);`;
+  t.style.background = surfaceBg;
+  t.style.border = '1px solid rgba(255,255,255,0.08)';
+  t.style.animation = 'scToastIn 0.3s ease';
+  t.innerHTML = `
+    <div style="font-size:20px;">${icon}</div>
+    <div style="flex:1;">
+      <div style="font-size:13px;font-weight:600;color:${textColor};margin-bottom:3px;">${title}</div>
+      <div style="font-size:12px;color:${textDim};line-height:1.5;">${msg}</div>
+    </div>
+    <div id="sc-toast-close" style="color:rgba(238,240,229,0.32);cursor:pointer;font-size:16px;flex-shrink:0;">✕</div>
+    <style>@keyframes scToastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}</style>
+  `;
+  document.querySelector('.phone').appendChild(t);
+  document.getElementById('sc-toast-close').onclick = () => t.remove();
+  setTimeout(() => { if(t.parentNode) t.remove(); }, 4000);
+}
+</script>
+</body>
+</html>

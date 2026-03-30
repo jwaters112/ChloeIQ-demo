@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ChloeIQ — Marketplace</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,300;1,600&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0A0B07;
+  --accent: #B8E030;
+  --accent-dim: rgba(184,224,48,0.10);
+  --surface: #13160D;
+  --surface2: #1C1F14;
+  --border: rgba(184,224,48,0.12);
+  --border2: rgba(255,255,255,0.07);
+  --text: #EEF0E5;
+  --text-dim: rgba(238,240,229,0.55);
+  --text-muted: rgba(238,240,229,0.32);
+  --warm: #1A1C12;
+  --warm2: #222418;
+  --green: #4ADE80;
+  --amber: #FBBF24;
+  --red: #F87171;
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body {
+  background: #0D0D0D;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Sans', sans-serif;
+  padding: 24px 16px;
+  gap: 20px;
+}
+.outer-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--accent); opacity: 0.6;
+}
+.phone {
+  width: 375px; height: 812px;
+  background: var(--bg);
+  border-radius: 44px; overflow: hidden; position: relative;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.07), 0 0 0 2px rgba(0,0,0,0.6), 0 32px 64px rgba(0,0,0,0.7);
+  display: flex; flex-direction: column;
+}
+.notch { position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:30px;background:#080808;border-radius:0 0 20px 20px;z-index:20; }
+.status-bar { display:flex;justify-content:space-between;align-items:center;padding:18px 28px 0;font-family:'DM Mono',monospace;font-size:12px;color:rgba(238,240,229,0.6);flex-shrink:0;z-index:10;background:var(--bg);position:relative; }
+
+/* SCREENS */
+.screen { flex:1;display:none;flex-direction:column;overflow:hidden; }
+.screen.active { display:flex; }
+
+/* ══════════════════════
+   SHARED HEADER
+══════════════════════ */
+.mkt-header {
+  padding: 14px 20px 12px;
+  border-bottom: 1px solid var(--border2);
+  flex-shrink: 0;
+}
+.mkt-header-top { display:flex;align-items:center;justify-content:space-between;margin-bottom:10px; }
+.mkt-eyebrow { font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:3px; }
+.mkt-title { font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--text); }
+.mkt-badge {
+  background:var(--accent-dim);border:1px solid var(--border);
+  border-radius:100px;padding:5px 12px;
+  font-family:'DM Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:1px;
+}
+.filter-row { display:flex;gap:6px;overflow-x:auto;scrollbar-width:none; }
+.filter-row::-webkit-scrollbar { display:none; }
+.filter-chip {
+  padding:6px 14px;border-radius:100px;
+  border:1px solid var(--border2);background:var(--surface);
+  font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;
+  color:var(--text-muted);white-space:nowrap;cursor:pointer;transition:all 0.2s;
+}
+.filter-chip.active { background:var(--accent-dim);border-color:rgba(184,224,48,0.3);color:var(--accent); }
+
+/* SCROLL */
+.mkt-scroll { flex:1;overflow-y:auto;scrollbar-width:none;padding:14px 16px; }
+.mkt-scroll::-webkit-scrollbar { display:none; }
+
+/* ══════════════════════
+   HOST SIDE — OPPORTUNITY BOARD
+══════════════════════ */
+.opp-card {
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:16px;padding:16px;margin-bottom:10px;
+  cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;
+}
+.opp-card:hover { border-color:rgba(184,224,48,0.2); }
+.opp-card.applied { border-color:rgba(184,224,48,0.3);background:rgba(184,224,48,0.03); }
+
+.opp-top { display:flex;align-items:flex-start;gap:12px;margin-bottom:12px; }
+.opp-icon { width:44px;height:44px;border-radius:12px;background:var(--warm2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0; }
+.opp-info { flex:1; }
+.opp-address { font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:2px; }
+.opp-meta { font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted); }
+.opp-right { display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0; }
+.opp-price { font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:var(--text); }
+.opp-demand {
+  font-size:10px;font-weight:600;padding:3px 8px;border-radius:100px;
+}
+.demand-high { background:rgba(74,222,128,0.12);color:var(--green); }
+.demand-med  { background:rgba(251,191,36,0.12); color:var(--amber); }
+.demand-low  { background:rgba(255,255,255,0.06);color:var(--text-muted); }
+
+.opp-stats { display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px; }
+.opp-stat { background:var(--warm2);border-radius:10px;padding:8px;text-align:center; }
+.opp-stat-val { font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:var(--accent); }
+.opp-stat-lbl { font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-top:2px; }
+
+.opp-tags { display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px; }
+.opp-tag { background:var(--warm2);border-radius:100px;padding:4px 10px;font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted); }
+.opp-tag.match { background:var(--accent-dim);color:var(--accent); }
+
+.opp-actions { display:flex;gap:8px; }
+.btn-apply {
+  flex:1;background:var(--accent);color:var(--bg);border:none;
+  border-radius:11px;padding:11px;
+  font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:600;cursor:pointer;transition:all 0.2s;
+}
+.btn-apply.applied { background:var(--green);color:#fff;pointer-events:none; }
+.btn-view-opp { background:var(--warm2);border:1px solid var(--border2);border-radius:11px;padding:11px 14px;color:var(--text-muted);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer; }
+
+/* MY APPLICATIONS */
+.app-card {
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:14px;padding:14px;margin-bottom:8px;
+  display:flex;align-items:center;gap:12px;cursor:pointer;transition:all 0.2s;
+}
+.app-card:hover { border-color:rgba(184,224,48,0.2); }
+.app-icon { width:40px;height:40px;border-radius:11px;background:var(--warm2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0; }
+.app-info { flex:1; }
+.app-address { font-size:14px;font-weight:500;color:var(--text);margin-bottom:2px; }
+.app-meta { font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted); }
+.app-status {
+  font-size:10px;font-weight:600;padding:4px 10px;border-radius:100px;flex-shrink:0;
+}
+.status-pending  { background:rgba(251,191,36,0.12);color:var(--amber); }
+.status-confirmed{ background:rgba(74,222,128,0.12);color:var(--green); }
+.status-declined { background:rgba(248,113,113,0.12);color:var(--red); }
+
+/* ══════════════════════
+   LISTING SIDE — POST & REVIEW
+══════════════════════ */
+.post-card {
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:16px;padding:16px;margin-bottom:10px;cursor:pointer;transition:all 0.2s;
+}
+.post-card:hover { border-color:rgba(184,224,48,0.2); }
+.post-top { display:flex;align-items:flex-start;gap:12px;margin-bottom:12px; }
+.post-icon { width:44px;height:44px;border-radius:12px;background:var(--warm2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0; }
+.post-info { flex:1; }
+.post-address { font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:2px; }
+.post-meta { font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted); }
+.post-applicants {
+  font-family:'DM Mono',monospace;font-size:11px;
+  color:var(--accent);padding:3px 10px;border-radius:100px;
+  background:var(--accent-dim);border:1px solid var(--border);
+}
+
+.post-applicant-row {
+  background:var(--warm2);border-radius:12px;padding:12px;
+  display:flex;align-items:center;gap:10px;margin-bottom:6px;
+}
+.post-applicant-row:last-child { margin-bottom:0; }
+.pa-avatar { width:34px;height:34px;border-radius:10px;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0; }
+.pa-info { flex:1; }
+.pa-name { font-size:13px;font-weight:500;color:var(--text);margin-bottom:1px; }
+.pa-meta { font-family:'DM Mono',monospace;font-size:9px;color:var(--text-muted); }
+.pa-score { font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:var(--accent);flex-shrink:0; }
+.pa-actions { display:flex;gap:6px;margin-top:8px; }
+.pa-btn-confirm { flex:1;background:var(--accent);color:var(--bg);border:none;border-radius:9px;padding:9px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:600;cursor:pointer; }
+.pa-btn-confirm.done { background:var(--green);color:#fff;pointer-events:none; }
+.pa-btn-decline { background:var(--warm);border:1px solid var(--border2);border-radius:9px;padding:9px 12px;color:var(--text-muted);font-family:'DM Mono',monospace;font-size:10px;cursor:pointer; }
+
+/* ══════════════════════
+   BOTTOM NAV
+══════════════════════ */
+.bottom-nav { display:flex;border-top:1px solid var(--border2);padding:10px 0 20px;background:var(--bg);flex-shrink:0; }
+.nav-item { flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0; }
+.nav-icon { font-size:20px; }
+.nav-label { font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.5px;color:var(--text-muted);text-transform:uppercase; }
+.nav-item.active .nav-label { color:var(--accent); }
+
+/* SHEET */
+.sheet-backdrop { position:absolute;inset:0;background:rgba(0,0,0,0.6);z-index:49;opacity:0;pointer-events:none;transition:opacity 0.3s;backdrop-filter:blur(3px); }
+.sheet-backdrop.open { opacity:1;pointer-events:all; }
+.sheet { position:absolute;bottom:0;left:0;right:0;background:var(--surface);border-radius:22px 22px 0 0;border-top:1px solid var(--border2);padding:0 20px 32px;transform:translateY(100%);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);z-index:50;max-height:80%;overflow-y:auto;scrollbar-width:none; }
+.sheet::-webkit-scrollbar { display:none; }
+.sheet.open { transform:translateY(0); }
+.sheet-handle { width:36px;height:4px;background:var(--border2);border-radius:2px;margin:12px auto 16px; }
+</style>
+</head>
+<body>
+
+<div class="outer-label">ChloeIQ · Marketplace · Two-Sided</div>
+
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status-bar"><span>9:41</span><span>●●● 5G 🔋</span></div>
+
+  <!-- ══ HOST VIEW: OPPORTUNITY BOARD ══ -->
+  <div class="screen active" id="s-host">
+    <div class="mkt-header">
+      <div class="mkt-header-top">
+        <div>
+          <div class="mkt-eyebrow">Host Agent View</div>
+          <div class="mkt-title">Open House Board</div>
+        </div>
+        <div class="mkt-badge" id="host-live-badge">12 live</div>
+      </div>
+      <div class="filter-row">
+        <div class="filter-chip active" onclick="filterOpps(this,'all')">All</div>
+        <div class="filter-chip" onclick="filterOpps(this,'high')">High Demand</div>
+        <div class="filter-chip" onclick="filterOpps(this,'match')">Best Match</div>
+        <div class="filter-chip" onclick="filterOpps(this,'nearby')">Nearby</div>
+      </div>
+    </div>
+
+    <div class="mkt-scroll" id="opp-scroll">
+
+      <!-- OPP 1 — High demand -->
+      <div class="opp-card" id="opp-magnolia" data-demand="high" data-match="true">
+        <div class="opp-top">
+          <div class="opp-icon">🏡</div>
+          <div class="opp-info">
+            <div class="opp-address">2847 Magnolia Drive</div>
+            <div class="opp-meta">Flower Mound · Sun Mar 29 · 1–4pm</div>
+          </div>
+          <div class="opp-right">
+            <div class="opp-price">$1.295M</div>
+            <div class="opp-demand demand-high">🔥 High</div>
+          </div>
+        </div>
+        <div class="opp-stats">
+          <div class="opp-stat"><div class="opp-stat-val">87</div><div class="opp-stat-lbl">Demand</div></div>
+          <div class="opp-stat"><div class="opp-stat-val">14</div><div class="opp-stat-lbl">Buyers Est.</div></div>
+          <div class="opp-stat"><div class="opp-stat-val">94%</div><div class="opp-stat-lbl">DNA Match</div></div>
+        </div>
+        <div class="opp-tags">
+          <div class="opp-tag match">Your buyer pool</div>
+          <div class="opp-tag">Refined Modern</div>
+          <div class="opp-tag">Flower Mound</div>
+          <div class="opp-tag">Pool</div>
+        </div>
+        <div class="opp-actions">
+          <button class="btn-apply" id="apply-magnolia" onclick="applyToEvent('magnolia')">Apply to Host →</button>
+          <button class="btn-view-opp" onclick="openOppSheet('magnolia')">Details</button>
+        </div>
+      </div>
+
+      <!-- OPP 2 -->
+      <div class="opp-card" id="opp-elmwood" data-demand="high" data-match="false">
+        <div class="opp-top">
+          <div class="opp-icon">🏡</div>
+          <div class="opp-info">
+            <div class="opp-address">412 Elmwood Court</div>
+            <div class="opp-meta">Southlake · Sat Mar 28 · 2–5pm</div>
+          </div>
+          <div class="opp-right">
+            <div class="opp-price">$2.1M</div>
+            <div class="opp-demand demand-high">🔥 High</div>
+          </div>
+        </div>
+        <div class="opp-stats">
+          <div class="opp-stat"><div class="opp-stat-val">82</div><div class="opp-stat-lbl">Demand</div></div>
+          <div class="opp-stat"><div class="opp-stat-val">11</div><div class="opp-stat-lbl">Buyers Est.</div></div>
+          <div class="opp-stat"><div class="opp-stat-val">78%</div><div class="opp-stat-lbl">DNA Match</div></div>
+        </div>
+        <div class="opp-tags">
+          <div class="opp-tag">Coastal Luxe</div>
+          <div class="opp-tag">Southlake</div>
+          <div class="opp-tag">Guest House</div>
+        </div>
+        <div class="opp-actions">
+          <button class="btn-apply" id="apply-elmwood" onclick="applyToEvent('elmwood')">Apply to Host →</button>
+          <button class="btn-view-opp" onclick="openOppSheet('elmwood')">Details</button>
+        </div>
+      </div>
+
+      <!-- OPP 3 -->
+      <div class="opp-card" id="opp-cedar" data-demand="med" data-match="false">
+        <div class="opp-top">
+          <div class="opp-icon">🏡</div>
+          <div class="opp-info">
+            <div class="opp-address">1104 Cedar Ridge Lane</div>
+            <div class="opp-meta">Argyle · Sun Mar 29 · 12–3pm</div>
+          </div>
+          <div class="opp-right">
+            <div class="opp-price">$875K</div>
+            <div class="opp-demand demand-med">⚡ Med</div>
+          </div>
+        </div>
+        <div class="opp-stats">
+          <div class="opp-stat"><div class="opp-stat-val">71</div><div class="opp-stat-lbl">Demand</div></div>
+          <div class="opp-stat"><div class="opp-stat-val">8</div><div class="opp-stat-lbl">Buyers Est.</div></div>
+          <div class="opp-stat"><div class="opp-stat-val">65%</div><div class="opp-stat-lbl">DNA Match</div></div>
+        </div>
+        <div class="opp-tags">
+          <div class="opp-tag">Warm Organic</div>
+          <div class="opp-tag">Argyle</div>
+          <div class="opp-tag">Acreage</div>
+        </div>
+        <div class="opp-actions">
+          <button class="btn-apply" id="apply-cedar" onclick="applyToEvent('cedar')">Apply to Host →</button>
+          <button class="btn-view-opp" onclick="openOppSheet('cedar')">Details</button>
+        </div>
+      </div>
+
+      <!-- OPP 4 -->
+      <div class="opp-card" id="opp-lakeside" data-demand="high" data-match="true">
+        <div class="opp-top">
+          <div class="opp-icon">🏡</div>
+          <div class="opp-info">
+            <div class="opp-address">318 Lakeside Blvd</div>
+            <div class="opp-meta">Grapevine · Sat Mar 28 · 1–4pm</div>
+          </div>
+          <div class="opp-right">
+            <div class="opp-price">$1.55M</div>
+            <div class="opp-demand demand-high">🔥 High</div>
+          </div>
+        </div>
+        <div class="opp-stats">
+          <div class="opp-stat"><div class="opp-stat-val">79</div><div class="opp-stat-lbl">Demand</div></div>
+          <div class="opp-stat"><div class="opp-stat-val">12</div><div class="opp-stat-lbl">Buyers Est.</div></div>
+          <div class="opp-stat"><div class="opp-stat-val">88%</div><div class="opp-stat-lbl">DNA Match</div></div>
+        </div>
+        <div class="opp-tags">
+          <div class="opp-tag match">Your buyer pool</div>
+          <div class="opp-tag">Refined Modern</div>
+          <div class="opp-tag">Lakefront</div>
+        </div>
+        <div class="opp-actions">
+          <button class="btn-apply" id="apply-lakeside" onclick="applyToEvent('lakeside')">Apply to Host →</button>
+          <button class="btn-view-opp" onclick="openOppSheet('lakeside')">Details</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ MY APPLICATIONS ══ -->
+  <div class="screen" id="s-apps">
+    <div class="mkt-header">
+      <div class="mkt-header-top">
+        <div>
+          <div class="mkt-eyebrow">Host Agent View</div>
+          <div class="mkt-title">My Applications</div>
+        </div>
+        <div class="mkt-badge">3 pending</div>
+      </div>
+    </div>
+    <div class="mkt-scroll">
+
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">Confirmed</div>
+      <div class="app-card">
+        <div class="app-icon">🏡</div>
+        <div class="app-info">
+          <div class="app-address">2847 Magnolia Drive</div>
+          <div class="app-meta">Flower Mound · Sun Mar 29 · 1–4pm</div>
+        </div>
+        <div class="app-status status-confirmed">✓ Confirmed</div>
+      </div>
+
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin:14px 0 10px;">Pending</div>
+      <div class="app-card">
+        <div class="app-icon">🏡</div>
+        <div class="app-info">
+          <div class="app-address">412 Elmwood Court</div>
+          <div class="app-meta">Southlake · Sat Mar 28 · 2–5pm</div>
+        </div>
+        <div class="app-status status-pending">⏳ Pending</div>
+      </div>
+      <div class="app-card">
+        <div class="app-icon">🏡</div>
+        <div class="app-info">
+          <div class="app-address">318 Lakeside Blvd</div>
+          <div class="app-meta">Grapevine · Sat Mar 28 · 1–4pm</div>
+        </div>
+        <div class="app-status status-pending">⏳ Pending</div>
+      </div>
+
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin:14px 0 10px;">Past Events</div>
+      <div class="app-card" style="opacity:0.55;">
+        <div class="app-icon">🏡</div>
+        <div class="app-info">
+          <div class="app-address">1104 Cedar Ridge Lane</div>
+          <div class="app-meta">Argyle · Mar 15 · Completed</div>
+        </div>
+        <div class="app-status status-confirmed" style="background:rgba(255,255,255,0.06);color:var(--text-muted);">Done</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ LISTING AGENT: MY LISTINGS ══ -->
+  <div class="screen" id="s-listing">
+    <div class="mkt-header">
+      <div class="mkt-header-top">
+        <div>
+          <div class="mkt-eyebrow">Listing Agent View</div>
+          <div class="mkt-title">My Open Houses</div>
+        </div>
+        <div class="mkt-badge">2 active</div>
+      </div>
+    </div>
+    <div class="mkt-scroll">
+
+      <!-- Listing 1 — has applicants -->
+      <div class="post-card">
+        <div class="post-top">
+          <div class="post-icon">🏡</div>
+          <div class="post-info">
+            <div class="post-address">2847 Magnolia Drive</div>
+            <div class="post-meta">Sun Mar 29 · 1–4pm · $1,295,000</div>
+          </div>
+          <div class="post-applicants">3 applicants</div>
+        </div>
+
+        <!-- Applicants ranked by score -->
+        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">Ranked by Host Score</div>
+
+        <div class="post-applicant-row">
+          <div class="pa-avatar">👤</div>
+          <div class="pa-info">
+            <div class="pa-name">Marcus Rivera</div>
+            <div class="pa-meta">Gold · 42 events · 98% follow-up</div>
+          </div>
+          <div class="pa-score">780</div>
+        </div>
+        <div class="pa-actions">
+          <button class="pa-btn-confirm done" id="confirm-marcus">✓ Confirmed</button>
+          <button class="pa-btn-decline" style="pointer-events:none;opacity:0.4;">Decline</button>
+        </div>
+
+        <div style="height:8px;"></div>
+
+        <div class="post-applicant-row" style="opacity:0.65;">
+          <div class="pa-avatar">👤</div>
+          <div class="pa-info">
+            <div class="pa-name">Sarah Okonkwo</div>
+            <div class="pa-meta">Gold · 58 events · 96% follow-up</div>
+          </div>
+          <div class="pa-score">812</div>
+        </div>
+        <div class="pa-actions" style="opacity:0.65;">
+          <button class="pa-btn-confirm" id="confirm-sarah" onclick="confirmHost(this,'sarah')">Confirm Host</button>
+          <button class="pa-btn-decline">Decline</button>
+        </div>
+      </div>
+
+      <!-- Listing 2 — needs host -->
+      <div class="post-card">
+        <div class="post-top">
+          <div class="post-icon">🏡</div>
+          <div class="post-info">
+            <div class="post-address">412 Elmwood Court</div>
+            <div class="post-meta">Sat Mar 28 · 2–5pm · $2,100,000</div>
+          </div>
+          <div class="post-applicants" style="background:rgba(251,191,36,0.12);border-color:rgba(251,191,36,0.3);color:var(--amber);">1 applicant</div>
+        </div>
+        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">Awaiting Selection</div>
+        <div class="post-applicant-row">
+          <div class="pa-avatar">👤</div>
+          <div class="pa-info">
+            <div class="pa-name">Daniel Park</div>
+            <div class="pa-meta">Silver · 28 events · 91% follow-up</div>
+          </div>
+          <div class="pa-score" style="color:var(--amber);">720</div>
+        </div>
+        <div class="pa-actions">
+          <button class="pa-btn-confirm" id="confirm-daniel" onclick="confirmHost(this,'daniel')">Confirm Host</button>
+          <button class="pa-btn-decline">Decline</button>
+        </div>
+
+        <div style="margin-top:12px;background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.2);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--amber);line-height:1.5;">
+          ⚡ Only 1 applicant — consider promoting this listing to attract higher-tier hosts.
+        </div>
+      </div>
+
+      <!-- Post new -->
+      <button onclick="showPostToast()" style="width:100%;background:var(--surface);border:1px dashed rgba(184,224,48,0.25);border-radius:14px;padding:16px;color:var(--accent);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;margin-bottom:16px;">
+        + Post New Open House
+      </button>
+
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <div class="nav-item active" id="nav-board"   onclick="goScreen('s-host');setNav('nav-board')">
+      <div class="nav-icon">📋</div>
+      <div class="nav-label">Board</div>
+    </div>
+    <div class="nav-item" id="nav-apps"    onclick="goScreen('s-apps');setNav('nav-apps')">
+      <div class="nav-icon">📬</div>
+      <div class="nav-label">Applied</div>
+    </div>
+    <div class="nav-item" id="nav-listing" onclick="goScreen('s-listing');setNav('nav-listing')">
+      <div class="nav-icon">🏡</div>
+      <div class="nav-label">Listings</div>
+    </div>
+    <div class="nav-item" id="nav-alerts"  onclick="showAlertToast()">
+      <div class="nav-icon">🔔</div>
+      <div class="nav-label">Alerts</div>
+    </div>
+  </div>
+
+  <!-- SHEET -->
+  <div class="sheet-backdrop" id="sheet-backdrop" onclick="closeSheet()"></div>
+  <div class="sheet" id="detail-sheet">
+    <div class="sheet-handle"></div>
+    <div id="sheet-content"></div>
+  </div>
+
+</div>
+
+<script>
+// ── THEME ──
+(function(){
+  const p=new URLSearchParams(window.location.search),root=document.documentElement;
+  const h=k=>p.get(k)?'#'+p.get(k):null;
+  const sv=(k,v)=>v&&root.style.setProperty(k,v);
+  const bg=h('bg'),ac=h('accent'),tx=h('text'),sf=h('surface');
+  sv('--bg',bg);sv('--accent',ac);sv('--text',tx);sv('--surface',sf);
+  if(ac){const r=parseInt(ac.slice(1,3),16),g=parseInt(ac.slice(3,5),16),b=parseInt(ac.slice(5,7),16);
+    root.style.setProperty('--accent-dim',`rgba(${r},${g},${b},0.10)`);
+    root.style.setProperty('--border',`rgba(${r},${g},${b},0.12)`);}
+  if(tx){const r=parseInt(tx.slice(1,3),16),g=parseInt(tx.slice(3,5),16),b=parseInt(tx.slice(5,7),16);
+    root.style.setProperty('--text-dim',`rgba(${r},${g},${b},0.55)`);
+    root.style.setProperty('--text-muted',`rgba(${r},${g},${b},0.32)`);}
+  if(bg){root.style.setProperty('--warm',bg);root.style.setProperty('--warm2',bg);}
+  const font=p.get('font')?decodeURIComponent(p.get('font')):null;
+  if(font){const l=document.createElement('link');l.rel='stylesheet';
+    l.href=`https://fonts.googleapis.com/css2?family=${font.replace(/ /g,'+')}:wght@400;600;700&display=swap`;
+    document.head.appendChild(l);
+    l.onload=()=>document.querySelectorAll('.mkt-title,.opp-address,.post-address').forEach(e=>e.style.fontFamily=`'${font}',serif`);}
+})();
+
+// ── NAV ──
+function goScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function setNav(id){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById(id)?.classList.add('active');
+}
+
+// ── FILTER ──
+function filterOpps(el, type) {
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.opp-card').forEach(card => {
+    const demand = card.dataset.demand;
+    const match  = card.dataset.match === 'true';
+    if(type==='all')    card.style.display='';
+    else if(type==='high')  card.style.display = demand==='high' ? '' : 'none';
+    else if(type==='match') card.style.display = match ? '' : 'none';
+    else if(type==='nearby') card.style.display=''; // all shown as nearby for demo
+  });
+}
+
+// ── APPLY ──
+function applyToEvent(key) {
+  const btn = document.getElementById('apply-'+key);
+  const card = document.getElementById('opp-'+key);
+  btn.textContent = '✓ Applied';
+  btn.classList.add('applied');
+  card.classList.add('applied');
+  showToast('📬','Application Sent',`Your Host Score 780 and profile have been sent to the listing agent. You'll be notified within 24 hours.`);
+}
+
+// ── OPP DETAIL SHEET ──
+const oppData = {
+  magnolia: {
+    icon:'🏡', addr:'2847 Magnolia Drive', city:'Flower Mound, TX 76226',
+    date:'Sunday, March 29 · 1:00 – 4:00 PM', price:'$1,295,000',
+    demand:87, buyers:14, match:'94%',
+    tags:['4 bed / 3.5 bath','3,840 sq ft','Pool & Lanai','Refined Modern DNA'],
+    desc:"High-demand luxury listing with a strong Refined Modern buyer DNA signal. 94% match with your current buyer pool — this is a priority opportunity for your profile.",
+    listingAgent:'Elena Reyes · Compass'
+  },
+  elmwood: {
+    icon:'🏡', addr:'412 Elmwood Court', city:'Southlake, TX 76092',
+    date:'Saturday, March 28 · 2:00 – 5:00 PM', price:'$2,100,000',
+    demand:82, buyers:11, match:'78%',
+    tags:['5 bed / 4.5 bath','5,200 sq ft','Guest House','Coastal Luxe DNA'],
+    desc:"Ultra-luxury Southlake listing with strong buyer demand. Your buyer pool is a 78% match — slightly off your core profile but worth the exposure at this price point.",
+    listingAgent:'James Whitfield · Briggs Freeman'
+  },
+  cedar: {
+    icon:'🏡', addr:'1104 Cedar Ridge Lane', city:'Argyle, TX 76226',
+    date:'Sunday, March 29 · 12:00 – 3:00 PM', price:'$875,000',
+    demand:71, buyers:8, match:'65%',
+    tags:['4 bed / 3 bath','2,900 sq ft','Acreage','Warm Organic DNA'],
+    desc:"Moderate demand listing with a 65% buyer pool match. Lower priority given your current Refined Modern focus, but good for market exposure in Argyle.",
+    listingAgent:'Priya Nair · Keller Williams'
+  },
+  lakeside: {
+    icon:'🏡', addr:'318 Lakeside Blvd', city:'Grapevine, TX 76051',
+    date:'Saturday, March 28 · 1:00 – 4:00 PM', price:'$1,550,000',
+    demand:79, buyers:12, match:'88%',
+    tags:['4 bed / 4 bath','4,100 sq ft','Lakefront','Refined Modern DNA'],
+    desc:"Strong Refined Modern listing with 88% buyer pool match. Lakefront properties in this price range consistently over-perform on dwell time and conversion.",
+    listingAgent:'Sarah Okonkwo · Compass'
+  },
+};
+
+function openOppSheet(key) {
+  const d = oppData[key];
+  const warm2 = getComputedStyle(document.documentElement).getPropertyValue('--warm2').trim()||'#222418';
+  const textCol = getComputedStyle(document.documentElement).getPropertyValue('--text').trim()||'#EEF0E5';
+  const textDimCol = getComputedStyle(document.documentElement).getPropertyValue('--text-dim').trim()||'rgba(238,240,229,0.55)';
+  const textMutedCol = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim()||'rgba(238,240,229,0.32)';
+  const accentCol = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#B8E030';
+  const tagsHtml = d.tags.map(t=>`<div style="background:${warm2};border-radius:100px;padding:4px 10px;font-family:'DM Mono',monospace;font-size:10px;color:${textMutedCol};">${t}</div>`).join('');
+  document.getElementById('sheet-content').innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+      <div style="width:46px;height:46px;border-radius:12px;background:${warm2};display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">${d.icon}</div>
+      <div style="flex:1;"><div style="font-family:'Fraunces',serif;font-size:17px;font-weight:700;color:${textCol};">${d.addr}</div><div style="font-size:12px;color:${textMutedCol};margin-top:2px;">${d.city}</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
+      <div style="background:${warm2};border-radius:10px;padding:10px;text-align:center;"><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:${accentCol};">${d.demand}</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:${textMutedCol};text-transform:uppercase;letter-spacing:1px;margin-top:2px;">Demand</div></div>
+      <div style="background:${warm2};border-radius:10px;padding:10px;text-align:center;"><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:${accentCol};">${d.buyers}</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:${textMutedCol};text-transform:uppercase;letter-spacing:1px;margin-top:2px;">Buyers Est.</div></div>
+      <div style="background:${warm2};border-radius:10px;padding:10px;text-align:center;"><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:${accentCol};">${d.match}</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:${textMutedCol};text-transform:uppercase;letter-spacing:1px;margin-top:2px;">DNA Match</div></div>
+    </div>
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:${textMutedCol};margin-bottom:6px;">Date & Time</div>
+    <div style="font-size:13px;color:${textDimCol};margin-bottom:14px;">${d.date}</div>
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:${textMutedCol};margin-bottom:8px;">Property Tags</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">${tagsHtml}</div>
+    <div style="background:rgba(184,224,48,0.06);border:1px solid rgba(184,224,48,0.15);border-radius:12px;padding:13px;margin-bottom:14px;">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:${accentCol};margin-bottom:6px;">✨ Chloe's Read</div>
+      <div style="font-size:13px;color:${textDimCol};line-height:1.6;">${d.desc}</div>
+    </div>
+    <div style="font-size:12px;color:${textMutedCol};margin-bottom:14px;">Listed by ${d.listingAgent}</div>
+    <div style="display:flex;gap:8px;">
+      <button onclick="closeSheet();applyToEvent('${key}')" style="flex:1;background:${accentCol};color:#0A0B07;border:none;border-radius:11px;padding:13px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:600;cursor:pointer;">Apply to Host →</button>
+      <button onclick="closeSheet()" style="background:${warm2};border:1px solid rgba(255,255,255,0.07);border-radius:11px;padding:13px 16px;color:${textMutedCol};font-size:13px;cursor:pointer;">Close</button>
+    </div>
+  `;
+  document.getElementById('sheet-backdrop').classList.add('open');
+  document.getElementById('detail-sheet').classList.add('open');
+}
+
+function closeSheet(){
+  document.getElementById('sheet-backdrop').classList.remove('open');
+  document.getElementById('detail-sheet').classList.remove('open');
+}
+
+// ── CONFIRM HOST ──
+function confirmHost(btn, name) {
+  btn.textContent = '✓ Confirmed';
+  btn.classList.add('done');
+  const nameMap = { sarah:'Sarah Okonkwo', daniel:'Daniel Park' };
+  showToast('✓','Host Confirmed',`${nameMap[name]||name} has been notified and is confirmed for this event.`);
+}
+
+// ── TOASTS ──
+function showPostToast(){
+  showToast('🏡','Post New Open House','Fill in the listing details and ChloeIQ will match it to host agents by buyer DNA demand score.');
+}
+function showAlertToast(){
+  showToast('🔔','Marketplace Alerts','You\'ll be notified when new high-demand events match your buyer pool or when a listing agent confirms your application.');
+}
+
+function showToast(icon, title, msg) {
+  const existing = document.getElementById('mkt-toast'); if(existing) existing.remove();
+  const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text').trim()||'#EEF0E5';
+  const textDim   = getComputedStyle(document.documentElement).getPropertyValue('--text-dim').trim()||'rgba(238,240,229,0.55)';
+  const surfBg    = getComputedStyle(document.documentElement).getPropertyValue('--surface').trim()||'#13160D';
+  const t = document.createElement('div');
+  t.id = 'mkt-toast';
+  t.style.cssText = `position:absolute;bottom:88px;left:16px;right:16px;border-radius:14px;padding:14px 16px;z-index:150;display:flex;gap:12px;align-items:flex-start;box-shadow:0 8px 24px rgba(0,0,0,0.5);animation:mkIn 0.3s ease;`;
+  t.style.background = surfBg;
+  t.style.border = '1px solid rgba(255,255,255,0.08)';
+  t.innerHTML = `
+    <div style="font-size:20px;">${icon}</div>
+    <div style="flex:1;"><div style="font-size:13px;font-weight:600;color:${textColor};margin-bottom:3px;">${title}</div><div style="font-size:12px;color:${textDim};line-height:1.5;">${msg}</div></div>
+    <div id="mkt-toast-x" style="color:rgba(238,240,229,0.32);cursor:pointer;font-size:16px;flex-shrink:0;">✕</div>
+    <style>@keyframes mkIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}</style>`;
+  document.querySelector('.phone').appendChild(t);
+  document.getElementById('mkt-toast-x').onclick = ()=>t.remove();
+  setTimeout(()=>{ if(t.parentNode) t.remove(); }, 4000);
+}
+
+// ── LIVE BADGE ──
+let liveCount = 12;
+setInterval(()=>{
+  if(Math.random()<0.15){
+    liveCount = Math.max(8,Math.min(20,liveCount+(Math.random()<0.6?1:-1)));
+    const el = document.getElementById('host-live-badge');
+    if(el) el.textContent = liveCount+' live';
+  }
+},3000);
+</script>
+</body>
+</html>

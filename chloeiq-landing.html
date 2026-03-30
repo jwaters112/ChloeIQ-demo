@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChloeIQ — Open Houses Are Buyer Intelligence Events</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,700&family=DM+Mono:wght@300;400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0A0B07;
+  --accent: #B8E030;
+  --text: #EEF0E5;
+  --dim: rgba(238,240,229,0.5);
+  --muted: rgba(238,240,229,0.28);
+  --surface: #111306;
+  --border: rgba(184,224,48,0.12);
+  --border2: rgba(255,255,255,0.06);
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  overflow-x: hidden;
+}
+
+/* ── NOISE TEXTURE ── */
+body::before {
+  content:'';
+  position:fixed;inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events:none; z-index:1; opacity:0.6;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top:0; left:0; right:0;
+  padding: 20px 40px;
+  display: flex; align-items:center; justify-content:space-between;
+  z-index: 100;
+  border-bottom: 1px solid transparent;
+  transition: all 0.4s ease;
+}
+nav.scrolled {
+  background: rgba(10,11,7,0.92);
+  border-bottom-color: var(--border2);
+  backdrop-filter: blur(12px);
+  padding: 14px 40px;
+}
+.nav-logo {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--accent);
+}
+.nav-links { display:flex; gap:32px; align-items:center; }
+.nav-link {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--muted); text-decoration:none; transition: color 0.2s;
+}
+.nav-link:hover { color: var(--text); }
+.nav-cta {
+  background: var(--accent); color: var(--bg);
+  padding: 9px 20px; border-radius: 8px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+  font-weight: 600; text-decoration: none;
+  transition: opacity 0.2s;
+}
+.nav-cta:hover { opacity: 0.85; }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction:column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 120px 24px 80px;
+  position: relative; overflow: hidden;
+}
+.hero-glow {
+  position:absolute;
+  width: 800px; height: 600px;
+  background: radial-gradient(ellipse 60% 60% at 50% 30%, rgba(184,224,48,0.07), transparent 65%);
+  top: 0; left: 50%; transform: translateX(-50%);
+  pointer-events:none;
+}
+.hero-grid {
+  position:absolute;inset:0;
+  background-image:
+    linear-gradient(rgba(184,224,48,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(184,224,48,0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 40%, black 0%, transparent 75%);
+  pointer-events:none;
+}
+.hero-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 24px;
+  opacity: 0; animation: fadeUp 0.8s ease 0.2s forwards;
+}
+.hero-headline {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(48px, 7vw, 88px);
+  font-weight: 700; line-height: 1.05;
+  color: var(--text);
+  max-width: 860px; margin: 0 auto 12px;
+  opacity: 0; animation: fadeUp 0.9s ease 0.35s forwards;
+}
+.hero-headline em {
+  font-style: italic;
+  color: var(--accent);
+}
+.hero-sub {
+  font-size: 18px; color: var(--dim);
+  max-width: 520px; margin: 0 auto 40px;
+  line-height: 1.65;
+  opacity: 0; animation: fadeUp 0.9s ease 0.5s forwards;
+}
+.hero-actions {
+  display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+  opacity: 0; animation: fadeUp 0.9s ease 0.65s forwards;
+  margin-bottom: 64px;
+}
+.btn-primary {
+  background: var(--accent); color: var(--bg);
+  padding: 15px 32px; border-radius: 10px;
+  font-family: 'Fraunces', serif;
+  font-size: 17px; font-weight: 700;
+  text-decoration: none; border: none; cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(184,224,48,0.25); }
+.btn-secondary {
+  background: transparent; color: var(--text);
+  padding: 15px 32px; border-radius: 10px;
+  font-family: 'DM Mono', monospace;
+  font-size: 13px; letter-spacing: 1px; text-transform: uppercase;
+  text-decoration: none; border: 1px solid var(--border2); cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-secondary:hover { border-color: rgba(255,255,255,0.2); }
+
+/* HERO STATS */
+.hero-stats {
+  display: flex; gap: 0;
+  border: 1px solid var(--border2);
+  border-radius: 14px; overflow: hidden;
+  opacity: 0; animation: fadeUp 0.9s ease 0.8s forwards;
+}
+.hero-stat {
+  padding: 16px 28px; text-align: center;
+  border-right: 1px solid var(--border2);
+}
+.hero-stat:last-child { border-right: none; }
+.hs-val {
+  font-family: 'Fraunces', serif;
+  font-size: 28px; font-weight: 700; color: var(--accent);
+  display: block; margin-bottom: 3px;
+}
+.hs-lbl {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ── PROBLEM ── */
+.section { padding: 100px 24px; max-width: 1100px; margin: 0 auto; }
+.section-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 16px;
+}
+.section-title {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 700; line-height: 1.15;
+  color: var(--text); max-width: 640px; margin-bottom: 16px;
+}
+.section-sub {
+  font-size: 16px; color: var(--dim); line-height: 1.7;
+  max-width: 520px; margin-bottom: 48px;
+}
+
+.problem-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+.problem-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 16px; padding: 24px;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.problem-card:hover { border-color: rgba(255,255,255,0.12); transform: translateY(-2px); }
+.pc-icon { font-size: 28px; margin-bottom: 12px; }
+.pc-stat {
+  font-family: 'Fraunces', serif;
+  font-size: 36px; font-weight: 700; color: var(--accent);
+  margin-bottom: 6px;
+}
+.pc-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.pc-desc { font-size: 13px; color: var(--dim); line-height: 1.55; }
+
+/* ── HOW IT WORKS ── */
+.how-wrap {
+  background: var(--surface);
+  border-top: 1px solid var(--border2);
+  border-bottom: 1px solid var(--border2);
+  padding: 100px 24px;
+}
+.how-inner { max-width: 1100px; margin: 0 auto; }
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0; margin-top: 48px;
+  position: relative;
+}
+.steps::before {
+  content:'';
+  position:absolute;
+  top: 28px; left: 28px; right: 28px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  opacity: 0.25;
+}
+.step { padding: 0 20px; text-align: center; position:relative; }
+.step-num {
+  width: 56px; height: 56px; border-radius: 16px;
+  background: rgba(184,224,48,0.1);
+  border: 1px solid rgba(184,224,48,0.2);
+  display: flex; align-items:center; justify-content:center;
+  font-family: 'Fraunces', serif;
+  font-size: 20px; font-weight: 700; color: var(--accent);
+  margin: 0 auto 16px;
+}
+.step-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.step-desc { font-size: 12px; color: var(--dim); line-height: 1.6; }
+
+/* ── FEATURE BENTO ── */
+.bento {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: auto;
+  gap: 12px; margin-top: 48px;
+}
+.bento-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 18px; padding: 28px;
+  overflow: hidden; position: relative;
+  transition: border-color 0.25s, transform 0.25s;
+}
+.bento-card:hover { border-color: rgba(184,224,48,0.2); transform: translateY(-2px); }
+.bc-1 { grid-column: span 7; }
+.bc-2 { grid-column: span 5; }
+.bc-3 { grid-column: span 5; }
+.bc-4 { grid-column: span 7; }
+.bc-5 { grid-column: span 4; }
+.bc-6 { grid-column: span 4; }
+.bc-7 { grid-column: span 4; }
+.bento-icon { font-size: 32px; margin-bottom: 14px; }
+.bento-title { font-family:'Fraunces',serif; font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+.bento-desc { font-size: 13px; color: var(--dim); line-height: 1.6; }
+.bento-accent {
+  background: rgba(184,224,48,0.04);
+  border-color: rgba(184,224,48,0.15);
+}
+.bento-glow {
+  position:absolute; width:200px; height:200px;
+  background: radial-gradient(circle, rgba(184,224,48,0.08), transparent 70%);
+  top:-40px; right:-40px; pointer-events:none;
+}
+
+/* ── SOCIAL PROOF ── */
+.proof-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px; margin-top: 48px;
+}
+.quote-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 16px; padding: 24px;
+  transition: border-color 0.2s;
+}
+.quote-card:hover { border-color: rgba(184,224,48,0.2); }
+.quote-text {
+  font-family: 'Fraunces', serif;
+  font-size: 16px; font-style: italic;
+  color: var(--text); line-height: 1.65;
+  margin-bottom: 16px;
+}
+.quote-text::before { content: '"'; color: var(--accent); }
+.quote-text::after  { content: '"'; color: var(--accent); }
+.quote-meta { display:flex; align-items:center; gap:10px; }
+.quote-av {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: rgba(184,224,48,0.1);
+  border: 1px solid rgba(184,224,48,0.15);
+  display:flex; align-items:center; justify-content:center;
+  font-size: 16px; flex-shrink:0;
+}
+.quote-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.quote-role { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--muted); margin-top:1px; letter-spacing:0.5px; }
+
+/* ── PRICING ── */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px; margin-top: 48px;
+}
+.pricing-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 18px; padding: 28px;
+  position: relative;
+  transition: transform 0.2s;
+}
+.pricing-card:hover { transform: translateY(-3px); }
+.pricing-card.featured {
+  border-color: rgba(184,224,48,0.35);
+  background: rgba(184,224,48,0.04);
+}
+.pc-rec {
+  position:absolute; top:-1px; left:50%; transform:translateX(-50%);
+  background: var(--accent); color: var(--bg);
+  font-family:'DM Mono',monospace; font-size:9px;
+  letter-spacing:2px; text-transform:uppercase; font-weight:600;
+  padding: 5px 14px; border-radius: 0 0 10px 10px;
+}
+.pricing-name { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:2px; text-transform:uppercase; color: var(--muted); margin-bottom:12px; margin-top:8px; }
+.pricing-price {
+  font-family: 'Fraunces', serif;
+  font-size: 44px; font-weight:700; color: var(--accent);
+  line-height:1; margin-bottom:4px;
+}
+.pricing-period { font-size: 13px; color: var(--dim); margin-bottom: 20px; }
+.pricing-features { list-style:none; margin-bottom: 24px; }
+.pricing-features li {
+  display:flex; align-items:flex-start; gap:8px;
+  font-size: 13px; color: var(--dim);
+  padding: 7px 0; border-bottom: 1px solid var(--border2);
+  line-height:1.4;
+}
+.pricing-features li:last-child { border-bottom:none; }
+.pf-check { color: var(--accent); flex-shrink:0; margin-top:1px; }
+.btn-plan {
+  width:100%; padding:13px; border-radius:10px;
+  font-family:'DM Mono',monospace; font-size:11px;
+  letter-spacing:1.5px; text-transform:uppercase; font-weight:600;
+  cursor:pointer; border:none; transition:all 0.2s;
+}
+.btn-plan-primary { background: var(--accent); color: var(--bg); }
+.btn-plan-primary:hover { opacity: 0.85; }
+.btn-plan-secondary { background: rgba(255,255,255,0.05); color: var(--dim); border:1px solid var(--border2) !important; }
+.btn-plan-secondary:hover { background: rgba(255,255,255,0.08); }
+
+/* ── CTA SECTION ── */
+.cta-section {
+  padding: 120px 24px;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+.cta-glow {
+  position:absolute; width:600px; height:400px;
+  background: radial-gradient(ellipse, rgba(184,224,48,0.07), transparent 65%);
+  top:50%; left:50%; transform:translate(-50%,-50%);
+  pointer-events:none;
+}
+.cta-title {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(36px, 5vw, 62px);
+  font-weight:700; color: var(--text);
+  max-width: 700px; margin: 0 auto 16px;
+  line-height: 1.1;
+}
+.cta-sub { font-size:16px; color:var(--dim); max-width:420px; margin:0 auto 36px; line-height:1.65; }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border2);
+  padding: 40px;
+  display: flex; align-items:center; justify-content:space-between;
+  flex-wrap: wrap; gap: 16px;
+}
+.footer-logo { font-family:'DM Mono',monospace; font-size:12px; letter-spacing:3px; text-transform:uppercase; color: var(--accent); }
+.footer-links { display:flex; gap:24px; }
+.footer-link { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color: var(--muted); text-decoration:none; transition:color 0.2s; }
+.footer-link:hover { color: var(--text); }
+.footer-copy { font-family:'DM Mono',monospace; font-size:10px; color: var(--muted); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(24px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.reveal {
+  opacity:0; transform:translateY(20px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible { opacity:1; transform:translateY(0); }
+
+/* ── TICKER ── */
+.ticker-wrap {
+  overflow:hidden; border-top:1px solid var(--border2); border-bottom:1px solid var(--border2);
+  padding: 14px 0; background: var(--surface);
+}
+.ticker-track {
+  display:flex; gap:48px; width:max-content;
+  animation: ticker 30s linear infinite;
+}
+.ticker-item {
+  font-family:'DM Mono',monospace; font-size:11px;
+  letter-spacing:2px; text-transform:uppercase;
+  color: var(--muted); white-space:nowrap;
+  display:flex; align-items:center; gap:12px;
+}
+.ticker-dot { width:4px; height:4px; border-radius:50%; background:var(--accent); flex-shrink:0; }
+@keyframes ticker {
+  from { transform:translateX(0); }
+  to   { transform:translateX(-50%); }
+}
+
+/* TOAST */
+.toast {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%);
+  background:#13160D; border:1px solid rgba(255,255,255,0.08);
+  border-radius:14px; padding:14px 20px;
+  display:flex; gap:10px; align-items:center;
+  z-index:999; box-shadow:0 12px 40px rgba(0,0,0,0.5);
+  animation:toastIn 0.35s ease;
+  font-size:14px; color: var(--text);
+  white-space:nowrap;
+}
+@keyframes toastIn { from{opacity:0;transform:translateX(-50%) translateY(8px)} to{opacity:1;transform:translateX(-50%) translateY(0)} }
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  nav { padding:16px 20px; }
+  nav.scrolled { padding:12px 20px; }
+  .nav-links { display:none; }
+  .hero-stats { flex-direction:column; border:none; gap:0; }
+  .hero-stat { border-right:none; border-bottom:1px solid var(--border2); padding:14px 20px; }
+  .hero-stat:last-child { border-bottom:none; }
+  .bento { grid-template-columns:1fr; }
+  .bc-1,.bc-2,.bc-3,.bc-4,.bc-5,.bc-6,.bc-7 { grid-column:span 1; }
+  .steps::before { display:none; }
+  footer { flex-direction:column; align-items:flex-start; padding:24px 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-logo">ChloeIQ</div>
+  <div class="nav-links">
+    <a href="#how" class="nav-link">How It Works</a>
+    <a href="#features" class="nav-link">Features</a>
+    <a href="#pricing" class="nav-link">Pricing</a>
+    <a href="#investors" class="nav-link">Investors</a>
+    <a href="#" class="nav-cta" onclick="toast('📅','Book a demo — we\'ll reach out within 24 hours.');return false;">Get a Demo</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-eyebrow">Now in Beta · DFW Market</div>
+  <h1 class="hero-headline">
+    Open houses are<br><em>buyer intelligence</em><br>events.
+  </h1>
+  <p class="hero-sub">ChloeIQ turns every open house into a data-rich conversion engine. Buyers scan a QR code. Chloe profiles, guides, and scores them. Agents close more deals.</p>
+  <div class="hero-actions">
+    <a href="#" class="btn-primary" onclick="toast('🚀','Starting your free trial — check your email!');return false;">Start Free Trial →</a>
+    <a href="#how" class="btn-secondary">See How It Works</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><span class="hs-val">87%</span><span class="hs-lbl">Follow-Up Rate</span></div>
+    <div class="hero-stat"><span class="hs-val">4.2×</span><span class="hs-lbl">Conversion Lift</span></div>
+    <div class="hero-stat"><span class="hs-val">312</span><span class="hs-lbl">Beta Agents</span></div>
+    <div class="hero-stat"><span class="hs-val">0</span><span class="hs-lbl">Direct Competitors</span></div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    <div class="ticker-item"><div class="ticker-dot"></div>87% Agent Follow-Up Rate</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>StyleDNA™ Buyer Profiling</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>Ask Chloe AI Tour Guide</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>4.2× Conversion Lift</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>Live Lead Scoring</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>34.7× LTV / CAC</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>Chloe Code™ QR Signs</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>Zero Direct Competitors</div>
+    <!-- duplicate for seamless loop -->
+    <div class="ticker-item"><div class="ticker-dot"></div>87% Agent Follow-Up Rate</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>StyleDNA™ Buyer Profiling</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>Ask Chloe AI Tour Guide</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>4.2× Conversion Lift</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>Live Lead Scoring</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>34.7× LTV / CAC</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>Chloe Code™ QR Signs</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>Zero Direct Competitors</div>
+  </div>
+</div>
+
+<!-- PROBLEM -->
+<section id="problem" class="section reveal">
+  <div class="section-eyebrow">The Problem</div>
+  <h2 class="section-title">Agents walk away from open houses with nothing.</h2>
+  <p class="section-sub">4.8 million open houses happen every year in the US. Every single one ends with a paper sign-in sheet and zero usable buyer data.</p>
+  <div class="problem-grid">
+    <div class="problem-card reveal">
+      <div class="pc-icon">📋</div>
+      <div class="pc-stat">38%</div>
+      <div class="pc-title">Average follow-up rate</div>
+      <div class="pc-desc">Most agents never follow up with the majority of buyers they meet at open houses. The leads simply evaporate.</div>
+    </div>
+    <div class="problem-card reveal">
+      <div class="pc-icon">🎯</div>
+      <div class="pc-stat">0</div>
+      <div class="pc-title">Buyer profiles captured</div>
+      <div class="pc-desc">Agents have no way of knowing a buyer's purchase intent, style preferences, or how close they are to making an offer.</div>
+    </div>
+    <div class="problem-card reveal">
+      <div class="pc-icon">💸</div>
+      <div class="pc-stat">$2.1T</div>
+      <div class="pc-title">Annual transaction value</div>
+      <div class="pc-desc">The US residential real estate market generates trillions in transactions — all operating with essentially no buyer-side data infrastructure.</div>
+    </div>
+    <div class="problem-card reveal">
+      <div class="pc-icon">⏱️</div>
+      <div class="pc-stat">4.8M</div>
+      <div class="pc-title">Open houses per year</div>
+      <div class="pc-desc">Every one of these events is a missed opportunity to build a buyer intelligence database that could transform how agents work.</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" class="how-wrap">
+  <div class="how-inner">
+    <div class="section-eyebrow reveal">How It Works</div>
+    <h2 class="section-title reveal">Five steps. One open house. Infinite intelligence.</h2>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">1</div>
+        <div class="step-title">Chloe Code™ at the door</div>
+        <div class="step-desc">A branded QR sign greets buyers. They scan — no app download, no friction. The experience activates instantly.</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">2</div>
+        <div class="step-title">StyleDNA™ Quiz</div>
+        <div class="step-desc">60 seconds. 4 buyer profiles. Chloe classifies each buyer's aesthetic and purchase priorities with 94% completion rate.</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">3</div>
+        <div class="step-title">AI-Guided Tour</div>
+        <div class="step-desc">Ask Chloe answers questions room-by-room. Dwell time, questions asked, and interest signals are captured in real time.</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">4</div>
+        <div class="step-title">Live Lead Dashboard</div>
+        <div class="step-desc">The agent gets live buyer scores, heat maps, and AI-drafted personalized follow-ups before the event even ends.</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">5</div>
+        <div class="step-title">Seller Intelligence Report</div>
+        <div class="step-desc">The listing agent receives a full post-event report: buyer DNA mix, demand score, room engagement, and hot leads ranked.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES BENTO -->
+<section id="features" class="section reveal">
+  <div class="section-eyebrow">Platform</div>
+  <h2 class="section-title">Built for every person in the transaction.</h2>
+  <p class="section-sub">Buyers, agents, listing agents, brokerages, and vendors — every persona gets exactly what they need.</p>
+  <div class="bento">
+    <div class="bento-card bc-1 bento-accent reveal">
+      <div class="bento-glow"></div>
+      <div class="bento-icon">🧬</div>
+      <div class="bento-title">StyleDNA™ Buyer Profiling</div>
+      <div class="bento-desc">Our proprietary 4-profile buyer classification system — Refined Modern, Warm Organic, Coastal Luxe, Bold Eclectic — trained on real open house behavioral data. Every event makes it smarter. No competitor can replicate this flywheel.</div>
+    </div>
+    <div class="bento-card bc-2 reveal">
+      <div class="bento-icon">✨</div>
+      <div class="bento-title">Ask Chloe AI</div>
+      <div class="bento-desc">Anthropic-powered tour guide that answers buyer questions in real time, adapts to their DNA profile, and captures intent signals invisibly.</div>
+    </div>
+    <div class="bento-card bc-3 reveal">
+      <div class="bento-icon">📊</div>
+      <div class="bento-title">Live Agent Dashboard</div>
+      <div class="bento-desc">Hot lead alerts, buyer heat maps, and AI-drafted follow-up emails — all before the open house ends.</div>
+    </div>
+    <div class="bento-card bc-4 bento-accent reveal">
+      <div class="bento-glow"></div>
+      <div class="bento-icon">🏢</div>
+      <div class="bento-title">Brokerage Intelligence</div>
+      <div class="bento-desc">Team-level visibility for brokers: coaching queue, revenue attribution, onboarding progress, agent leaderboard, and market comparison against other DFW brokerages. ChloeIQ turns brokerage management from intuition into data.</div>
+    </div>
+    <div class="bento-card bc-5 reveal">
+      <div class="bento-icon">🗺️</div>
+      <div class="bento-title">Market Intelligence</div>
+      <div class="bento-desc">Buyer demand scores by ZIP, DNA trend data, and 30-day AI forecasts for the DFW market.</div>
+    </div>
+    <div class="bento-card bc-6 reveal">
+      <div class="bento-icon">🤝</div>
+      <div class="bento-title">Host Marketplace</div>
+      <div class="bento-desc">A two-sided marketplace where host agents apply to co-host listings. 15% platform take rate.</div>
+    </div>
+    <div class="bento-card bc-7 reveal">
+      <div class="bento-icon">🧬</div>
+      <div class="bento-title">Vendor Ad Platform</div>
+      <div class="bento-desc">DNA-targeted placements for home service vendors — shown to buyers at the perfect moment. 12.4% engagement rate.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF -->
+<section class="section reveal" style="padding-top:0">
+  <div class="section-eyebrow">From the Beta</div>
+  <h2 class="section-title">Agents who tried it didn't go back.</h2>
+  <div class="proof-grid">
+    <div class="quote-card reveal">
+      <div class="quote-text">This is the first time I've actually known who to call after an open house.</div>
+      <div class="quote-meta">
+        <div class="quote-av">👤</div>
+        <div><div class="quote-name">Marcus Rivera</div><div class="quote-role">Gold Tier Agent · Epting Realty DFW</div></div>
+      </div>
+    </div>
+    <div class="quote-card reveal">
+      <div class="quote-text">The seller report alone is worth the subscription. My sellers are obsessed with the data.</div>
+      <div class="quote-meta">
+        <div class="quote-av">👤</div>
+        <div><div class="quote-name">Elena Reyes</div><div class="quote-role">Listing Agent · Compass DFW</div></div>
+      </div>
+    </div>
+    <div class="quote-card reveal">
+      <div class="quote-text">We went from 38% to 87% follow-up rate in six weeks. That's not a small number.</div>
+      <div class="quote-meta">
+        <div class="quote-av">👤</div>
+        <div><div class="quote-name">Sarah Okonkwo</div><div class="quote-role">Gold Tier Agent · Epting Realty DFW</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" class="how-wrap">
+  <div class="how-inner">
+    <div class="section-eyebrow reveal">Pricing</div>
+    <h2 class="section-title reveal">Simple pricing. No surprises.</h2>
+    <p class="section-sub reveal">Start free for 14 days. No credit card required.</p>
+    <div class="pricing-grid">
+      <div class="pricing-card reveal">
+        <div class="pricing-name">Starter</div>
+        <div class="pricing-price">$49</div>
+        <div class="pricing-period">per agent / month</div>
+        <ul class="pricing-features">
+          <li><span class="pf-check">✓</span>Chloe Code™ QR signs (2/mo)</li>
+          <li><span class="pf-check">✓</span>StyleDNA buyer profiling</li>
+          <li><span class="pf-check">✓</span>Basic agent dashboard</li>
+          <li><span class="pf-check">✓</span>Post-tour buyer reports</li>
+          <li><span class="pf-check">✓</span>3 AI follow-up drafts/mo</li>
+        </ul>
+        <button class="btn-plan btn-plan-secondary" onclick="toast('📋','Starting your Starter trial!')">Get Started</button>
+      </div>
+      <div class="pricing-card featured reveal">
+        <div class="pc-rec">Most Popular</div>
+        <div class="pricing-name">Growth</div>
+        <div class="pricing-price">$129</div>
+        <div class="pricing-period">per agent / month</div>
+        <ul class="pricing-features">
+          <li><span class="pf-check">✓</span>Unlimited Chloe Code signs</li>
+          <li><span class="pf-check">✓</span>Full StyleDNA profiling</li>
+          <li><span class="pf-check">✓</span>Live dashboard + heat maps</li>
+          <li><span class="pf-check">✓</span>Unlimited AI follow-up drafts</li>
+          <li><span class="pf-check">✓</span>Host Marketplace access</li>
+          <li><span class="pf-check">✓</span>Market Intelligence data</li>
+          <li><span class="pf-check">✓</span>Seller intelligence reports</li>
+        </ul>
+        <button class="btn-plan btn-plan-primary" onclick="toast('🚀','Starting your Growth trial!')">Start Free Trial</button>
+      </div>
+      <div class="pricing-card reveal">
+        <div class="pricing-name">Brokerage</div>
+        <div class="pricing-price">$299</div>
+        <div class="pricing-period">per month · up to 25 agents</div>
+        <ul class="pricing-features">
+          <li><span class="pf-check">✓</span>Everything in Growth</li>
+          <li><span class="pf-check">✓</span>Brokerage dashboard</li>
+          <li><span class="pf-check">✓</span>Team leaderboard</li>
+          <li><span class="pf-check">✓</span>Revenue attribution</li>
+          <li><span class="pf-check">✓</span>Coaching queue</li>
+          <li><span class="pf-check">✓</span>Market comparison data</li>
+          <li><span class="pf-check">✓</span>Dedicated onboarding</li>
+        </ul>
+        <button class="btn-plan btn-plan-secondary" onclick="toast('🏢','Contacting brokerage sales team!')">Contact Sales</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INVESTORS -->
+<section id="investors" class="section reveal">
+  <div class="section-eyebrow">For Investors</div>
+  <h2 class="section-title">We're raising a $1.5M seed round.</h2>
+  <p class="section-sub">PropTech investors: the buyer intelligence category in residential real estate is a white space. We're building the data infrastructure layer that doesn't exist yet.</p>
+  <div class="problem-grid" style="margin-top:32px">
+    <div class="problem-card reveal">
+      <div class="pc-stat" style="font-size:28px">34.7×</div>
+      <div class="pc-title">LTV / CAC ratio</div>
+      <div class="pc-desc">$94 CAC, $3,264 LTV over 24 months. Unit economics that hold at scale.</div>
+    </div>
+    <div class="problem-card reveal">
+      <div class="pc-stat" style="font-size:28px">$680M</div>
+      <div class="pc-title">Near-term SOM</div>
+      <div class="pc-desc">Open house intelligence is a new category within the $32B PropTech market.</div>
+    </div>
+    <div class="problem-card reveal">
+      <div class="pc-stat" style="font-size:28px">0</div>
+      <div class="pc-title">Direct competitors</div>
+      <div class="pc-desc">Spacio is a sign-in sheet. CRMs don't capture event data. We own this category.</div>
+    </div>
+    <div class="problem-card reveal">
+      <div class="pc-stat" style="font-size:28px">$0</div>
+      <div class="pc-title">Churn in 8-week beta</div>
+      <div class="pc-desc">312 beta agents, 18 brokerages, zero churn. The product works and agents love it.</div>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:40px">
+    <a href="#" class="btn-primary" onclick="toast('📊','Deck link sent to your email — chloeiq.com/investors');return false;">View Investor Deck →</a>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-glow"></div>
+  <div class="section-eyebrow reveal">Get Started</div>
+  <h2 class="cta-title reveal">Your next open house<br><em style="color:var(--accent);font-style:italic">deserves better data.</em></h2>
+  <p class="cta-sub reveal">Join 312 agents across 18 DFW brokerages already using ChloeIQ. Free 14-day trial. No credit card required.</p>
+  <div class="reveal" style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+    <a href="#" class="btn-primary" onclick="toast('🚀','Starting your free trial!');return false;">Start Free Trial →</a>
+    <a href="#" class="btn-secondary" onclick="toast('📅','Demo request sent — we will reach out within 24 hours.');return false;">Book a Demo</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">ChloeIQ</div>
+  <div class="footer-links">
+    <a href="#how" class="footer-link">How It Works</a>
+    <a href="#pricing" class="footer-link">Pricing</a>
+    <a href="#investors" class="footer-link">Investors</a>
+    <a href="#" class="footer-link" onclick="toast('✉️','josh@chloeiq.com');return false">Contact</a>
+  </div>
+  <div class="footer-copy">© 2026 ChloeIQ · Josh & Sarah Waters · DFW</div>
+</footer>
+
+<script>
+// NAV scroll
+window.addEventListener('scroll', function() {
+  document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 40);
+});
+
+// Reveal on scroll
+var reveals = document.querySelectorAll('.reveal');
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(e) {
+    if(e.isIntersecting) { e.target.classList.add('visible'); }
+  });
+}, { threshold: 0.12 });
+reveals.forEach(function(el) { observer.observe(el); });
+
+// Toast
+function toast(icon, msg) {
+  var old = document.getElementById('gt');
+  if(old) old.remove();
+  var t = document.createElement('div');
+  t.id = 'gt';
+  t.className = 'toast';
+  t.innerHTML = '<span style="font-size:20px">'+icon+'</span><span>'+msg+'</span>';
+  document.body.appendChild(t);
+  setTimeout(function(){ var el=document.getElementById('gt'); if(el) el.remove(); }, 3500);
+}
+</script>
+</body>
+</html>

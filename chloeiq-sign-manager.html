@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ChloeIQ — Sign Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,300;1,600&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0A0B07;
+  --accent: #B8E030;
+  --accent-dim: rgba(184,224,48,0.10);
+  --surface: #13160D;
+  --border: rgba(184,224,48,0.12);
+  --border2: rgba(255,255,255,0.07);
+  --text: #EEF0E5;
+  --text-dim: rgba(238,240,229,0.55);
+  --text-muted: rgba(238,240,229,0.32);
+  --warm: #1A1C12;
+  --warm2: #222418;
+  --green: #4ADE80;
+  --amber: #FBBF24;
+  --red: #F87171;
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body {
+  background: #0D0D0D;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Sans', sans-serif;
+  padding: 24px 16px;
+  gap: 20px;
+}
+.outer-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--accent); opacity: 0.6;
+}
+.phone {
+  width: 375px; height: 812px;
+  background: var(--bg);
+  border-radius: 44px; overflow: hidden; position: relative;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.07), 0 0 0 2px rgba(0,0,0,0.6), 0 32px 64px rgba(0,0,0,0.7);
+  display: flex; flex-direction: column;
+}
+.notch { position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:30px;background:#080808;border-radius:0 0 20px 20px;z-index:20; }
+.status-bar { display:flex;justify-content:space-between;align-items:center;padding:18px 28px 0;font-family:'DM Mono',monospace;font-size:12px;color:rgba(238,240,229,0.6);flex-shrink:0;z-index:10;background:var(--bg);position:relative; }
+
+/* SCREENS */
+.screen { flex:1;display:none;flex-direction:column;overflow:hidden; }
+.screen.active { display:flex; }
+
+/* ── HEADER ── */
+.pg-hdr {
+  padding: 14px 20px 12px;
+  border-bottom: 1px solid var(--border2);
+  flex-shrink: 0;
+}
+.pg-hdr-row { display:flex;align-items:center;justify-content:space-between;margin-bottom:10px; }
+.pg-eyebrow { font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:3px; }
+.pg-title { font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--text); }
+.pg-badge { background:var(--accent-dim);border:1px solid var(--border);border-radius:100px;padding:5px 12px;font-family:'DM Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:1px; }
+
+.tab-row { display:flex;gap:0;border-bottom:1px solid var(--border2); }
+.tab { flex:1;padding:10px 6px;text-align:center;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s; }
+.tab.active { color:var(--accent);border-bottom-color:var(--accent); }
+
+/* SCROLL */
+.pg-scroll { flex:1;overflow-y:auto;scrollbar-width:none;padding:14px 16px; }
+.pg-scroll::-webkit-scrollbar { display:none; }
+
+/* ── SIGN CARD ── */
+.sign-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.sign-card:hover { border-color:rgba(184,224,48,0.2); }
+.sign-card.active-sign { border-color: var(--accent); }
+
+/* Sign visual */
+.sign-visual {
+  height: 100px;
+  background: linear-gradient(135deg, #0E1208, #141A0A);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.sign-glow {
+  position:absolute;inset:0;
+  background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(184,224,48,0.07), transparent);
+}
+.sign-body {
+  position: relative; z-index: 1;
+  background: #0A0B07;
+  border: 2px solid rgba(184,224,48,0.4);
+  border-radius: 10px;
+  padding: 10px 20px;
+  text-align: center;
+  min-width: 160px;
+}
+.sign-logo { font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:4px; }
+.sign-code-word { font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:var(--text);letter-spacing:4px; }
+.sign-qr-hint { font-size:18px;margin-top:3px; }
+.sign-status-bar {
+  position: absolute;
+  top: 8px; right: 8px;
+  font-size:10px;font-weight:600;
+  padding:3px 8px;border-radius:100px;
+}
+.ss-live    { background:rgba(74,222,128,0.15);color:var(--green); }
+.ss-pending { background:rgba(251,191,36,0.15);color:var(--amber); }
+.ss-transit { background:rgba(184,224,48,0.12);color:var(--accent); }
+.ss-inactive{ background:rgba(255,255,255,0.06);color:var(--text-muted); }
+
+/* Sign info */
+.sign-info { padding:13px 14px; }
+.sign-address { font-family:'Fraunces',serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px; }
+.sign-meta { font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);margin-bottom:10px; }
+.sign-stats { display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px; }
+.ss-stat { background:var(--warm2);border-radius:9px;padding:8px;text-align:center; }
+.ss-val { font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:var(--accent); }
+.ss-lbl { font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-top:2px; }
+
+/* ── ORDER SCREEN ── */
+.order-step {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 10px;
+}
+.os-step-num {
+  width: 26px;height:26px;border-radius:50%;
+  background:var(--accent-dim);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;font-size:11px;color:var(--accent);
+  flex-shrink:0;
+}
+.os-step-header { display:flex;align-items:center;gap:10px;margin-bottom:12px; }
+.os-step-title { font-size:14px;font-weight:600;color:var(--text); }
+.os-step-sub { font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);margin-top:1px; }
+
+.size-options { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+.size-opt {
+  background:var(--warm2);border:1px solid var(--border2);
+  border-radius:12px;padding:12px;text-align:center;
+  cursor:pointer;transition:all 0.2s;
+}
+.size-opt.selected { background:var(--accent-dim);border-color:rgba(184,224,48,0.35);color:var(--accent); }
+.size-opt-size { font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:var(--text);margin-bottom:3px; }
+.size-opt.selected .size-opt-size { color:var(--accent); }
+.size-opt-lbl { font-family:'DM Mono',monospace;font-size:9px;color:var(--text-muted);letter-spacing:1px; }
+.size-opt.selected .size-opt-lbl { color:rgba(184,224,48,0.7); }
+
+.material-opts { display:flex;flex-direction:column;gap:7px; }
+.mat-opt {
+  display:flex;align-items:center;gap:12px;
+  background:var(--warm2);border:1px solid var(--border2);
+  border-radius:12px;padding:12px 14px;
+  cursor:pointer;transition:all 0.2s;
+}
+.mat-opt.selected { background:var(--accent-dim);border-color:rgba(184,224,48,0.3); }
+.mat-radio { width:18px;height:18px;border-radius:50%;border:1.5px solid var(--border2);flex-shrink:0;transition:all 0.2s; }
+.mat-opt.selected .mat-radio { background:var(--accent);border-color:var(--accent); }
+.mat-info { flex:1; }
+.mat-name { font-size:13px;font-weight:500;color:var(--text); }
+.mat-detail { font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);margin-top:1px; }
+.mat-price { font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:var(--accent);flex-shrink:0; }
+
+.qty-row { display:flex;align-items:center;gap:14px; }
+.qty-btn { width:36px;height:36px;border-radius:10px;background:var(--warm2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;color:var(--text-dim);transition:all 0.2s;user-select:none; }
+.qty-btn:hover { border-color:rgba(184,224,48,0.25);color:var(--accent); }
+.qty-val { font-family:'Fraunces',serif;font-size:24px;font-weight:700;color:var(--accent);min-width:32px;text-align:center; }
+.qty-lbl { font-size:13px;color:var(--text-muted); }
+
+.order-summary {
+  background:var(--accent);border-radius:14px;padding:16px;margin-bottom:12px;
+}
+.os-row { display:flex;justify-content:space-between;align-items:center;margin-bottom:6px; }
+.os-row:last-child { margin-bottom:0;padding-top:8px;border-top:1px solid rgba(10,11,7,0.15); }
+.os-key { font-size:13px;color:rgba(10,11,7,0.6); }
+.os-val { font-family:'Fraunces',serif;font-size:14px;font-weight:700;color:var(--bg); }
+.os-total { font-size:18px; }
+
+/* ── ANALYTICS ── */
+.analytics-hero {
+  background:var(--accent);border-radius:16px;padding:18px;
+  display:flex;align-items:center;gap:14px;margin-bottom:12px;
+}
+.ah-val { font-family:'Fraunces',serif;font-size:44px;font-weight:700;color:var(--bg);line-height:1;flex-shrink:0; }
+.ah-info { flex:1; }
+.ah-label { font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(10,11,7,0.5);margin-bottom:4px; }
+.ah-title { font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:var(--bg); }
+.ah-sub { font-size:12px;color:rgba(10,11,7,0.55);margin-top:2px; }
+
+.analytics-grid { display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px; }
+.ag-card { background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:14px; }
+.ag-val { font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:var(--accent);margin-bottom:3px; }
+.ag-lbl { font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted); }
+.ag-change { font-size:11px;color:var(--green);margin-top:4px; }
+
+.perf-table {
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:14px;overflow:hidden;margin-bottom:12px;
+}
+.pt-header { display:grid;grid-template-columns:1fr auto auto auto;gap:8px;padding:10px 14px;border-bottom:1px solid var(--border2);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted); }
+.pt-row { display:grid;grid-template-columns:1fr auto auto auto;gap:8px;padding:11px 14px;border-bottom:1px solid var(--border2);align-items:center; }
+.pt-row:last-child { border-bottom:none; }
+.pt-code { font-family:'DM Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:1px; }
+.pt-addr { font-size:12px;color:var(--text-dim); }
+.pt-scans { font-family:'Fraunces',serif;font-size:14px;font-weight:700;color:var(--accent);text-align:right;width:36px; }
+.pt-conv { font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted);text-align:right;width:36px; }
+.pt-status { width:8px;height:8px;border-radius:50%;flex-shrink:0; }
+
+/* BOTTOM NAV */
+.bottom-nav { display:flex;border-top:1px solid var(--border2);padding:10px 0 20px;background:var(--bg);flex-shrink:0; }
+.nav-item { flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0; }
+.nav-icon { font-size:20px; }
+.nav-label { font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.5px;color:var(--text-muted);text-transform:uppercase; }
+.nav-item.active .nav-label { color:var(--accent); }
+
+/* SHEET */
+.sheet-backdrop { position:absolute;inset:0;background:rgba(0,0,0,0.65);z-index:49;opacity:0;pointer-events:none;transition:opacity 0.3s;backdrop-filter:blur(3px); }
+.sheet-backdrop.open { opacity:1;pointer-events:all; }
+.detail-sheet { position:absolute;bottom:0;left:0;right:0;background:var(--surface);border-radius:22px 22px 0 0;border-top:1px solid var(--border2);padding:0 20px 32px;transform:translateY(100%);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);z-index:50;max-height:85%;overflow-y:auto;scrollbar-width:none; }
+.detail-sheet::-webkit-scrollbar { display:none; }
+.detail-sheet.open { transform:translateY(0); }
+.ds-handle { width:36px;height:4px;background:var(--border2);border-radius:2px;margin:12px auto 16px; }
+</style>
+</head>
+<body>
+
+<div class="outer-label">ChloeIQ · Sign Manager</div>
+
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status-bar"><span>9:41</span><span>●●● 5G 🔋</span></div>
+
+  <!-- ══ SCREEN: MY SIGNS ══ -->
+  <div class="screen active" id="s-signs">
+    <div class="pg-hdr">
+      <div class="pg-hdr-row">
+        <div>
+          <div class="pg-eyebrow">Physical Sign Manager</div>
+          <div class="pg-title">My Chloe Signs</div>
+        </div>
+        <div class="pg-badge" id="active-badge">3 active</div>
+      </div>
+      <div class="tab-row">
+        <div class="tab active" id="tab-all"      onclick="filterSigns(this,'all')">All (5)</div>
+        <div class="tab"        id="tab-live"     onclick="filterSigns(this,'live')">Live (2)</div>
+        <div class="tab"        id="tab-transit"  onclick="filterSigns(this,'transit')">In Transit (1)</div>
+        <div class="tab"        id="tab-inactive" onclick="filterSigns(this,'inactive')">Inactive (2)</div>
+      </div>
+    </div>
+
+    <div class="pg-scroll" id="signs-scroll">
+
+      <!-- Sign 1 — LIVE -->
+      <div class="sign-card active-sign" id="sc-magnolia" data-status="live" onclick="openSignDetail('magnolia')">
+        <div class="sign-visual">
+          <div class="sign-glow"></div>
+          <div class="sign-body">
+            <div class="sign-logo">ChloeIQ</div>
+            <div class="sign-code-word">MAGNOLIA</div>
+            <div class="sign-qr-hint">⬛</div>
+          </div>
+          <div class="sign-status-bar ss-live">● Live</div>
+        </div>
+        <div class="sign-info">
+          <div class="sign-address">2847 Magnolia Drive</div>
+          <div class="sign-meta">Flower Mound · Deployed Mar 28 · 18×24 Corrugated</div>
+          <div class="sign-stats">
+            <div class="ss-stat"><div class="ss-val">47</div><div class="ss-lbl">Scans</div></div>
+            <div class="ss-stat"><div class="ss-val">12</div><div class="ss-lbl">Buyers</div></div>
+            <div class="ss-stat"><div class="ss-val">87%</div><div class="ss-lbl">Conv.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sign 2 — LIVE -->
+      <div class="sign-card" id="sc-elmwood" data-status="live" onclick="openSignDetail('elmwood')">
+        <div class="sign-visual">
+          <div class="sign-glow"></div>
+          <div class="sign-body">
+            <div class="sign-logo">ChloeIQ</div>
+            <div class="sign-code-word">ELMWOOD</div>
+            <div class="sign-qr-hint">⬛</div>
+          </div>
+          <div class="sign-status-bar ss-live">● Live</div>
+        </div>
+        <div class="sign-info">
+          <div class="sign-address">412 Elmwood Court</div>
+          <div class="sign-meta">Southlake · Deployed Mar 20 · 24×36 Aluminum</div>
+          <div class="sign-stats">
+            <div class="ss-stat"><div class="ss-val">31</div><div class="ss-lbl">Scans</div></div>
+            <div class="ss-stat"><div class="ss-val">9</div><div class="ss-lbl">Buyers</div></div>
+            <div class="ss-stat"><div class="ss-val">74%</div><div class="ss-lbl">Conv.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sign 3 — IN TRANSIT -->
+      <div class="sign-card" id="sc-lakeside" data-status="transit" onclick="openSignDetail('lakeside')">
+        <div class="sign-visual" style="opacity:0.7;">
+          <div class="sign-glow"></div>
+          <div class="sign-body" style="border-color:rgba(184,224,48,0.2);opacity:0.8;">
+            <div class="sign-logo">ChloeIQ</div>
+            <div class="sign-code-word">LAKESIDE</div>
+            <div class="sign-qr-hint">⬛</div>
+          </div>
+          <div class="sign-status-bar ss-transit">→ In Transit</div>
+        </div>
+        <div class="sign-info">
+          <div class="sign-address">318 Lakeside Blvd</div>
+          <div class="sign-meta">Grapevine · Ordered Mar 26 · 18×24 Corrugated · Arrives Fri</div>
+          <div class="sign-stats">
+            <div class="ss-stat"><div class="ss-val">—</div><div class="ss-lbl">Scans</div></div>
+            <div class="ss-stat"><div class="ss-val">—</div><div class="ss-lbl">Buyers</div></div>
+            <div class="ss-stat"><div class="ss-val">—</div><div class="ss-lbl">Conv.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sign 4 — INACTIVE -->
+      <div class="sign-card" id="sc-cedar" data-status="inactive" onclick="openSignDetail('cedar')" style="opacity:0.55;">
+        <div class="sign-visual">
+          <div class="sign-body" style="border-color:rgba(255,255,255,0.1);">
+            <div class="sign-logo" style="color:rgba(238,240,229,0.3);">ChloeIQ</div>
+            <div class="sign-code-word" style="color:rgba(238,240,229,0.4);">CEDAR</div>
+            <div class="sign-qr-hint">⬛</div>
+          </div>
+          <div class="sign-status-bar ss-inactive">◌ Inactive</div>
+        </div>
+        <div class="sign-info">
+          <div class="sign-address">1104 Cedar Ridge Lane</div>
+          <div class="sign-meta">Argyle · Used Mar 15 · 18×24 Corrugated · In storage</div>
+          <div class="sign-stats">
+            <div class="ss-stat"><div class="ss-val">22</div><div class="ss-lbl">Scans</div></div>
+            <div class="ss-stat"><div class="ss-val">7</div><div class="ss-lbl">Buyers</div></div>
+            <div class="ss-stat"><div class="ss-val">68%</div><div class="ss-lbl">Conv.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sign 5 — INACTIVE -->
+      <div class="sign-card" id="sc-oak" data-status="inactive" onclick="openSignDetail('oak')" style="opacity:0.55;">
+        <div class="sign-visual">
+          <div class="sign-body" style="border-color:rgba(255,255,255,0.1);">
+            <div class="sign-logo" style="color:rgba(238,240,229,0.3);">ChloeIQ</div>
+            <div class="sign-code-word" style="color:rgba(238,240,229,0.4);">OAK</div>
+            <div class="sign-qr-hint">⬛</div>
+          </div>
+          <div class="sign-status-bar ss-inactive">◌ Inactive</div>
+        </div>
+        <div class="sign-info">
+          <div class="sign-address">88 Oak Hollow Drive</div>
+          <div class="sign-meta">Trophy Club · Used Mar 8 · 24×36 Aluminum · In storage</div>
+          <div class="sign-stats">
+            <div class="ss-stat"><div class="ss-val">14</div><div class="ss-lbl">Scans</div></div>
+            <div class="ss-stat"><div class="ss-val">5</div><div class="ss-lbl">Buyers</div></div>
+            <div class="ss-stat"><div class="ss-val">59%</div><div class="ss-lbl">Conv.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <button onclick="goScreen('s-order');setNav('nav-order')" style="width:100%;background:var(--surface);border:1px dashed rgba(184,224,48,0.25);border-radius:14px;padding:16px;color:var(--accent);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;margin-bottom:16px;">+ Order New Sign</button>
+
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: ORDER ══ -->
+  <div class="screen" id="s-order">
+    <div class="pg-hdr">
+      <div class="pg-hdr-row">
+        <div>
+          <div class="pg-eyebrow">Sign Manager</div>
+          <div class="pg-title">Order a Sign</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pg-scroll">
+
+      <!-- Step 1: Size -->
+      <div class="order-step">
+        <div class="os-step-header">
+          <div class="os-step-num">1</div>
+          <div>
+            <div class="os-step-title">Sign Size</div>
+            <div class="os-step-sub">Choose your display size</div>
+          </div>
+        </div>
+        <div class="size-options">
+          <div class="size-opt selected" id="sz-small" onclick="selectSize(this,'small','18×24')">
+            <div class="size-opt-size">18×24"</div>
+            <div class="size-opt-lbl">Standard · Yard Sign</div>
+          </div>
+          <div class="size-opt" id="sz-large" onclick="selectSize(this,'large','24×36')">
+            <div class="size-opt-size">24×36"</div>
+            <div class="size-opt-lbl">Large · Post Sign</div>
+          </div>
+          <div class="size-opt" id="sz-rider" onclick="selectSize(this,'rider','6×24')">
+            <div class="size-opt-size">6×24"</div>
+            <div class="size-opt-lbl">Rider · Add-on Strip</div>
+          </div>
+          <div class="size-opt" id="sz-xl" onclick="selectSize(this,'xl','36×48')">
+            <div class="size-opt-size">36×48"</div>
+            <div class="size-opt-lbl">XL · Open House</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Material -->
+      <div class="order-step">
+        <div class="os-step-header">
+          <div class="os-step-num">2</div>
+          <div>
+            <div class="os-step-title">Material</div>
+            <div class="os-step-sub">Single-use or reusable</div>
+          </div>
+        </div>
+        <div class="material-opts">
+          <div class="mat-opt selected" id="mat-corrugated" onclick="selectMat(this,'corrugated',12)">
+            <div class="mat-radio"></div>
+            <div class="mat-info">
+              <div class="mat-name">Corrugated Plastic</div>
+              <div class="mat-detail">Lightweight · 1–3 uses · Ships in 2 days</div>
+            </div>
+            <div class="mat-price">$12</div>
+          </div>
+          <div class="mat-opt" id="mat-aluminum" onclick="selectMat(this,'aluminum',28)">
+            <div class="mat-radio"></div>
+            <div class="mat-info">
+              <div class="mat-name">Aluminum</div>
+              <div class="mat-detail">Durable · 20+ uses · Ships in 3 days</div>
+            </div>
+            <div class="mat-price">$28</div>
+          </div>
+          <div class="mat-opt" id="mat-foam" onclick="selectMat(this,'foam',18)">
+            <div class="mat-radio"></div>
+            <div class="mat-info">
+              <div class="mat-name">Foam Board</div>
+              <div class="mat-detail">Premium look · Indoor use · Ships in 2 days</div>
+            </div>
+            <div class="mat-price">$18</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Qty -->
+      <div class="order-step">
+        <div class="os-step-header">
+          <div class="os-step-num">3</div>
+          <div>
+            <div class="os-step-title">Quantity</div>
+            <div class="os-step-sub">Each sign gets a unique Chloe Code</div>
+          </div>
+        </div>
+        <div class="qty-row">
+          <div class="qty-btn" onclick="changeQty(-1)">−</div>
+          <div class="qty-val" id="qty-display">2</div>
+          <div class="qty-btn" onclick="changeQty(1)">+</div>
+          <div class="qty-lbl" id="qty-label">signs · $24 total</div>
+        </div>
+      </div>
+
+      <!-- Order summary -->
+      <div class="order-summary" id="order-summary">
+        <div class="os-row"><div class="os-key">Size</div><div class="os-val">18×24"</div></div>
+        <div class="os-row"><div class="os-key">Material</div><div class="os-val">Corrugated</div></div>
+        <div class="os-row"><div class="os-key">Quantity</div><div class="os-val" id="summary-qty">2 signs</div></div>
+        <div class="os-row"><div class="os-key">Ships</div><div class="os-val">2 business days</div></div>
+        <div class="os-row"><div class="os-key">Total</div><div class="os-val os-total" id="summary-total">$24</div></div>
+      </div>
+
+      <button class="btn-order" onclick="placeOrder()" style="width:100%;background:var(--accent);color:var(--bg);border:none;border-radius:14px;padding:15px;font-family:'Fraunces',serif;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:8px;">Place Order →</button>
+      <button onclick="goScreen('s-signs');setNav('nav-signs')" style="width:100%;background:transparent;color:var(--text-muted);border:1px solid var(--border2);border-radius:14px;padding:13px;font-size:13px;cursor:pointer;margin-bottom:16px;">← Back to Signs</button>
+
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: ANALYTICS ══ -->
+  <div class="screen" id="s-analytics">
+    <div class="pg-hdr">
+      <div class="pg-hdr-row">
+        <div>
+          <div class="pg-eyebrow">Sign Manager</div>
+          <div class="pg-title">Sign Analytics</div>
+        </div>
+        <div class="pg-badge">All Time</div>
+      </div>
+    </div>
+
+    <div class="pg-scroll">
+
+      <div class="analytics-hero">
+        <div class="ah-val">114</div>
+        <div class="ah-info">
+          <div class="ah-label">Total Sign Scans</div>
+          <div class="ah-title">5 signs · 33 buyers activated</div>
+          <div class="ah-sub">76% avg scan-to-profile conversion</div>
+        </div>
+      </div>
+
+      <div class="analytics-grid">
+        <div class="ag-card">
+          <div class="ag-val">76%</div>
+          <div class="ag-lbl">Avg Conversion</div>
+          <div class="ag-change">↑ +8% vs last month</div>
+        </div>
+        <div class="ag-card">
+          <div class="ag-val">$0.31</div>
+          <div class="ag-lbl">Cost per Lead</div>
+          <div class="ag-change">↓ Best yet</div>
+        </div>
+        <div class="ag-card">
+          <div class="ag-val">22.8</div>
+          <div class="ag-lbl">Scans / Sign</div>
+          <div class="ag-change">↑ +4.2 vs avg</div>
+        </div>
+        <div class="ag-card">
+          <div class="ag-val">6.6</div>
+          <div class="ag-lbl">Buyers / Sign</div>
+          <div class="ag-change">↑ Top 15% DFW</div>
+        </div>
+      </div>
+
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">Performance by Sign</div>
+      <div class="perf-table">
+        <div class="pt-header">
+          <div>Code</div>
+          <div>Scans</div>
+          <div>Conv</div>
+          <div></div>
+        </div>
+        <div class="pt-row" onclick="openSignDetail('magnolia')" style="cursor:pointer;">
+          <div><div class="pt-code">MAGNOLIA</div><div class="pt-addr">Magnolia Dr</div></div>
+          <div class="pt-scans">47</div>
+          <div class="pt-conv">87%</div>
+          <div class="pt-status" style="background:var(--green);"></div>
+        </div>
+        <div class="pt-row" onclick="openSignDetail('elmwood')" style="cursor:pointer;">
+          <div><div class="pt-code">ELMWOOD</div><div class="pt-addr">Elmwood Ct</div></div>
+          <div class="pt-scans">31</div>
+          <div class="pt-conv">74%</div>
+          <div class="pt-status" style="background:var(--green);"></div>
+        </div>
+        <div class="pt-row" onclick="openSignDetail('cedar')" style="cursor:pointer;">
+          <div><div class="pt-code">CEDAR</div><div class="pt-addr">Cedar Ridge</div></div>
+          <div class="pt-scans">22</div>
+          <div class="pt-conv">68%</div>
+          <div class="pt-status" style="background:var(--amber);"></div>
+        </div>
+        <div class="pt-row" onclick="openSignDetail('oak')" style="cursor:pointer;">
+          <div><div class="pt-code">OAK</div><div class="pt-addr">Oak Hollow</div></div>
+          <div class="pt-scans">14</div>
+          <div class="pt-conv">59%</div>
+          <div class="pt-status" style="background:var(--amber);"></div>
+        </div>
+        <div class="pt-row" style="opacity:0.4;">
+          <div><div class="pt-code">LAKESIDE</div><div class="pt-addr">Lakeside Blvd</div></div>
+          <div class="pt-scans">—</div>
+          <div class="pt-conv">—</div>
+          <div class="pt-status" style="background:var(--border2);"></div>
+        </div>
+      </div>
+
+      <div style="background:rgba(184,224,48,0.06);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:16px;">
+        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;">✨ Chloe's Sign Insights</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--text-dim);line-height:1.55;"><div style="width:5px;height:5px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:5px;"></div><div>MAGNOLIA is your best-performing sign at 87% conversion. The 18×24 corrugated format is ideal for yard placement — consider ordering 2 more for this weekend.</div></div>
+          <div style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--text-dim);line-height:1.55;"><div style="width:5px;height:5px;border-radius:50%;background:var(--amber);flex-shrink:0;margin-top:5px;"></div><div>OAK at 59% conversion is below your average. This is likely a placement issue — signs near the street corner convert 22% better than front-yard only placements.</div></div>
+          <div style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--text-dim);line-height:1.55;"><div style="width:5px;height:5px;border-radius:50%;background:var(--accent);flex-shrink:0;margin-top:5px;"></div><div>At $0.31 per lead, your ChloeIQ signs are generating buyer data 14× cheaper than digital ads for the same conversion quality.</div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- ══ SCREEN: CART ══ -->
+  <div class="screen" id="s-cart">
+    <div class="pg-hdr">
+      <div class="pg-hdr-row">
+        <div>
+          <div class="pg-eyebrow">Sign Manager</div>
+          <div class="pg-title">Your Cart</div>
+        </div>
+        <div class="pg-badge" id="cart-count-badge">1 item</div>
+      </div>
+    </div>
+
+    <div class="pg-scroll">
+
+      <!-- Cart item -->
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">Order Items</div>
+
+      <div style="background:var(--surface);border:1px solid var(--border2);border-radius:16px;overflow:hidden;margin-bottom:10px;">
+        <!-- Sign preview -->
+        <div style="height:80px;background:linear-gradient(135deg,#0E1208,#141A0A);display:flex;align-items:center;justify-content:center;position:relative;">
+          <div style="background:#0A0B07;border:2px solid rgba(184,224,48,0.35);border-radius:8px;padding:8px 18px;text-align:center;">
+            <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;color:var(--accent);margin-bottom:3px;">ChloeIQ</div>
+            <div style="font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:var(--text);letter-spacing:3px;" id="cart-code">NEW SIGN</div>
+            <div style="font-size:12px;margin-top:2px;">⬛</div>
+          </div>
+        </div>
+        <!-- Item details -->
+        <div style="padding:14px;">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;">
+            <div>
+              <div style="font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:3px;">ChloeIQ Physical Sign</div>
+              <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);" id="cart-spec">18×24" · Corrugated Plastic</div>
+            </div>
+            <div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--accent);" id="cart-unit-price">$12 ea</div>
+          </div>
+          <!-- Qty adjuster inline -->
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="qty-btn" onclick="cartChangeQty(-1)">−</div>
+              <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--accent);" id="cart-qty">2</div>
+              <div class="qty-btn" onclick="cartChangeQty(1)">+</div>
+              <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);">qty</div>
+            </div>
+            <button onclick="removeCartItem()" style="background:transparent;border:none;font-family:'DM Mono',monospace;font-size:10px;color:var(--red);cursor:pointer;letter-spacing:1px;text-transform:uppercase;">Remove</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Unique codes notice -->
+      <div style="background:var(--accent-dim);border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;margin-bottom:16px;">
+        <div style="font-size:18px;">✨</div>
+        <div style="font-size:12px;color:var(--text-dim);line-height:1.55;">Each sign gets its own unique Chloe Code and QR. You can assign codes to listings from your dashboard after delivery.</div>
+      </div>
+
+      <!-- Delivery details -->
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">Delivery</div>
+      <div style="background:var(--surface);border:1px solid var(--border2);border-radius:14px;overflow:hidden;margin-bottom:16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border2);">
+          <div>
+            <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px;">Marcus Rivera</div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);">2847 Flower Mound Rd, TX 76226</div>
+          </div>
+          <button onclick="showToast('📍','Change Address','Update your delivery address in Settings.')" style="background:transparent;border:none;font-family:'DM Mono',monospace;font-size:10px;color:var(--accent);cursor:pointer;letter-spacing:1px;">Change</button>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;">
+          <div>
+            <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px;" id="cart-ship-label">Standard · 2 business days</div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);" id="cart-arrive-label">Arrives by Friday, Mar 31</div>
+          </div>
+          <div style="font-family:'Fraunces',serif;font-size:14px;font-weight:700;color:var(--green);">Free</div>
+        </div>
+      </div>
+
+      <!-- Order summary -->
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">Order Summary</div>
+      <div style="background:var(--surface);border:1px solid var(--border2);border-radius:14px;overflow:hidden;margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--border2);">
+          <div style="font-size:13px;color:var(--text-dim);">Signs (<span id="cart-qty-summary">2</span>)</div>
+          <div style="font-family:'Fraunces',serif;font-size:14px;font-weight:700;color:var(--text);" id="cart-subtotal">$24.00</div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--border2);">
+          <div style="font-size:13px;color:var(--text-dim);">Shipping</div>
+          <div style="font-size:13px;font-weight:600;color:var(--green);">Free</div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 14px;">
+          <div style="font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:var(--text);">Total</div>
+          <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--accent);" id="cart-total">$24.00</div>
+        </div>
+      </div>
+
+      <!-- Payment -->
+      <div style="background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:13px 14px;display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+        <div style="font-size:22px;">💳</div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:500;color:var(--text);">Visa ending in 4242</div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);">Billed to ChloeIQ Growth Plan</div>
+        </div>
+        <button onclick="showToast('💳','Change Payment','Manage payment methods in billing settings.')" style="background:transparent;border:none;font-family:'DM Mono',monospace;font-size:10px;color:var(--accent);cursor:pointer;letter-spacing:1px;">Change</button>
+      </div>
+
+      <button onclick="confirmOrder()" style="width:100%;background:var(--accent);color:var(--bg);border:none;border-radius:14px;padding:15px;font-family:'Fraunces',serif;font-size:17px;font-weight:700;cursor:pointer;margin-bottom:8px;" id="confirm-order-btn">Confirm Order →</button>
+      <button onclick="goScreen('s-order');setNav('nav-order')" style="width:100%;background:transparent;color:var(--text-muted);border:1px solid var(--border2);border-radius:14px;padding:13px;font-size:13px;cursor:pointer;margin-bottom:16px;">← Edit Order</button>
+
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <div class="nav-item active" id="nav-signs"     onclick="goScreen('s-signs');setNav('nav-signs')">
+      <div class="nav-icon">🪧</div>
+      <div class="nav-label">Signs</div>
+    </div>
+    <div class="nav-item" id="nav-order"     onclick="goScreen('s-order');setNav('nav-order')">
+      <div class="nav-icon">📦</div>
+      <div class="nav-label">Order</div>
+    </div>
+    <div class="nav-item" id="nav-cart"      onclick="goToCart()">
+      <div class="nav-icon">🛒</div>
+      <div class="nav-label">Cart</div>
+    </div>
+    <div class="nav-item" id="nav-analytics" onclick="goScreen('s-analytics');setNav('nav-analytics')">
+      <div class="nav-icon">📊</div>
+      <div class="nav-label">Analytics</div>
+    </div>
+  </div>
+
+  <!-- SIGN DETAIL SHEET -->
+  <div class="sheet-backdrop" id="sheet-backdrop" onclick="closeSheet()"></div>
+  <div class="detail-sheet" id="detail-sheet">
+    <div class="ds-handle"></div>
+    <div id="sheet-content"></div>
+  </div>
+
+</div>
+
+<script>
+// ── THEME ──
+(function(){
+  const p=new URLSearchParams(window.location.search),root=document.documentElement;
+  const h=k=>p.get(k)?'#'+p.get(k):null;
+  const sv=(k,v)=>v&&root.style.setProperty(k,v);
+  const bg=h('bg'),ac=h('accent'),tx=h('text'),sf=h('surface');
+  sv('--bg',bg);sv('--accent',ac);sv('--text',tx);sv('--surface',sf);
+  if(ac){const r=parseInt(ac.slice(1,3),16),g=parseInt(ac.slice(3,5),16),b=parseInt(ac.slice(5,7),16);
+    root.style.setProperty('--accent-dim',`rgba(${r},${g},${b},0.10)`);
+    root.style.setProperty('--border',`rgba(${r},${g},${b},0.12)`);}
+  if(tx){const r=parseInt(tx.slice(1,3),16),g=parseInt(tx.slice(3,5),16),b=parseInt(tx.slice(5,7),16);
+    root.style.setProperty('--text-dim',`rgba(${r},${g},${b},0.55)`);
+    root.style.setProperty('--text-muted',`rgba(${r},${g},${b},0.32)`);}
+  if(bg){root.style.setProperty('--warm',bg);root.style.setProperty('--warm2',bg);}
+  const font=p.get('font')?decodeURIComponent(p.get('font')):null;
+  if(font){const l=document.createElement('link');l.rel='stylesheet';
+    l.href=`https://fonts.googleapis.com/css2?family=${font.replace(/ /g,'+')}:wght@400;600;700&display=swap`;
+    document.head.appendChild(l);
+    l.onload=()=>document.querySelectorAll('.pg-title,.sign-code-word,.ah-val,.ag-val').forEach(e=>e.style.fontFamily=`'${font}',serif`);}
+})();
+
+// ── NAV ──
+function goScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function setNav(id){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById(id)?.classList.add('active');
+}
+
+// ── FILTER TABS ──
+function filterSigns(el, type) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.sign-card').forEach(card => {
+    const status = card.dataset.status;
+    card.style.display = (type==='all' || status===type) ? '' : 'none';
+  });
+}
+
+// ── ORDER STATE ──
+let orderState = { size:'small', sizeLabel:'18×24"', material:'corrugated', matLabel:'Corrugated', matPrice:12, qty:2, ships:'2 business days' };
+
+function selectSize(el, key, label) {
+  document.querySelectorAll('.size-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  orderState.size = key;
+  orderState.sizeLabel = label + '"';
+  updateOrderSummary();
+}
+
+function selectMat(el, key, price) {
+  document.querySelectorAll('.mat-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  const labels = { corrugated:'Corrugated', aluminum:'Aluminum', foam:'Foam Board' };
+  const ships  = { corrugated:'2 business days', aluminum:'3 business days', foam:'2 business days' };
+  orderState.material = key;
+  orderState.matLabel = labels[key];
+  orderState.matPrice = price;
+  orderState.ships = ships[key];
+  updateOrderSummary();
+}
+
+function changeQty(delta) {
+  orderState.qty = Math.max(1, Math.min(20, orderState.qty + delta));
+  document.getElementById('qty-display').textContent = orderState.qty;
+  document.getElementById('qty-label').textContent = `sign${orderState.qty!==1?'s':''} · $${orderState.qty * orderState.matPrice} total`;
+  updateOrderSummary();
+}
+
+function updateOrderSummary() {
+  document.getElementById('qty-label').textContent = `sign${orderState.qty!==1?'s':''} · $${orderState.qty * orderState.matPrice} total`;
+  document.getElementById('summary-qty').textContent = `${orderState.qty} sign${orderState.qty!==1?'s':''}`;
+  document.getElementById('summary-total').textContent = `$${orderState.qty * orderState.matPrice}`;
+  const sumEl = document.getElementById('order-summary');
+  if(sumEl){
+    const rows = sumEl.querySelectorAll('.os-row');
+    if(rows[0]) rows[0].querySelector('.os-val').textContent = orderState.sizeLabel;
+    if(rows[1]) rows[1].querySelector('.os-val').textContent = orderState.matLabel;
+    if(rows[3]) rows[3].querySelector('.os-val').textContent = orderState.ships;
+  }
+}
+
+function placeOrder() {
+  // Sync order state to cart display
+  document.getElementById('cart-code').textContent = 'NEW SIGN';
+  document.getElementById('cart-spec').textContent = orderState.sizeLabel + ' · ' + orderState.matLabel;
+  document.getElementById('cart-unit-price').textContent = '$' + orderState.matPrice + ' ea';
+  document.getElementById('cart-qty').textContent = orderState.qty;
+  document.getElementById('cart-ship-label').textContent = 'Standard · ' + orderState.ships;
+  updateCartTotals();
+  goScreen('s-cart');
+  setNav('nav-cart');
+}
+
+function goToCart() {
+  setNav('nav-cart');
+  goScreen('s-cart');
+}
+
+function cartChangeQty(delta) {
+  orderState.qty = Math.max(1, Math.min(20, orderState.qty + delta));
+  document.getElementById('cart-qty').textContent = orderState.qty;
+  updateCartTotals();
+}
+
+function removeCartItem() {
+  showToast('🗑️', 'Item Removed', 'Sign removed from cart.');
+  setTimeout(() => { goScreen('s-order'); setNav('nav-order'); }, 600);
+}
+
+function updateCartTotals() {
+  const subtotal = orderState.qty * orderState.matPrice;
+  document.getElementById('cart-qty-summary').textContent = orderState.qty;
+  document.getElementById('cart-subtotal').textContent = '$' + subtotal.toFixed(2);
+  document.getElementById('cart-total').textContent = '$' + subtotal.toFixed(2);
+  document.getElementById('cart-count-badge').textContent = orderState.qty + ' item' + (orderState.qty !== 1 ? 's' : '');
+}
+
+function confirmOrder() {
+  const btn = document.getElementById('confirm-order-btn');
+  btn.textContent = 'Processing...';
+  btn.style.opacity = '0.7';
+  setTimeout(() => {
+    showToast('✅', 'Order Confirmed', orderState.qty + ' × ' + orderState.sizeLabel + ' ' + orderState.matLabel + ' sign' + (orderState.qty!==1?'s':'') + ' ordered. Chloe Codes will be emailed within 1 hour.');
+    btn.textContent = 'Confirm Order →';
+    btn.style.opacity = '1';
+    setTimeout(() => { goScreen('s-signs'); setNav('nav-signs'); }, 1000);
+  }, 1200);
+}
+
+// ── SIGN DETAIL DATA ──
+const signData = {
+  magnolia: { code:'MAGNOLIA', addr:'2847 Magnolia Drive', city:'Flower Mound, TX', status:'live', statusLabel:'● Live', statusColor:'var(--green)', size:'18×24"', material:'Corrugated Plastic', deployed:'March 28, 2026', scans:47, buyers:12, conv:'87%', note:'Your best-performing sign. High foot-traffic street placement is driving strong scan rates. Consider ordering a second sign for the side entrance.' },
+  elmwood:  { code:'ELMWOOD',  addr:'412 Elmwood Court',   city:'Southlake, TX',    status:'live', statusLabel:'● Live', statusColor:'var(--green)', size:'24×36"', material:'Aluminum',           deployed:'March 20, 2026', scans:31, buyers:9,  conv:'74%', note:'Solid performance for a larger property. The 24x36 aluminum sign is holding up well outdoors. Conversion is slightly below average — try moving it closer to the street.' },
+  lakeside: { code:'LAKESIDE', addr:'318 Lakeside Blvd',   city:'Grapevine, TX',    status:'transit', statusLabel:'→ In Transit', statusColor:'var(--accent)', size:'18×24"', material:'Corrugated Plastic', deployed:'Arriving Friday', scans:0, buyers:0, conv:'—', note:'Sign is en route. Estimated arrival Friday March 28. Your Chloe Code is already active — buyers who scan the digital version will be tracked until the physical sign arrives.' },
+  cedar:    { code:'CEDAR',    addr:'1104 Cedar Ridge Ln', city:'Argyle, TX',        status:'inactive', statusLabel:'◌ Inactive', statusColor:'var(--text-muted)', size:'18×24"', material:'Corrugated Plastic', deployed:'Used March 15',   scans:22, buyers:7,  conv:'68%', note:'Event complete. Sign is in storage. You can reactivate this code for a future event at the same property or reassign it to a new listing.' },
+  oak:      { code:'OAK',      addr:'88 Oak Hollow Drive', city:'Trophy Club, TX',   status:'inactive', statusLabel:'◌ Inactive', statusColor:'var(--text-muted)', size:'24×36"', material:'Aluminum',           deployed:'Used March 8',    scans:14, buyers:5,  conv:'59%', note:'Below-average conversion. Chloe recommends relocating this sign to the street corner for future events — data shows 22% better conversion vs front-yard placement.' },
+};
+
+function openSignDetail(key) {
+  const d = signData[key];
+  const warm2 = getComputedStyle(document.documentElement).getPropertyValue('--warm2').trim()||'#222418';
+  const tc    = getComputedStyle(document.documentElement).getPropertyValue('--text').trim()||'#EEF0E5';
+  const td    = getComputedStyle(document.documentElement).getPropertyValue('--text-dim').trim()||'rgba(238,240,229,0.55)';
+  const tm    = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim()||'rgba(238,240,229,0.32)';
+  const ac    = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#B8E030';
+
+  document.getElementById('sheet-content').innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+      <div style="background:#0A0B07;border:2px solid rgba(184,224,48,0.3);border-radius:12px;padding:10px 16px;text-align:center;flex-shrink:0;">
+        <div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:2px;color:${ac};margin-bottom:3px;">ChloeIQ</div>
+        <div style="font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:${tc};letter-spacing:3px;">${d.code}</div>
+        <div style="font-size:14px;margin-top:2px;">⬛</div>
+      </div>
+      <div style="flex:1;">
+        <div style="font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:${tc};margin-bottom:2px;">${d.addr}</div>
+        <div style="font-size:12px;color:${tm};margin-bottom:6px;">${d.city}</div>
+        <div style="font-size:11px;font-weight:600;color:${d.statusColor};">${d.statusLabel}</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
+      <div style="background:${warm2};border-radius:10px;padding:10px;text-align:center;"><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:${ac};">${d.scans||'—'}</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:${tm};text-transform:uppercase;letter-spacing:1px;margin-top:2px;">Scans</div></div>
+      <div style="background:${warm2};border-radius:10px;padding:10px;text-align:center;"><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:${ac};">${d.buyers||'—'}</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:${tm};text-transform:uppercase;letter-spacing:1px;margin-top:2px;">Buyers</div></div>
+      <div style="background:${warm2};border-radius:10px;padding:10px;text-align:center;"><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:${ac};">${d.conv}</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:${tm};text-transform:uppercase;letter-spacing:1px;margin-top:2px;">Conv.</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+      <div style="background:${warm2};border-radius:10px;padding:10px;"><div style="font-family:'DM Mono',monospace;font-size:9px;color:${tm};text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Size</div><div style="font-size:13px;font-weight:500;color:${tc};">${d.size}</div></div>
+      <div style="background:${warm2};border-radius:10px;padding:10px;"><div style="font-family:'DM Mono',monospace;font-size:9px;color:${tm};text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Material</div><div style="font-size:13px;font-weight:500;color:${tc};">${d.material}</div></div>
+    </div>
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:${tm};margin-bottom:6px;">Deployed</div>
+    <div style="font-size:13px;color:${td};margin-bottom:14px;">${d.deployed}</div>
+    <div style="background:rgba(184,224,48,0.06);border:1px solid rgba(184,224,48,0.15);border-radius:12px;padding:13px;margin-bottom:14px;">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:${ac};margin-bottom:6px;">✨ Chloe's Note</div>
+      <div style="font-size:13px;color:${td};line-height:1.6;">${d.note}</div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button onclick="closeSheet();showToast('🖨️','Print Ready','PDF for ${d.code} is ready to download and print.');" style="flex:1;background:${ac};color:#0A0B07;border:none;border-radius:11px;padding:13px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:600;cursor:pointer;">Print QR →</button>
+      <button onclick="closeSheet()" style="background:${warm2};border:1px solid rgba(255,255,255,0.07);border-radius:11px;padding:13px 16px;color:${tm};font-size:13px;cursor:pointer;">Close</button>
+    </div>`;
+
+  document.getElementById('sheet-backdrop').classList.add('open');
+  document.getElementById('detail-sheet').classList.add('open');
+}
+
+function closeSheet() {
+  document.getElementById('sheet-backdrop').classList.remove('open');
+  document.getElementById('detail-sheet').classList.remove('open');
+}
+
+// ── TOAST ──
+function showToast(icon, title, msg) {
+  const ex = document.getElementById('sm-toast'); if(ex) ex.remove();
+  const tc = getComputedStyle(document.documentElement).getPropertyValue('--text').trim()||'#EEF0E5';
+  const td = getComputedStyle(document.documentElement).getPropertyValue('--text-dim').trim()||'rgba(238,240,229,0.55)';
+  const sb = getComputedStyle(document.documentElement).getPropertyValue('--surface').trim()||'#13160D';
+  const t  = document.createElement('div');
+  t.id = 'sm-toast';
+  t.style.cssText = `position:absolute;bottom:88px;left:16px;right:16px;border-radius:14px;padding:14px 16px;z-index:150;display:flex;gap:12px;align-items:flex-start;box-shadow:0 8px 24px rgba(0,0,0,0.5);animation:smIn 0.3s ease;`;
+  t.style.background = sb;
+  t.style.border = '1px solid rgba(255,255,255,0.08)';
+  t.innerHTML = `<div style="font-size:20px;">${icon}</div><div style="flex:1;"><div style="font-size:13px;font-weight:600;color:${tc};margin-bottom:3px;">${title}</div><div style="font-size:12px;color:${td};line-height:1.5;">${msg}</div></div><div id="sm-toast-x" style="color:rgba(238,240,229,0.32);cursor:pointer;font-size:16px;flex-shrink:0;">✕</div><style>@keyframes smIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}</style>`;
+  document.querySelector('.phone').appendChild(t);
+  document.getElementById('sm-toast-x').onclick = ()=>t.remove();
+  setTimeout(()=>{ if(t.parentNode) t.remove(); }, 5000);
+}
+</script>
+</body>
+</html>

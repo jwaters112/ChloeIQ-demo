@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ChloeIQ — Vendor Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,300;1,600&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0A0B07;
+  --accent: #B8E030;
+  --accent-dim: rgba(184,224,48,0.10);
+  --surface: #13160D;
+  --border: rgba(184,224,48,0.12);
+  --border2: rgba(255,255,255,0.07);
+  --text: #EEF0E5;
+  --text-dim: rgba(238,240,229,0.55);
+  --text-muted: rgba(238,240,229,0.32);
+  --warm: #1A1C12;
+  --warm2: #222418;
+  --green: #4ADE80;
+  --amber: #FBBF24;
+  --red: #F87171;
+  --blue: #60A5FA;
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body {
+  background: #0D0D0D;
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  font-family: 'DM Sans', sans-serif;
+  padding: 24px 16px; gap: 20px;
+}
+.outer-label { font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);opacity:0.6; }
+.phone {
+  width:375px; height:812px; background:var(--bg);
+  border-radius:44px; overflow:hidden; position:relative;
+  box-shadow:0 0 0 1px rgba(255,255,255,0.07),0 0 0 2px rgba(0,0,0,0.6),0 32px 64px rgba(0,0,0,0.7);
+  display:flex; flex-direction:column;
+}
+.notch { position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:30px;background:#080808;border-radius:0 0 20px 20px;z-index:20; }
+.status-bar { display:flex;justify-content:space-between;align-items:center;padding:18px 28px 0;font-family:'DM Mono',monospace;font-size:12px;color:rgba(238,240,229,0.6);flex-shrink:0;z-index:10;background:var(--bg);position:relative; }
+.screen { flex:1;display:none;flex-direction:column;overflow:hidden; }
+.screen.active { display:flex; }
+
+/* HEADER */
+.pg-hdr { padding:14px 20px 12px;border-bottom:1px solid var(--border2);flex-shrink:0; }
+.pg-hdr-row { display:flex;align-items:center;justify-content:space-between;margin-bottom:10px; }
+.pg-eyebrow { font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:3px; }
+.pg-title { font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--text); }
+.pg-badge { background:var(--accent-dim);border:1px solid var(--border);border-radius:100px;padding:5px 12px;font-family:'DM Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:1px; }
+
+.tab-row { display:flex;border-bottom:1px solid var(--border2); }
+.tab { flex:1;padding:10px 4px;text-align:center;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s; }
+.tab.active { color:var(--accent);border-bottom-color:var(--accent); }
+
+.pg-scroll { flex:1;overflow-y:auto;scrollbar-width:none;padding:14px 16px; }
+.pg-scroll::-webkit-scrollbar { display:none; }
+
+/* HERO */
+.hero-card { background:var(--accent);border-radius:18px;padding:18px;margin-bottom:12px;display:flex;align-items:center;gap:14px; }
+.hc-val { font-family:'Fraunces',serif;font-size:44px;font-weight:700;color:var(--bg);line-height:1;flex-shrink:0; }
+.hc-info { flex:1; }
+.hc-label { font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(10,11,7,0.5);margin-bottom:4px; }
+.hc-title { font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:var(--bg); }
+.hc-sub { font-size:12px;color:rgba(10,11,7,0.55);margin-top:3px; }
+
+/* KPI */
+.kpi-grid { display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px; }
+.kpi { background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:14px; }
+.kpi-val { font-family:'Fraunces',serif;font-size:24px;font-weight:700;color:var(--accent);margin-bottom:3px; }
+.kpi-lbl { font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-muted); }
+.kpi-change { font-size:11px;margin-top:4px;color:var(--green); }
+
+/* SEC LABEL */
+.sec-lbl { font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px; }
+
+/* AUDIENCE CARD */
+.audience-card { background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:14px;margin-bottom:8px;cursor:pointer;transition:all 0.2s; }
+.audience-card:hover { border-color:rgba(184,224,48,0.2); }
+.ac-top { display:flex;align-items:center;gap:12px;margin-bottom:10px; }
+.ac-icon { width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0; }
+.ac-info { flex:1; }
+.ac-name { font-size:14px;font-weight:500;color:var(--text);margin-bottom:2px; }
+.ac-desc { font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted); }
+.ac-count { font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--accent); }
+.ac-bars { display:flex;flex-direction:column;gap:5px; }
+.ac-bar-row { display:flex;align-items:center;gap:8px; }
+.ac-bar-label { font-size:11px;color:var(--text-dim);width:90px;flex-shrink:0; }
+.ac-bar-track { flex:1;height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden; }
+.ac-bar-fill { height:100%;background:var(--accent);border-radius:2px; }
+.ac-bar-val { font-family:'DM Mono',monospace;font-size:10px;color:var(--accent);width:28px;text-align:right;flex-shrink:0; }
+
+/* PLACEMENT ROW */
+.placement-row { background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:13px 14px;display:flex;align-items:center;gap:12px;margin-bottom:8px;cursor:pointer;transition:all 0.2s; }
+.placement-row:hover { border-color:rgba(184,224,48,0.2); }
+.pr-icon { width:38px;height:38px;border-radius:10px;background:var(--warm2);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0; }
+.pr-info { flex:1; }
+.pr-name { font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px; }
+.pr-meta { font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted); }
+.pr-right { display:flex;flex-direction:column;align-items:flex-end;gap:4px; }
+.pr-stat { font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:var(--accent); }
+.pr-sub { font-family:'DM Mono',monospace;font-size:9px;color:var(--text-muted); }
+
+/* CAMPAIGN CARD */
+.campaign-card { background:var(--surface);border:1px solid var(--border2);border-radius:16px;overflow:hidden;margin-bottom:10px;cursor:pointer;transition:all 0.2s; }
+.campaign-card:hover { border-color:rgba(184,224,48,0.2); }
+.campaign-card.active-camp { border-color:rgba(184,224,48,0.3); }
+.cc-header { padding:13px 14px;display:flex;align-items:center;gap:12px; }
+.cc-icon { width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0; }
+.cc-info { flex:1; }
+.cc-name { font-size:14px;font-weight:500;color:var(--text);margin-bottom:2px; }
+.cc-meta { font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted); }
+.cc-status { font-size:10px;font-weight:600;padding:3px 8px;border-radius:100px; }
+.status-active { background:rgba(74,222,128,0.12);color:var(--green); }
+.status-paused { background:rgba(255,255,255,0.06);color:var(--text-muted); }
+.status-draft  { background:rgba(251,191,36,0.12);color:var(--amber); }
+.cc-stats { display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border-top:1px solid var(--border2); }
+.cc-stat { padding:10px;text-align:center;border-right:1px solid var(--border2); }
+.cc-stat:last-child { border-right:none; }
+.cc-stat-val { font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:var(--accent); }
+.cc-stat-lbl { font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);margin-top:2px; }
+
+/* INSIGHT */
+.insight-card { background:rgba(184,224,48,0.06);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px; }
+.ic-hdr { font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px; }
+.ic-point { display:flex;gap:8px;align-items:flex-start;font-size:12px;color:var(--text-dim);line-height:1.55;margin-bottom:7px; }
+.ic-point:last-child { margin-bottom:0; }
+.ic-dot { width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:5px; }
+
+/* PRICING TOGGLE */
+.pricing-toggle { display:flex;gap:1px;background:var(--border2);border-radius:10px;padding:2px;margin-bottom:14px; }
+.pt-btn { flex:1;padding:7px;border-radius:8px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);cursor:pointer;transition:all 0.2s;text-align:center; }
+.pt-btn.active { background:var(--surface);color:var(--accent); }
+
+/* PRICING CARDS */
+.pricing-card { background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:16px;margin-bottom:10px; }
+.pricing-card.recommended { border-color:var(--accent); }
+.pc-badge { font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px; }
+.pc-name { font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--text);margin-bottom:4px; }
+.pc-price { font-family:'Fraunces',serif;font-size:32px;font-weight:700;color:var(--accent);margin-bottom:4px; }
+.pc-period { font-size:13px;color:var(--text-muted); }
+.pc-features { display:flex;flex-direction:column;gap:6px;margin:12px 0; }
+.pc-feature { display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-dim); }
+.pc-check { color:var(--accent);flex-shrink:0; }
+.pc-btn { width:100%;border-radius:11px;padding:12px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;font-weight:600;border:none; }
+.pc-btn-primary { background:var(--accent);color:var(--bg); }
+.pc-btn-secondary { background:var(--warm2);color:var(--text-muted);border:1px solid var(--border2) !important; }
+
+/* BOTTOM NAV */
+.bottom-nav { display:flex;border-top:1px solid var(--border2);padding:10px 0 20px;background:var(--bg);flex-shrink:0; }
+.nav-item { flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0; }
+.nav-icon { font-size:20px; }
+.nav-label { font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.5px;color:var(--text-muted);text-transform:uppercase; }
+.nav-item.active .nav-label { color:var(--accent); }
+
+
+/* CAMPAIGN CREATOR */
+.step-pip { flex:1;height:3px;background:var(--border2);border-radius:2px;transition:background 0.3s; }
+.step-pip.active { background:var(--accent); }
+.create-step { position:absolute;inset:0;display:none;flex-direction:column;overflow:hidden;background:var(--bg); }
+.create-step.active { display:flex; }
+.step-header { margin-bottom:16px; }
+.step-num { font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px; }
+.step-title { font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--text);margin-bottom:4px; }
+.step-sub { font-size:13px;color:var(--text-muted); }
+.field-label { font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px; }
+.field-input { width:100%;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:13px 14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border-color 0.2s; }
+.field-input:focus { border-color:rgba(184,224,48,0.35); }
+.service-grid { display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px; }
+.service-opt { background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;transition:all 0.2s; }
+.service-opt.selected { background:var(--accent-dim);border-color:rgba(184,224,48,0.35); }
+.svc-icon { font-size:22px;margin-bottom:5px; }
+.svc-label { font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.5px;text-transform:uppercase;color:var(--text-muted);line-height:1.3; }
+.service-opt.selected .svc-label { color:var(--accent); }
+.dna-opt { background:var(--surface);border:1px solid var(--border2);border-radius:13px;padding:13px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:all 0.2s; }
+.dna-opt.selected { background:var(--accent-dim);border-color:rgba(184,224,48,0.3); }
+.dna-icon { width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0; }
+.dna-info { flex:1; }
+.dna-name { font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px; }
+.dna-desc { font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted); }
+.dna-check { width:20px;height:20px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--bg);font-weight:700;flex-shrink:0;opacity:0;transition:opacity 0.2s; }
+.dna-opt.selected .dna-check { opacity:1; }
+.placement-opt { background:var(--surface);border:1px solid var(--border2);border-radius:13px;padding:13px 14px;display:flex;align-items:flex-start;gap:12px;cursor:pointer;transition:all 0.2s; }
+.placement-opt.selected { background:var(--accent-dim);border-color:rgba(184,224,48,0.3); }
+.pl-radio { width:18px;height:18px;border-radius:50%;border:1.5px solid var(--border2);flex-shrink:0;margin-top:1px;transition:all 0.2s; }
+.selected-radio { background:var(--accent);border-color:var(--accent); }
+.step-btn { background:var(--accent);color:var(--bg);border:none;border-radius:13px;padding:15px;font-family:'Fraunces',serif;font-size:16px;font-weight:700;cursor:pointer;transition:opacity 0.15s; }
+.step-btn:active { opacity:0.85; }
+.step-btn-back { background:var(--warm2);color:var(--text-muted);border:1px solid var(--border2);border-radius:13px;padding:15px 18px;font-size:13px;cursor:pointer;white-space:nowrap; }
+input[type=range]::-webkit-slider-thumb { -webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 0 8px rgba(184,224,48,0.4);border:2px solid var(--bg); }
+
+/* SHEET */
+.sheet-backdrop { position:absolute;inset:0;background:rgba(0,0,0,0.65);z-index:49;opacity:0;pointer-events:none;transition:opacity 0.3s;backdrop-filter:blur(3px); }
+.sheet-backdrop.open { opacity:1;pointer-events:all; }
+.detail-sheet { position:absolute;bottom:0;left:0;right:0;background:var(--surface);border-radius:22px 22px 0 0;border-top:1px solid var(--border2);padding:0 20px 32px;transform:translateY(100%);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);z-index:50;max-height:85%;overflow-y:auto;scrollbar-width:none; }
+.detail-sheet::-webkit-scrollbar { display:none; }
+.detail-sheet.open { transform:translateY(0); }
+.ds-handle { width:36px;height:4px;background:var(--border2);border-radius:2px;margin:12px auto 16px; }
+</style>
+</head>
+<body>
+
+<div class="outer-label">ChloeIQ · Vendor Dashboard · PropTech Partner</div>
+
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status-bar"><span>9:41</span><span>●●● 5G 🔋</span></div>
+
+  <!-- ══ OVERVIEW ══ -->
+  <div class="screen active" id="s-overview">
+    <div class="pg-hdr">
+      <div class="pg-hdr-row">
+        <div>
+          <div class="pg-eyebrow">Vendor Partner · Premier Home Services</div>
+          <div class="pg-title">Vendor Overview</div>
+        </div>
+        <div class="pg-badge">Live</div>
+      </div>
+      <div class="tab-row">
+        <div class="tab active" id="tab-ov" onclick="switchTab('overview')">Overview</div>
+        <div class="tab" id="tab-au" onclick="switchTab('audience')">Audience</div>
+        <div class="tab" id="tab-ca" onclick="switchTab('campaigns')">Campaigns</div>
+        <div class="tab" id="tab-pr" onclick="switchTab('pricing')">Pricing</div>
+      </div>
+    </div>
+    <div class="pg-scroll">
+
+      <div class="hero-card">
+        <div class="hc-val">847</div>
+        <div class="hc-info">
+          <div class="hc-label">Buyers Reached This Month</div>
+          <div class="hc-title">Active in-home placement</div>
+          <div class="hc-sub">Shown during live open house tours</div>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi"><div class="kpi-val">3.2K</div><div class="kpi-lbl">Total Impressions</div><div class="kpi-change">↑ +18% vs last mo</div></div>
+        <div class="kpi"><div class="kpi-val">12.4%</div><div class="kpi-lbl">Engagement Rate</div><div class="kpi-change">↑ 4× industry avg</div></div>
+        <div class="kpi"><div class="kpi-val">$4.20</div><div class="kpi-lbl">Cost per Engaged Lead</div><div class="kpi-change">↓ Best yet</div></div>
+        <div class="kpi"><div class="kpi-val">94%</div><div class="kpi-lbl">Buyer Relevance Score</div><div class="kpi-change">↑ DNA-matched</div></div>
+      </div>
+
+      <div class="sec-lbl">Active Placements</div>
+      <div class="placement-row" onclick="openPlacementSheet('chloe-ai')">
+        <div class="pr-icon" style="background:var(--accent-dim);">✨</div>
+        <div class="pr-info">
+          <div class="pr-name">Ask Chloe Integration</div>
+          <div class="pr-meta">Shown when buyers ask about home services</div>
+        </div>
+        <div class="pr-right">
+          <div class="pr-stat">312</div>
+          <div class="pr-sub">Impressions</div>
+        </div>
+      </div>
+      <div class="placement-row" onclick="openPlacementSheet('buyer-report')">
+        <div class="pr-icon" style="background:rgba(96,165,250,0.12);">📋</div>
+        <div class="pr-info">
+          <div class="pr-name">Post-Tour Buyer Report</div>
+          <div class="pr-meta">Featured in every buyer's summary</div>
+        </div>
+        <div class="pr-right">
+          <div class="pr-stat">284</div>
+          <div class="pr-sub">Impressions</div>
+        </div>
+      </div>
+      <div class="placement-row" onclick="openPlacementSheet('dna-match')">
+        <div class="pr-icon" style="background:rgba(74,222,128,0.12);">🧬</div>
+        <div class="pr-info">
+          <div class="pr-name">DNA-Matched Recommendation</div>
+          <div class="pr-meta">Shown to buyers whose profile matches</div>
+        </div>
+        <div class="pr-right">
+          <div class="pr-stat">251</div>
+          <div class="pr-sub">Impressions</div>
+        </div>
+      </div>
+
+      <div class="insight-card">
+        <div class="ic-hdr">✨ Chloe's Vendor Insight</div>
+        <div class="ic-point"><div class="ic-dot" style="background:var(--green);"></div><div>Your 12.4% engagement rate is 4× the industry average for in-home services advertising. Buyers who are actively evaluating a purchase are far more receptive than general display audiences.</div></div>
+        <div class="ic-point"><div class="ic-dot" style="background:var(--accent);"></div><div>DNA-matched placements convert 2.8× better than untargeted. Refined Modern buyers engage most with Premier's staging and design services.</div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ AUDIENCE ══ -->
+  <div class="screen" id="s-audience">
+    <div class="pg-hdr">
+      <div class="pg-hdr-row">
+        <div><div class="pg-eyebrow">Vendor Partner</div><div class="pg-title">Buyer Audience</div></div>
+        <div class="pg-badge">847 buyers</div>
+      </div>
+      <div class="tab-row">
+        <div class="tab" id="tab-ov2" onclick="switchTab('overview')">Overview</div>
+        <div class="tab active" id="tab-au2" onclick="switchTab('audience')">Audience</div>
+        <div class="tab" id="tab-ca2" onclick="switchTab('campaigns')">Campaigns</div>
+        <div class="tab" id="tab-pr2" onclick="switchTab('pricing')">Pricing</div>
+      </div>
+    </div>
+    <div class="pg-scroll">
+
+      <div class="sec-lbl">Audience by StyleDNA</div>
+      <div class="audience-card" onclick="openAudienceSheet('refined')">
+        <div class="ac-top">
+          <div class="ac-icon" style="background:var(--accent-dim);">🏛️</div>
+          <div class="ac-info">
+            <div class="ac-name">Refined Modern</div>
+            <div class="ac-desc">Your highest-value segment</div>
+          </div>
+          <div class="ac-count">322</div>
+        </div>
+        <div class="ac-bars">
+          <div class="ac-bar-row"><div class="ac-bar-label">Avg home budget</div><div class="ac-bar-track"><div class="ac-bar-fill" style="width:88%"></div></div><div class="ac-bar-val">$1.4M</div></div>
+          <div class="ac-bar-row"><div class="ac-bar-label">Engagement rate</div><div class="ac-bar-track"><div class="ac-bar-fill" style="width:76%"></div></div><div class="ac-bar-val">16.2%</div></div>
+        </div>
+      </div>
+
+      <div class="audience-card" onclick="openAudienceSheet('warm')">
+        <div class="ac-top">
+          <div class="ac-icon" style="background:rgba(251,191,36,0.1);">🌿</div>
+          <div class="ac-info">
+            <div class="ac-name">Warm Organic</div>
+            <div class="ac-desc">Family-focused buyers</div>
+          </div>
+          <div class="ac-count">228</div>
+        </div>
+        <div class="ac-bars">
+          <div class="ac-bar-row"><div class="ac-bar-label">Avg home budget</div><div class="ac-bar-track"><div class="ac-bar-fill" style="width:64%"></div></div><div class="ac-bar-val">$1.1M</div></div>
+          <div class="ac-bar-row"><div class="ac-bar-label">Engagement rate</div><div class="ac-bar-track"><div class="ac-bar-fill" style="width:58%"></div></div><div class="ac-bar-val">11.8%</div></div>
+        </div>
+      </div>
+
+      <div class="audience-card" onclick="openAudienceSheet('coastal')">
+        <div class="ac-top">
+          <div class="ac-icon" style="background:rgba(96,165,250,0.1);">🏊</div>
+          <div class="ac-info">
+            <div class="ac-name">Coastal Luxe</div>
+            <div class="ac-desc">High-income outdoor living focus</div>
+          </div>
+          <div class="ac-count">161</div>
+        </div>
+        <div class="ac-bars">
+          <div class="ac-bar-row"><div class="ac-bar-label">Avg home budget</div><div class="ac-bar-track"><div class="ac-bar-fill" style="width:95%"></div></div><div class="ac-bar-val">$1.8M</div></div>
+          <div class="ac-bar-row"><div class="ac-bar-label">Engagement rate</div><div class="ac-bar-track"><div class="ac-bar-fill" style="width:44%"></div></div><div class="ac-bar-val">9.4%</div></div>
+        </div>
+      </div>
+
+      <div class="audience-card" onclick="openAudienceSheet('bold')">
+        <div class="ac-top">
+          <div class="ac-icon" style="background:rgba(248,113,113,0.1);">🎨</div>
+          <div class="ac-info">
+            <div class="ac-name">Bold Eclectic</div>
+            <div class="ac-desc">Design-forward buyers</div>
+          </div>
+          <div class="ac-count">136</div>
+        </div>
+        <div class="ac-bars">
+          <div class="ac-bar-row"><div class="ac-bar-label">Avg home budget</div><div class="ac-bar-track"><div class="ac-bar-fill" style="width:52%"></div></div><div class="ac-bar-val">$920K</div></div>
+          <div class="ac-bar-row"><div class="ac-bar-label">Engagement rate</div><div class="ac-bar-track"><div class="ac-bar-fill" style="width:38%"></div></div><div class="ac-bar-val">8.1%</div></div>
+        </div>
+      </div>
+
+      <div class="insight-card">
+        <div class="ic-hdr">✨ Audience Insight</div>
+        <div class="ic-point"><div class="ic-dot" style="background:var(--accent);"></div><div>Refined Modern buyers (322) are your sweet spot — highest budgets, highest engagement, and the strongest match for Premier's core staging and design services.</div></div>
+        <div class="ic-point"><div class="ic-dot" style="background:var(--amber);"></div><div>Coastal Luxe buyers have the highest avg budget at $1.8M but lower engagement. Consider tailoring your outdoor living and pool services messaging specifically for this segment.</div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ CAMPAIGNS ══ -->
+  <div class="screen" id="s-campaigns">
+    <div class="pg-hdr">
+      <div class="pg-hdr-row">
+        <div><div class="pg-eyebrow">Vendor Partner</div><div class="pg-title">Campaigns</div></div>
+        <div class="pg-badge">2 active</div>
+      </div>
+      <div class="tab-row">
+        <div class="tab" id="tab-ov3" onclick="switchTab('overview')">Overview</div>
+        <div class="tab" id="tab-au3" onclick="switchTab('audience')">Audience</div>
+        <div class="tab active" id="tab-ca3" onclick="switchTab('campaigns')">Campaigns</div>
+        <div class="tab" id="tab-pr3" onclick="switchTab('pricing')">Pricing</div>
+      </div>
+    </div>
+    <div class="pg-scroll">
+
+      <div class="campaign-card active-camp" onclick="openCampaignSheet('staging')">
+        <div class="cc-header">
+          <div class="cc-icon" style="background:var(--accent-dim);">🛋️</div>
+          <div class="cc-info">
+            <div class="cc-name">Staging & Design Services</div>
+            <div class="cc-meta">Refined Modern · All Listings · DFW</div>
+          </div>
+          <div class="cc-status status-active">● Active</div>
+        </div>
+        <div class="cc-stats">
+          <div class="cc-stat"><div class="cc-stat-val">441</div><div class="cc-stat-lbl">Impressions</div></div>
+          <div class="cc-stat"><div class="cc-stat-val">14.2%</div><div class="cc-stat-lbl">Engagement</div></div>
+          <div class="cc-stat"><div class="cc-stat-val">$3.80</div><div class="cc-stat-lbl">Cost/Lead</div></div>
+        </div>
+      </div>
+
+      <div class="campaign-card active-camp" onclick="openCampaignSheet('inspection')">
+        <div class="cc-header">
+          <div class="cc-icon" style="background:rgba(96,165,250,0.12);">🔍</div>
+          <div class="cc-info">
+            <div class="cc-name">Home Inspection Bundle</div>
+            <div class="cc-meta">All DNA Types · $800K+ Listings</div>
+          </div>
+          <div class="cc-status status-active">● Active</div>
+        </div>
+        <div class="cc-stats">
+          <div class="cc-stat"><div class="cc-stat-val">312</div><div class="cc-stat-lbl">Impressions</div></div>
+          <div class="cc-stat"><div class="cc-stat-val">10.8%</div><div class="cc-stat-lbl">Engagement</div></div>
+          <div class="cc-stat"><div class="cc-stat-val">$4.90</div><div class="cc-stat-lbl">Cost/Lead</div></div>
+        </div>
+      </div>
+
+      <div class="campaign-card" onclick="openCampaignSheet('moving')">
+        <div class="cc-header">
+          <div class="cc-icon" style="background:rgba(251,191,36,0.1);">📦</div>
+          <div class="cc-info">
+            <div class="cc-name">Moving & Storage Promo</div>
+            <div class="cc-meta">Warm Organic · Family Buyers</div>
+          </div>
+          <div class="cc-status status-paused">◌ Paused</div>
+        </div>
+        <div class="cc-stats">
+          <div class="cc-stat"><div class="cc-stat-val">94</div><div class="cc-stat-lbl">Impressions</div></div>
+          <div class="cc-stat"><div class="cc-stat-val">7.2%</div><div class="cc-stat-lbl">Engagement</div></div>
+          <div class="cc-stat"><div class="cc-stat-val">$6.10</div><div class="cc-stat-lbl">Cost/Lead</div></div>
+        </div>
+      </div>
+
+      <div class="campaign-card" onclick="openCampaignSheet('landscape')">
+        <div class="cc-header">
+          <div class="cc-icon" style="background:rgba(74,222,128,0.1);">🌿</div>
+          <div class="cc-info">
+            <div class="cc-name">Landscape & Pool Design</div>
+            <div class="cc-meta">Coastal Luxe · $1M+ Listings</div>
+          </div>
+          <div class="cc-status status-draft">◐ Draft</div>
+        </div>
+        <div class="cc-stats">
+          <div class="cc-stat"><div class="cc-stat-val">—</div><div class="cc-stat-lbl">Impressions</div></div>
+          <div class="cc-stat"><div class="cc-stat-val">—</div><div class="cc-stat-lbl">Engagement</div></div>
+          <div class="cc-stat"><div class="cc-stat-val">—</div><div class="cc-stat-lbl">Cost/Lead</div></div>
+        </div>
+      </div>
+
+      <button onclick="switchTab('create');" style="width:100%;background:var(--surface);border:1px dashed rgba(184,224,48,0.25);border-radius:14px;padding:16px;color:var(--accent);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;margin-bottom:16px;">+ Create New Campaign</button>
+
+    </div>
+  </div>
+
+  <!-- ══ PRICING ══ -->
+  <div class="screen" id="s-pricing">
+    <div class="pg-hdr">
+      <div class="pg-hdr-row">
+        <div><div class="pg-eyebrow">Vendor Partner</div><div class="pg-title">Vendor Plans</div></div>
+      </div>
+      <div class="tab-row">
+        <div class="tab" id="tab-ov4" onclick="switchTab('overview')">Overview</div>
+        <div class="tab" id="tab-au4" onclick="switchTab('audience')">Audience</div>
+        <div class="tab" id="tab-ca4" onclick="switchTab('campaigns')">Campaigns</div>
+        <div class="tab active" id="tab-pr4" onclick="switchTab('pricing')">Pricing</div>
+      </div>
+    </div>
+    <div class="pg-scroll">
+
+      <div class="pricing-toggle">
+        <div class="pt-btn active" id="pt-monthly" onclick="setPricingPeriod('monthly')">Monthly</div>
+        <div class="pt-btn" id="pt-annual" onclick="setPricingPeriod('annual')">Annual (save 20%)</div>
+      </div>
+
+      <div class="pricing-card">
+        <div class="pc-badge">STARTER</div>
+        <div class="pc-name">Local Vendor</div>
+        <div><span class="pc-price" id="price-starter">$199</span><span class="pc-period">/mo</span></div>
+        <div class="pc-features">
+          <div class="pc-feature"><div class="pc-check">✓</div>Up to 500 buyer impressions/mo</div>
+          <div class="pc-feature"><div class="pc-check">✓</div>1 active campaign</div>
+          <div class="pc-feature"><div class="pc-check">✓</div>Post-tour report placement</div>
+          <div class="pc-feature"><div class="pc-check">✓</div>Basic DNA targeting</div>
+          <div class="pc-feature" style="opacity:0.4;"><div class="pc-check">–</div>Ask Chloe integration</div>
+          <div class="pc-feature" style="opacity:0.4;"><div class="pc-check">–</div>Analytics dashboard</div>
+        </div>
+        <button class="pc-btn pc-btn-secondary" onclick="showToast('📋','Plan Selected','Starter plan details sent to your email.');">Get Started</button>
+      </div>
+
+      <div class="pricing-card recommended">
+        <div class="pc-badge">★ RECOMMENDED · YOUR PLAN</div>
+        <div class="pc-name">Regional Partner</div>
+        <div><span class="pc-price" id="price-regional">$499</span><span class="pc-period">/mo</span></div>
+        <div class="pc-features">
+          <div class="pc-feature"><div class="pc-check">✓</div>Up to 2,500 buyer impressions/mo</div>
+          <div class="pc-feature"><div class="pc-check">✓</div>4 active campaigns</div>
+          <div class="pc-feature"><div class="pc-check">✓</div>Ask Chloe integration</div>
+          <div class="pc-feature"><div class="pc-check">✓</div>Full DNA targeting</div>
+          <div class="pc-feature"><div class="pc-check">✓</div>Real-time analytics dashboard</div>
+          <div class="pc-feature"><div class="pc-check">✓</div>A/B campaign testing</div>
+        </div>
+        <button class="pc-btn pc-btn-primary" onclick="showToast('✅','Current Plan','You are already on the Regional Partner plan.');">Current Plan</button>
+      </div>
+
+      <div class="pricing-card">
+        <div class="pc-badge">ENTERPRISE</div>
+        <div class="pc-name">National Partner</div>
+        <div><span class="pc-price" id="price-national">$1,299</span><span class="pc-period">/mo</span></div>
+        <div class="pc-features">
+          <div class="pc-feature"><div class="pc-check">✓</div>Unlimited impressions</div>
+          <div class="pc-feature"><div class="pc-check">✓</div>Unlimited campaigns</div>
+          <div class="pc-feature"><div class="pc-check">✓</div>Data API access</div>
+          <div class="pc-feature"><div class="pc-check">✓</div>Custom DNA audience segments</div>
+          <div class="pc-feature"><div class="pc-check">✓</div>White-label reporting</div>
+          <div class="pc-feature"><div class="pc-check">✓</div>Dedicated account manager</div>
+        </div>
+        <button class="pc-btn pc-btn-secondary" onclick="showToast('💬','Sales Contact','A ChloeIQ partner specialist will reach out within 24 hours.');">Talk to Sales</button>
+      </div>
+
+      <div style="height:8px;"></div>
+
+    </div>
+  </div>
+
+
+  <!-- ══ CREATE CAMPAIGN ══ -->
+  <div class="screen" id="s-create">
+    <div class="pg-hdr">
+      <div class="pg-hdr-row">
+        <div>
+          <div class="pg-eyebrow">Vendor Partner</div>
+          <div class="pg-title">New Campaign</div>
+        </div>
+        <button onclick="switchTab('campaigns')" style="background:var(--warm2);border:1px solid var(--border2);border-radius:10px;padding:6px 12px;color:var(--text-muted);font-size:13px;cursor:pointer;">Cancel</button>
+      </div>
+      <!-- Step progress -->
+      <div style="display:flex;gap:4px;margin-top:2px;">
+        <div class="step-pip active" id="pip-1"></div>
+        <div class="step-pip" id="pip-2"></div>
+        <div class="step-pip" id="pip-3"></div>
+        <div class="step-pip" id="pip-4"></div>
+      </div>
+    </div>
+
+    <div style="flex:1;overflow:hidden;position:relative;">
+
+      <!-- ── STEP 1: Name & Service ── -->
+      <div class="create-step active" id="create-step-1">
+        <div class="pg-scroll">
+          <div class="step-header">
+            <div class="step-num">1 of 4</div>
+            <div class="step-title">What are you promoting?</div>
+            <div class="step-sub">Name your campaign and choose your service category.</div>
+          </div>
+
+          <div class="field-label">Campaign Name</div>
+          <input class="field-input" id="camp-name" type="text" placeholder="e.g. Spring Staging Special" value="">
+
+          <div class="field-label" style="margin-top:14px;">Service Category</div>
+          <div class="service-grid" id="service-grid">
+            <div class="service-opt selected" id="svc-staging" onclick="selectService(this,'staging','🛋️','Staging & Design')">
+              <div class="svc-icon">🛋️</div>
+              <div class="svc-label">Staging & Design</div>
+            </div>
+            <div class="service-opt" id="svc-inspection" onclick="selectService(this,'inspection','🔍','Home Inspection')">
+              <div class="svc-icon">🔍</div>
+              <div class="svc-label">Home Inspection</div>
+            </div>
+            <div class="service-opt" id="svc-moving" onclick="selectService(this,'moving','📦','Moving & Storage')">
+              <div class="svc-icon">📦</div>
+              <div class="svc-label">Moving & Storage</div>
+            </div>
+            <div class="service-opt" id="svc-landscape" onclick="selectService(this,'landscape','🌿','Landscaping')">
+              <div class="svc-icon">🌿</div>
+              <div class="svc-label">Landscaping</div>
+            </div>
+            <div class="service-opt" id="svc-smart" onclick="selectService(this,'smart','💡','Smart Home')">
+              <div class="svc-icon">💡</div>
+              <div class="svc-label">Smart Home</div>
+            </div>
+            <div class="service-opt" id="svc-other" onclick="selectService(this,'other','⚙️','Other')">
+              <div class="svc-icon">⚙️</div>
+              <div class="svc-label">Other</div>
+            </div>
+          </div>
+
+          <div style="height:16px;"></div>
+          <button class="step-btn" onclick="goStep(2)">Continue →</button>
+        </div>
+      </div>
+
+      <!-- ── STEP 2: DNA Targeting ── -->
+      <div class="create-step" id="create-step-2">
+        <div class="pg-scroll">
+          <div class="step-header">
+            <div class="step-num">2 of 4</div>
+            <div class="step-title">Who should see this?</div>
+            <div class="step-sub">Select the buyer StyleDNA profiles you want to reach. You can pick multiple.</div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
+            <div class="dna-opt selected" id="dna-refined" onclick="toggleDNA(this,'refined')">
+              <div class="dna-icon" style="background:var(--accent-dim);">🏛️</div>
+              <div class="dna-info">
+                <div class="dna-name">Refined Modern</div>
+                <div class="dna-desc">322 buyers · $1.4M avg · 16.2% engagement</div>
+              </div>
+              <div class="dna-check" id="dna-check-refined">✓</div>
+            </div>
+            <div class="dna-opt" id="dna-warm" onclick="toggleDNA(this,'warm')">
+              <div class="dna-icon" style="background:rgba(251,191,36,0.1);">🌿</div>
+              <div class="dna-info">
+                <div class="dna-name">Warm Organic</div>
+                <div class="dna-desc">228 buyers · $1.1M avg · 11.8% engagement</div>
+              </div>
+              <div class="dna-check" id="dna-check-warm"></div>
+            </div>
+            <div class="dna-opt" id="dna-coastal" onclick="toggleDNA(this,'coastal')">
+              <div class="dna-icon" style="background:rgba(96,165,250,0.1);">🏊</div>
+              <div class="dna-info">
+                <div class="dna-name">Coastal Luxe</div>
+                <div class="dna-desc">161 buyers · $1.8M avg · 9.4% engagement</div>
+              </div>
+              <div class="dna-check" id="dna-check-coastal"></div>
+            </div>
+            <div class="dna-opt" id="dna-bold" onclick="toggleDNA(this,'bold')">
+              <div class="dna-icon" style="background:rgba(248,113,113,0.1);">🎨</div>
+              <div class="dna-info">
+                <div class="dna-name">Bold Eclectic</div>
+                <div class="dna-desc">136 buyers · $920K avg · 8.1% engagement</div>
+              </div>
+              <div class="dna-check" id="dna-check-bold"></div>
+            </div>
+            <div class="dna-opt" id="dna-all" onclick="selectAllDNA(this)">
+              <div class="dna-icon" style="background:rgba(255,255,255,0.06);">👥</div>
+              <div class="dna-info">
+                <div class="dna-name">All Buyers</div>
+                <div class="dna-desc">847 buyers · No DNA filter</div>
+              </div>
+              <div class="dna-check" id="dna-check-all"></div>
+            </div>
+          </div>
+
+          <div style="background:var(--accent-dim);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:16px;display:flex;gap:8px;align-items:flex-start;">
+            <div style="font-size:16px;">✨</div>
+            <div style="font-size:12px;color:var(--text-dim);line-height:1.5;" id="dna-estimate">Reaching <strong style="color:var(--text);">322 buyers</strong> — Refined Modern is your best match for Staging services.</div>
+          </div>
+
+          <div style="display:flex;gap:8px;">
+            <button class="step-btn-back" onclick="goStep(1)">← Back</button>
+            <button class="step-btn" onclick="goStep(3)" style="flex:1;">Continue →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── STEP 3: Placement & Budget ── -->
+      <div class="create-step" id="create-step-3">
+        <div class="pg-scroll">
+          <div class="step-header">
+            <div class="step-num">3 of 4</div>
+            <div class="step-title">Where & how much?</div>
+            <div class="step-sub">Choose where your campaign appears and set your monthly budget.</div>
+          </div>
+
+          <div class="field-label">Placement Type</div>
+          <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:16px;">
+            <div class="placement-opt selected" id="pl-chloe" onclick="selectPlacement(this,'chloe')">
+              <div class="pl-radio selected-radio"></div>
+              <div style="flex:1;">
+                <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px;">Ask Chloe Integration</div>
+                <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);">Shown when buyers ask about services · Highest intent</div>
+              </div>
+              <div style="font-family:'Fraunces',serif;font-size:13px;font-weight:700;color:var(--accent);">$3.20 CPL</div>
+            </div>
+            <div class="placement-opt" id="pl-report" onclick="selectPlacement(this,'report')">
+              <div class="pl-radio"></div>
+              <div style="flex:1;">
+                <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px;">Post-Tour Buyer Report</div>
+                <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);">Featured in every buyer summary after the tour</div>
+              </div>
+              <div style="font-family:'Fraunces',serif;font-size:13px;font-weight:700;color:var(--accent);">$4.10 CPL</div>
+            </div>
+            <div class="placement-opt" id="pl-dna" onclick="selectPlacement(this,'dna')">
+              <div class="pl-radio"></div>
+              <div style="flex:1;">
+                <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px;">DNA-Matched Recommendation</div>
+                <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);">Shown only to matching buyer profiles</div>
+              </div>
+              <div style="font-family:'Fraunces',serif;font-size:13px;font-weight:700;color:var(--accent);">$3.80 CPL</div>
+            </div>
+          </div>
+
+          <div class="field-label">Monthly Budget</div>
+          <div style="background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:16px;margin-bottom:8px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+              <div style="font-family:'Fraunces',serif;font-size:32px;font-weight:700;color:var(--accent);" id="budget-display">$150</div>
+              <div style="font-size:12px;color:var(--text-muted);">per month</div>
+            </div>
+            <input type="range" id="budget-slider" min="50" max="1000" step="25" value="150" oninput="updateBudget()" style="-webkit-appearance:none;appearance:none;width:100%;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;outline:none;">
+            <div style="display:flex;justify-content:space-between;margin-top:8px;">
+              <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-muted);">$50</div>
+              <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-muted);">$1,000</div>
+            </div>
+          </div>
+          <div style="background:var(--accent-dim);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:12px;color:var(--text-dim);line-height:1.55;" id="budget-estimate">
+            At $150/mo you can expect approximately <strong style="color:var(--text);">47 engaged leads</strong> per month at your current CPL.
+          </div>
+
+          <div style="display:flex;gap:8px;">
+            <button class="step-btn-back" onclick="goStep(2)">← Back</button>
+            <button class="step-btn" onclick="goStep(4)" style="flex:1;">Continue →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── STEP 4: Review & Launch ── -->
+      <div class="create-step" id="create-step-4">
+        <div class="pg-scroll">
+          <div class="step-header">
+            <div class="step-num">4 of 4</div>
+            <div class="step-title">Review & launch.</div>
+            <div class="step-sub">Everything looks good? Hit launch to go live immediately.</div>
+          </div>
+
+          <!-- Summary card -->
+          <div style="background:var(--surface);border:1px solid var(--border2);border-radius:16px;overflow:hidden;margin-bottom:12px;">
+            <div style="padding:14px;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:10px;">
+              <div style="font-size:22px;" id="review-icon">🛋️</div>
+              <div style="flex:1;">
+                <div style="font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:var(--text);" id="review-name">New Campaign</div>
+                <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);margin-top:2px;" id="review-service">Staging & Design</div>
+              </div>
+              <div style="font-size:10px;font-weight:600;padding:4px 10px;border-radius:100px;background:rgba(251,191,36,0.12);color:var(--amber);">◐ Ready</div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr;">
+              <div style="padding:12px;text-align:center;">
+                <div style="font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:var(--accent);" id="review-budget">$150</div>
+                <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px;">Budget/Mo</div>
+              </div>
+              <div style="background:var(--border2);"></div>
+              <div style="padding:12px;text-align:center;">
+                <div style="font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:var(--accent);" id="review-audience">322</div>
+                <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px;">Buyers</div>
+              </div>
+              <div style="background:var(--border2);"></div>
+              <div style="padding:12px;text-align:center;">
+                <div style="font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:var(--accent);" id="review-leads">~47</div>
+                <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-top:2px;">Est. Leads</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
+            <div style="background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;">
+              <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">Placement</div>
+              <div style="font-size:13px;font-weight:500;color:var(--text);" id="review-placement">Ask Chloe</div>
+            </div>
+            <div style="background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;">
+              <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">DNA Target</div>
+              <div style="font-size:13px;font-weight:500;color:var(--text);" id="review-dna">Refined Modern</div>
+            </div>
+            <div style="background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;">
+              <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">Est. Cost/Lead</div>
+              <div style="font-size:13px;font-weight:500;color:var(--accent);" id="review-cpl">$3.20</div>
+            </div>
+            <div style="background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;">
+              <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;">Billed To</div>
+              <div style="font-size:13px;font-weight:500;color:var(--text);">Visa ···· 4242</div>
+            </div>
+          </div>
+
+          <div style="background:rgba(184,224,48,0.06);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:16px;display:flex;gap:8px;align-items:flex-start;">
+            <div style="font-size:16px;">✨</div>
+            <div style="font-size:12px;color:var(--text-dim);line-height:1.55;">Campaign goes live immediately after launch. Buyers will start seeing your placement at the next open house event in your target area.</div>
+          </div>
+
+          <div style="display:flex;gap:8px;">
+            <button class="step-btn-back" onclick="goStep(3)">← Back</button>
+            <button class="step-btn" onclick="launchCampaign()" style="flex:1;" id="launch-btn">🚀 Launch Campaign</button>
+          </div>
+          <div style="height:16px;"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <div class="nav-item active" id="nav-overview" onclick="switchTab('overview')"><div class="nav-icon">📊</div><div class="nav-label">Overview</div></div>
+    <div class="nav-item" id="nav-audience"  onclick="switchTab('audience')"><div class="nav-icon">🧬</div><div class="nav-label">Audience</div></div>
+    <div class="nav-item" id="nav-campaigns" onclick="switchTab('campaigns')"><div class="nav-icon">📢</div><div class="nav-label">Campaigns</div></div>
+    <div class="nav-item" id="nav-pricing"   onclick="switchTab('pricing')"><div class="nav-icon">💳</div><div class="nav-label">Pricing</div></div>
+  </div>
+
+  <!-- SHEET -->
+  <div class="sheet-backdrop" id="sheet-backdrop" onclick="closeSheet()"></div>
+  <div class="detail-sheet" id="detail-sheet">
+    <div class="ds-handle"></div>
+    <div id="sheet-content"></div>
+  </div>
+
+</div>
+
+<script>
+// ── THEME ──
+(function(){
+  const p=new URLSearchParams(window.location.search),root=document.documentElement;
+  const h=k=>p.get(k)?'#'+p.get(k):null;
+  const sv=(k,v)=>v&&root.style.setProperty(k,v);
+  const bg=h('bg'),ac=h('accent'),tx=h('text'),sf=h('surface');
+  sv('--bg',bg);sv('--accent',ac);sv('--text',tx);sv('--surface',sf);
+  if(ac){const r=parseInt(ac.slice(1,3),16),g=parseInt(ac.slice(3,5),16),b=parseInt(ac.slice(5,7),16);
+    root.style.setProperty('--accent-dim',`rgba(${r},${g},${b},0.10)`);
+    root.style.setProperty('--border',`rgba(${r},${g},${b},0.12)`);}
+  if(tx){const r=parseInt(tx.slice(1,3),16),g=parseInt(tx.slice(3,5),16),b=parseInt(tx.slice(5,7),16);
+    root.style.setProperty('--text-dim',`rgba(${r},${g},${b},0.55)`);
+    root.style.setProperty('--text-muted',`rgba(${r},${g},${b},0.32)`);}
+  if(bg){root.style.setProperty('--warm',bg);root.style.setProperty('--warm2',bg);}
+  const font=p.get('font')?decodeURIComponent(p.get('font')):null;
+  if(font){const l=document.createElement('link');l.rel='stylesheet';
+    l.href=`https://fonts.googleapis.com/css2?family=${font.replace(/ /g,'+')}:wght@400;600;700&display=swap`;
+    document.head.appendChild(l);}
+})();
+
+// ── NAV ──
+const tabMap = {
+  create:    {screen:'s-create',    nav:'nav-campaigns'},
+  overview:  {screen:'s-overview',  nav:'nav-overview'},
+  audience:  {screen:'s-audience',  nav:'nav-audience'},
+  campaigns: {screen:'s-campaigns', nav:'nav-campaigns'},
+  pricing:   {screen:'s-pricing',   nav:'nav-pricing'},
+};
+function switchTab(key) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById(tabMap[key].screen).classList.add('active');
+  document.getElementById(tabMap[key].nav).classList.add('active');
+}
+
+
+// ── CAMPAIGN CREATOR STATE ──
+const campState = {
+  name: '', service: 'staging', serviceIcon: '🛋️', serviceLabel: 'Staging & Design',
+  dna: new Set(['refined']), placement: 'chloe', placementLabel: 'Ask Chloe', cpl: 3.20,
+  budget: 150, currentStep: 1
+};
+
+function goStep(n) {
+  // Update review data before showing step 4
+  if(n === 4) updateReview();
+
+  document.querySelectorAll('.create-step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('create-step-'+n)?.classList.add('active');
+  document.querySelectorAll('.step-pip').forEach((p,i)=>p.classList.toggle('active', i<n));
+  campState.currentStep = n;
+
+  // Update slider fill
+  if(n===3) updateBudget();
+}
+
+function selectService(el, key, icon, label) {
+  document.querySelectorAll('.service-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  campState.service = key; campState.serviceIcon = icon; campState.serviceLabel = label;
+}
+
+function toggleDNA(el, key) {
+  if(key==='all') { selectAllDNA(el); return; }
+  // Deselect "all" if individual selected
+  document.getElementById('dna-all')?.classList.remove('selected');
+  document.getElementById('dna-check-all').textContent = '';
+  campState.dna.delete('all');
+
+  el.classList.toggle('selected');
+  const check = document.getElementById('dna-check-'+key);
+  if(el.classList.contains('selected')) {
+    campState.dna.add(key);
+    check.textContent = '✓';
+  } else {
+    campState.dna.delete(key);
+    check.textContent = '';
+  }
+  if(campState.dna.size === 0) campState.dna.add('refined'), document.getElementById('dna-refined').classList.add('selected'), document.getElementById('dna-check-refined').textContent='✓';
+  updateDNAEstimate();
+}
+
+function selectAllDNA(el) {
+  ['refined','warm','coastal','bold'].forEach(k => {
+    document.getElementById('dna-'+k)?.classList.remove('selected');
+    document.getElementById('dna-check-'+k).textContent = '';
+  });
+  campState.dna = new Set(['all']);
+  el.classList.add('selected');
+  document.getElementById('dna-check-all').textContent = '✓';
+  updateDNAEstimate();
+}
+
+const dnaCounts = { refined:322, warm:228, coastal:161, bold:136, all:847 };
+function updateDNAEstimate() {
+  let total = 0;
+  campState.dna.forEach(k => total += dnaCounts[k]||0);
+  const el = document.getElementById('dna-estimate');
+  if(el) el.innerHTML = `Reaching <strong style="color:var(--text);">${total} buyers</strong> with your selected DNA targeting.`;
+}
+
+function selectPlacement(el, key) {
+  document.querySelectorAll('.placement-opt').forEach(o=>{
+    o.classList.remove('selected');
+    o.querySelector('.pl-radio')?.classList.remove('selected-radio');
+  });
+  el.classList.add('selected');
+  el.querySelector('.pl-radio')?.classList.add('selected-radio');
+  const cplMap = { chloe:3.20, report:4.10, dna:3.80 };
+  const labelMap = { chloe:'Ask Chloe', report:'Post-Tour Report', dna:'DNA-Matched' };
+  campState.placement = key;
+  campState.placementLabel = labelMap[key];
+  campState.cpl = cplMap[key];
+  updateBudget();
+}
+
+function updateBudget() {
+  const val = parseInt(document.getElementById('budget-slider')?.value||150);
+  campState.budget = val;
+  const leads = Math.round(val / campState.cpl);
+  const ac = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#B8E030';
+  const tc = getComputedStyle(document.documentElement).getPropertyValue('--text').trim()||'#EEF0E5';
+  const sl = document.getElementById('budget-slider');
+  if(sl){ const pct=((val-50)/(1000-50))*100; sl.style.background=`linear-gradient(to right,${ac} ${pct}%,rgba(255,255,255,0.08) ${pct}%)`; }
+  const disp = document.getElementById('budget-display');
+  if(disp) disp.textContent = '$'+val;
+  const est = document.getElementById('budget-estimate');
+  if(est) est.innerHTML = `At $${val}/mo you can expect approximately <strong style="color:${tc};">${leads} engaged leads</strong> per month at $${campState.cpl.toFixed(2)} CPL.`;
+}
+
+function updateReview() {
+  const name = document.getElementById('camp-name')?.value || 'New Campaign';
+  let dnaLabels = [];
+  if(campState.dna.has('all')) dnaLabels = ['All Buyers'];
+  else { const map={refined:'Refined Modern',warm:'Warm Organic',coastal:'Coastal Luxe',bold:'Bold Eclectic'}; campState.dna.forEach(k=>dnaLabels.push(map[k]||k)); }
+  const leads = Math.round(campState.budget / campState.cpl);
+  let audienceCount = 0; campState.dna.forEach(k=>audienceCount+=dnaCounts[k]||0);
+
+  const set = (id,val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
+  set('review-name', name || 'New Campaign');
+  set('review-service', campState.serviceLabel);
+  set('review-icon', campState.serviceIcon);
+  set('review-budget', '$'+campState.budget);
+  set('review-audience', audienceCount);
+  set('review-leads', '~'+leads);
+  set('review-placement', campState.placementLabel);
+  set('review-dna', dnaLabels.join(', '));
+  set('review-cpl', '$'+campState.cpl.toFixed(2));
+}
+
+function launchCampaign() {
+  const btn = document.getElementById('launch-btn');
+  btn.textContent = 'Launching...'; btn.style.opacity='0.7';
+  setTimeout(() => {
+    showToast('🚀','Campaign Live','Your campaign is now active. Buyers will start seeing your placement at the next open house event.');
+    btn.textContent='🚀 Launch Campaign'; btn.style.opacity='1';
+    setTimeout(()=>switchTab('campaigns'), 800);
+  }, 1500);
+}
+
+// ── PRICING TOGGLE ──
+const prices = {
+  monthly: { starter:199, regional:499, national:1299 },
+  annual:  { starter:159, regional:399, national:1039 },
+};
+function setPricingPeriod(period) {
+  document.getElementById('pt-monthly').classList.toggle('active', period==='monthly');
+  document.getElementById('pt-annual').classList.toggle('active', period==='annual');
+  const p = prices[period];
+  document.getElementById('price-starter').textContent  = '$'+p.starter;
+  document.getElementById('price-regional').textContent = '$'+p.regional;
+  document.getElementById('price-national').textContent = '$'+p.national;
+}
+
+// ── PLACEMENT SHEETS ──
+const placementData = {
+  'chloe-ai': { icon:'✨', name:'Ask Chloe Integration', impressions:312, engagement:'16.8%', costPerLead:'$3.20', desc:'Your brand appears when buyers ask Chloe questions about home services during their open house tour. This is the highest-intent placement — buyers are actively seeking what you offer at the exact moment they need it.' },
+  'buyer-report': { icon:'📋', name:'Post-Tour Buyer Report', impressions:284, engagement:'11.4%', costPerLead:'$4.10', desc:'Your placement appears in the personalized buyer report each visitor receives after their tour. Buyers review this report when evaluating the property — a natural moment to introduce home services.' },
+  'dna-match': { icon:'🧬', name:'DNA-Matched Recommendation', impressions:251, engagement:'13.2%', costPerLead:'$3.80', desc:'Shown exclusively to buyers whose StyleDNA profile indicates high affinity for your services. Refined Modern buyers see your staging services; Coastal Luxe buyers see outdoor design. Zero wasted impressions.' },
+};
+
+function openPlacementSheet(key) {
+  const d = placementData[key];
+  const warm2 = getComputedStyle(document.documentElement).getPropertyValue('--warm2').trim()||'#222418';
+  const tc = getComputedStyle(document.documentElement).getPropertyValue('--text').trim()||'#EEF0E5';
+  const td = getComputedStyle(document.documentElement).getPropertyValue('--text-dim').trim()||'rgba(238,240,229,0.55)';
+  const tm = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim()||'rgba(238,240,229,0.32)';
+  const ac = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#B8E030';
+  document.getElementById('sheet-content').innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <div style="width:46px;height:46px;border-radius:13px;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">${d.icon}</div>
+      <div style="font-family:'Fraunces',serif;font-size:17px;font-weight:700;color:${tc};flex:1;">${d.name}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
+      <div style="background:${warm2};border-radius:10px;padding:10px;text-align:center;"><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:${ac};">${d.impressions}</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:${tm};text-transform:uppercase;letter-spacing:1px;margin-top:2px;">Impressions</div></div>
+      <div style="background:${warm2};border-radius:10px;padding:10px;text-align:center;"><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:${ac};">${d.engagement}</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:${tm};text-transform:uppercase;letter-spacing:1px;margin-top:2px;">Engagement</div></div>
+      <div style="background:${warm2};border-radius:10px;padding:10px;text-align:center;"><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:${ac};">${d.costPerLead}</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:${tm};text-transform:uppercase;letter-spacing:1px;margin-top:2px;">Cost/Lead</div></div>
+    </div>
+    <div style="background:rgba(184,224,48,0.06);border:1px solid rgba(184,224,48,0.15);border-radius:12px;padding:13px;margin-bottom:14px;">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:${ac};margin-bottom:6px;">How It Works</div>
+      <div style="font-size:13px;color:${td};line-height:1.6;">${d.desc}</div>
+    </div>
+    <button onclick="closeSheet()" style="width:100%;background:${warm2};border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:13px;color:${tm};font-size:14px;cursor:pointer;">Close</button>`;
+  openSheet();
+}
+
+// ── AUDIENCE SHEETS ──
+const audienceData = {
+  refined: { icon:'🏛️', name:'Refined Modern', count:322, budget:'$1.4M avg', engagement:'16.2%', topService:'Staging & Interior Design', note:'Your highest-converting segment. Refined Modern buyers prioritize clean lines, premium finishes, and turnkey quality. They are most responsive to staging consultations, custom cabinetry referrals, and smart home installations.' },
+  warm:    { icon:'🌿', name:'Warm Organic',   count:228, budget:'$1.1M avg', engagement:'11.8%', topService:'Landscaping & Family Spaces', note:'Family-oriented buyers who value comfort, natural materials, and functional spaces. They respond well to landscaping, storage solutions, and child-friendly renovation services.' },
+  coastal: { icon:'🏊', name:'Coastal Luxe',   count:161, budget:'$1.8M avg', engagement:'9.4%',  topService:'Pool & Outdoor Living',       note:'Highest avg budget at $1.8M but lower engagement. These buyers are selective. Tailor messaging specifically to outdoor living, pool design, and entertaining spaces for best results.' },
+  bold:    { icon:'🎨', name:'Bold Eclectic',  count:136, budget:'$920K avg', engagement:'8.1%',  topService:'Custom Renovations & Art',    note:'Design-forward buyers who value personality and uniqueness. They respond to custom renovation services, unique material sourcing, and design consultation rather than standard service packages.' },
+};
+
+function openAudienceSheet(key) {
+  const d = audienceData[key];
+  const warm2 = getComputedStyle(document.documentElement).getPropertyValue('--warm2').trim()||'#222418';
+  const tc = getComputedStyle(document.documentElement).getPropertyValue('--text').trim()||'#EEF0E5';
+  const td = getComputedStyle(document.documentElement).getPropertyValue('--text-dim').trim()||'rgba(238,240,229,0.55)';
+  const tm = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim()||'rgba(238,240,229,0.32)';
+  const ac = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#B8E030';
+  document.getElementById('sheet-content').innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <div style="width:46px;height:46px;border-radius:13px;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">${d.icon}</div>
+      <div style="flex:1;"><div style="font-family:'Fraunces',serif;font-size:17px;font-weight:700;color:${tc};">${d.name}</div><div style="font-family:'DM Mono',monospace;font-size:10px;color:${tm};margin-top:2px;">${d.count} buyers in your reach</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+      <div style="background:${warm2};border-radius:10px;padding:12px;"><div style="font-family:'DM Mono',monospace;font-size:9px;color:${tm};text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Avg Budget</div><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:${ac};">${d.budget}</div></div>
+      <div style="background:${warm2};border-radius:10px;padding:12px;"><div style="font-family:'DM Mono',monospace;font-size:9px;color:${tm};text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Engagement</div><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:${ac};">${d.engagement}</div></div>
+    </div>
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:${tm};margin-bottom:6px;">Top Service Match</div>
+    <div style="font-size:13px;color:${td};margin-bottom:14px;">${d.topService}</div>
+    <div style="background:rgba(184,224,48,0.06);border:1px solid rgba(184,224,48,0.15);border-radius:12px;padding:13px;margin-bottom:14px;">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:${ac};margin-bottom:6px;">✨ Segment Strategy</div>
+      <div style="font-size:13px;color:${td};line-height:1.6;">${d.note}</div>
+    </div>
+    <button onclick="closeSheet()" style="width:100%;background:${warm2};border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:13px;color:${tm};font-size:14px;cursor:pointer;">Close</button>`;
+  openSheet();
+}
+
+// ── CAMPAIGN SHEETS ──
+const campaignData = {
+  staging:    { icon:'🛋️', name:'Staging & Design Services', status:'Active', impressions:441, engagement:'14.2%', cpl:'$3.80', budget:'$200/mo', dna:'Refined Modern', note:'Your best-performing campaign. Refined Modern buyers are highly receptive to staging consultations at the moment of purchase decision. Consider increasing budget by 50% — model suggests cost-per-lead would remain under $5.' },
+  inspection: { icon:'🔍', name:'Home Inspection Bundle',    status:'Active', impressions:312, engagement:'10.8%', cpl:'$4.90', budget:'$150/mo', dna:'All Types',       note:'Consistent performer across all DNA types. Home inspection is a universal need — no DNA filtering needed. Buyers who engage here are within 30 days of a purchase decision.' },
+  moving:     { icon:'📦', name:'Moving & Storage Promo',   status:'Paused', impressions:94,  engagement:'7.2%',  cpl:'$6.10', budget:'$75/mo',  dna:'Warm Organic',     note:'Paused due to below-average engagement for Warm Organic. Consider reframing the message from "moving services" to "family relocation specialist" — language that resonates better with this segment.' },
+  landscape:  { icon:'🌿', name:'Landscape & Pool Design',  status:'Draft',  impressions:0,   engagement:'—',    cpl:'—',     budget:'$100/mo', dna:'Coastal Luxe',      note:'Draft campaign targeting Coastal Luxe buyers. This segment has the highest avg budget ($1.8M) and the strongest affinity for outdoor living. Recommended to launch before spring open house season.' },
+};
+
+function openCampaignSheet(key) {
+  const d = campaignData[key];
+  const warm2 = getComputedStyle(document.documentElement).getPropertyValue('--warm2').trim()||'#222418';
+  const tc = getComputedStyle(document.documentElement).getPropertyValue('--text').trim()||'#EEF0E5';
+  const td = getComputedStyle(document.documentElement).getPropertyValue('--text-dim').trim()||'rgba(238,240,229,0.55)';
+  const tm = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim()||'rgba(238,240,229,0.32)';
+  const ac = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#B8E030';
+  const statusColor = d.status==='Active'?'var(--green)':d.status==='Paused'?tm:'var(--amber)';
+  const actionLabel = d.status==='Active'?'Pause Campaign':d.status==='Paused'?'Resume Campaign':'Launch Campaign';
+  document.getElementById('sheet-content').innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <div style="width:46px;height:46px;border-radius:13px;background:var(--accent-dim);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">${d.icon}</div>
+      <div style="flex:1;"><div style="font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:${tc};">${d.name}</div><div style="font-size:11px;font-weight:600;color:${statusColor};margin-top:3px;">● ${d.status}</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
+      <div style="background:${warm2};border-radius:10px;padding:10px;text-align:center;"><div style="font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:${ac};">${d.impressions||'—'}</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:${tm};text-transform:uppercase;letter-spacing:1px;margin-top:2px;">Impressions</div></div>
+      <div style="background:${warm2};border-radius:10px;padding:10px;text-align:center;"><div style="font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:${ac};">${d.engagement}</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:${tm};text-transform:uppercase;letter-spacing:1px;margin-top:2px;">Engagement</div></div>
+      <div style="background:${warm2};border-radius:10px;padding:10px;text-align:center;"><div style="font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:${ac};">${d.cpl}</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:${tm};text-transform:uppercase;letter-spacing:1px;margin-top:2px;">Cost/Lead</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+      <div style="background:${warm2};border-radius:10px;padding:10px;"><div style="font-family:'DM Mono',monospace;font-size:9px;color:${tm};text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">Monthly Budget</div><div style="font-size:14px;font-weight:500;color:${tc};">${d.budget}</div></div>
+      <div style="background:${warm2};border-radius:10px;padding:10px;"><div style="font-family:'DM Mono',monospace;font-size:9px;color:${tm};text-transform:uppercase;letter-spacing:1px;margin-bottom:3px;">DNA Target</div><div style="font-size:13px;font-weight:500;color:${tc};">${d.dna}</div></div>
+    </div>
+    <div style="background:rgba(184,224,48,0.06);border:1px solid rgba(184,224,48,0.15);border-radius:12px;padding:13px;margin-bottom:14px;">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:${ac};margin-bottom:6px;">✨ Campaign Insight</div>
+      <div style="font-size:13px;color:${td};line-height:1.6;">${d.note}</div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button onclick="closeSheet();showToast('📢','Campaign Updated','${d.name} status updated successfully.');" style="flex:1;background:${ac};color:#0A0B07;border:none;border-radius:11px;padding:13px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:600;cursor:pointer;">${actionLabel}</button>
+      <button onclick="closeSheet()" style="background:${warm2};border:1px solid rgba(255,255,255,0.07);border-radius:11px;padding:13px 16px;color:${tm};font-size:13px;cursor:pointer;">Close</button>
+    </div>`;
+  openSheet();
+}
+
+function openSheet() {
+  document.getElementById('sheet-backdrop').classList.add('open');
+  document.getElementById('detail-sheet').classList.add('open');
+}
+function closeSheet() {
+  document.getElementById('sheet-backdrop').classList.remove('open');
+  document.getElementById('detail-sheet').classList.remove('open');
+}
+
+// ── TOAST ──
+function showToast(icon, title, msg) {
+  const ex = document.getElementById('vd-toast'); if(ex) ex.remove();
+  const tc = getComputedStyle(document.documentElement).getPropertyValue('--text').trim()||'#EEF0E5';
+  const td = getComputedStyle(document.documentElement).getPropertyValue('--text-dim').trim()||'rgba(238,240,229,0.55)';
+  const sb = getComputedStyle(document.documentElement).getPropertyValue('--surface').trim()||'#13160D';
+  const t  = document.createElement('div');
+  t.id = 'vd-toast';
+  t.style.cssText = `position:absolute;bottom:88px;left:16px;right:16px;border-radius:14px;padding:14px 16px;z-index:150;display:flex;gap:12px;align-items:flex-start;box-shadow:0 8px 24px rgba(0,0,0,0.5);animation:vdIn 0.3s ease;`;
+  t.style.background = sb; t.style.border = '1px solid rgba(255,255,255,0.08)';
+  t.innerHTML = `<div style="font-size:20px;">${icon}</div><div style="flex:1;"><div style="font-size:13px;font-weight:600;color:${tc};margin-bottom:3px;">${title}</div><div style="font-size:12px;color:${td};line-height:1.5;">${msg}</div></div><div id="vd-toast-x" style="color:rgba(238,240,229,0.32);cursor:pointer;font-size:16px;flex-shrink:0;">✕</div><style>@keyframes vdIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}</style>`;
+  document.querySelector('.phone').appendChild(t);
+  document.getElementById('vd-toast-x').onclick = ()=>t.remove();
+  setTimeout(()=>{ if(t.parentNode) t.remove(); }, 4000);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ChloeIQ — Listing Agent Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,300;1,600&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0A0B07;
+  --accent: #B8E030;
+  --accent-dim: rgba(184,224,48,0.10);
+  --surface: #13160D;
+  --surface2: #1C1F14;
+  --border: rgba(184,224,48,0.12);
+  --border2: rgba(255,255,255,0.07);
+  --text: #EEF0E5;
+  --text-dim: rgba(238,240,229,0.55);
+  --text-muted: rgba(238,240,229,0.32);
+  --warm: #1A1C12;
+  --warm2: #222418;
+  --green: #4ADE80;
+  --amber: #FBBF24;
+  --red: #F87171;
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body {
+  background: #0D0D0D;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Sans', sans-serif;
+  padding: 24px 16px;
+  gap: 20px;
+}
+.outer-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--accent); opacity: 0.6;
+}
+.phone {
+  width: 375px; height: 812px;
+  background: var(--bg);
+  border-radius: 44px; overflow: hidden; position: relative;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.07), 0 0 0 2px rgba(0,0,0,0.6), 0 32px 64px rgba(0,0,0,0.7);
+  display: flex; flex-direction: column;
+}
+.notch { position:absolute; top:0; left:50%; transform:translateX(-50%); width:120px; height:30px; background:#080808; border-radius:0 0 20px 20px; z-index:20; }
+.status-bar { display:flex; justify-content:space-between; align-items:center; padding:18px 28px 0; font-family:'DM Mono',monospace; font-size:12px; color:rgba(238,240,229,0.6); flex-shrink:0; z-index:10; }
+
+/* SCREENS */
+.screen { flex:1; display:none; flex-direction:column; overflow:hidden; }
+.screen.active { display:flex; }
+
+/* ══ SHARED HEADER ══ */
+.pg-header {
+  padding: 14px 20px 14px;
+  border-bottom: 1px solid var(--border2);
+  flex-shrink: 0;
+}
+.pg-eyebrow { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin-bottom:3px; }
+.pg-title { font-family:'Fraunces',serif; font-size:18px; font-weight:700; color:var(--text); }
+.pg-sub { font-size:12px; color:var(--text-muted); margin-top:2px; }
+
+/* ══ SCREEN: OVERVIEW ══ */
+#s-overview { background:var(--bg); }
+
+.overview-scroll { flex:1; overflow-y:auto; scrollbar-width:none; padding:16px 20px; }
+.overview-scroll::-webkit-scrollbar { display:none; }
+
+/* Property hero card */
+.prop-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 18px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.prop-image {
+  height: 120px;
+  background: linear-gradient(135deg, #1A2A0E 0%, #0E1A08 50%, #162010 100%);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.prop-image-bg {
+  position:absolute; inset:0;
+  background: radial-gradient(ellipse 80% 60% at 30% 50%, rgba(184,224,48,0.08), transparent);
+}
+.prop-image-emoji { font-size: 48px; position:relative; z-index:1; }
+.prop-image-badge {
+  position:absolute; top:10px; right:10px;
+  background: var(--accent);
+  color: var(--bg);
+  border-radius: 100px;
+  padding: 4px 10px;
+  font-family:'DM Mono',monospace;
+  font-size:10px; font-weight:600; letter-spacing:1px;
+}
+.prop-info { padding:14px 16px; }
+.prop-address { font-family:'Fraunces',serif; font-size:16px; font-weight:700; color:var(--text); margin-bottom:2px; }
+.prop-meta { font-size:12px; color:var(--text-muted); margin-bottom:12px; }
+.prop-stats { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:8px; }
+.ps { text-align:center; }
+.ps-val { font-family:'Fraunces',serif; font-size:18px; font-weight:700; color:var(--accent); }
+.ps-lbl { font-family:'DM Mono',monospace; font-size:8px; letter-spacing:1px; text-transform:uppercase; color:var(--text-muted); margin-top:2px; }
+
+/* Section label */
+.sec-lbl { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px; }
+
+/* Demand score card */
+.demand-card {
+  background: linear-gradient(135deg, rgba(184,224,48,0.08), rgba(184,224,48,0.03));
+  border: 1px solid rgba(184,224,48,0.2);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+  display: flex; align-items: center; gap: 14px;
+}
+.demand-ring {
+  width: 72px; height: 72px; position:relative;
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.demand-ring svg { position:absolute; inset:0; transform:rotate(-90deg); }
+.dr-bg { fill:none; stroke:rgba(255,255,255,0.06); stroke-width:7; }
+.dr-fg { fill:none; stroke:var(--accent); stroke-width:7; stroke-linecap:round;
+  stroke-dasharray:201; stroke-dashoffset:26; filter:drop-shadow(0 0 4px var(--accent)); }
+.demand-num { font-family:'Fraunces',serif; font-size:22px; font-weight:700; color:var(--accent); }
+.demand-info { flex:1; }
+.demand-title { font-family:'Fraunces',serif; font-size:15px; font-weight:700; color:var(--text); margin-bottom:3px; }
+.demand-sub { font-size:12px; color:var(--text-dim); line-height:1.5; }
+.demand-trend { font-family:'DM Mono',monospace; font-size:10px; color:var(--green); margin-top:5px; }
+
+/* Top leads preview */
+.lead-preview {
+  background:var(--surface); border:1px solid var(--border2);
+  border-radius:14px; padding:12px 14px;
+  display:flex; align-items:center; gap:12px;
+  margin-bottom:8px; cursor:pointer; transition:all 0.2s;
+}
+.lead-preview:hover { border-color:rgba(184,224,48,0.2); }
+.lp-avatar { width:36px; height:36px; border-radius:50%; background:var(--warm2); border:1.5px solid var(--border2); display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; position:relative; }
+.lp-hot { position:absolute; top:-2px; right:-2px; width:10px; height:10px; border-radius:50%; background:var(--red); border:2px solid var(--surface); animation:hotPulse 1.2s ease-in-out infinite; }
+@keyframes hotPulse { 0%,100%{transform:scale(1)}50%{transform:scale(1.35)} }
+.lp-info { flex:1; }
+.lp-name { font-size:13px; font-weight:500; color:var(--text); }
+.lp-meta { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); margin-top:1px; }
+.lp-score { font-family:'Fraunces',serif; font-size:18px; font-weight:700; color:var(--accent); }
+
+/* Host agent card */
+.host-card {
+  background:var(--surface); border:1px solid var(--border2);
+  border-radius:16px; padding:14px 16px;
+  display:flex; align-items:center; gap:12px;
+  margin-bottom:16px;
+}
+.host-avatar { width:44px; height:44px; border-radius:13px; background:var(--accent-dim); border:1px solid rgba(184,224,48,0.2); display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
+.host-info { flex:1; }
+.host-name { font-size:14px; font-weight:600; color:var(--text); margin-bottom:2px; }
+.host-meta { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); }
+.host-score-chip { background:var(--accent-dim); border:1px solid rgba(184,224,48,0.25); border-radius:100px; padding:5px 12px; font-family:'DM Mono',monospace; font-size:11px; color:var(--accent); letter-spacing:1px; }
+
+/* ══ SCREEN: REPORT ══ */
+#s-report { background:var(--bg); }
+.report-scroll { flex:1; overflow-y:auto; scrollbar-width:none; padding:16px 20px; }
+.report-scroll::-webkit-scrollbar { display:none; }
+
+.report-summary {
+  background: var(--accent);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.rs-label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:rgba(10,11,7,0.5); margin-bottom:8px; }
+.rs-title { font-family:'Fraunces',serif; font-size:20px; font-weight:700; color:var(--bg); margin-bottom:4px; line-height:1.2; }
+.rs-sub { font-size:12px; color:rgba(10,11,7,0.55); margin-bottom:14px; }
+.rs-stats { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+.rss { background:rgba(10,11,7,0.1); border-radius:10px; padding:10px; text-align:center; }
+.rss-val { font-family:'Fraunces',serif; font-size:20px; font-weight:700; color:var(--bg); }
+.rss-lbl { font-family:'DM Mono',monospace; font-size:8px; text-transform:uppercase; color:rgba(10,11,7,0.5); letter-spacing:1px; margin-top:2px; }
+
+/* Room performance */
+.room-perf { display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
+.rp-row { display:flex; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--border2); border-radius:12px; padding:12px 14px; }
+.rp-icon { font-size:20px; width:28px; text-align:center; flex-shrink:0; }
+.rp-info { flex:1; }
+.rp-name { font-size:13px; font-weight:500; color:var(--text); margin-bottom:3px; }
+.rp-bar-wrap { height:4px; background:rgba(255,255,255,0.06); border-radius:2px; overflow:hidden; }
+.rp-bar { height:100%; background:var(--accent); border-radius:2px; }
+.rp-time { font-family:'Fraunces',serif; font-size:16px; font-weight:700; color:var(--accent); flex-shrink:0; }
+
+/* Seller insight */
+.seller-insight {
+  background:var(--surface); border:1px solid var(--border2);
+  border-radius:16px; padding:16px; margin-bottom:16px;
+}
+.si-header { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.si-icon { width:36px; height:36px; border-radius:10px; background:var(--accent-dim); display:flex; align-items:center; justify-content:center; font-size:17px; }
+.si-title { font-family:'Fraunces',serif; font-size:15px; font-weight:700; color:var(--text); }
+.si-points { display:flex; flex-direction:column; gap:8px; }
+.si-point { display:flex; gap:10px; align-items:flex-start; }
+.si-dot { width:6px; height:6px; border-radius:50%; margin-top:5px; flex-shrink:0; }
+.si-text { font-size:13px; color:var(--text-dim); line-height:1.55; }
+
+/* DNA breakdown */
+.dna-bars { display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
+.dna-row { display:flex; align-items:center; gap:10px; }
+.dna-label { font-size:12px; color:var(--text-dim); width:120px; flex-shrink:0; }
+.dna-bar-wrap { flex:1; height:6px; background:rgba(255,255,255,0.06); border-radius:3px; overflow:hidden; }
+.dna-bar { height:100%; background:var(--accent); border-radius:3px; }
+.dna-pct { font-family:'DM Mono',monospace; font-size:11px; color:var(--accent); width:30px; text-align:right; }
+
+/* ══ SCREEN: HOSTS ══ */
+#s-hosts { background:var(--bg); }
+.hosts-scroll { flex:1; overflow-y:auto; scrollbar-width:none; padding:14px 20px; }
+.hosts-scroll::-webkit-scrollbar { display:none; }
+
+.host-full {
+  background:var(--surface); border:1px solid var(--border2);
+  border-radius:16px; padding:16px; margin-bottom:10px;
+  cursor:pointer; transition:all 0.2s;
+}
+.host-full:hover { border-color:rgba(184,224,48,0.2); }
+.host-full.confirmed { border-color:rgba(184,224,48,0.3); }
+
+.hf-top { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+.hf-avatar { width:44px; height:44px; border-radius:13px; background:var(--accent-dim); border:1px solid rgba(184,224,48,0.2); display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; }
+.hf-info { flex:1; }
+.hf-name { font-size:15px; font-weight:600; color:var(--text); margin-bottom:2px; }
+.hf-meta { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); }
+.hf-right { display:flex; flex-direction:column; align-items:flex-end; gap:5px; }
+.hf-score { font-family:'Fraunces',serif; font-size:20px; font-weight:700; color:var(--accent); }
+.hf-tier { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); }
+
+.hf-stats { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-bottom:12px; }
+.hfs { background:var(--warm2); border-radius:8px; padding:8px; text-align:center; }
+.hfs-val { font-family:'Fraunces',serif; font-size:15px; font-weight:700; color:var(--accent); }
+.hfs-lbl { font-family:'DM Mono',monospace; font-size:8px; color:var(--text-muted); letter-spacing:1px; text-transform:uppercase; margin-top:2px; }
+
+.hf-actions { display:flex; gap:8px; }
+.hf-btn { flex:1; border-radius:10px; padding:10px; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; text-transform:uppercase; cursor:pointer; text-align:center; transition:all 0.2s; border:none; }
+.hf-btn-confirm { background:var(--accent); color:var(--bg); font-weight:600; }
+.hf-btn-confirm.done { background:var(--green); color:#fff; pointer-events:none; }
+.hf-btn-view { background:transparent; color:var(--text-muted); border:1px solid var(--border2) !important; }
+.hf-badge { display:flex; align-items:center; gap:6px; margin-bottom:10px; }
+.hf-badge-dot { width:6px; height:6px; border-radius:50%; background:var(--green); }
+.hf-badge-text { font-family:'DM Mono',monospace; font-size:10px; color:var(--green); letter-spacing:1px; }
+
+/* BOTTOM NAV */
+.bottom-nav { display:flex; border-top:1px solid var(--border2); padding:10px 0 20px; background:var(--bg); flex-shrink:0; }
+.nav-item { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; padding:4px 0; }
+.nav-icon { font-size:20px; }
+.nav-label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:0.5px; color:var(--text-muted); text-transform:uppercase; }
+.nav-item.active .nav-label { color:var(--accent); }
+
+/* DETAIL SHEET */
+.detail-backdrop { position:absolute; inset:0; background:rgba(0,0,0,0.6); z-index:49; opacity:0; pointer-events:none; transition:opacity 0.3s; backdrop-filter:blur(3px); }
+.detail-backdrop.open { opacity:1; pointer-events:all; }
+.detail-sheet { position:absolute; bottom:0; left:0; right:0; background:var(--surface); border-radius:22px 22px 0 0; border-top:1px solid var(--border2); padding:0 20px 32px; transform:translateY(100%); transition:transform 0.35s cubic-bezier(0.4,0,0.2,1); z-index:50; max-height:80%; overflow-y:auto; scrollbar-width:none; }
+.detail-sheet::-webkit-scrollbar { display:none; }
+.detail-sheet.open { transform:translateY(0); }
+.ds-handle { width:36px; height:4px; background:var(--border2); border-radius:2px; margin:12px auto 16px; }
+</style>
+</head>
+<body>
+
+<div class="outer-label">ChloeIQ · Listing Agent Dashboard · Elena Reyes</div>
+
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status-bar"><span>9:41</span><span>●●● 5G 🔋</span></div>
+
+  <!-- ══ OVERVIEW ══ -->
+  <div class="screen active" id="s-overview">
+    <div class="pg-header">
+      <div class="pg-eyebrow">Listing Agent · Elena Reyes</div>
+      <div class="pg-title">Property Overview</div>
+      <div class="pg-sub">Live · Open House in progress</div>
+    </div>
+
+    <div class="overview-scroll">
+
+      <!-- Property card -->
+      <div class="prop-card">
+        <div class="prop-image">
+          <div class="prop-image-bg"></div>
+          <div class="prop-image-emoji">🏡</div>
+          <div class="prop-image-badge">LIVE</div>
+        </div>
+        <div class="prop-info">
+          <div class="prop-address">2847 Magnolia Drive</div>
+          <div class="prop-meta">Flower Mound, TX 76226 · $1,295,000 · 4 bd / 3.5 ba / 3,840 sf</div>
+          <div class="prop-stats">
+            <div class="ps"><div class="ps-val" id="ov-buyers">12</div><div class="ps-lbl">Buyers</div></div>
+            <div class="ps"><div class="ps-val">3</div><div class="ps-lbl">Hot Leads</div></div>
+            <div class="ps"><div class="ps-val">87%</div><div class="ps-lbl">Top Match</div></div>
+            <div class="ps"><div class="ps-val" id="ov-time">41m</div><div class="ps-lbl">Live</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Demand score -->
+      <div class="sec-lbl">Buyer Demand Score</div>
+      <div class="demand-card">
+        <div class="demand-ring">
+          <svg viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg">
+            <circle class="dr-bg" cx="36" cy="36" r="32"/>
+            <circle class="dr-fg" cx="36" cy="36" r="32"/>
+          </svg>
+          <div class="demand-num">87</div>
+        </div>
+        <div class="demand-info">
+          <div class="demand-title">Strong Demand</div>
+          <div class="demand-sub">This property is outperforming 78% of comparable Flower Mound listings this month.</div>
+          <div class="demand-trend">↑ +6 pts vs last open house</div>
+        </div>
+      </div>
+
+      <!-- Top leads -->
+      <div class="sec-lbl">Top Leads Today</div>
+      <div class="lead-preview" onclick="openLeadSheet('jordan')">
+        <div class="lp-avatar">👤<div class="lp-hot"></div></div>
+        <div class="lp-info">
+          <div class="lp-name">Jordan Lee</div>
+          <div class="lp-meta">Refined Modern · Kitchen 14m · 4 questions</div>
+        </div>
+        <div class="lp-score">87%</div>
+      </div>
+      <div class="lead-preview" onclick="openLeadSheet('alex')">
+        <div class="lp-avatar">👤<div class="lp-hot" style="background:var(--amber);"></div></div>
+        <div class="lp-info">
+          <div class="lp-name">Alex & Sam Chen</div>
+          <div class="lp-meta">Warm Organic · Primary 18m</div>
+        </div>
+        <div class="lp-score">82%</div>
+      </div>
+      <div class="lead-preview" onclick="openLeadSheet('morgan')">
+        <div class="lp-avatar">👤</div>
+        <div class="lp-info">
+          <div class="lp-name">Morgan Rivera</div>
+          <div class="lp-meta">Coastal Luxe · Backyard 12m</div>
+        </div>
+        <div class="lp-score">79%</div>
+      </div>
+
+      <!-- Host agent -->
+      <div class="sec-lbl" style="margin-top:8px;">Host Agent</div>
+      <div class="host-card">
+        <div class="host-avatar">👤</div>
+        <div class="host-info">
+          <div class="host-name">Marcus Rivera</div>
+          <div class="host-meta">Gold Tier · 42 events · 98% follow-up rate</div>
+        </div>
+        <div class="host-score-chip">780</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ REPORT ══ -->
+  <div class="screen" id="s-report">
+    <div class="pg-header">
+      <div class="pg-eyebrow">Post-Event Summary</div>
+      <div class="pg-title">Seller Report</div>
+      <div class="pg-sub">2847 Magnolia Drive · Today</div>
+    </div>
+
+    <div class="report-scroll">
+
+      <div class="report-summary">
+        <div class="rs-label">Open House Performance</div>
+        <div class="rs-title">Strong event — 3 hot leads, demand score 87</div>
+        <div class="rs-sub">Your property outperformed 78% of comparable Flower Mound listings this month.</div>
+        <div class="rs-stats">
+          <div class="rss"><div class="rss-val">12</div><div class="rss-lbl">Buyers</div></div>
+          <div class="rss"><div class="rss-val">52m</div><div class="rss-lbl">Dwell</div></div>
+          <div class="rss"><div class="rss-val">4</div><div class="rss-lbl">Questions</div></div>
+        </div>
+      </div>
+
+      <!-- Room performance -->
+      <div class="sec-lbl">Room Performance</div>
+      <div class="room-perf">
+        <div class="rp-row">
+          <div class="rp-icon">🍳</div>
+          <div class="rp-info">
+            <div class="rp-name">Kitchen</div>
+            <div class="rp-bar-wrap"><div class="rp-bar" style="width:95%"></div></div>
+          </div>
+          <div class="rp-time">14m</div>
+        </div>
+        <div class="rp-row">
+          <div class="rp-icon">🛁</div>
+          <div class="rp-info">
+            <div class="rp-name">Primary Suite</div>
+            <div class="rp-bar-wrap"><div class="rp-bar" style="width:78%"></div></div>
+          </div>
+          <div class="rp-time">11m</div>
+        </div>
+        <div class="rp-row">
+          <div class="rp-icon">🌿</div>
+          <div class="rp-info">
+            <div class="rp-name">Backyard & Pool</div>
+            <div class="rp-bar-wrap"><div class="rp-bar" style="width:64%"></div></div>
+          </div>
+          <div class="rp-time">9m</div>
+        </div>
+        <div class="rp-row">
+          <div class="rp-icon">🛋️</div>
+          <div class="rp-info">
+            <div class="rp-name">Living Room</div>
+            <div class="rp-bar-wrap"><div class="rp-bar" style="width:43%"></div></div>
+          </div>
+          <div class="rp-time">6m</div>
+        </div>
+        <div class="rp-row">
+          <div class="rp-icon">🍽️</div>
+          <div class="rp-info">
+            <div class="rp-name">Dining Room</div>
+            <div class="rp-bar-wrap"><div class="rp-bar" style="width:22%"></div></div>
+          </div>
+          <div class="rp-time">3m</div>
+        </div>
+      </div>
+
+      <!-- Buyer DNA breakdown -->
+      <div class="sec-lbl">Buyer StyleDNA Mix</div>
+      <div class="dna-bars">
+        <div class="dna-row">
+          <div class="dna-label">Refined Modern</div>
+          <div class="dna-bar-wrap"><div class="dna-bar" style="width:42%"></div></div>
+          <div class="dna-pct">42%</div>
+        </div>
+        <div class="dna-row">
+          <div class="dna-label">Warm Organic</div>
+          <div class="dna-bar-wrap"><div class="dna-bar" style="width:25%"></div></div>
+          <div class="dna-pct">25%</div>
+        </div>
+        <div class="dna-row">
+          <div class="dna-label">Coastal Luxe</div>
+          <div class="dna-bar-wrap"><div class="dna-bar" style="width:18%"></div></div>
+          <div class="dna-pct">18%</div>
+        </div>
+        <div class="dna-row">
+          <div class="dna-label">Bold Eclectic</div>
+          <div class="dna-bar-wrap"><div class="dna-bar" style="width:15%"></div></div>
+          <div class="dna-pct">15%</div>
+        </div>
+      </div>
+
+      <!-- Seller insights -->
+      <div class="seller-insight">
+        <div class="si-header">
+          <div class="si-icon">✨</div>
+          <div class="si-title">Chloe's Seller Insights</div>
+        </div>
+        <div class="si-points">
+          <div class="si-point">
+            <div class="si-dot" style="background:var(--green);"></div>
+            <div class="si-text"><strong style="color:var(--text);">Kitchen is your selling story.</strong> 8 of 12 buyers spent meaningful time there — the Wolf range and slab cabinetry are the most-noticed features.</div>
+          </div>
+          <div class="si-point">
+            <div class="si-dot" style="background:var(--green);"></div>
+            <div class="si-text"><strong style="color:var(--text);">Backyard overdelivered.</strong> Buyers lingered longer than expected outdoors. The southwest orientation is a genuine differentiator — worth leading with in your listing copy.</div>
+          </div>
+          <div class="si-point">
+            <div class="si-dot" style="background:var(--amber);"></div>
+            <div class="si-text"><strong style="color:var(--text);">Dining room underperformed.</strong> Low dwell time suggests buyers moved through quickly. A staging refresh could help this room hold attention and improve flow.</div>
+          </div>
+          <div class="si-point">
+            <div class="si-dot" style="background:var(--accent);"></div>
+            <div class="si-text"><strong style="color:var(--text);">3 hot leads ready for follow-up.</strong> Jordan Lee (87%), Alex & Sam Chen (82%), and Morgan Rivera (79%) all show strong purchase intent. Marcus has drafted personalized follow-ups for each.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Share button -->
+      <button onclick="showShareToast()" style="width:100%;background:var(--accent);color:var(--bg);border:none;border-radius:14px;padding:15px;font-family:'Fraunces',serif;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:8px;">Share Report with Seller →</button>
+      <button onclick="showShareToast()" style="width:100%;background:transparent;color:var(--text-muted);border:1px solid var(--border2);border-radius:14px;padding:13px;font-size:13px;cursor:pointer;">Download PDF</button>
+
+    </div>
+  </div>
+
+  <!-- ══ HOSTS ══ -->
+  <div class="screen" id="s-hosts">
+    <div class="pg-header">
+      <div class="pg-eyebrow">Marketplace</div>
+      <div class="pg-title">Host Applicants</div>
+      <div class="pg-sub">3 agents applied · 1 confirmed</div>
+    </div>
+
+    <div class="hosts-scroll">
+
+      <!-- Confirmed host -->
+      <div class="host-full confirmed">
+        <div class="hf-badge"><div class="hf-badge-dot"></div><div class="hf-badge-text">Confirmed Host</div></div>
+        <div class="hf-top">
+          <div class="hf-avatar">👤</div>
+          <div class="hf-info">
+            <div class="hf-name">Marcus Rivera</div>
+            <div class="hf-meta">Gold Tier · Epting Realty · DFW</div>
+          </div>
+          <div class="hf-right">
+            <div class="hf-score">780</div>
+            <div class="hf-tier">Gold Tier</div>
+          </div>
+        </div>
+        <div class="hf-stats">
+          <div class="hfs"><div class="hfs-val">42</div><div class="hfs-lbl">Events</div></div>
+          <div class="hfs"><div class="hfs-val">98%</div><div class="hfs-lbl">Follow-Up</div></div>
+          <div class="hfs"><div class="hfs-val">4.9★</div><div class="hfs-lbl">Rating</div></div>
+        </div>
+        <div class="hf-actions">
+          <div class="hf-btn hf-btn-confirm done">✓ Confirmed</div>
+          <div class="hf-btn hf-btn-view" onclick="showHostSheet('marcus')">View Profile</div>
+        </div>
+      </div>
+
+      <!-- Applicant 2 -->
+      <div class="host-full">
+        <div class="hf-top">
+          <div class="hf-avatar" style="background:rgba(251,191,36,0.12);border-color:rgba(251,191,36,0.2);">👤</div>
+          <div class="hf-info">
+            <div class="hf-name">Sarah Okonkwo</div>
+            <div class="hf-meta">Gold Tier · Compass · DFW</div>
+          </div>
+          <div class="hf-right">
+            <div class="hf-score">812</div>
+            <div class="hf-tier">Gold Tier</div>
+          </div>
+        </div>
+        <div class="hf-stats">
+          <div class="hfs"><div class="hfs-val">58</div><div class="hfs-lbl">Events</div></div>
+          <div class="hfs"><div class="hfs-val">96%</div><div class="hfs-lbl">Follow-Up</div></div>
+          <div class="hfs"><div class="hfs-val">4.8★</div><div class="hfs-lbl">Rating</div></div>
+        </div>
+        <div class="hf-actions">
+          <div class="hf-btn hf-btn-confirm" id="confirm-sarah" onclick="confirmHost(this,'sarah')">Confirm Host</div>
+          <div class="hf-btn hf-btn-view" onclick="showHostSheet('sarah')">View Profile</div>
+        </div>
+      </div>
+
+      <!-- Applicant 3 -->
+      <div class="host-full">
+        <div class="hf-top">
+          <div class="hf-avatar">👤</div>
+          <div class="hf-info">
+            <div class="hf-name">Daniel Park</div>
+            <div class="hf-meta">Silver Tier · Keller Williams · DFW</div>
+          </div>
+          <div class="hf-right">
+            <div class="hf-score">720</div>
+            <div class="hf-tier">Silver Tier</div>
+          </div>
+        </div>
+        <div class="hf-stats">
+          <div class="hfs"><div class="hfs-val">28</div><div class="hfs-lbl">Events</div></div>
+          <div class="hfs"><div class="hfs-val">91%</div><div class="hfs-lbl">Follow-Up</div></div>
+          <div class="hfs"><div class="hfs-val">4.6★</div><div class="hfs-lbl">Rating</div></div>
+        </div>
+        <div class="hf-actions">
+          <div class="hf-btn hf-btn-confirm" id="confirm-daniel" onclick="confirmHost(this,'daniel')">Confirm Host</div>
+          <div class="hf-btn hf-btn-view" onclick="showHostSheet('daniel')">View Profile</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <div class="nav-item active" id="nav-overview" onclick="goScreen('s-overview');setNav('nav-overview')">
+      <div class="nav-icon">🏠</div>
+      <div class="nav-label">Overview</div>
+    </div>
+    <div class="nav-item" id="nav-report" onclick="goScreen('s-report');setNav('nav-report')">
+      <div class="nav-icon">📊</div>
+      <div class="nav-label">Report</div>
+    </div>
+    <div class="nav-item" id="nav-hosts" onclick="goScreen('s-hosts');setNav('nav-hosts')">
+      <div class="nav-icon">🤝</div>
+      <div class="nav-label">Hosts</div>
+    </div>
+    <div class="nav-item" id="nav-share" onclick="showShareToast()">
+      <div class="nav-icon">📤</div>
+      <div class="nav-label">Share</div>
+    </div>
+  </div>
+
+  <!-- DETAIL OVERLAY -->
+  <div class="detail-backdrop" id="detail-backdrop" onclick="closeSheet()"></div>
+  <div class="detail-sheet" id="detail-sheet">
+    <div class="ds-handle"></div>
+    <div id="sheet-content"></div>
+  </div>
+
+</div>
+
+<script>
+// ── THEME ──
+(function(){
+  const p=new URLSearchParams(window.location.search),root=document.documentElement;
+  const h=k=>p.get(k)?'#'+p.get(k):null;
+  const sv=(k,v)=>v&&root.style.setProperty(k,v);
+  const bg=h('bg'),ac=h('accent'),tx=h('text'),sf=h('surface');
+  sv('--bg',bg);sv('--accent',ac);sv('--text',tx);sv('--surface',sf);
+  if(ac){const r=parseInt(ac.slice(1,3),16),g=parseInt(ac.slice(3,5),16),b=parseInt(ac.slice(5,7),16);
+    root.style.setProperty('--accent-dim',`rgba(${r},${g},${b},0.10)`);
+    root.style.setProperty('--border',`rgba(${r},${g},${b},0.12)`);}
+  if(tx){const r=parseInt(tx.slice(1,3),16),g=parseInt(tx.slice(3,5),16),b=parseInt(tx.slice(5,7),16);
+    root.style.setProperty('--text-dim',`rgba(${r},${g},${b},0.55)`);
+    root.style.setProperty('--text-muted',`rgba(${r},${g},${b},0.32)`);}
+  if(bg){root.style.setProperty('--warm',bg);root.style.setProperty('--warm2',bg);}
+  const font=p.get('font')?decodeURIComponent(p.get('font')):null;
+  if(font){const l=document.createElement('link');l.rel='stylesheet';
+    l.href=`https://fonts.googleapis.com/css2?family=${font.replace(/ /g,'+')}:wght@400;600;700&display=swap`;
+    document.head.appendChild(l);
+    l.onload=()=>document.querySelectorAll('.pg-title,.prop-address,.demand-title,.rs-title,.hf-name').forEach(e=>e.style.fontFamily=`'${font}',serif`);}
+})();
+
+// ── NAV ──
+function goScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function setNav(id){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById(id)?.classList.add('active');
+}
+
+// ── SHEET ──
+function openSheet(html){
+  document.getElementById('sheet-content').innerHTML = html;
+  document.getElementById('detail-sheet').classList.add('open');
+  document.getElementById('detail-backdrop').classList.add('open');
+}
+function closeSheet(){
+  document.getElementById('detail-sheet').classList.remove('open');
+  document.getElementById('detail-backdrop').classList.remove('open');
+}
+
+// ── LEAD SHEETS ──
+const leadData = {
+  jordan:{name:'Jordan Lee',score:'87%',signal:'🔥 Hot',dna:'Refined Modern',rooms:'Kitchen 14m · Primary 11m · Yard 9m',budget:'$1.2M–$1.8M',timeline:'Within 3 months',note:"Jordan asked 4 questions through Chloe — all property-specific. Strongest kitchen dwell of any buyer. Highest purchase intent on the tour. Marcus has drafted a personalized follow-up — recommend sending within 2 hours."},
+  alex:{name:'Alex & Sam Chen',score:'82%',signal:'⚡ Warm',dna:'Warm Organic',rooms:'Primary 18m · Kitchen 8m · Office 6m',budget:'$1.0M–$1.5M',timeline:'Within 3 months',note:"Spent the longest time in the primary suite of any buyer (18 minutes). Office dwell suggests WFH is a priority. Family buyer profile aligns well with the school district. Strong candidate for a private showing."},
+  morgan:{name:'Morgan Rivera',score:'79%',signal:'⚡ Warm',dna:'Coastal Luxe',rooms:'Backyard 12m · Kitchen 6m · Living 4m',budget:'$1.0M–$1.6M',timeline:'3–6 months',note:"Backyard was Morgan's strongest room — 12 minutes, the longest of any buyer in that space. Coastal Luxe profile aligns well with the pool and indoor-outdoor flow. Slightly longer timeline but genuine interest."},
+};
+
+function openLeadSheet(key){
+  const d = leadData[key];
+  const sigColor = d.signal.includes('🔥')?'#FF6B6B':'#FBBF24';
+  const sigBg    = d.signal.includes('🔥')?'rgba(255,107,107,0.12)':'rgba(251,191,36,0.12)';
+  openSheet(`
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+      <div style="width:46px;height:46px;border-radius:50%;background:var(--warm2);border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:22px;">👤</div>
+      <div style="flex:1;"><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--text);">${d.name}</div><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);margin-top:2px;">${d.dna}</div></div>
+      <div style="text-align:right;"><div style="font-family:'Fraunces',serif;font-size:24px;font-weight:700;color:var(--accent);">${d.score}</div><div style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:100px;background:${sigBg};color:${sigColor};margin-top:4px;">${d.signal}</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+      <div style="background:var(--warm2);border-radius:10px;padding:10px;"><div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;">Budget</div><div style="font-size:12px;font-weight:500;color:var(--text);">${d.budget}</div></div>
+      <div style="background:var(--warm2);border-radius:10px;padding:10px;"><div style="font-family:'DM Mono',monospace;font-size:8px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;">Timeline</div><div style="font-size:12px;font-weight:500;color:var(--text);">${d.timeline}</div></div>
+    </div>
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;">Top Rooms</div>
+    <div style="font-size:13px;color:var(--text-dim);margin-bottom:14px;">${d.rooms}</div>
+    <div style="background:rgba(184,224,48,0.06);border:1px solid var(--border);border-radius:12px;padding:13px 14px;margin-bottom:14px;">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;">✨ Agent Note</div>
+      <div style="font-size:13px;color:var(--text-dim);line-height:1.6;">${d.note}</div>
+    </div>
+    <button onclick="closeSheet()" style="width:100%;background:var(--warm2);border:1px solid var(--border2);border-radius:12px;padding:13px;color:var(--text-dim);font-size:14px;cursor:pointer;">Close</button>
+  `);
+}
+
+// ── HOST PROFILES ──
+const hostData = {
+  marcus:{name:'Marcus Rivera',score:780,tier:'Gold',events:42,followup:'98%',rating:'4.9',note:"Marcus is your confirmed host for today's event. His Refined Modern buyer network aligns well with this property. 3 hot leads generated — his highest-quality event of the month."},
+  sarah:{name:'Sarah Okonkwo',score:812,tier:'Gold',events:58,followup:'96%',rating:'4.8',note:"Sarah is the top-ranked agent in your DFW network by Host Score. Specializes in luxury properties $1M+. Her buyer pool skews Refined Modern and Warm Organic — an excellent fit for this listing."},
+  daniel:{name:'Daniel Park',score:720,tier:'Silver',events:28,followup:'91%',rating:'4.6',note:"Daniel is a solid Silver Tier agent with a growing track record. His buyer pool is younger and more price-sensitive — may be better suited for listings in the $800K–$1.1M range."},
+};
+
+function showHostSheet(key){
+  const d = hostData[key];
+  openSheet(`
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+      <div style="width:46px;height:46px;border-radius:13px;background:var(--accent-dim);border:1px solid rgba(184,224,48,0.2);display:flex;align-items:center;justify-content:center;font-size:22px;">👤</div>
+      <div style="flex:1;"><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--text);">${d.name}</div><div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);margin-top:2px;">${d.tier} Tier</div></div>
+      <div style="font-family:'Fraunces',serif;font-size:28px;font-weight:700;color:var(--accent);">${d.score}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
+      <div style="background:var(--warm2);border-radius:10px;padding:10px;text-align:center;"><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--accent);">${d.events}</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;">Events</div></div>
+      <div style="background:var(--warm2);border-radius:10px;padding:10px;text-align:center;"><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--accent);">${d.followup}</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;">Follow-Up</div></div>
+      <div style="background:var(--warm2);border-radius:10px;padding:10px;text-align:center;"><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--accent);">${d.rating}★</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text-muted);letter-spacing:1px;text-transform:uppercase;">Rating</div></div>
+    </div>
+    <div style="background:rgba(184,224,48,0.06);border:1px solid var(--border);border-radius:12px;padding:13px 14px;margin-bottom:14px;">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;">✨ Chloe's Assessment</div>
+      <div style="font-size:13px;color:var(--text-dim);line-height:1.6;">${d.note}</div>
+    </div>
+    <button onclick="closeSheet()" style="width:100%;background:var(--warm2);border:1px solid var(--border2);border-radius:12px;padding:13px;color:var(--text-dim);font-size:14px;cursor:pointer;">Close</button>
+  `);
+}
+
+// ── CONFIRM HOST ──
+function confirmHost(btn, key){
+  btn.textContent = '✓ Confirmed';
+  btn.classList.add('done');
+  showToast('✓ Host Confirmed', `${hostData[key]?.name || 'Agent'} has been notified and confirmed for this event.`);
+}
+
+// ── SHARE TOAST ──
+function showShareToast(){
+  showToast('📤 Share Report', 'Seller report link copied. Send to your client via email or text.');
+}
+
+// ── TOAST ──
+function showToast(title, msg){
+  const existing = document.getElementById('ld-toast'); if(existing) existing.remove();
+  const t = document.createElement('div');
+  t.id = 'ld-toast';
+  t.style.cssText = 'position:absolute;bottom:90px;left:16px;right:16px;background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:14px 16px;z-index:150;display:flex;gap:10px;align-items:flex-start;box-shadow:0 8px 24px rgba(0,0,0,0.4);animation:toastIn 0.3s ease;';
+  t.innerHTML = `<div style="font-size:18px;">${title.split(' ')[0]}</div><div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--text);">${title.substring(2)}</div><div style="font-size:12px;color:var(--text-muted);margin-top:2px;">${msg}</div></div><div onclick="document.getElementById('ld-toast').remove()" style="color:var(--text-muted);cursor:pointer;font-size:16px;">✕</div><style>@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}</style>`;
+  document.querySelector('.phone').appendChild(t);
+  setTimeout(()=>t.remove(), 4000);
+}
+
+// ── LIVE STATS ──
+let elapsed=41, buyers=12;
+setInterval(()=>{
+  elapsed++;
+  document.getElementById('ov-time').textContent = elapsed<60?`${elapsed}m`:`${Math.floor(elapsed/60)}h ${elapsed%60}m`;
+  if(Math.random()<0.15){ buyers=Math.max(8,Math.min(18,buyers+(Math.random()<0.55?1:-1))); document.getElementById('ov-buyers').textContent=buyers; }
+},1000);
+</script>
+</body>
+</html>

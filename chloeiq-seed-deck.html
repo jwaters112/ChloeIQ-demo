@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ChloeIQ Seed Deck</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:#0D0D0D;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px 16px;gap:16px;font-family:'DM Sans',sans-serif}
+.lbl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#B8E030;opacity:0.6}
+.phone{width:375px;height:812px;background:#0A0B07;border-radius:44px;overflow:hidden;position:relative;box-shadow:0 0 0 1px rgba(255,255,255,0.07),0 32px 64px rgba(0,0,0,0.7);display:flex;flex-direction:column}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:30px;background:#080808;border-radius:0 0 20px 20px;z-index:20}
+.bar{display:flex;justify-content:space-between;padding:18px 28px 0;font-family:'DM Mono',monospace;font-size:12px;color:rgba(238,240,229,0.5);flex-shrink:0;background:#0A0B07;position:relative;z-index:10}
+
+/* TRACK */
+.viewport{flex:1;overflow:hidden;position:relative}
+.track{display:flex;height:100%;width:3750px}
+.slide{width:375px;height:100%;overflow-y:auto;overflow-x:hidden;flex-shrink:0}
+.slide::-webkit-scrollbar{display:none}
+
+/* BOTTOM */
+.bottom{display:flex;align-items:center;justify-content:space-between;padding:10px 20px 18px;background:#0A0B07;flex-shrink:0;border-top:1px solid rgba(255,255,255,0.06)}
+.btn{width:44px;height:44px;border-radius:12px;background:#13160D;border:1px solid rgba(255,255,255,0.08);color:rgba(238,240,229,0.6);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.btn:disabled{opacity:0.25;cursor:default}
+.ctr{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;color:rgba(238,240,229,0.35)}
+.prog{height:2px;background:rgba(255,255,255,0.06);flex-shrink:0;position:relative}
+.prog-fill{height:100%;background:#B8E030;transition:width 0.3s ease;position:absolute;left:0;top:0}
+
+/* SLIDE CONTENT */
+.cover{min-height:100%;background:radial-gradient(ellipse 120% 55% at 50% 0%,rgba(184,224,48,0.09),transparent 55%),#0A0B07;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:36px 28px 16px}
+.body{padding:22px 18px 24px}
+.eye{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#B8E030;margin-bottom:8px}
+.h1{font-family:'Fraunces',serif;font-size:25px;font-weight:700;color:#EEF0E5;line-height:1.2;margin-bottom:6px}
+.sub{font-size:13px;color:rgba(238,240,229,0.5);line-height:1.6;margin-bottom:16px}
+.card{background:#13160D;border:1px solid rgba(255,255,255,0.07);border-radius:13px;padding:12px 13px;margin-bottom:8px}
+.card-row{display:flex;gap:11px;align-items:flex-start}
+.ci{font-size:19px;flex-shrink:0;margin-top:1px}
+.ct{font-size:13px;font-weight:600;color:#EEF0E5;margin-bottom:2px}
+.cd{font-size:12px;color:rgba(238,240,229,0.5);line-height:1.5}
+.flow{display:flex;gap:11px;align-items:flex-start;margin-bottom:9px}
+.fn{width:25px;height:25px;border-radius:7px;background:#B8E030;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:13px;font-weight:700;color:#0A0B07;flex-shrink:0}
+.ft{font-size:13px;font-weight:600;color:#EEF0E5;margin-bottom:2px}
+.fd{font-size:12px;color:rgba(238,240,229,0.5);line-height:1.5}
+.kgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:14px}
+.kc{background:#13160D;border:1px solid rgba(255,255,255,0.07);border-radius:11px;padding:11px;text-align:center}
+.kv{font-family:'Fraunces',serif;font-size:19px;font-weight:700;color:#B8E030}
+.kl{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(238,240,229,0.3);margin-top:3px}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.sc{background:#13160D;border:1px solid rgba(255,255,255,0.07);border-radius:13px;padding:12px}
+.sv{font-family:'Fraunces',serif;font-size:22px;font-weight:700;color:#B8E030;margin-bottom:2px}
+.sl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(238,240,229,0.3)}
+.ss{font-size:11px;color:rgba(238,240,229,0.4);margin-top:3px}
+.br{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+.bl{font-size:12px;color:rgba(238,240,229,0.5);width:100px;flex-shrink:0}
+.bt{flex:1;height:5px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden}
+.bf{height:100%;background:#B8E030;border-radius:3px}
+.bv{font-family:'DM Mono',monospace;font-size:10px;color:#B8E030;width:36px;text-align:right;flex-shrink:0}
+.rr{background:#13160D;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:11px 12px;display:flex;align-items:center;gap:10px;margin-bottom:7px}
+.ri{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.rn{font-size:13px;font-weight:500;color:#EEF0E5;margin-bottom:1px}
+.rd{font-family:'DM Mono',monospace;font-size:10px;color:rgba(238,240,229,0.3)}
+.rv{font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:#B8E030;flex-shrink:0}
+.tr{background:#13160D;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:11px 12px;display:flex;align-items:center;gap:10px;margin-bottom:7px}
+.ta{width:38px;height:38px;border-radius:11px;background:rgba(184,224,48,0.08);border:1px solid rgba(184,224,48,0.18);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.tn{font-size:13px;font-weight:600;color:#EEF0E5;margin-bottom:2px}
+.tro{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:#B8E030;margin-bottom:2px}
+.tp{font-size:11px;color:rgba(238,240,229,0.4);line-height:1.4}
+.ur{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+.ul{font-size:12px;color:rgba(238,240,229,0.5);width:115px;flex-shrink:0}
+.ut{flex:1;height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden}
+.uf{height:100%;background:#B8E030;border-radius:3px}
+.up{font-family:'DM Mono',monospace;font-size:10px;color:#B8E030;width:32px;text-align:right;flex-shrink:0}
+.ins{background:rgba(184,224,48,0.06);border:1px solid rgba(184,224,48,0.12);border-radius:13px;padding:12px;margin-bottom:10px}
+.ih{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#B8E030;margin-bottom:7px}
+.ip{font-size:12px;color:rgba(238,240,229,0.5);line-height:1.6}
+.ctbl{background:#13160D;border:1px solid rgba(255,255,255,0.07);border-radius:13px;overflow:hidden;margin-bottom:12px}
+.ch{display:grid;grid-template-columns:1fr 40px 40px 40px;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.07);font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(238,240,229,0.3)}
+.cr{display:grid;grid-template-columns:1fr 40px 40px 40px;padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.07);align-items:center}
+.cr:last-child{border-bottom:none}
+.cr.me{background:rgba(184,224,48,0.04)}
+.cn{font-size:12px;color:#EEF0E5}
+.cs{font-family:'DM Mono',monospace;font-size:9px;color:rgba(238,240,229,0.3)}
+.cc{text-align:center;font-size:13px}
+.contact-wrap{min-height:100%;background:radial-gradient(ellipse 120% 45% at 50% 100%,rgba(184,224,48,0.06),transparent 50%),#0A0B07;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px 28px 16px}
+.ccard{background:#13160D;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:12px 15px;text-align:left;width:100%;max-width:280px;margin-bottom:8px}
+.ccl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(238,240,229,0.3);margin-bottom:3px}
+.ccn{font-size:13px;font-weight:600;color:#EEF0E5}
+.ccv{font-family:'DM Mono',monospace;font-size:11px;color:#B8E030;margin-top:2px}
+.cbtn{background:#B8E030;border-radius:12px;padding:13px;text-align:center;cursor:pointer;width:100%;max-width:280px;border:none;margin-top:4px}
+.toast{position:absolute;bottom:88px;left:14px;right:14px;background:#13160D;border:1px solid rgba(255,255,255,0.08);border-radius:13px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,0.5);animation:tin 0.3s ease}
+@keyframes tin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div class="lbl">ChloeIQ · Seed Deck · $1.5M</div>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="bar"><span>9:41</span><span>●●● 5G 🔋</span></div>
+
+  <div class="prog"><div class="prog-fill" id="pf" style="width:10%"></div></div>
+
+  <div class="viewport">
+    <div class="track" id="track">
+
+      <!-- 1: COVER -->
+      <div class="slide">
+        <div class="cover">
+          <div class="eye" style="margin-bottom:22px">ChloeIQ</div>
+          <div style="font-family:'Fraunces',serif;font-size:32px;font-weight:700;color:#EEF0E5;line-height:1.15;margin-bottom:10px">Open houses are<br><em style="color:#B8E030">buyer intelligence<br>events.</em></div>
+          <div style="font-size:13px;color:rgba(238,240,229,0.5);line-height:1.65;max-width:270px;margin-bottom:28px">ChloeIQ transforms every open house into a data-rich buyer conversion machine — for agents, brokerages, and the listings they serve.</div>
+          <div style="background:#B8E030;border-radius:15px;padding:16px 26px;display:inline-flex;flex-direction:column;align-items:center;gap:3px">
+            <div style="font-family:'Fraunces',serif;font-size:36px;font-weight:700;color:#0A0B07;line-height:1">$1.5M</div>
+            <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(10,11,7,0.55)">Seed Round · PropTech</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2: PROBLEM -->
+      <div class="slide">
+        <div class="body">
+          <div class="eye">The Problem</div>
+          <div class="h1">Open houses generate zero usable data.</div>
+          <div class="sub">Agents host 4+ events per month and walk away with a paper sign-in sheet and no idea who was interested.</div>
+          <div class="card"><div class="card-row"><div class="ci">📋</div><div><div class="ct">No buyer intelligence</div><div class="cd">Agents can't tell who spent 14 minutes in the kitchen from who spent 30 seconds at the door.</div></div></div></div>
+          <div class="card"><div class="card-row"><div class="ci">📉</div><div><div class="ct">38% average follow-up rate</div><div class="cd">The industry average agent follows up with fewer than 4 in 10 visitors. Most leads evaporate.</div></div></div></div>
+          <div class="card"><div class="card-row"><div class="ci">🎯</div><div><div class="ct">Zero personalization</div><div class="cd">Every buyer gets the same generic follow-up email. Purchase intent is invisible to the agent.</div></div></div></div>
+          <div class="card"><div class="card-row"><div class="ci">🏠</div><div><div class="ct">$2.1T in annual transactions</div><div class="cd">The US residential market produces enormous value with essentially no buyer-side data infrastructure.</div></div></div></div>
+        </div>
+      </div>
+
+      <!-- 3: SOLUTION -->
+      <div class="slide">
+        <div class="body">
+          <div class="eye">The Solution</div>
+          <div class="h1">Turn every open house into an intelligence event.</div>
+          <div class="sub">Buyers scan a QR code at the door. Chloe does the rest.</div>
+          <div class="flow"><div class="fn">1</div><div><div class="ft">Chloe Code™ at the door</div><div class="fd">Buyers scan a physical QR sign. No app download. Instant web experience activates.</div></div></div>
+          <div class="flow"><div class="fn">2</div><div><div class="ft">StyleDNA™ quiz</div><div class="fd">60-second quiz profiles the buyer's aesthetic and priorities. 4 DNA types. 94% completion rate.</div></div></div>
+          <div class="flow"><div class="fn">3</div><div><div class="ft">Chloe guides the tour</div><div class="fd">AI tour guide answers questions room-by-room. Dwell time and room signals captured in real time.</div></div></div>
+          <div class="flow"><div class="fn">4</div><div><div class="ft">Agent gets a hot lead dashboard</div><div class="fd">Live buyer scores, heat maps, and AI-drafted personalized follow-ups — ready before the event ends.</div></div></div>
+          <div class="flow"><div class="fn">5</div><div><div class="ft">Seller gets a professional report</div><div class="fd">Post-event intelligence with buyer DNA mix, demand scores, and room-by-room engagement data.</div></div></div>
+        </div>
+      </div>
+
+      <!-- 4: TRACTION -->
+      <div class="slide">
+        <div class="body">
+          <div class="eye">Traction</div>
+          <div class="h1">Early signals are strong.</div>
+          <div class="sub">Beta launched in DFW Q1 2026. 8 weeks of live data.</div>
+          <div class="kgrid">
+            <div class="kc"><div class="kv">18</div><div class="kl">Brokerages</div></div>
+            <div class="kc"><div class="kv">312</div><div class="kl">Agents</div></div>
+            <div class="kc"><div class="kv">1,847</div><div class="kl">Buyers</div></div>
+            <div class="kc"><div class="kv">74</div><div class="kl">Events/Wk</div></div>
+            <div class="kc"><div class="kv">87%</div><div class="kl">Follow-Up</div></div>
+            <div class="kc"><div class="kv">4.2×</div><div class="kl">Conv. Lift</div></div>
+          </div>
+          <div class="card"><div class="card-row"><div class="ci">💬</div><div><div class="ct">"This is the first time I've actually known who to call."</div><div class="cd">— Marcus Rivera, Gold Tier Agent, Epting Realty DFW</div></div></div></div>
+          <div class="card"><div class="card-row"><div class="ci">💬</div><div><div class="ct">"The seller report alone is worth the subscription."</div><div class="cd">— Elena Reyes, Listing Agent, Compass DFW</div></div></div></div>
+        </div>
+      </div>
+
+      <!-- 5: MARKET -->
+      <div class="slide">
+        <div class="body">
+          <div class="eye">Market Opportunity</div>
+          <div class="h1">A massive market with no real incumbent.</div>
+          <div class="sub">Real estate tech is $32B — but open house intelligence is a white space.</div>
+          <div class="card" style="margin-bottom:12px">
+            <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(238,240,229,0.3);margin-bottom:11px">Market Size</div>
+            <div class="br"><div class="bl">TAM · US RE Tech</div><div class="bt"><div class="bf" style="width:100%;background:rgba(184,224,48,0.22)"></div></div><div class="bv" style="color:rgba(238,240,229,0.5)">$32B</div></div>
+            <div class="br"><div class="bl">SAM · Agent Software</div><div class="bt"><div class="bf" style="width:72%;background:rgba(184,224,48,0.5)"></div></div><div class="bv" style="color:rgba(238,240,229,0.7)">$4.8B</div></div>
+            <div class="br" style="margin-bottom:0"><div class="bl">SOM · OH Intelligence</div><div class="bt"><div class="bf" style="width:40%"></div></div><div class="bv">$680M</div></div>
+          </div>
+          <div class="sgrid">
+            <div class="sc"><div class="sv">5M+</div><div class="sl">US Agents</div><div class="ss">Primary customer</div></div>
+            <div class="sc"><div class="sv">4.8M</div><div class="sl">Open Houses/Yr</div><div class="ss">Each one is an event</div></div>
+            <div class="sc"><div class="sv">$136</div><div class="sl">Avg ARPU</div><div class="ss">Conservative estimate</div></div>
+            <div class="sc"><div class="sv">0</div><div class="sl">Direct Competitors</div><div class="ss">White space</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6: BUSINESS MODEL -->
+      <div class="slide">
+        <div class="body">
+          <div class="eye">Business Model</div>
+          <div class="h1">Four interlocking revenue streams.</div>
+          <div class="sub">SaaS as the base. Marketplace and data as the moat.</div>
+          <div class="rr"><div class="ri" style="background:rgba(184,224,48,0.1)">💳</div><div style="flex:1"><div class="rn">Agent SaaS</div><div class="rd">$49–$299/mo · 3 tiers</div></div><div class="rv">60%</div></div>
+          <div class="rr"><div class="ri" style="background:rgba(96,165,250,0.1)">🤝</div><div style="flex:1"><div class="rn">Host Marketplace</div><div class="rd">15% take rate on placements</div></div><div class="rv">20%</div></div>
+          <div class="rr"><div class="ri" style="background:rgba(74,222,128,0.1)">🧬</div><div style="flex:1"><div class="rn">Vendor Placements</div><div class="rd">DNA-targeted ads · $199–$1,299/mo</div></div><div class="rv">12%</div></div>
+          <div class="rr"><div class="ri" style="background:rgba(251,191,36,0.1)">📊</div><div style="flex:1"><div class="rn">Data Licensing</div><div class="rd">Anonymized buyer intelligence API</div></div><div class="rv">8%</div></div>
+          <div class="card" style="margin-top:4px">
+            <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(238,240,229,0.3);margin-bottom:9px">Unit Economics</div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:5px"><div style="font-size:12px;color:rgba(238,240,229,0.5)">CAC (agent)</div><div style="font-family:'DM Mono',monospace;font-size:12px;color:#B8E030">$94</div></div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:5px"><div style="font-size:12px;color:rgba(238,240,229,0.5)">ARPU (monthly)</div><div style="font-family:'DM Mono',monospace;font-size:12px;color:#B8E030">$136</div></div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:5px"><div style="font-size:12px;color:rgba(238,240,229,0.5)">LTV (24-mo)</div><div style="font-family:'DM Mono',monospace;font-size:12px;color:#B8E030">$3,264</div></div>
+            <div style="display:flex;justify-content:space-between;border-top:1px solid rgba(255,255,255,0.07);padding-top:8px;margin-top:3px"><div style="font-size:13px;font-weight:600;color:#EEF0E5">LTV / CAC</div><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:#B8E030">34.7×</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7: COMPETITION -->
+      <div class="slide">
+        <div class="body">
+          <div class="eye">Competitive Landscape</div>
+          <div class="h1">Adjacent players. No direct competitor.</div>
+          <div class="sub">The open house intelligence category is genuinely new.</div>
+          <div class="ctbl">
+            <div class="ch"><div>Player</div><div style="text-align:center">Data</div><div style="text-align:center">AI</div><div style="text-align:center">DNA</div></div>
+            <div class="cr me"><div><div style="font-size:13px;font-weight:700;color:#B8E030">ChloeIQ</div></div><div class="cc" style="color:#4ADE80">✓</div><div class="cc" style="color:#4ADE80">✓</div><div class="cc" style="color:#4ADE80">✓</div></div>
+            <div class="cr"><div><div class="cn">Spacio</div><div class="cs">Sign-in sheets</div></div><div class="cc" style="color:#F87171">✗</div><div class="cc" style="color:#F87171">✗</div><div class="cc" style="color:#F87171">✗</div></div>
+            <div class="cr"><div><div class="cn">Follow Up Boss</div><div class="cs">CRM</div></div><div class="cc" style="color:#F87171">✗</div><div class="cc" style="color:#FBBF24">~</div><div class="cc" style="color:#F87171">✗</div></div>
+            <div class="cr"><div><div class="cn">Zillow / Realtor</div><div class="cs">Listing platforms</div></div><div class="cc" style="color:#FBBF24">~</div><div class="cc" style="color:#F87171">✗</div><div class="cc" style="color:#F87171">✗</div></div>
+            <div class="cr"><div><div class="cn">Generic CRMs</div><div class="cs">Salesforce etc.</div></div><div class="cc" style="color:#F87171">✗</div><div class="cc" style="color:#FBBF24">~</div><div class="cc" style="color:#F87171">✗</div></div>
+          </div>
+          <div class="ins"><div class="ih">Our Moat</div><div class="ip">StyleDNA is a proprietary buyer classification system trained on behavioral data from live open house events. Every event makes it smarter. No competitor can replicate this data flywheel without starting over.</div></div>
+        </div>
+      </div>
+
+      <!-- 8: TEAM -->
+      <div class="slide">
+        <div class="body">
+          <div class="eye">The Team</div>
+          <div class="h1">Built by people who know the industry.</div>
+          <div class="sub">Two co-founders with deep roots in real estate, mortgage, title, and business development.</div>
+          <div class="tr"><div class="ta">👤</div><div><div class="tn">Josh Waters</div><div class="tro">Co-Founder & CEO</div><div class="tp">Agent @ REAL Broker, LLC<br>Branch Manager @ New American Funding</div></div></div>
+          <div class="tr"><div class="ta">👤</div><div><div class="tn">Sarah Waters</div><div class="tro">Co-Founder & CRO</div><div class="tp">Sr BD Manager @ Tiago Title<br>Business & Life Coach</div></div></div>
+          <div class="tr"><div class="ta" style="font-size:14px">🤖</div><div><div class="tn">AI-Powered Product</div><div class="tro">Built on Anthropic API</div><div class="tp">Claude powers Chloe's intelligence layer</div></div></div>
+          <div class="tr" style="opacity:0.55"><div class="ta">⚙️</div><div><div class="tn">Hiring: CTO</div><div class="tro">Open Role</div><div class="tp">PropTech or consumer AI background preferred</div></div></div>
+          <div class="card" style="margin-top:2px">
+            <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(238,240,229,0.3);margin-bottom:8px">Stack</div>
+            <div style="display:flex;flex-wrap:wrap;gap:5px">
+              <span style="background:#1A1C12;border-radius:100px;padding:4px 9px;font-family:'DM Mono',monospace;font-size:10px;color:rgba(238,240,229,0.4)">Next.js</span>
+              <span style="background:#1A1C12;border-radius:100px;padding:4px 9px;font-family:'DM Mono',monospace;font-size:10px;color:rgba(238,240,229,0.4)">Supabase</span>
+              <span style="background:#1A1C12;border-radius:100px;padding:4px 9px;font-family:'DM Mono',monospace;font-size:10px;color:rgba(238,240,229,0.4)">Vercel</span>
+              <span style="background:#1A1C12;border-radius:100px;padding:4px 9px;font-family:'DM Mono',monospace;font-size:10px;color:rgba(238,240,229,0.4)">Anthropic API</span>
+              <span style="background:#1A1C12;border-radius:100px;padding:4px 9px;font-family:'DM Mono',monospace;font-size:10px;color:rgba(238,240,229,0.4)">Resend</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 9: ASK -->
+      <div class="slide">
+        <div class="body">
+          <div class="eye">The Ask</div>
+          <div class="h1">$1.5M seed to reach product-market fit.</div>
+          <div class="sub">18-month runway to 500 agents and $68K MRR.</div>
+          <div style="background:#B8E030;border-radius:15px;padding:16px 18px;margin-bottom:14px">
+            <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(10,11,7,0.5);margin-bottom:3px">Raising</div>
+            <div style="font-family:'Fraunces',serif;font-size:46px;font-weight:700;color:#0A0B07;line-height:1">$1.5M</div>
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(238,240,229,0.3);margin-bottom:9px">Use of Funds</div>
+          <div class="ur"><div class="ul">Product & Eng</div><div class="ut"><div class="uf" style="width:40%"></div></div><div class="up">40%</div></div>
+          <div class="ur"><div class="ul">Sales & Marketing</div><div class="ut"><div class="uf" style="width:30%"></div></div><div class="up">30%</div></div>
+          <div class="ur"><div class="ul">Ops & Team</div><div class="ut"><div class="uf" style="width:20%"></div></div><div class="up">20%</div></div>
+          <div class="ur" style="margin-bottom:14px"><div class="ul">Reserve</div><div class="ut"><div class="uf" style="width:10%"></div></div><div class="up">10%</div></div>
+          <div class="sgrid">
+            <div class="sc"><div class="sv">500</div><div class="sl">Target Agents</div><div class="ss">18-month milestone</div></div>
+            <div class="sc"><div class="sv">$68K</div><div class="sl">Target MRR</div><div class="ss">At 18 months</div></div>
+            <div class="sc"><div class="sv">5</div><div class="sl">Target Markets</div><div class="ss">DFW → TX → SE US</div></div>
+            <div class="sc"><div class="sv">Q3 '27</div><div class="sl">Series A Ready</div><div class="ss">Target milestone</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 10: CONTACT -->
+      <div class="slide">
+        <div class="contact-wrap">
+          <div class="eye" style="margin-bottom:20px">ChloeIQ</div>
+          <div style="font-family:'Fraunces',serif;font-size:27px;font-weight:700;color:#EEF0E5;line-height:1.2;margin-bottom:10px">Let's build the future of open house intelligence.</div>
+          <div style="font-size:13px;color:rgba(238,240,229,0.5);line-height:1.6;max-width:270px;margin-bottom:22px">We're raising a $1.5M seed round from PropTech investors who understand that buyer data is the next category to unlock in residential real estate.</div>
+          <div class="ccard"><div class="ccl">Co-Founders</div><div class="ccn">Josh & Sarah Waters</div><div class="ccv">josh@chloeiq.com</div></div>
+          <div class="ccard"><div class="ccl">Deck & Data Room</div><div class="ccv">chloeiq.com/investors</div></div>
+          <button class="cbtn" onclick="showToast()"><div style="font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:#0A0B07">Request a Meeting →</div></button>
+        </div>
+      </div>
+
+    </div><!-- end track -->
+  </div><!-- end viewport -->
+
+  <div class="bottom">
+    <button class="btn" id="bp" onclick="go(-1)" disabled>←</button>
+    <div class="ctr" id="ctr">1 / 10</div>
+    <button class="btn" id="bn" onclick="go(1)">→</button>
+  </div>
+
+</div>
+
+<script>
+var cur = 0;
+var total = 10;
+
+function go(d) {
+  var n = cur + d;
+  if (n < 0 || n >= total) return;
+  cur = n;
+  document.getElementById('track').style.transform = 'translateX(-' + (cur * 375) + 'px)';
+  document.getElementById('track').style.transition = 'transform 0.35s cubic-bezier(0.4,0,0.2,1)';
+  document.getElementById('pf').style.width = ((cur + 1) / total * 100) + '%';
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + total;
+  document.getElementById('bp').disabled = (cur === 0);
+  document.getElementById('bn').disabled = (cur === total - 1);
+}
+
+var tx = 0;
+var vp = document.querySelector('.viewport');
+vp.addEventListener('touchstart', function(e) { tx = e.touches[0].clientX; }, {passive: true});
+vp.addEventListener('touchend', function(e) {
+  var dx = e.changedTouches[0].clientX - tx;
+  if (dx < -40) go(1);
+  else if (dx > 40) go(-1);
+}, {passive: true});
+
+function showToast() {
+  var old = document.getElementById('tt');
+  if (old) { old.remove(); return; }
+  var t = document.createElement('div');
+  t.id = 'tt';
+  t.className = 'toast';
+  t.innerHTML = '<div style="font-size:19px">📅</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#EEF0E5;margin-bottom:2px">Meeting Request Sent</div><div style="font-size:12px;color:rgba(238,240,229,0.5);line-height:1.5">Josh or Sarah will follow up at josh@chloeiq.com within 24 hours.</div></div><div onclick="document.getElementById(\'tt\').remove()" style="color:rgba(238,240,229,0.3);cursor:pointer;font-size:16px;flex-shrink:0">✕</div>';
+  document.querySelector('.phone').appendChild(t);
+  setTimeout(function() { var el = document.getElementById('tt'); if (el) el.remove(); }, 5000);
+}
+</script>
+</body>
+</html>

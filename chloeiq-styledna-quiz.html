@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ChloeIQ — StyleDNA Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,300;1,600&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0A0B07;
+  --accent: #B8E030;
+  --accent-dim: rgba(184,224,48,0.10);
+  --surface: #13160D;
+  --border: rgba(184,224,48,0.12);
+  --text: #EEF0E5;
+  --text-dim: rgba(238,240,229,0.55);
+  --text-muted: rgba(238,240,229,0.35);
+  --warm: #1C1A14;
+  --warm2: #242118;
+  --warm3: #2E2B22;
+  --linen: #F0EBE0;
+  --linen-dim: rgba(240,235,224,0.55);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+body {
+  background: var(--bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Sans', sans-serif;
+  padding: 24px 16px;
+  gap: 32px;
+}
+
+/* OUTER LABEL */
+.outer-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0.7;
+  text-align: center;
+}
+
+/* PHONE SHELL */
+.phone {
+  width: 375px;
+  height: 812px;
+  background: var(--warm);
+  border-radius: 44px;
+  overflow: hidden;
+  position: relative;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.07),
+    0 0 0 2px rgba(0,0,0,0.6),
+    0 32px 64px rgba(0,0,0,0.6),
+    inset 0 0 0 1px rgba(255,255,255,0.03);
+  display: flex;
+  flex-direction: column;
+}
+
+/* NOTCH */
+.notch {
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 120px; height: 30px;
+  background: #0A0A0A;
+  border-radius: 0 0 20px 20px;
+  z-index: 20;
+}
+
+/* STATUS BAR */
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 28px 0;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--linen);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+  padding-top: 18px;
+}
+.status-icons { display: flex; gap: 5px; align-items: center; font-size: 11px; }
+
+/* ── SCREEN SYSTEM ── */
+.screen {
+  flex: 1;
+  overflow: hidden;
+  display: none;
+  flex-direction: column;
+}
+.screen.active { display: flex; }
+
+/* ══════════════════════════════
+   INTRO SCREEN
+══════════════════════════════ */
+#s-intro {
+  background: var(--warm);
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 48px;
+  position: relative;
+  overflow: hidden;
+}
+
+.intro-glow {
+  position: absolute;
+  width: 260px; height: 260px;
+  background: radial-gradient(circle, rgba(184,224,48,0.12) 0%, transparent 70%);
+  top: 30%; left: 50%;
+  transform: translate(-50%,-50%);
+  pointer-events: none;
+}
+
+.intro-badge {
+  position: absolute;
+  top: 60px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent-dim);
+  border: 1px solid rgba(184,224,48,0.2);
+  border-radius: 100px;
+  padding: 6px 16px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.intro-dna-art {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -60%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.dna-row {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+}
+
+.dna-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  opacity: 0.15;
+  animation: dnaPulse 3s ease-in-out infinite;
+}
+
+.dna-dot.lit { opacity: 0.8; animation: dnaPulse 2s ease-in-out infinite; }
+.dna-dot.mid { opacity: 0.4; }
+
+.dna-line {
+  width: 32px; height: 1px;
+  background: linear-gradient(to right, transparent, rgba(184,224,48,0.3), transparent);
+}
+
+@keyframes dnaPulse {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.intro-content {
+  width: 100%;
+  padding: 0 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.intro-title {
+  font-family: 'Fraunces', serif;
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--linen);
+  text-align: center;
+  line-height: 1.15;
+}
+
+.intro-title em {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.intro-desc {
+  font-size: 14px;
+  color: var(--linen-dim);
+  text-align: center;
+  line-height: 1.65;
+  max-width: 280px;
+}
+
+.intro-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 4px 0;
+}
+
+.intro-pill {
+  background: var(--warm2);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 100px;
+  padding: 5px 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--linen-dim);
+  letter-spacing: 0.5px;
+}
+
+.intro-cta {
+  width: 100%;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 16px;
+  padding: 17px;
+  font-family: 'Fraunces', serif;
+  font-size: 17px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  margin-top: 8px;
+}
+.intro-cta:active { opacity: 0.85; }
+
+.intro-meta {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+/* ══════════════════════════════
+   QUESTION SCREEN
+══════════════════════════════ */
+#s-question {
+  background: var(--warm);
+}
+
+.q-header {
+  padding: 20px 24px 14px;
+  flex-shrink: 0;
+}
+
+.q-progress-track {
+  height: 3px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+
+.q-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+}
+
+.q-step {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+
+.q-text {
+  font-family: 'Fraunces', serif;
+  font-size: 21px;
+  font-weight: 600;
+  color: var(--linen);
+  line-height: 1.3;
+}
+
+.q-sub {
+  font-size: 13px;
+  color: var(--linen-dim);
+  margin-top: 5px;
+  line-height: 1.5;
+}
+
+.q-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 20px 10px;
+  scrollbar-width: none;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.q-body::-webkit-scrollbar { display: none; }
+
+/* Option types */
+.opt {
+  background: var(--warm2);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 14px;
+  padding: 13px 15px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  cursor: pointer;
+  transition: all 0.18s;
+  position: relative;
+  overflow: hidden;
+}
+
+.opt::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  opacity: 0;
+  transition: opacity 0.18s;
+}
+
+.opt.selected {
+  border-color: var(--accent);
+  background: rgba(184,224,48,0.07);
+}
+
+.opt.selected::before { opacity: 0.04; }
+
+.opt-emoji {
+  font-size: 26px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  width: 36px;
+  text-align: center;
+}
+
+.opt-text { flex: 1; position: relative; z-index: 1; }
+.opt-label { font-size: 15px; color: var(--linen); font-weight: 500; line-height: 1.2; }
+.opt-desc { font-size: 12px; color: var(--linen-dim); margin-top: 2px; }
+
+.opt-check {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.18);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  flex-shrink: 0;
+  transition: all 0.18s;
+  position: relative; z-index: 1;
+  color: transparent;
+}
+
+.opt.selected .opt-check {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+}
+
+/* GRID style options (for Q5) */
+.opt-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+
+.opt-grid-item {
+  background: var(--warm2);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 14px;
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.18s;
+  text-align: center;
+}
+
+.opt-grid-item.selected {
+  border-color: var(--accent);
+  background: rgba(184,224,48,0.07);
+}
+
+.opt-grid-emoji { font-size: 28px; }
+.opt-grid-label { font-size: 13px; font-weight: 500; color: var(--linen); line-height: 1.2; }
+
+/* SCALE style (for Q6) */
+.opt-scale {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.scale-track {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--warm2);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+
+.scale-track.selected {
+  border-color: var(--accent);
+  background: rgba(184,224,48,0.07);
+}
+
+.scale-num {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--accent);
+  width: 28px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.scale-bar-wrap { flex: 1; }
+.scale-label { font-size: 13px; color: var(--linen); font-weight: 500; }
+.scale-sublabel { font-size: 11px; color: var(--linen-dim); }
+
+.scale-dot {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.18);
+  flex-shrink: 0;
+  transition: all 0.18s;
+}
+
+.scale-track.selected .scale-dot {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+/* FOOTER NAV */
+.q-footer {
+  padding: 12px 20px 24px;
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+.btn-back {
+  width: 48px; height: 48px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  color: var(--linen-dim);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.18s;
+  flex-shrink: 0;
+}
+.btn-back:hover { background: rgba(255,255,255,0.09); }
+.btn-back:disabled { opacity: 0.25; pointer-events: none; }
+
+.btn-next {
+  flex: 1;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 14px;
+  padding: 14px;
+  font-family: 'Fraunces', serif;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.18s;
+  opacity: 0.3;
+  pointer-events: none;
+}
+.btn-next.ready { opacity: 1; pointer-events: all; }
+.btn-next:active { opacity: 0.85; }
+
+/* ══════════════════════════════
+   RESULT SCREEN
+══════════════════════════════ */
+#s-result {
+  background: var(--warm);
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+#s-result::-webkit-scrollbar { display: none; }
+
+.result-header {
+  padding: 24px 24px 0;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.result-ring-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 24px 0;
+}
+
+.result-ring {
+  width: 148px; height: 148px;
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 16px;
+}
+
+.result-ring svg {
+  position: absolute;
+  inset: 0;
+  transform: rotate(-90deg);
+}
+
+.ring-bg2 { fill:none; stroke: rgba(255,255,255,0.06); stroke-width: 9; }
+.ring-fg  { fill:none; stroke: var(--accent); stroke-width: 9; stroke-linecap:round;
+  stroke-dasharray: 370;
+  stroke-dashoffset: 370;
+  transition: stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1) 0.3s;
+}
+
+.ring-val {
+  font-family: 'Fraunces', serif;
+  font-size: 44px;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+  text-align: center;
+}
+
+.ring-lbl {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--linen-dim);
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.result-dna-name {
+  font-family: 'Fraunces', serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--linen);
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.result-dna-desc {
+  font-size: 13px;
+  color: var(--linen-dim);
+  text-align: center;
+  line-height: 1.65;
+  padding: 0 24px;
+  margin-bottom: 20px;
+}
+
+.result-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  justify-content: center;
+  padding: 0 24px;
+  margin-bottom: 24px;
+}
+
+.result-tag {
+  padding: 6px 13px;
+  border-radius: 100px;
+  border: 1px solid rgba(184,224,48,0.22);
+  background: rgba(184,224,48,0.06);
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--accent);
+  letter-spacing: 0.5px;
+}
+
+.result-breakdown {
+  margin: 0 20px 20px;
+  background: var(--warm2);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.breakdown-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 14px;
+}
+
+.breakdown-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.breakdown-row:last-child { margin-bottom: 0; }
+
+.breakdown-label {
+  font-size: 12px;
+  color: var(--linen-dim);
+  width: 90px;
+  flex-shrink: 0;
+}
+
+.breakdown-bar-track {
+  flex: 1;
+  height: 4px;
+  background: rgba(255,255,255,0.07);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.breakdown-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  width: 0;
+  transition: width 1s ease 0.6s;
+}
+
+.breakdown-pct {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  width: 30px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.result-chloe-card {
+  margin: 0 20px 20px;
+  background: rgba(184,224,48,0.06);
+  border: 1px solid rgba(184,224,48,0.15);
+  border-radius: 16px;
+  padding: 16px 18px;
+}
+
+.chloe-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.chloe-card-avatar {
+  width: 32px; height: 32px;
+  background: var(--accent-dim);
+  border: 1px solid rgba(184,224,48,0.25);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px;
+}
+
+.chloe-card-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--linen);
+}
+.chloe-card-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--accent);
+}
+
+.chloe-card-text {
+  font-size: 13px;
+  color: var(--linen-dim);
+  line-height: 1.6;
+  font-style: italic;
+}
+
+.result-actions {
+  padding: 4px 20px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.res-btn-primary {
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 14px;
+  padding: 16px;
+  font-family: 'Fraunces', serif;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.res-btn-primary:active { opacity: 0.85; }
+
+.res-btn-secondary {
+  background: rgba(255,255,255,0.05);
+  color: var(--linen-dim);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 14px;
+  padding: 13px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.res-btn-secondary:hover { background: rgba(255,255,255,0.08); color: var(--linen); }
+
+/* BOTTOM CAPTION */
+.bottom-caption {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  text-align: center;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+</style>
+</head>
+<body>
+
+<div class="outer-label">ChloeIQ · StyleDNA™ Quiz</div>
+
+<div class="phone">
+  <div class="notch"></div>
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <span style="font-weight:500;">9:41</span>
+    <span class="status-icons">●●● 5G 🔋</span>
+  </div>
+
+  <!-- ══ INTRO SCREEN ══ -->
+  <div class="screen active" id="s-intro">
+    <div class="intro-glow"></div>
+    <div class="intro-badge">StyleDNA™ by ChloeIQ</div>
+
+    <!-- DNA art -->
+    <div class="intro-dna-art">
+      <div class="dna-row"><div class="dna-dot lit"></div><div class="dna-line"></div><div class="dna-dot mid"></div></div>
+      <div class="dna-row"><div class="dna-dot mid"></div><div class="dna-line"></div><div class="dna-dot lit"></div></div>
+      <div class="dna-row"><div class="dna-dot lit"></div><div class="dna-line"></div><div class="dna-dot"></div></div>
+      <div class="dna-row"><div class="dna-dot"></div><div class="dna-line"></div><div class="dna-dot lit"></div></div>
+      <div class="dna-row"><div class="dna-dot lit"></div><div class="dna-line"></div><div class="dna-dot mid"></div></div>
+      <div class="dna-row"><div class="dna-dot mid"></div><div class="dna-line"></div><div class="dna-dot lit"></div></div>
+      <div class="dna-row"><div class="dna-dot"></div><div class="dna-line"></div><div class="dna-dot lit"></div></div>
+    </div>
+
+    <div class="intro-content">
+      <div class="intro-title">Discover your<br><em>home aesthetic</em></div>
+      <div class="intro-desc">6 questions that reveal exactly how you see, feel, and live in a home — so every listing we show you feels personal.</div>
+      <div class="intro-pills">
+        <div class="intro-pill">6 Questions</div>
+        <div class="intro-pill">~2 Minutes</div>
+        <div class="intro-pill">No account needed</div>
+      </div>
+      <button class="intro-cta" onclick="startQuiz()">Build My StyleDNA →</button>
+      <div class="intro-meta">For Jordan Lee · 2847 Magnolia Drive</div>
+    </div>
+  </div>
+
+  <!-- ══ QUESTION SCREEN ══ -->
+  <div class="screen" id="s-question">
+    <div class="q-header">
+      <div class="q-progress-track">
+        <div class="q-progress-fill" id="q-progress" style="width:16.6%"></div>
+      </div>
+      <div class="q-step" id="q-step">Question 1 of 6</div>
+      <div class="q-text" id="q-text"></div>
+      <div class="q-sub" id="q-sub"></div>
+    </div>
+
+    <div class="q-body" id="q-body"></div>
+
+    <div class="q-footer">
+      <button class="btn-back" id="btn-back" onclick="prevQ()" disabled>←</button>
+      <button class="btn-next" id="btn-next" onclick="nextQ()">Continue →</button>
+    </div>
+  </div>
+
+  <!-- ══ RESULT SCREEN ══ -->
+  <div class="screen" id="s-result">
+    <div class="result-header">Your StyleDNA Profile</div>
+
+    <div class="result-ring-wrap">
+      <div class="result-ring">
+        <svg viewBox="0 0 148 148" xmlns="http://www.w3.org/2000/svg">
+          <circle class="ring-bg2" cx="74" cy="74" r="58"/>
+          <circle class="ring-fg" id="ring-fg" cx="74" cy="74" r="58"/>
+        </svg>
+        <div>
+          <div class="ring-val" id="r-score">87%</div>
+          <div class="ring-lbl">Match Score</div>
+        </div>
+      </div>
+
+      <div class="result-dna-name" id="r-dna-name">Refined Modern</div>
+      <div class="result-dna-desc" id="r-dna-desc">You prize intentional design, clean lines, and elevated materials. Every detail earns its place — and you'll know when it doesn't.</div>
+    </div>
+
+    <div class="result-tags" id="r-tags"></div>
+
+    <div class="result-breakdown">
+      <div class="breakdown-title">Profile Breakdown</div>
+      <div class="breakdown-row">
+        <div class="breakdown-label">Aesthetic</div>
+        <div class="breakdown-bar-track"><div class="breakdown-bar-fill" data-pct="92" style="width:0%"></div></div>
+        <div class="breakdown-pct">92%</div>
+      </div>
+      <div class="breakdown-row">
+        <div class="breakdown-label">Lifestyle Fit</div>
+        <div class="breakdown-bar-track"><div class="breakdown-bar-fill" data-pct="85" style="width:0%"></div></div>
+        <div class="breakdown-pct">85%</div>
+      </div>
+      <div class="breakdown-row">
+        <div class="breakdown-label">Finishes</div>
+        <div class="breakdown-bar-track"><div class="breakdown-bar-fill" data-pct="88" style="width:0%"></div></div>
+        <div class="breakdown-pct">88%</div>
+      </div>
+      <div class="breakdown-row">
+        <div class="breakdown-label">Spatial Feel</div>
+        <div class="breakdown-bar-track"><div class="breakdown-bar-fill" data-pct="82" style="width:0%"></div></div>
+        <div class="breakdown-pct">82%</div>
+      </div>
+    </div>
+
+    <div class="result-chloe-card">
+      <div class="chloe-card-header">
+        <div class="chloe-card-avatar">✨</div>
+        <div>
+          <div class="chloe-card-name">Chloe's Read</div>
+          <div class="chloe-card-sub">Personalized to your DNA</div>
+        </div>
+      </div>
+      <div class="chloe-card-text" id="r-chloe-read">"Jordan, your Refined Modern profile tells me you'll notice the slab hardware before the square footage. I'll flag rooms where the finishes match your standard — and be honest when they don't."</div>
+    </div>
+
+    <div class="result-actions">
+      <button class="res-btn-primary" onclick="restart()">Retake Quiz →</button>
+      <button class="res-btn-secondary" onclick="restart()">See Different Profile</button>
+    </div>
+  </div>
+
+</div><!-- end phone -->
+
+<div class="bottom-caption">Standalone Demo · 6 Questions · Fully Interactive</div>
+
+<script>
+// ── THEME FROM URL PARAMS ──
+(function applyUrlTheme() {
+  const p = new URLSearchParams(window.location.search);
+  const root = document.documentElement;
+  const hex = k => p.get(k) ? '#' + p.get(k) : null;
+  const set = (k, v) => v && root.style.setProperty(k, v);
+
+  const bg      = hex('bg');
+  const accent  = hex('accent');
+  const text    = hex('text');
+  const surface = hex('surface');
+  const font    = p.get('font') ? decodeURIComponent(p.get('font')) : null;
+
+  set('--bg', bg);
+  set('--accent', accent);
+  set('--text', text);
+  set('--surface', surface);
+
+  if (accent) {
+    const r = parseInt(accent.slice(1,3),16);
+    const g = parseInt(accent.slice(3,5),16);
+    const b = parseInt(accent.slice(5,7),16);
+    root.style.setProperty('--accent-dim', `rgba(${r},${g},${b},0.10)`);
+  }
+  if (text) {
+    const r = parseInt(text.slice(1,3),16);
+    const g = parseInt(text.slice(3,5),16);
+    const b = parseInt(text.slice(5,7),16);
+    root.style.setProperty('--linen', text);
+    root.style.setProperty('--linen-dim', `rgba(${r},${g},${b},0.55)`);
+    root.style.setProperty('--text-muted', `rgba(${r},${g},${b},0.35)`);
+  }
+  if (bg) {
+    root.style.setProperty('--warm', bg);
+    root.style.setProperty('--warm2', bg);
+    root.style.setProperty('--warm3', bg);
+  }
+  if (font) {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = `https://fonts.googleapis.com/css2?family=${font.replace(/ /g,'+')}:wght@400;600;700;800&display=swap`;
+    document.head.appendChild(link);
+    link.onload = () => {
+      document.querySelectorAll('.intro-title,.q-text,.result-dna-name,.ring-val,.intro-cta,.btn-next,.res-btn-primary').forEach(el => {
+        el.style.fontFamily = `'${font}', serif`;
+      });
+    };
+  }
+})();
+
+const QUESTIONS = [
+  {
+    type: 'list',
+    text: "When you walk into a home and instantly feel it — what does it look like?",
+    sub: "Your gut reaction before you analyze anything",
+    opts: [
+      { e:'🖤', l:'Clean, minimal, intentional',    d:'Everything earns its place' },
+      { e:'🪵', l:'Warm, textured, lived-in',        d:'Natural materials everywhere' },
+      { e:'🌊', l:'Light, airy, coastal',            d:'Whites and organic shapes' },
+      { e:'🎨', l:'Bold, layered, collected',        d:'Personality in every corner' },
+    ]
+  },
+  {
+    type: 'list',
+    text: "Your dream kitchen has…",
+    sub: "Be honest — you'll spend a lot of time here",
+    opts: [
+      { e:'🔲', l:'Slab cabinets, no hardware',      d:'Clean as a museum' },
+      { e:'🪵', l:'Shaker cabinets, open shelving',  d:'Real and functional' },
+      { e:'🐚', l:'Curved edges, warm stone',        d:'Soft and sculptural' },
+      { e:'🔶', l:'Mixed metals, statement island',  d:'Designed to impress' },
+    ]
+  },
+  {
+    type: 'list',
+    text: "The primary suite should feel like…",
+    sub: "Your daily reset",
+    opts: [
+      { e:'🏨', l:'A luxury hotel',          d:'Spa finish, soaking tub' },
+      { e:'🌾', l:'A countryside retreat',   d:'Linen, wood, softness' },
+      { e:'🌙', l:'Calm and cocoon-like',    d:'Dark, quiet, restful' },
+      { e:'☀️', l:'Light-flooded and airy',  d:'Morning light, volume ceilings' },
+    ]
+  },
+  {
+    type: 'grid',
+    text: "Your outdoor space is for…",
+    sub: "How you actually use it",
+    opts: [
+      { e:'🏊', l:'Pool & entertaining' },
+      { e:'🌿', l:'Garden & privacy' },
+      { e:'🍽️', l:'Outdoor kitchen' },
+      { e:'🌅', l:'Views & quiet' },
+    ]
+  },
+  {
+    type: 'list',
+    text: "How important are the finishes?",
+    sub: "Honesty here improves your match accuracy",
+    opts: [
+      { e:'💎', l:'Everything — I notice hardware',  d:'Builder-grade is a dealbreaker' },
+      { e:'✅', l:'Quality over luxury',             d:'Solid and well-made matters' },
+      { e:'🛠️', l:"I'll renovate anyway",            d:'Good bones, I handle the rest' },
+      { e:'🙂', l:'Not really my focus',             d:'Function over form, always' },
+    ]
+  },
+  {
+    type: 'scale',
+    text: "How social is your home life?",
+    sub: "This affects layout priority more than anything",
+    opts: [
+      { n:'1', l:'Very private',      s:'Just us, always' },
+      { n:'2', l:'Mostly quiet',      s:'Family only, rarely guests' },
+      { n:'3', l:'Balanced',          s:'Friends sometimes, family often' },
+      { n:'4', l:'We host a lot',     s:'Open plan is non-negotiable' },
+      { n:'5', l:'Always entertaining', s:'The more the better' },
+    ]
+  },
+];
+
+const DNA_PROFILES = [
+  { name:'Refined Modern',   score:87, desc:'You prize intentional design, clean lines, and elevated materials. Every detail earns its place — and you\'ll know when it doesn\'t.', tags:['Clean Lines','Elevated Finishes','Indoor–Outdoor','Spa Primary'], read:'"Jordan, your Refined Modern profile tells me you\'ll notice the slab hardware before the square footage. I\'ll flag rooms where the finishes match your standard — and be honest when they don\'t."' },
+  { name:'Warm Organic',     score:82, desc:'You gravitate toward natural materials, layered texture, and spaces that feel like they\'ve always existed. You\'re not decorating — you\'re living.', tags:['Natural Materials','Warm Lighting','Open Shelving','Garden Views'], read:'"Your Warm Organic profile means we\'ll focus on wood grain, stone weight, and light quality. You\'ll feel the difference before you see it."' },
+  { name:'Coastal Luxe',     score:79, desc:'Light, volume, and a connection to the outdoors define your ideal home. You want to feel like you\'re always on the best vacation.', tags:['Ocean Views','White Walls','Organic Shapes','Indoor–Outdoor'], read:'"You\'ll love the southwest-facing backyard and the way afternoon light moves through the main level here. The pool is exactly what your profile describes."' },
+  { name:'Bold Eclectic',    score:85, desc:'Your home tells a story — collected, layered, unapologetically specific. You\'d rather have one extraordinary room than five safe ones.', tags:['Mixed Eras','Statement Pieces','Jewel Tones','Curated Art'], read:'"The volume ceilings and formal dining here give you the canvas your Bold Eclectic profile needs. This is a home you can put your mark on."' },
+];
+
+let currentQ = 0;
+let answers = new Array(6).fill(null);
+let resultProfile = null;
+
+function startQuiz() {
+  currentQ = 0;
+  answers = new Array(6).fill(null);
+  showScreen('s-question');
+  renderQuestion();
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentQ];
+  const pct = ((currentQ + 1) / 6 * 100).toFixed(1);
+  document.getElementById('q-progress').style.width = pct + '%';
+  document.getElementById('q-step').textContent = `Question ${currentQ + 1} of 6 — StyleDNA™`;
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('q-sub').textContent = q.sub;
+
+  const body = document.getElementById('q-body');
+  const sel = answers[currentQ];
+
+  if (q.type === 'list') {
+    body.innerHTML = q.opts.map((o,i) => `
+      <div class="opt ${sel===i?'selected':''}" onclick="selectOpt(${i})">
+        <div class="opt-emoji">${o.e}</div>
+        <div class="opt-text">
+          <div class="opt-label">${o.l}</div>
+          ${o.d ? `<div class="opt-desc">${o.d}</div>` : ''}
+        </div>
+        <div class="opt-check">${sel===i?'✓':''}</div>
+      </div>
+    `).join('');
+  } else if (q.type === 'grid') {
+    body.innerHTML = `<div class="opt-grid">${
+      q.opts.map((o,i) => `
+        <div class="opt-grid-item ${sel===i?'selected':''}" onclick="selectOpt(${i})">
+          <div class="opt-grid-emoji">${o.e}</div>
+          <div class="opt-grid-label">${o.l}</div>
+        </div>
+      `).join('')
+    }</div>`;
+  } else if (q.type === 'scale') {
+    body.innerHTML = `<div class="opt-scale">${
+      q.opts.map((o,i) => `
+        <div class="scale-track ${sel===i?'selected':''}" onclick="selectOpt(${i})">
+          <div class="scale-num">${o.n}</div>
+          <div class="scale-bar-wrap">
+            <div class="scale-label">${o.l}</div>
+            <div class="scale-sublabel">${o.s}</div>
+          </div>
+          <div class="scale-dot"></div>
+        </div>
+      `).join('')
+    }</div>`;
+  }
+
+  // Btn states
+  const nextBtn = document.getElementById('btn-next');
+  const backBtn = document.getElementById('btn-back');
+  nextBtn.classList.toggle('ready', sel !== null);
+  nextBtn.textContent = currentQ === 5 && sel !== null ? 'See My DNA →' : 'Continue →';
+  backBtn.disabled = currentQ === 0;
+}
+
+function selectOpt(i) {
+  answers[currentQ] = i;
+  renderQuestion();
+}
+
+function nextQ() {
+  if (answers[currentQ] === null) return;
+  if (currentQ < 5) {
+    currentQ++;
+    renderQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function prevQ() {
+  if (currentQ > 0) { currentQ--; renderQuestion(); }
+}
+
+function showResult() {
+  // Pick profile based on Q1 answer primarily
+  const profileIdx = answers[0] !== null ? answers[0] : 0;
+  resultProfile = DNA_PROFILES[profileIdx];
+
+  document.getElementById('r-dna-name').textContent = resultProfile.name;
+  document.getElementById('r-dna-desc').textContent = resultProfile.desc;
+  document.getElementById('r-chloe-read').textContent = resultProfile.read;
+  document.getElementById('r-score').textContent = resultProfile.score + '%';
+
+  // Tags
+  document.getElementById('r-tags').innerHTML = resultProfile.tags.map(t =>
+    `<div class="result-tag">${t}</div>`
+  ).join('');
+
+  showScreen('s-result');
+
+  // Animate ring
+  const circumference = 2 * Math.PI * 58;
+  const offset = circumference * (1 - resultProfile.score / 100);
+  setTimeout(() => {
+    document.getElementById('ring-fg').style.strokeDashoffset = offset;
+  }, 100);
+
+  // Animate bars
+  setTimeout(() => {
+    document.querySelectorAll('.breakdown-bar-fill').forEach(bar => {
+      bar.style.width = bar.dataset.pct + '%';
+    });
+  }, 400);
+}
+
+function restart() {
+  showScreen('s-intro');
+}
+</script>
+</body>
+</html>

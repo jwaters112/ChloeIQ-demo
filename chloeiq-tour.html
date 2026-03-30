@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ChloeIQ — Chloe Tour</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,300;1,600&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0A0B07;
+  --accent: #B8E030;
+  --accent-dim: rgba(184,224,48,0.10);
+  --surface: #13160D;
+  --border: rgba(184,224,48,0.12);
+  --border2: rgba(255,255,255,0.07);
+  --text: #EEF0E5;
+  --text-dim: rgba(238,240,229,0.55);
+  --text-muted: rgba(238,240,229,0.32);
+  --warm: #1A1C12;
+  --warm2: #222418;
+  --green: #4ADE80;
+  --amber: #FBBF24;
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body {
+  background: #0D0D0D;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Sans', sans-serif;
+  padding: 24px 16px;
+  gap: 20px;
+}
+.outer-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  opacity: 0.6;
+}
+.phone {
+  width: 375px;
+  height: 812px;
+  background: var(--warm);
+  border-radius: 44px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.07), 0 0 0 2px rgba(0,0,0,0.6), 0 32px 64px rgba(0,0,0,0.7);
+  display: flex;
+  flex-direction: column;
+}
+.notch {
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 120px; height: 30px;
+  background: #080808;
+  border-radius: 0 0 20px 20px;
+  z-index: 20;
+}
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 28px 0;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: rgba(238,240,229,0.6);
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+/* HEADER */
+.tour-header {
+  padding: 14px 20px 12px;
+  border-bottom: 1px solid var(--border2);
+  flex-shrink: 0;
+}
+.tour-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.tour-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 2px;
+}
+.tour-address {
+  font-family: 'Fraunces', serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+}
+.tour-timer-badge {
+  background: var(--accent-dim);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 6px 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.timer-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
+.timer-text {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: var(--accent);
+  letter-spacing: 1px;
+}
+.tour-progress-row {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+}
+.progress-pill {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border2);
+  transition: background 0.4s;
+}
+.progress-pill.done   { background: var(--accent); opacity: 0.55; }
+.progress-pill.active { background: var(--accent); }
+
+/* FLOOR PLAN */
+.floorplan-wrap { padding: 12px 16px 8px; flex-shrink: 0; }
+.floorplan-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+.floorplan {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 14px;
+  padding: 8px;
+  position: relative;
+  height: 158px;
+  overflow: hidden;
+}
+.fp-room {
+  position: absolute;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'DM Mono', monospace;
+  color: var(--text-muted);
+}
+.fp-room.visited  { background: rgba(184,224,48,0.08); border-color: rgba(184,224,48,0.25); color: var(--accent); }
+.fp-room.current  { background: rgba(184,224,48,0.16); border-color: var(--accent); color: var(--accent); box-shadow: 0 0 10px rgba(184,224,48,0.12); }
+.fp-room.unvisited { background: rgba(255,255,255,0.02); }
+.fp-room-icon { font-size: 13px; }
+.fp-room-name { font-size: 7px; letter-spacing: 0.3px; text-align: center; line-height: 1.2; }
+.fp-r1a { top:8px; left:8px;   width:74px; height:58px; }
+.fp-r1b { top:8px; left:88px;  width:68px; height:58px; }
+.fp-r1c { top:8px; left:162px; width:62px; height:58px; }
+.fp-r1d { top:8px; left:230px; width:74px; height:58px; }
+.fp-r2a { top:74px; left:8px;   width:74px; height:58px; }
+.fp-r2b { top:74px; left:88px;  width:62px; height:58px; }
+.fp-r2c { top:74px; left:156px; width:68px; height:58px; }
+.fp-r2d { top:74px; left:230px; width:74px; height:58px; }
+.fp-dot {
+  position: absolute;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--warm);
+  box-shadow: 0 0 8px rgba(184,224,48,0.7);
+  transition: top 0.5s cubic-bezier(0.4,0,0.2,1), left 0.5s cubic-bezier(0.4,0,0.2,1);
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* NUDGE */
+.chloe-nudge {
+  margin: 0 16px 8px;
+  background: rgba(184,224,48,0.06);
+  border: 1px solid rgba(184,224,48,0.14);
+  border-radius: 13px;
+  padding: 10px 13px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.nudge-avatar {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  background: var(--accent-dim);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.nudge-msg { font-size: 12px; color: var(--text-dim); line-height: 1.5; }
+.nudge-msg strong { color: var(--text); }
+.nudge-action { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--accent); letter-spacing: 1px; margin-top: 4px; }
+
+/* ROOM LIST */
+.room-list {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: none;
+  padding: 0 16px 8px;
+}
+.room-list::-webkit-scrollbar { display: none; }
+.room-list-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 8px 0 10px;
+}
+.room-item {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 14px;
+  padding: 12px 13px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 7px;
+}
+.room-item.visited { border-color: rgba(184,224,48,0.18); background: rgba(184,224,48,0.03); }
+.room-item.current { border-color: var(--accent); background: rgba(184,224,48,0.07); box-shadow: 0 0 16px rgba(184,224,48,0.06); }
+.room-item-bar { position: absolute; left:0; top:0; bottom:0; width:3px; border-radius: 2px 0 0 2px; }
+.room-item-icon {
+  width: 38px; height: 38px;
+  border-radius: 11px;
+  background: var(--warm2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.room-item.visited .room-item-icon { background: var(--accent-dim); }
+.room-item.current .room-item-icon { background: rgba(184,224,48,0.13); }
+.room-item-info { flex: 1; }
+.room-item-name { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+.room-item-status { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); }
+.room-item.visited .room-item-status { color: rgba(184,224,48,0.7); }
+.room-item.current .room-item-status { color: var(--accent); }
+.room-item-right { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; flex-shrink: 0; }
+.room-dwell { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text-dim); }
+.room-dwell.live { color: var(--accent); }
+.interest-dot { width: 8px; height: 8px; border-radius: 50%; }
+.dot-high   { background: var(--green); }
+.dot-medium { background: var(--amber); }
+.dot-low    { background: var(--border2); }
+.dot-live   { background: var(--accent); animation: pulse 1.5s infinite; }
+
+/* BOTTOM */
+.tour-bottom {
+  padding: 12px 16px 24px;
+  border-top: 1px solid var(--border2);
+  flex-shrink: 0;
+  display: flex;
+  gap: 10px;
+}
+.btn-chloe {
+  flex: 1;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 13px;
+  padding: 13px;
+  font-family: 'Fraunces', serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn-next {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 13px;
+  padding: 13px 16px;
+  color: var(--text-dim);
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.btn-next:hover { border-color: rgba(184,224,48,0.25); color: var(--text); }
+
+/* DETAIL OVERLAY */
+.detail-backdrop {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 49;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.detail-backdrop.open { opacity: 1; pointer-events: all; }
+.room-detail {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: var(--surface);
+  border-radius: 22px 22px 0 0;
+  border-top: 1px solid var(--border2);
+  padding: 0 20px 32px;
+  transform: translateY(100%);
+  transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+  z-index: 50;
+}
+.room-detail.open { transform: translateY(0); }
+.detail-handle { width: 36px; height: 4px; background: var(--border2); border-radius: 2px; margin: 12px auto 16px; }
+.detail-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.detail-icon { width: 46px; height: 46px; border-radius: 13px; background: var(--accent-dim); display: flex; align-items: center; justify-content: center; font-size: 22px; }
+.detail-title { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 700; color: var(--text); }
+.detail-sub { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--accent); letter-spacing: 1px; margin-top: 2px; }
+.detail-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.dstat { background: var(--warm2); border-radius: 10px; padding: 10px; text-align: center; }
+.dstat-val { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; color: var(--accent); }
+.dstat-lbl { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--text-muted); letter-spacing: 1px; margin-top: 2px; }
+.detail-insight { background: rgba(184,224,48,0.06); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; font-size: 13px; color: var(--text-dim); line-height: 1.6; }
+.detail-insight strong { color: var(--text); }
+.detail-close { width: 100%; background: var(--warm2); border: 1px solid var(--border2); border-radius: 12px; padding: 13px; color: var(--text-dim); font-size: 14px; cursor: pointer; }
+
+/* ── CELEBRATION SCREEN ── */
+.celebrate {
+  position: absolute;
+  inset: 0;
+  background: var(--bg);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 28px 24px 36px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  overflow: hidden;
+}
+.celebrate.show { opacity: 1; pointer-events: all; }
+
+#confetti-canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.cel-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 0;
+}
+
+/* Ring */
+.cel-ring-wrap {
+  width: 148px; height: 148px;
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 18px;
+}
+.cel-ring-wrap svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+.cel-ring-bg { fill:none; stroke: rgba(255,255,255,0.06); stroke-width:9; }
+.cel-ring-fg {
+  fill:none; stroke: var(--accent); stroke-width:9; stroke-linecap:round;
+  stroke-dasharray: 377;
+  stroke-dashoffset: 377;
+  filter: drop-shadow(0 0 6px var(--accent));
+  transition: stroke-dashoffset 1.4s cubic-bezier(0.4,0,0.2,1) 0.4s;
+}
+.celebrate.animate .cel-ring-fg { stroke-dashoffset: 49; }
+
+.cel-score-num {
+  font-family: 'Fraunces', serif;
+  font-size: 48px;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 0.45s ease 1s, transform 0.45s cubic-bezier(0.34,1.56,0.64,1) 1s;
+}
+.celebrate.animate .cel-score-num { opacity: 1; transform: scale(1); }
+
+.cel-score-lbl {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-top: 3px;
+  text-align: center;
+}
+
+/* Text */
+.cel-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+  opacity: 0;
+  transition: opacity 0.4s ease 1.5s;
+}
+.celebrate.animate .cel-eyebrow { opacity: 0.8; }
+
+.cel-headline {
+  font-family: 'Fraunces', serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text);
+  text-align: center;
+  line-height: 1.2;
+  margin-bottom: 8px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.45s ease 1.65s, transform 0.45s ease 1.65s;
+}
+.celebrate.animate .cel-headline { opacity: 1; transform: translateY(0); }
+
+.cel-verdict {
+  font-size: 13px;
+  color: var(--text-dim);
+  text-align: center;
+  line-height: 1.6;
+  max-width: 276px;
+  margin-bottom: 24px;
+  opacity: 0;
+  transition: opacity 0.4s ease 1.9s;
+}
+.celebrate.animate .cel-verdict { opacity: 1; }
+
+/* Next cards */
+.cel-cards {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.45s ease 2.1s, transform 0.45s ease 2.1s;
+}
+.celebrate.animate .cel-cards { opacity: 1; transform: translateY(0); }
+
+.cel-card {
+  border-radius: 13px;
+  padding: 12px 15px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.cel-card:active { opacity: 0.85; }
+.cel-card-primary { background: var(--accent); }
+.cel-card-secondary { background: var(--surface); border: 1px solid var(--border2); }
+
+.cel-card-icon {
+  width: 34px; height: 34px;
+  border-radius: 9px;
+  background: rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.cel-card-secondary .cel-card-icon { background: var(--warm2); }
+
+.cel-card-title { font-size: 13px; font-weight: 600; color: var(--bg); }
+.cel-card-sub   { font-size: 11px; color: rgba(10,11,7,0.55); margin-top: 1px; }
+.cel-card-secondary .cel-card-title { color: var(--text); }
+.cel-card-secondary .cel-card-sub   { color: var(--text-muted); }
+.cel-card-arrow { margin-left: auto; font-size: 15px; color: rgba(10,11,7,0.4); flex-shrink: 0; }
+.cel-card-secondary .cel-card-arrow { color: var(--text-muted); }
+
+.cel-back {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-top: 14px;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.4s ease 2.5s;
+}
+.celebrate.animate .cel-back { opacity: 0.45; }
+.cel-back:hover { opacity: 0.8 !important; }
+</style>
+</head>
+<body>
+
+<div class="outer-label">ChloeIQ · Tour Route · 2847 Magnolia Drive</div>
+
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status-bar">
+    <span>9:41</span>
+    <span>●●● 5G 🔋</span>
+  </div>
+
+  <!-- HEADER -->
+  <div class="tour-header">
+    <div class="tour-header-top">
+      <div>
+        <div class="tour-eyebrow">Chloe Tour · Live</div>
+        <div class="tour-address">2847 Magnolia Drive</div>
+      </div>
+      <div class="tour-timer-badge">
+        <div class="timer-dot"></div>
+        <div class="timer-text" id="timer-display">14:22</div>
+      </div>
+    </div>
+    <div class="tour-progress-row" id="progress-pills"></div>
+  </div>
+
+  <!-- FLOOR PLAN -->
+  <div class="floorplan-wrap">
+    <div class="floorplan-label">Floor Plan · Tap any room</div>
+    <div class="floorplan">
+      <div class="fp-room fp-r1a" id="fp-kitchen"  onclick="travelTo('kitchen')"><div class="fp-room-icon">🍳</div><div class="fp-room-name">Kitchen</div></div>
+      <div class="fp-room fp-r1b" id="fp-living"   onclick="travelTo('living')"><div class="fp-room-icon">🛋️</div><div class="fp-room-name">Living</div></div>
+      <div class="fp-room fp-r1c" id="fp-dining"   onclick="travelTo('dining')"><div class="fp-room-icon">🍽️</div><div class="fp-room-name">Dining</div></div>
+      <div class="fp-room fp-r1d" id="fp-backyard" onclick="travelTo('backyard')"><div class="fp-room-icon">🌿</div><div class="fp-room-name">Yard</div></div>
+      <div class="fp-room fp-r2a" id="fp-primary"  onclick="travelTo('primary')"><div class="fp-room-icon">🛁</div><div class="fp-room-name">Primary</div></div>
+      <div class="fp-room fp-r2b" id="fp-bed2"     onclick="travelTo('bed2')"><div class="fp-room-icon">🛏️</div><div class="fp-room-name">Bed 2</div></div>
+      <div class="fp-room fp-r2c" id="fp-office"   onclick="travelTo('office')"><div class="fp-room-icon">💼</div><div class="fp-room-name">Office</div></div>
+      <div class="fp-room fp-r2d" id="fp-outdoor"  onclick="travelTo('outdoor')"><div class="fp-room-icon">🏊</div><div class="fp-room-name">Pool</div></div>
+      <div class="fp-dot" id="fp-dot"></div>
+    </div>
+  </div>
+
+  <!-- NUDGE -->
+  <div class="chloe-nudge" onclick="cycleNudge()">
+    <div class="nudge-avatar">✨</div>
+    <div style="flex:1;">
+      <div class="nudge-msg" id="nudge-msg"><strong>You're in the Living Room.</strong> The 12-foot volume ceilings are a strong Refined Modern signal — exactly what your StyleDNA flagged.</div>
+      <div class="nudge-action">Tap to cycle tips →</div>
+    </div>
+  </div>
+
+  <!-- ROOM LIST -->
+  <div class="room-list">
+    <div class="room-list-label" id="list-label">Tour Route · 8 rooms</div>
+    <div id="room-list-items"></div>
+  </div>
+
+  <!-- BOTTOM -->
+  <div class="tour-bottom">
+    <button class="btn-chloe">✨ Ask Chloe</button>
+    <button class="btn-next" onclick="advanceRoom()">Next Room →</button>
+  </div>
+
+  <!-- DETAIL OVERLAY -->
+  <div class="detail-backdrop" id="detail-backdrop" onclick="closeDetail()"></div>
+  <div class="room-detail" id="room-detail">
+    <div class="detail-handle"></div>
+    <div class="detail-header">
+      <div class="detail-icon" id="d-icon">🍳</div>
+      <div>
+        <div class="detail-title" id="d-title">Kitchen</div>
+        <div class="detail-sub"   id="d-sub">HIGH INTEREST · 14 MIN</div>
+      </div>
+    </div>
+    <div class="detail-stats">
+      <div class="dstat"><div class="dstat-val" id="d-time">14m</div><div class="dstat-lbl">Dwell</div></div>
+      <div class="dstat"><div class="dstat-val" id="d-match">95%</div><div class="dstat-lbl">DNA Match</div></div>
+      <div class="dstat"><div class="dstat-val" id="d-q">2</div><div class="dstat-lbl">Questions</div></div>
+    </div>
+    <div class="detail-insight" id="d-insight"><strong>Chloe's read:</strong> Loading...</div>
+    <button class="detail-close" onclick="closeDetail()">Close ↓</button>
+  </div>
+
+  <!-- CELEBRATION -->
+  <div class="celebrate" id="celebrate">
+    <canvas id="confetti-canvas"></canvas>
+    <div class="cel-inner">
+      <div class="cel-ring-wrap">
+        <svg viewBox="0 0 148 148" xmlns="http://www.w3.org/2000/svg">
+          <circle class="cel-ring-bg" cx="74" cy="74" r="60"/>
+          <circle class="cel-ring-fg" id="cel-ring" cx="74" cy="74" r="60"/>
+        </svg>
+        <div style="text-align:center;">
+          <div class="cel-score-num">87%</div>
+          <div class="cel-score-lbl">Match Score</div>
+        </div>
+      </div>
+      <div class="cel-eyebrow">Tour Complete · All 8 Rooms Visited</div>
+      <div class="cel-headline">Strong match,<br><em style="color:var(--accent);font-style:italic;">Jordan.</em></div>
+      <div class="cel-verdict">Your Refined Modern profile is highly activated here. The kitchen and primary suite are the two strongest signals of the tour.</div>
+      <div class="cel-cards">
+        <div class="cel-card cel-card-primary">
+          <div class="cel-card-icon">🎨</div>
+          <div style="flex:1;">
+            <div class="cel-card-title">Explore VisionMatch</div>
+            <div class="cel-card-sub">See every room in your style</div>
+          </div>
+          <div class="cel-card-arrow">→</div>
+        </div>
+        <div class="cel-card cel-card-secondary">
+          <div class="cel-card-icon">📅</div>
+          <div style="flex:1;">
+            <div class="cel-card-title">Schedule a Private Showing</div>
+            <div class="cel-card-sub">With Marcus Rivera · Gold Tier</div>
+          </div>
+          <div class="cel-card-arrow">→</div>
+        </div>
+        <div class="cel-card cel-card-secondary">
+          <div class="cel-card-icon">✨</div>
+          <div style="flex:1;">
+            <div class="cel-card-title">Ask Chloe Anything</div>
+            <div class="cel-card-sub">Full property Q&A now unlocked</div>
+          </div>
+          <div class="cel-card-arrow">→</div>
+        </div>
+      </div>
+      <div class="cel-back" onclick="hideCelebration()">← Back to tour</div>
+    </div>
+  </div>
+
+</div><!-- end phone -->
+
+<script>
+// ── THEME ──
+(function(){
+  const p=new URLSearchParams(window.location.search),root=document.documentElement;
+  const h=k=>p.get(k)?'#'+p.get(k):null;
+  const sv=(k,v)=>v&&root.style.setProperty(k,v);
+  const bg=h('bg'),ac=h('accent'),tx=h('text'),sf=h('surface');
+  sv('--bg',bg); sv('--accent',ac); sv('--text',tx); sv('--surface',sf);
+  if(ac){const r=parseInt(ac.slice(1,3),16),g=parseInt(ac.slice(3,5),16),b=parseInt(ac.slice(5,7),16);
+    root.style.setProperty('--accent-dim',`rgba(${r},${g},${b},0.10)`);
+    root.style.setProperty('--border',`rgba(${r},${g},${b},0.12)`);}
+  if(tx){const r=parseInt(tx.slice(1,3),16),g=parseInt(tx.slice(3,5),16),b=parseInt(tx.slice(5,7),16);
+    root.style.setProperty('--text-dim',`rgba(${r},${g},${b},0.55)`);
+    root.style.setProperty('--text-muted',`rgba(${r},${g},${b},0.32)`);}
+  if(bg){root.style.setProperty('--warm',bg);root.style.setProperty('--warm2',bg);}
+  const font=p.get('font')?decodeURIComponent(p.get('font')):null;
+  if(font){const l=document.createElement('link');l.rel='stylesheet';
+    l.href=`https://fonts.googleapis.com/css2?family=${font.replace(/ /g,'+')}:wght@400;600;700&display=swap`;
+    document.head.appendChild(l);
+    l.onload=()=>document.querySelectorAll('.tour-address,.detail-title,.btn-chloe,.cel-headline').forEach(e=>e.style.fontFamily=`'${font}',serif`);}
+})();
+
+// ── DATA ──
+const ROOMS=[
+  {key:'kitchen', icon:'🍳',name:'Kitchen',        fpId:'fp-kitchen', fpPos:{top:30,left:37},  visited:true,  interest:'high',   dwell:'14 min'},
+  {key:'living',  icon:'🛋️',name:'Living Room',    fpId:'fp-living',  fpPos:{top:30,left:118}, visited:true,  interest:'active', dwell:'live'},
+  {key:'primary', icon:'🛁',name:'Primary Suite',  fpId:'fp-primary', fpPos:{top:100,left:37}, visited:true,  interest:'high',   dwell:'11 min'},
+  {key:'dining',  icon:'🍽️',name:'Dining Room',    fpId:'fp-dining',  fpPos:{top:30,left:190}, visited:false, interest:'none',   dwell:'—'},
+  {key:'backyard',icon:'🌿',name:'Backyard & Pool', fpId:'fp-backyard',fpPos:{top:30,left:262}, visited:false, interest:'none',   dwell:'—'},
+  {key:'office',  icon:'💼',name:'Home Office',    fpId:'fp-office',  fpPos:{top:100,left:187},visited:false, interest:'none',   dwell:'—'},
+  {key:'bed2',    icon:'🛏️',name:'Bedroom 2 & 3', fpId:'fp-bed2',    fpPos:{top:100,left:115},visited:false, interest:'none',   dwell:'—'},
+  {key:'outdoor', icon:'🏊',name:'Pool Area',      fpId:'fp-outdoor', fpPos:{top:100,left:262},visited:false, interest:'none',   dwell:'—'},
+];
+const DETAILS={
+  kitchen: {sub:'HIGH INTEREST · 14 MIN', time:'14m',  match:'95%',q:'2',note:"Your 14-minute dwell is the strongest signal of the tour. Slab cabinetry and Wolf range align directly with your Refined Modern profile."},
+  living:  {sub:'CURRENT ROOM · LIVE',    time:'Live', match:'82%',q:'0',note:"Volume ceilings hit 12 feet — a strong Refined Modern signal. The unlacquered brass fireplace surround matches your material preferences exactly."},
+  primary: {sub:'HIGH INTEREST · 11 MIN', time:'11m',  match:'88%',q:'1',note:"Freestanding soaking tub, radiant floors, steam shower. Your quiz said 'luxury hotel' — this primary delivers exactly that."},
+  dining:  {sub:'NOT YET VISITED',        time:'—',    match:'74%',q:'0',note:"Butler's pantry adjacent adds hidden storage — high value for the entertainer lifestyle your quiz suggested."},
+  backyard:{sub:'NOT YET VISITED',        time:'—',    match:'84%',q:'0',note:"Southwest-facing — afternoon sun on the pool from 2pm until sunset. Covered lanai is 800 sq ft with built-in grill and fireplace."},
+  office:  {sub:'NOT YET VISITED',        time:'—',    match:'70%',q:'0',note:"Dedicated office with built-ins and separate entrance. Worth visiting if WFH is on your priority list."},
+  bed2:    {sub:'NOT YET VISITED',        time:'—',    match:'61%',q:'0',note:"Both secondary bedrooms have walk-in closets and share a Jack-and-Jill bath. Relevant if school district matters."},
+  outdoor: {sub:'NOT YET VISITED',        time:'—',    match:'80%',q:'0',note:"Heated pool with spa and travertine decking. The outdoor kitchen has a built-in Lynx grill."},
+};
+
+// ── STATE ──
+let currentKey='living';
+let totalSec=14*60+22, liveSec=6*60+14;
+let celebrated=false;
+function pad(n){return String(n).padStart(2,'0');}
+
+// Timer
+setInterval(()=>{
+  totalSec++; liveSec++;
+  document.getElementById('timer-display').textContent=`${pad(Math.floor(totalSec/60))}:${pad(totalSec%60)}`;
+  const el=document.getElementById('live-timer');
+  if(el) el.textContent=`${Math.floor(liveSec/60)}:${pad(liveSec%60)}`;
+},1000);
+
+// ── RENDER ──
+function render(){
+  const total=ROOMS.length;
+  const vCount=ROOMS.filter(r=>r.visited).length;
+  const nextUp=ROOMS.find(r=>!r.visited);
+
+  // Pills
+  const pillsEl=document.getElementById('progress-pills');
+  pillsEl.innerHTML='';
+  ROOMS.forEach(r=>{
+    const p=document.createElement('div');
+    p.className='progress-pill'+(r.key===currentKey?' active':r.visited?' done':'');
+    pillsEl.appendChild(p);
+  });
+
+  // Floor plan
+  ROOMS.forEach(r=>{
+    const el=document.getElementById(r.fpId);
+    if(!el)return;
+    el.className=el.className.replace(/\s*(current|visited|unvisited)/g,'');
+    el.classList.add(r.key===currentKey?'current':r.visited?'visited':'unvisited');
+  });
+
+  // Dot
+  const cur=ROOMS.find(r=>r.key===currentKey);
+  if(cur){
+    const dot=document.getElementById('fp-dot');
+    dot.style.top=(cur.fpPos.top-5)+'px';
+    dot.style.left=(cur.fpPos.left-5)+'px';
+  }
+
+  // Label
+  document.getElementById('list-label').textContent=`Tour Route · ${total} rooms · ${vCount} visited`;
+
+  // List
+  document.getElementById('room-list-items').innerHTML=ROOMS.map(r=>{
+    const isCur=r.key===currentKey;
+    const isNext=!r.visited&&r.key===nextUp?.key;
+    const cls=isCur?'current':r.visited?'visited':'unvisited';
+    const bar=isCur?'var(--accent)':r.visited?'var(--green)':'var(--border2)';
+    const dot=isCur?'dot-live':r.interest==='high'?'dot-high':r.visited?'dot-medium':'dot-low';
+    const status=isCur?'● You are here':r.visited?`✓ Visited · ${r.interest==='high'?'High interest':'Noted'}`:isNext?'Next up →':'Not yet visited';
+    const timeHtml=isCur?`<div class="room-dwell live" id="live-timer">${Math.floor(liveSec/60)}:${pad(liveSec%60)}</div>`:`<div class="room-dwell">${r.dwell}</div>`;
+    return `<div class="room-item ${cls}" onclick="travelTo('${r.key}')">
+      <div class="room-item-bar" style="background:${bar}"></div>
+      <div class="room-item-icon">${r.icon}</div>
+      <div class="room-item-info"><div class="room-item-name">${r.name}</div><div class="room-item-status">${status}</div></div>
+      <div class="room-item-right">${timeHtml}<div class="interest-dot ${dot}"></div></div>
+    </div>`;
+  }).join('');
+}
+
+// ── TRAVEL ──
+function travelTo(key){
+  const room=ROOMS.find(r=>r.key===key);
+  if(!room)return;
+  room.visited=true;
+  currentKey=key;
+  render();
+  openDetail(key);
+  // Check if all rooms visited
+  if(!celebrated && ROOMS.every(r=>r.visited)){
+    celebrated=true;
+    setTimeout(()=>{closeDetail(); setTimeout(showCelebration,400);},900);
+  }
+}
+
+// ── ADVANCE ──
+function advanceRoom(){
+  const idx=ROOMS.findIndex(r=>r.key===currentKey);
+  if(idx<ROOMS.length-1) travelTo(ROOMS[idx+1].key);
+}
+
+// ── DETAIL ──
+function openDetail(key){
+  const r=ROOMS.find(r=>r.key===key);
+  const d=DETAILS[key];
+  if(!r||!d)return;
+  document.getElementById('d-icon').textContent=r.icon;
+  document.getElementById('d-title').textContent=r.name;
+  document.getElementById('d-sub').textContent=d.sub;
+  document.getElementById('d-time').textContent=d.time;
+  document.getElementById('d-match').textContent=d.match;
+  document.getElementById('d-q').textContent=d.q;
+  document.getElementById('d-insight').innerHTML=`<strong>Chloe's read:</strong> ${d.note}`;
+  document.getElementById('room-detail').classList.add('open');
+  document.getElementById('detail-backdrop').classList.add('open');
+}
+function closeDetail(){
+  document.getElementById('room-detail').classList.remove('open');
+  document.getElementById('detail-backdrop').classList.remove('open');
+}
+
+// ── CELEBRATION ──
+function showCelebration(){
+  const cel=document.getElementById('celebrate');
+  cel.classList.add('show');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>cel.classList.add('animate')));
+  runConfetti();
+}
+function hideCelebration(){
+  const cel=document.getElementById('celebrate');
+  cel.classList.remove('show','animate');
+}
+
+// ── CONFETTI ──
+function runConfetti(){
+  const canvas=document.getElementById('confetti-canvas');
+  const ctx=canvas.getContext('2d');
+  const phone=document.querySelector('.phone');
+  canvas.width=phone.offsetWidth;
+  canvas.height=phone.offsetHeight;
+  const colors=['#B8E030','#D4F040','#E8FF70','#FFFFFF','rgba(184,224,48,0.7)'];
+  const pieces=Array.from({length:90},()=>({
+    x:Math.random()*canvas.width,
+    y:-20-Math.random()*120,
+    r:2.5+Math.random()*4.5,
+    vx:(Math.random()-0.5)*1.5,
+    vy:1.8+Math.random()*2.2,
+    tilt:Math.random()*10-5,
+    tiltV:(Math.random()*0.08+0.04)*(Math.random()>0.5?1:-1),
+    color:colors[Math.floor(Math.random()*colors.length)],
+    rect:Math.random()>0.45,
+  }));
+  let frame=0;
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    frame++;
+    const fade=frame>140?Math.max(0,1-(frame-140)/60):1;
+    pieces.forEach(p=>{
+      p.x+=p.vx+Math.sin(frame*0.015+p.r)*0.4;
+      p.y+=p.vy;
+      p.tilt+=p.tiltV;
+      if(p.y>canvas.height+10&&frame<140){p.y=-10;p.x=Math.random()*canvas.width;}
+      ctx.save();
+      ctx.globalAlpha=fade;
+      ctx.fillStyle=p.color;
+      ctx.translate(p.x,p.y);
+      ctx.rotate(p.tilt*Math.PI/180);
+      if(p.rect){ctx.fillRect(-p.r,-p.r/2,p.r*2,p.r);}
+      else{ctx.beginPath();ctx.arc(0,0,p.r,0,Math.PI*2);ctx.fill();}
+      ctx.restore();
+    });
+    if(frame<200)requestAnimationFrame(draw);
+    else ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+  draw();
+}
+
+// ── NUDGE ──
+const nudges=[
+  "<strong>You're in the Living Room.</strong> The 12-foot volume ceilings are a strong Refined Modern signal.",
+  "<strong>Tip:</strong> Haven't visited the backyard yet — the southwest pool view is one of your strongest match points.",
+  "<strong>Kitchen signal strong.</strong> 14 minutes there — that's 2× your tour average.",
+  "<strong>Chloe spotted:</strong> The unlacquered brass hardware matches the finish you picked in your StyleDNA quiz."
+];
+let nudgeIdx=0;
+function cycleNudge(){
+  nudgeIdx=(nudgeIdx+1)%nudges.length;
+  document.getElementById('nudge-msg').innerHTML=nudges[nudgeIdx];
+}
+
+// ── INIT ──
+render();
+</script>
+</body>
+</html>

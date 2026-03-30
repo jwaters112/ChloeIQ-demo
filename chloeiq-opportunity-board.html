@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ChloeIQ — Opportunity Board</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,300;1,600&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0A0B07;
+  --accent: #B8E030;
+  --accent-dim: rgba(184,224,48,0.10);
+  --surface: #13160D;
+  --border: rgba(184,224,48,0.12);
+  --border2: rgba(255,255,255,0.07);
+  --text: #EEF0E5;
+  --text-dim: rgba(238,240,229,0.55);
+  --text-muted: rgba(238,240,229,0.32);
+  --warm: #1A1C12;
+  --warm2: #222418;
+  --green: #4ADE80;
+  --amber: #FBBF24;
+  --red: #F87171;
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body {
+  background: #0D0D0D;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Sans', sans-serif;
+  padding: 24px 16px;
+  gap: 20px;
+}
+.outer-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--accent); opacity: 0.6;
+}
+.phone {
+  width: 375px; height: 812px;
+  background: var(--bg);
+  border-radius: 44px; overflow: hidden; position: relative;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.07), 0 0 0 2px rgba(0,0,0,0.6), 0 32px 64px rgba(0,0,0,0.7);
+  display: flex; flex-direction: column;
+}
+.notch { position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:30px;background:#080808;border-radius:0 0 20px 20px;z-index:20; }
+.status-bar { display:flex;justify-content:space-between;align-items:center;padding:18px 28px 0;font-family:'DM Mono',monospace;font-size:12px;color:rgba(238,240,229,0.6);flex-shrink:0;z-index:10;background:var(--bg);position:relative; }
+
+/* SCREENS */
+.screen { flex:1;display:none;flex-direction:column;overflow:hidden; }
+.screen.active { display:flex; }
+
+/* ══ SHARED HEADER ══ */
+.pg-hdr { padding:14px 20px 12px;border-bottom:1px solid var(--border2);flex-shrink:0; }
+.pg-hdr-row { display:flex;align-items:center;justify-content:space-between;margin-bottom:10px; }
+.pg-eyebrow { font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:3px; }
+.pg-title { font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--text); }
+
+/* VIEW TOGGLE */
+.view-toggle { display:flex;gap:1px;background:var(--border2);border-radius:10px;padding:2px; }
+.vt { padding:6px 14px;border-radius:8px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);cursor:pointer;transition:all 0.2s; }
+.vt.active { background:var(--surface);color:var(--accent); }
+
+/* FILTER ROW */
+.filter-row { display:flex;gap:6px;overflow-x:auto;scrollbar-width:none; }
+.filter-row::-webkit-scrollbar { display:none; }
+.filter-chip { padding:6px 14px;border-radius:100px;border:1px solid var(--border2);background:var(--surface);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text-muted);white-space:nowrap;cursor:pointer;transition:all 0.2s; }
+.filter-chip.active { background:var(--accent-dim);border-color:rgba(184,224,48,0.3);color:var(--accent); }
+
+/* SCROLL */
+.pg-scroll { flex:1;overflow-y:auto;scrollbar-width:none; }
+.pg-scroll::-webkit-scrollbar { display:none; }
+
+/* ══ MAP VIEW ══ */
+.map-container {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  background: #0C1008;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Fake map grid */
+.map-bg {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(184,224,48,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(184,224,48,0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+/* Roads */
+.map-roads {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.road-h {
+  position: absolute;
+  left: 0; right: 0;
+  height: 3px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 2px;
+}
+.road-v {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 3px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 2px;
+}
+.road-major {
+  background: rgba(255,255,255,0.10);
+  height: 5px;
+}
+.road-v.major {
+  background: rgba(255,255,255,0.10);
+  width: 5px;
+}
+
+/* Map labels */
+.map-street-label {
+  position: absolute;
+  font-family: 'DM Mono', monospace;
+  font-size: 8px;
+  color: rgba(255,255,255,0.18);
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+/* Map blocks / parcels */
+.map-block {
+  position: absolute;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(255,255,255,0.04);
+}
+
+/* PIN STYLES */
+.map-pin {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  cursor: pointer;
+  z-index: 10;
+  transition: transform 0.2s;
+  padding-bottom: 10px; /* extend touch target over the tail */
+  -webkit-tap-highlight-color: transparent;
+}
+.map-pin:hover { transform: translate(-50%, -100%) scale(1.1); }
+.map-pin.active-pin { transform: translate(-50%, -100%) scale(1.15); z-index: 20; }
+
+.pin-bubble {
+  background: var(--accent);
+  color: var(--bg);
+  border-radius: 10px;
+  padding: 5px 10px;
+  font-family: 'Fraunces', serif;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+  position: relative;
+}
+.pin-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -6px; left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--accent);
+  border-bottom: none;
+}
+.pin-bubble.high { background: var(--accent); }
+.pin-bubble.med  { background: var(--amber); color: #1A1000; }
+.pin-bubble.low  { background: rgba(255,255,255,0.2); color: var(--text); }
+.pin-bubble.med::after  { border-top-color: var(--amber); }
+.pin-bubble.low::after  { border-top-color: rgba(255,255,255,0.2); }
+.pin-bubble.applied { background: var(--green); color: #fff; }
+.pin-bubble.applied::after { border-top-color: var(--green); }
+
+/* My location dot */
+.my-location {
+  position: absolute;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: #4A9EFF;
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 6px rgba(74,158,255,0.2), 0 4px 8px rgba(0,0,0,0.4);
+  z-index: 15;
+  transform: translate(-50%,-50%);
+}
+
+/* Map bottom cards — peek strip */
+.map-bottom {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 0 16px 16px;
+  z-index: 30;
+  pointer-events: none;
+}
+.map-card-strip {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  pointer-events: all;
+  padding-bottom: 4px;
+}
+.map-card-strip::-webkit-scrollbar { display: none; }
+.map-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 14px;
+  padding: 12px 14px;
+  min-width: 200px;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+}
+.map-card.selected { border-color: var(--accent); background: rgba(184,224,48,0.05); }
+.mc-addr { font-family: 'Fraunces', serif; font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+.mc-meta { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); margin-bottom: 8px; }
+.mc-stats { display: flex; gap: 10px; }
+.mc-stat { text-align: center; }
+.mc-stat-val { font-family: 'Fraunces', serif; font-size: 15px; font-weight: 700; color: var(--accent); }
+.mc-stat-lbl { font-family: 'DM Mono', monospace; font-size: 8px; color: var(--text-muted); letter-spacing: 1px; text-transform: uppercase; }
+
+/* Map controls */
+.map-controls {
+  position: absolute;
+  top: 12px; right: 12px;
+  display: flex; flex-direction: column; gap: 6px;
+  z-index: 25;
+}
+.map-ctrl-btn {
+  width: 36px; height: 36px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+  transition: all 0.2s;
+}
+.map-ctrl-btn:hover { border-color: rgba(184,224,48,0.25); }
+
+/* Legend */
+.map-legend {
+  position: absolute;
+  top: 12px; left: 12px;
+  background: rgba(19,22,13,0.9);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 8px 10px;
+  z-index: 25;
+}
+.legend-row { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+.legend-row:last-child { margin-bottom: 0; }
+.legend-dot { width: 8px; height: 8px; border-radius: 3px; flex-shrink: 0; }
+.legend-lbl { font-family: 'DM Mono', monospace; font-size: 8px; color: var(--text-muted); letter-spacing: 0.5px; }
+
+/* ══ LIST VIEW ══ */
+.list-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  padding: 16px;
+  margin: 0 16px 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.list-card:hover { border-color: rgba(184,224,48,0.2); }
+.list-card.applied { border-color: rgba(184,224,48,0.3); background: rgba(184,224,48,0.03); }
+.lc-top { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+.lc-icon { width: 42px; height: 42px; border-radius: 12px; background: var(--warm2); display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.lc-info { flex: 1; }
+.lc-addr { font-family: 'Fraunces', serif; font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+.lc-meta { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); }
+.lc-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.lc-price { font-family: 'Fraunces', serif; font-size: 15px; font-weight: 700; color: var(--text); }
+.lc-demand { font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 100px; }
+.lc-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 10px; }
+.lc-stat { background: var(--warm2); border-radius: 8px; padding: 8px; text-align: center; }
+.lc-stat-val { font-family: 'Fraunces', serif; font-size: 15px; font-weight: 700; color: var(--accent); }
+.lc-stat-lbl { font-family: 'DM Mono', monospace; font-size: 8px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-muted); margin-top: 2px; }
+.lc-actions { display: flex; gap: 8px; }
+.btn-apply-list { flex: 1; background: var(--accent); color: var(--bg); border: none; border-radius: 10px; padding: 11px; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; cursor: pointer; }
+.btn-apply-list.applied { background: var(--green); color: #fff; pointer-events: none; }
+.btn-details { background: var(--warm2); border: 1px solid var(--border2); border-radius: 10px; padding: 11px 14px; color: var(--text-muted); font-family: 'DM Mono', monospace; font-size: 11px; cursor: pointer; }
+
+/* BOTTOM NAV */
+.bottom-nav { display:flex;border-top:1px solid var(--border2);padding:10px 0 20px;background:var(--bg);flex-shrink:0; }
+.nav-item { flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0; }
+.nav-icon { font-size:20px; }
+.nav-label { font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.5px;color:var(--text-muted);text-transform:uppercase; }
+.nav-item.active .nav-label { color:var(--accent); }
+
+
+
+/* SCORE TIPS */
+.score-tip-row { display:flex;align-items:flex-start;gap:12px;background:var(--surface);border:1px solid var(--border2);border-radius:13px;padding:13px 14px; }
+.score-tip-icon { width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0; }
+.score-tip-body { flex:1; }
+.score-tip-title { font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px; }
+.score-tip-sub { font-size:11px;color:var(--text-muted);line-height:1.5; }
+
+/* ALERT ROWS */
+.alert-row {
+  display:flex;align-items:center;gap:12px;
+  background:var(--surface);border:1px solid var(--border2);
+  border-radius:13px;padding:13px 14px;margin-bottom:8px;
+  cursor:pointer;transition:all 0.2s;
+}
+.alert-row:hover { border-color:rgba(184,224,48,0.2); }
+.alert-icon { width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0; }
+.alert-info { flex:1; }
+.alert-title { font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px; }
+.alert-sub { font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted); }
+.alert-toggle { width:44px;height:26px;border-radius:13px;background:var(--border2);position:relative;cursor:pointer;transition:background 0.25s;flex-shrink:0; }
+.alert-toggle.on { background:var(--accent); }
+.alert-knob { position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform 0.25s; }
+.alert-toggle.on .alert-knob { transform:translateX(18px); }
+
+/* SCORE BREAKDOWN */
+.score-br-row { display:flex;align-items:center;padding:11px 16px;gap:12px;border-bottom:1px solid var(--border2); }
+.score-br-lbl { font-size:13px;color:var(--text);flex:1; }
+.score-br-track { width:80px;height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden; }
+.score-br-bar { height:100%;background:var(--accent);border-radius:2px; }
+.score-br-val { font-family:'DM Mono',monospace;font-size:12px;color:var(--accent);width:32px;text-align:right; }
+
+/* LB PEEK */
+.lb-peek-row { display:flex;align-items:center;padding:11px 16px;gap:12px;border-bottom:1px solid var(--border2); }
+.lb-peek-rank { font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:var(--text-muted);width:20px; }
+.lb-peek-name { font-size:13px;color:var(--text);flex:1; }
+.lb-peek-score { font-family:'DM Mono',monospace;font-size:12px;color:var(--text-dim); }
+
+/* SHEET */
+.sheet-backdrop { position:absolute;inset:0;background:rgba(0,0,0,0.65);z-index:49;opacity:0;pointer-events:none;transition:opacity 0.3s;backdrop-filter:blur(3px); }
+.sheet-backdrop.open { opacity:1;pointer-events:all; }
+.sheet { position:absolute;bottom:0;left:0;right:0;background:var(--surface);border-radius:22px 22px 0 0;border-top:1px solid var(--border2);padding:0 20px 32px;transform:translateY(100%);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);z-index:50;max-height:82%;overflow-y:auto;scrollbar-width:none; }
+.sheet::-webkit-scrollbar { display:none; }
+.sheet.open { transform:translateY(0); }
+.sheet-handle { width:36px;height:4px;background:var(--border2);border-radius:2px;margin:12px auto 16px; }
+</style>
+</head>
+<body>
+
+<div class="outer-label">ChloeIQ · Opportunity Board · Map View</div>
+
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status-bar"><span>9:41</span><span>●●● 5G 🔋</span></div>
+
+  <!-- ══ MAIN SCREEN ══ -->
+  <div class="screen active" id="s-main">
+    <div class="pg-hdr">
+      <div class="pg-hdr-row">
+        <div>
+          <div class="pg-eyebrow">DFW · 12 listings live</div>
+          <div class="pg-title">Opportunity Board</div>
+        </div>
+        <div class="view-toggle">
+          <div class="vt active" id="vt-map"  onclick="setView('map')">Map</div>
+          <div class="vt"        id="vt-list" onclick="setView('list')">List</div>
+        </div>
+      </div>
+      <div class="filter-row">
+        <div class="filter-chip active" onclick="setFilter(this,'all')">All</div>
+        <div class="filter-chip" onclick="setFilter(this,'high')">🔥 High Demand</div>
+        <div class="filter-chip" onclick="setFilter(this,'match')">Best Match</div>
+        <div class="filter-chip" onclick="setFilter(this,'weekend')">This Weekend</div>
+      </div>
+    </div>
+
+    <!-- MAP VIEW -->
+    <div id="map-view" style="flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative;">
+      <div class="map-container">
+        <!-- Grid -->
+        <div class="map-bg"></div>
+
+        <!-- Roads -->
+        <div class="map-roads">
+          <!-- Horizontals -->
+          <div class="road-h major" style="top:28%;"></div>
+          <div class="road-h major" style="top:55%;"></div>
+          <div class="road-h" style="top:15%;"></div>
+          <div class="road-h" style="top:42%;"></div>
+          <div class="road-h" style="top:70%;"></div>
+          <div class="road-h" style="top:85%;"></div>
+          <!-- Verticals -->
+          <div class="road-v major" style="left:30%;"></div>
+          <div class="road-v major" style="left:65%;"></div>
+          <div class="road-v" style="left:15%;"></div>
+          <div class="road-v" style="left:48%;"></div>
+          <div class="road-v" style="left:82%;"></div>
+        </div>
+
+        <!-- Street labels -->
+        <div class="map-street-label" style="top:26%;left:5%;">FM 2499</div>
+        <div class="map-street-label" style="top:53%;left:5%;">Cross Timbers Rd</div>
+        <div class="map-street-label" style="top:5%;left:28%;writing-mode:vertical-lr;transform:rotate(180deg);">Morriss Rd</div>
+        <div class="map-street-label" style="top:5%;left:63%;writing-mode:vertical-lr;transform:rotate(180deg);">Long Prairie Rd</div>
+
+        <!-- Blocks -->
+        <div class="map-block" style="top:8%;left:5%;width:22%;height:16%;"></div>
+        <div class="map-block" style="top:8%;left:33%;width:28%;height:16%;"></div>
+        <div class="map-block" style="top:8%;left:67%;width:28%;height:16%;"></div>
+        <div class="map-block" style="top:30%;left:5%;width:22%;height:20%;"></div>
+        <div class="map-block" style="top:30%;left:33%;width:28%;height:20%;"></div>
+        <div class="map-block" style="top:30%;left:67%;width:28%;height:20%;"></div>
+        <div class="map-block" style="top:57%;left:5%;width:22%;height:22%;"></div>
+        <div class="map-block" style="top:57%;left:33%;width:28%;height:22%;"></div>
+        <div class="map-block" style="top:57%;left:67%;width:28%;height:22%;"></div>
+
+        <!-- PINS -->
+        <div class="map-pin active-pin" id="pin-magnolia" style="top:22%;left:42%;" onclick="selectPin('magnolia')">
+          <div class="pin-bubble high">$1.3M</div>
+        </div>
+        <div class="map-pin" id="pin-elmwood" style="top:38%;left:18%;" onclick="selectPin('elmwood')">
+          <div class="pin-bubble high">$2.1M</div>
+        </div>
+        <div class="map-pin" id="pin-lakeside" style="top:18%;left:72%;" onclick="selectPin('lakeside')">
+          <div class="pin-bubble high">$1.6M</div>
+        </div>
+        <div class="map-pin" id="pin-cedar" style="top:50%;left:55%;" onclick="selectPin('cedar')">
+          <div class="pin-bubble med">$875K</div>
+        </div>
+        <div class="map-pin" id="pin-oak" style="top:62%;left:25%;" onclick="selectPin('oak')">
+          <div class="pin-bubble low">$690K</div>
+        </div>
+
+        <!-- My location -->
+        <div class="my-location" style="top:40%;left:48%;"></div>
+
+        <!-- Map controls -->
+        <div class="map-controls">
+          <div class="map-ctrl-btn" onclick="showToast('🎯','Recentering','Map recentered to your location in Flower Mound, TX.')">📍</div>
+          <div class="map-ctrl-btn" onclick="showToast('🔍','Zoom','Pinch to zoom or use +/− controls.')">+</div>
+          <div class="map-ctrl-btn">−</div>
+        </div>
+
+        <!-- Legend -->
+        <div class="map-legend">
+          <div class="legend-row"><div class="legend-dot" style="background:var(--accent);"></div><div class="legend-lbl">High demand</div></div>
+          <div class="legend-row"><div class="legend-dot" style="background:var(--amber);"></div><div class="legend-lbl">Medium</div></div>
+          <div class="legend-row"><div class="legend-dot" style="background:rgba(255,255,255,0.2);"></div><div class="legend-lbl">Lower</div></div>
+          <div class="legend-row"><div class="legend-dot" style="background:#4A9EFF;border-radius:50%;"></div><div class="legend-lbl">You</div></div>
+        </div>
+
+        <!-- Bottom card strip -->
+        <div class="map-bottom">
+          <div class="map-card-strip" id="map-cards">
+            <div class="map-card selected" id="mc-magnolia" onclick="scrollToCard('magnolia')">
+              <div class="mc-addr">2847 Magnolia Dr</div>
+              <div class="mc-meta">Flower Mound · Sun · 1–4pm</div>
+              <div class="mc-stats">
+                <div class="mc-stat"><div class="mc-stat-val">87</div><div class="mc-stat-lbl">Demand</div></div>
+                <div class="mc-stat"><div class="mc-stat-val">94%</div><div class="mc-stat-lbl">Match</div></div>
+                <div class="mc-stat"><div class="mc-stat-val">14</div><div class="mc-stat-lbl">Buyers</div></div>
+              </div>
+            </div>
+            <div class="map-card" id="mc-elmwood" onclick="scrollToCard('elmwood')">
+              <div class="mc-addr">412 Elmwood Ct</div>
+              <div class="mc-meta">Southlake · Sat · 2–5pm</div>
+              <div class="mc-stats">
+                <div class="mc-stat"><div class="mc-stat-val">82</div><div class="mc-stat-lbl">Demand</div></div>
+                <div class="mc-stat"><div class="mc-stat-val">78%</div><div class="mc-stat-lbl">Match</div></div>
+                <div class="mc-stat"><div class="mc-stat-val">11</div><div class="mc-stat-lbl">Buyers</div></div>
+              </div>
+            </div>
+            <div class="map-card" id="mc-lakeside" onclick="scrollToCard('lakeside')">
+              <div class="mc-addr">318 Lakeside Blvd</div>
+              <div class="mc-meta">Grapevine · Sat · 1–4pm</div>
+              <div class="mc-stats">
+                <div class="mc-stat"><div class="mc-stat-val">79</div><div class="mc-stat-lbl">Demand</div></div>
+                <div class="mc-stat"><div class="mc-stat-val">88%</div><div class="mc-stat-lbl">Match</div></div>
+                <div class="mc-stat"><div class="mc-stat-val">12</div><div class="mc-stat-lbl">Buyers</div></div>
+              </div>
+            </div>
+            <div class="map-card" id="mc-cedar" onclick="scrollToCard('cedar')">
+              <div class="mc-addr">1104 Cedar Ridge Ln</div>
+              <div class="mc-meta">Argyle · Sun · 12–3pm</div>
+              <div class="mc-stats">
+                <div class="mc-stat"><div class="mc-stat-val">71</div><div class="mc-stat-lbl">Demand</div></div>
+                <div class="mc-stat"><div class="mc-stat-val">65%</div><div class="mc-stat-lbl">Match</div></div>
+                <div class="mc-stat"><div class="mc-stat-val">8</div><div class="mc-stat-lbl">Buyers</div></div>
+              </div>
+            </div>
+            <div class="map-card" id="mc-oak" onclick="scrollToCard('oak')">
+              <div class="mc-addr">88 Oak Hollow Dr</div>
+              <div class="mc-meta">Trophy Club · Sun · 2–5pm</div>
+              <div class="mc-stats">
+                <div class="mc-stat"><div class="mc-stat-val">61</div><div class="mc-stat-lbl">Demand</div></div>
+                <div class="mc-stat"><div class="mc-stat-val">52%</div><div class="mc-stat-lbl">Match</div></div>
+                <div class="mc-stat"><div class="mc-stat-val">6</div><div class="mc-stat-lbl">Buyers</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIST VIEW (hidden by default) -->
+    <div id="list-view" style="flex:1;overflow-y:auto;scrollbar-width:none;display:none;padding-top:12px;">
+      <div class="list-card" id="lc-magnolia">
+        <div class="lc-top">
+          <div class="lc-icon">🏡</div>
+          <div class="lc-info"><div class="lc-addr">2847 Magnolia Drive</div><div class="lc-meta">Flower Mound · Sun Mar 29 · 1–4pm</div></div>
+          <div class="lc-right"><div class="lc-price">$1.3M</div><div class="lc-demand" style="background:rgba(74,222,128,0.12);color:var(--green);">🔥 High</div></div>
+        </div>
+        <div class="lc-stats">
+          <div class="lc-stat"><div class="lc-stat-val">87</div><div class="lc-stat-lbl">Demand</div></div>
+          <div class="lc-stat"><div class="lc-stat-val">94%</div><div class="lc-stat-lbl">Match</div></div>
+          <div class="lc-stat"><div class="lc-stat-val">14</div><div class="lc-stat-lbl">Buyers</div></div>
+        </div>
+        <div class="lc-actions">
+          <button class="btn-apply-list" id="lapply-magnolia" onclick="applyFromList('magnolia')">Apply to Host →</button>
+          <button class="btn-details" onclick="openSheet('magnolia')">Details</button>
+        </div>
+      </div>
+      <div class="list-card" id="lc-elmwood">
+        <div class="lc-top">
+          <div class="lc-icon">🏡</div>
+          <div class="lc-info"><div class="lc-addr">412 Elmwood Court</div><div class="lc-meta">Southlake · Sat Mar 28 · 2–5pm</div></div>
+          <div class="lc-right"><div class="lc-price">$2.1M</div><div class="lc-demand" style="background:rgba(74,222,128,0.12);color:var(--green);">🔥 High</div></div>
+        </div>
+        <div class="lc-stats">
+          <div class="lc-stat"><div class="lc-stat-val">82</div><div class="lc-stat-lbl">Demand</div></div>
+          <div class="lc-stat"><div class="lc-stat-val">78%</div><div class="lc-stat-lbl">Match</div></div>
+          <div class="lc-stat"><div class="lc-stat-val">11</div><div class="lc-stat-lbl">Buyers</div></div>
+        </div>
+        <div class="lc-actions">
+          <button class="btn-apply-list" id="lapply-elmwood" onclick="applyFromList('elmwood')">Apply to Host →</button>
+          <button class="btn-details" onclick="openSheet('elmwood')">Details</button>
+        </div>
+      </div>
+      <div class="list-card" id="lc-lakeside">
+        <div class="lc-top">
+          <div class="lc-icon">🏡</div>
+          <div class="lc-info"><div class="lc-addr">318 Lakeside Blvd</div><div class="lc-meta">Grapevine · Sat Mar 28 · 1–4pm</div></div>
+          <div class="lc-right"><div class="lc-price">$1.6M</div><div class="lc-demand" style="background:rgba(74,222,128,0.12);color:var(--green);">🔥 High</div></div>
+        </div>
+        <div class="lc-stats">
+          <div class="lc-stat"><div class="lc-stat-val">79</div><div class="lc-stat-lbl">Demand</div></div>
+          <div class="lc-stat"><div class="lc-stat-val">88%</div><div class="lc-stat-lbl">Match</div></div>
+          <div class="lc-stat"><div class="lc-stat-val">12</div><div class="lc-stat-lbl">Buyers</div></div>
+        </div>
+        <div class="lc-actions">
+          <button class="btn-apply-list" id="lapply-lakeside" onclick="applyFromList('lakeside')">Apply to Host →</button>
+          <button class="btn-details" onclick="openSheet('lakeside')">Details</button>
+        </div>
+      </div>
+      <div class="list-card" id="lc-cedar">
+        <div class="lc-top">
+          <div class="lc-icon">🏡</div>
+          <div class="lc-info"><div class="lc-addr">1104 Cedar Ridge Ln</div><div class="lc-meta">Argyle · Sun Mar 29 · 12–3pm</div></div>
+          <div class="lc-right"><div class="lc-price">$875K</div><div class="lc-demand" style="background:rgba(251,191,36,0.12);color:var(--amber);">⚡ Med</div></div>
+        </div>
+        <div class="lc-stats">
+          <div class="lc-stat"><div class="lc-stat-val">71</div><div class="lc-stat-lbl">Demand</div></div>
+          <div class="lc-stat"><div class="lc-stat-val">65%</div><div class="lc-stat-lbl">Match</div></div>
+          <div class="lc-stat"><div class="lc-stat-val">8</div><div class="lc-stat-lbl">Buyers</div></div>
+        </div>
+        <div class="lc-actions">
+          <button class="btn-apply-list" id="lapply-cedar" onclick="applyFromList('cedar')">Apply to Host →</button>
+          <button class="btn-details" onclick="openSheet('cedar')">Details</button>
+        </div>
+      </div>
+      <div class="list-card" id="lc-oak">
+        <div class="lc-top">
+          <div class="lc-icon">🏡</div>
+          <div class="lc-info"><div class="lc-addr">88 Oak Hollow Drive</div><div class="lc-meta">Trophy Club · Sun Mar 29 · 2–5pm</div></div>
+          <div class="lc-right"><div class="lc-price">$690K</div><div class="lc-demand" style="background:rgba(255,255,255,0.06);color:var(--text-muted);">· Low</div></div>
+        </div>
+        <div class="lc-stats">
+          <div class="lc-stat"><div class="lc-stat-val">61</div><div class="lc-stat-lbl">Demand</div></div>
+          <div class="lc-stat"><div class="lc-stat-val">52%</div><div class="lc-stat-lbl">Match</div></div>
+          <div class="lc-stat"><div class="lc-stat-val">6</div><div class="lc-stat-lbl">Buyers</div></div>
+        </div>
+        <div class="lc-actions">
+          <button class="btn-apply-list" id="lapply-oak" onclick="applyFromList('oak')">Apply to Host →</button>
+          <button class="btn-details" onclick="openSheet('oak')">Details</button>
+        </div>
+      </div>
+      <div style="height:16px;"></div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV -->
+  <div class="bottom-nav">
+    <div class="nav-item active" id="nav-board">
+      <div class="nav-icon">📋</div>
+      <div class="nav-label">Board</div>
+    </div>
+    <div class="nav-item" id="nav-applied" onclick="openAppliedSheet()">
+      <div class="nav-icon">📬</div>
+      <div class="nav-label">Applied</div>
+    </div>
+    <div class="nav-item" id="nav-alerts" onclick="openAlertsSheet()">
+      <div class="nav-icon">🔔</div>
+      <div class="nav-label">Alerts</div>
+    </div>
+    <div class="nav-item" id="nav-score" onclick="openScoreSheet()">
+      <div class="nav-icon">⭐</div>
+      <div class="nav-label">Score</div>
+    </div>
+  </div>
+
+
+  <!-- APPLIED SHEET -->
+  <div class="sheet-backdrop" id="applied-backdrop" onclick="closeAppliedSheet()"></div>
+  <div class="sheet" id="applied-sheet" style="max-height:90%;">
+    <div class="sheet-handle"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div>
+        <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--text);">My Applications</div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);margin-top:2px;">Host Agent · Marcus Rivera</div>
+      </div>
+      <button onclick="closeAppliedSheet()" style="background:var(--warm2);border:1px solid var(--border2);border-radius:10px;padding:7px 12px;color:var(--text-muted);font-size:13px;cursor:pointer;">✕</button>
+    </div>
+
+    <!-- Confirmed -->
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">Confirmed</div>
+    <div style="background:var(--surface);border:1px solid rgba(74,222,128,0.25);border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+      <div style="width:38px;height:38px;border-radius:11px;background:rgba(74,222,128,0.1);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🏡</div>
+      <div style="flex:1;">
+        <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:2px;">2847 Magnolia Drive</div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);">Flower Mound · Sun Mar 29 · 1–4pm</div>
+      </div>
+      <div style="background:rgba(74,222,128,0.12);color:#4ADE80;font-size:10px;font-weight:600;padding:4px 10px;border-radius:100px;">✓ Confirmed</div>
+    </div>
+
+    <!-- Pending -->
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin:14px 0 10px;">Pending</div>
+    <div id="applied-pending-list"><!-- rendered by JS --></div>
+
+    <!-- Past -->
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin:14px 0 10px;">Past Events</div>
+    <div style="background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;opacity:0.5;">
+      <div style="width:38px;height:38px;border-radius:11px;background:var(--warm2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🏡</div>
+      <div style="flex:1;">
+        <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:2px;">1104 Cedar Ridge Lane</div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);">Argyle · Mar 15 · Completed</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.06);color:var(--text-muted);font-size:10px;font-weight:600;padding:4px 10px;border-radius:100px;">Done</div>
+    </div>
+  </div>
+
+
+  <!-- ALERTS SHEET -->
+  <div class="sheet-backdrop" id="alerts-backdrop" onclick="closeAlertsSheet()"></div>
+  <div class="sheet" id="alerts-sheet" style="max-height:88%;">
+    <div class="sheet-handle"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+      <div>
+        <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--text);">Smart Alerts</div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);margin-top:2px;">Notify me when...</div>
+      </div>
+      <button onclick="closeAlertsSheet()" style="background:var(--warm2);border:1px solid var(--border2);border-radius:10px;padding:7px 12px;color:var(--text-muted);font-size:13px;cursor:pointer;">✕</button>
+    </div>
+
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin:14px 0 10px;">New Opportunities</div>
+
+    <div class="alert-row" onclick="toggleAlert(this)">
+      <div class="alert-icon" style="background:rgba(184,224,48,0.12);">🔥</div>
+      <div class="alert-info">
+        <div class="alert-title">High Demand Listing Posted</div>
+        <div class="alert-sub">Demand score 80+ in my area</div>
+      </div>
+      <div class="alert-toggle on"><div class="alert-knob"></div></div>
+    </div>
+    <div class="alert-row" onclick="toggleAlert(this)">
+      <div class="alert-icon" style="background:rgba(184,224,48,0.12);">🧬</div>
+      <div class="alert-info">
+        <div class="alert-title">Strong DNA Match Available</div>
+        <div class="alert-sub">85%+ buyer pool match posted</div>
+      </div>
+      <div class="alert-toggle on"><div class="alert-knob"></div></div>
+    </div>
+    <div class="alert-row" onclick="toggleAlert(this)">
+      <div class="alert-icon" style="background:rgba(255,255,255,0.06);">📍</div>
+      <div class="alert-info">
+        <div class="alert-title">New Listing in My ZIP</div>
+        <div class="alert-sub">Any listing in 76226 or 76092</div>
+      </div>
+      <div class="alert-toggle"><div class="alert-knob"></div></div>
+    </div>
+
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin:14px 0 10px;">Application Updates</div>
+
+    <div class="alert-row" onclick="toggleAlert(this)">
+      <div class="alert-icon" style="background:rgba(74,222,128,0.12);">✓</div>
+      <div class="alert-info">
+        <div class="alert-title">Application Confirmed</div>
+        <div class="alert-sub">Listing agent accepts my application</div>
+      </div>
+      <div class="alert-toggle on"><div class="alert-knob"></div></div>
+    </div>
+    <div class="alert-row" onclick="toggleAlert(this)">
+      <div class="alert-icon" style="background:rgba(248,113,113,0.12);">✕</div>
+      <div class="alert-info">
+        <div class="alert-title">Application Declined</div>
+        <div class="alert-sub">So I can apply elsewhere quickly</div>
+      </div>
+      <div class="alert-toggle on"><div class="alert-knob"></div></div>
+    </div>
+    <div class="alert-row" onclick="toggleAlert(this)">
+      <div class="alert-icon" style="background:rgba(255,255,255,0.06);">⏰</div>
+      <div class="alert-info">
+        <div class="alert-title">Event Starting Soon</div>
+        <div class="alert-sub">2 hours before confirmed events</div>
+      </div>
+      <div class="alert-toggle"><div class="alert-knob"></div></div>
+    </div>
+
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin:14px 0 10px;">Score & Leaderboard</div>
+
+    <div class="alert-row" onclick="toggleAlert(this)">
+      <div class="alert-icon" style="background:rgba(184,224,48,0.12);">⭐</div>
+      <div class="alert-info">
+        <div class="alert-title">Score Change</div>
+        <div class="alert-sub">When my Host Score goes up or down</div>
+      </div>
+      <div class="alert-toggle on"><div class="alert-knob"></div></div>
+    </div>
+    <div class="alert-row" onclick="toggleAlert(this)">
+      <div class="alert-icon" style="background:rgba(255,255,255,0.06);">🏆</div>
+      <div class="alert-info">
+        <div class="alert-title">Leaderboard Movement</div>
+        <div class="alert-sub">When I move up or down in DFW rank</div>
+      </div>
+      <div class="alert-toggle"><div class="alert-knob"></div></div>
+    </div>
+    <div style="height:8px;"></div>
+  </div>
+
+  <!-- SCORE SHEET -->
+  <div class="sheet-backdrop" id="score-backdrop" onclick="closeScoreSheet()"></div>
+  <div class="sheet" id="score-sheet" style="max-height:88%;">
+    <div class="sheet-handle"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div>
+        <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--text);">Host Score</div>
+        <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);margin-top:2px;">Marcus Rivera · DFW</div>
+      </div>
+      <button onclick="closeScoreSheet()" style="background:var(--warm2);border:1px solid var(--border2);border-radius:10px;padding:7px 12px;color:var(--text-muted);font-size:13px;cursor:pointer;">✕</button>
+    </div>
+
+    <!-- Score ring -->
+    <div style="display:flex;align-items:center;gap:20px;background:var(--warm2);border-radius:16px;padding:18px;margin-bottom:14px;">
+      <div style="width:88px;height:88px;position:relative;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg viewBox="0 0 88 88" style="position:absolute;inset:0;transform:rotate(-90deg);">
+          <circle cx="44" cy="44" r="38" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="7"/>
+          <circle cx="44" cy="44" r="38" fill="none" stroke="#B8E030" stroke-width="7" stroke-linecap="round"
+            stroke-dasharray="239" stroke-dashoffset="60" style="filter:drop-shadow(0 0 5px #B8E030);"/>
+        </svg>
+        <div style="text-align:center;">
+          <div style="font-family:'Fraunces',serif;font-size:28px;font-weight:700;color:#B8E030;line-height:1;">780</div>
+        </div>
+      </div>
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:4px;">Gold Tier</div>
+        <div style="font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px;">Top 12% in DFW</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">+24 pts this month</div>
+        <div style="background:rgba(184,224,48,0.1);border:1px solid rgba(184,224,48,0.2);border-radius:100px;padding:3px 10px;display:inline-block;">
+          <span style="font-family:'DM Mono',monospace;font-size:9px;color:#B8E030;letter-spacing:1px;">3rd consecutive Gold</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Breakdown bars -->
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">Score Breakdown</div>
+    <div style="background:var(--surface);border:1px solid var(--border2);border-radius:14px;overflow:hidden;margin-bottom:14px;">
+      <div class="score-br-row"><div class="score-br-lbl">Follow-Up Rate</div><div class="score-br-track"><div class="score-br-bar" style="width:98%"></div></div><div class="score-br-val">98%</div></div>
+      <div class="score-br-row"><div class="score-br-lbl">Buyer Satisfaction</div><div class="score-br-track"><div class="score-br-bar" style="width:94%"></div></div><div class="score-br-val">94%</div></div>
+      <div class="score-br-row"><div class="score-br-lbl">Data Accuracy</div><div class="score-br-track"><div class="score-br-bar" style="width:91%"></div></div><div class="score-br-val">91%</div></div>
+      <div class="score-br-row" style="border-bottom:none;"><div class="score-br-lbl">Avg Match Score</div><div class="score-br-track"><div class="score-br-bar" style="width:79%"></div></div><div class="score-br-val">79%</div></div>
+    </div>
+
+    <!-- Leaderboard peek -->
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">DFW Leaderboard</div>
+    <div style="background:var(--surface);border:1px solid var(--border2);border-radius:14px;overflow:hidden;margin-bottom:14px;">
+      <div class="lb-peek-row"><div class="lb-peek-rank">1</div><div class="lb-peek-name">Sarah Okonkwo</div><div class="lb-peek-score">812</div></div>
+      <div class="lb-peek-row"><div class="lb-peek-rank">2</div><div class="lb-peek-name">Daniel Park</div><div class="lb-peek-score">801</div></div>
+      <div class="lb-peek-row" style="background:rgba(184,224,48,0.04);border-color:rgba(184,224,48,0.15);"><div class="lb-peek-rank" style="color:#B8E030;">3</div><div class="lb-peek-name" style="color:#B8E030;font-weight:600;">Marcus Rivera · You</div><div class="lb-peek-score" style="color:#B8E030;">780</div></div>
+      <div class="lb-peek-row" style="border-bottom:none;"><div class="lb-peek-rank">4</div><div class="lb-peek-name">Priya Nair</div><div class="lb-peek-score">764</div></div>
+    </div>
+
+    <div style="font-size:12px;color:var(--text-muted);text-align:center;margin-bottom:14px;">Need 40 more pts to reach #2 · 3 high-quality events at current trajectory</div>
+
+    <!-- Tips to improve -->
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">How to Improve Your Score</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
+
+      <div class="score-tip-row">
+        <div class="score-tip-icon" style="background:rgba(184,224,48,0.12);">📬</div>
+        <div class="score-tip-body">
+          <div class="score-tip-title">Send follow-ups within 2 hours</div>
+          <div class="score-tip-sub">Your avg is 4.2 hrs · Top agents send within 90 min · <span style="color:#B8E030;">+8 pts potential</span></div>
+        </div>
+      </div>
+
+      <div class="score-tip-row">
+        <div class="score-tip-icon" style="background:rgba(74,222,128,0.12);">🧬</div>
+        <div class="score-tip-body">
+          <div class="score-tip-title">Target higher DNA match listings</div>
+          <div class="score-tip-sub">Apply to 90%+ match events · Your current avg is 83% · <span style="color:#B8E030;">+6 pts potential</span></div>
+        </div>
+      </div>
+
+      <div class="score-tip-row">
+        <div class="score-tip-icon" style="background:rgba(251,191,36,0.12);">📋</div>
+        <div class="score-tip-body">
+          <div class="score-tip-title">Complete your buyer profile data</div>
+          <div class="score-tip-sub">3 recent buyers have incomplete StyleDNA · Nudge them to finish · <span style="color:#B8E030;">+5 pts potential</span></div>
+        </div>
+      </div>
+
+      <div class="score-tip-row">
+        <div class="score-tip-icon" style="background:rgba(184,224,48,0.12);">🏡</div>
+        <div class="score-tip-body">
+          <div class="score-tip-title">Host one more event this month</div>
+          <div class="score-tip-sub">You have capacity · 42 events so far · Top agents average 52/yr · <span style="color:#B8E030;">+4 pts potential</span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Upcoming opportunities -->
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">Best Opportunities Right Now</div>
+    <div style="background:rgba(184,224,48,0.06);border:1px solid rgba(184,224,48,0.15);border-radius:14px;padding:14px;margin-bottom:14px;">
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;align-items:center;gap:10px;cursor:pointer;" onclick="closeScoreSheet();selectPin('magnolia')">
+          <div style="font-size:18px;">🏡</div>
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:500;color:var(--text);">2847 Magnolia Drive</div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);">94% match · Demand 87 · Sun Mar 29</div>
+          </div>
+          <div style="font-family:'Fraunces',serif;font-size:14px;font-weight:700;color:#B8E030;">+12 pts</div>
+        </div>
+        <div style="height:1px;background:rgba(255,255,255,0.06);"></div>
+        <div style="display:flex;align-items:center;gap:10px;cursor:pointer;" onclick="closeScoreSheet();selectPin('lakeside')">
+          <div style="font-size:18px;">🏡</div>
+          <div style="flex:1;">
+            <div style="font-size:13px;font-weight:500;color:var(--text);">318 Lakeside Blvd</div>
+            <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-muted);">88% match · Demand 79 · Sat Mar 28</div>
+          </div>
+          <div style="font-family:'Fraunces',serif;font-size:14px;font-weight:700;color:#B8E030;">+10 pts</div>
+        </div>
+      </div>
+    </div>
+
+    <button onclick="openFullScorecard()" style="width:100%;background:var(--accent);color:var(--bg);border:none;border-radius:13px;padding:14px;font-family:'Fraunces',serif;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:8px;">View Full Scorecard →</button>
+    <div style="height:4px;"></div>
+  </div>
+
+  <!-- FULL SCORECARD OVERLAY -->
+  <div id="scorecard-overlay" style="position:absolute;inset:0;background:#0A0B07;z-index:200;display:none;flex-direction:column;transform:translateY(100%);transition:transform 0.4s cubic-bezier(0.4,0,0.2,1);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid rgba(255,255,255,0.07);flex-shrink:0;background:#0A0B07;">
+      <div style="font-family:'Fraunces',serif;font-size:17px;font-weight:700;color:#EEF0E5;">Host Scorecard</div>
+      <button id="sc-close-btn" style="background:#222418;border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:7px 14px;color:rgba(238,240,229,0.45);font-size:13px;cursor:pointer;">✕ Close</button>
+    </div>
+    <div style="flex:1;overflow-y:auto;scrollbar-width:none;">
+      <!-- Hero -->
+      <div style="background:linear-gradient(160deg,#0E1208 0%,#0A0B07 60%);padding:24px 20px;position:relative;overflow:hidden;">
+        <div style="position:absolute;width:220px;height:220px;background:radial-gradient(circle,rgba(184,224,48,0.09) 0%,transparent 65%);top:-50px;right:-50px;pointer-events:none;"></div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
+          <div style="width:62px;height:62px;border-radius:18px;background:rgba(184,224,48,0.1);border:2px solid rgba(184,224,48,0.25);display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;position:relative;">👤<div style="position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);background:#F0C040;color:#1A1000;border-radius:100px;padding:2px 7px;font-family:'DM Mono',monospace;font-size:7px;font-weight:700;white-space:nowrap;">GOLD</div></div>
+          <div style="flex:1;padding-top:4px;">
+            <div style="font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:#EEF0E5;">Marcus Rivera</div>
+            <div style="font-size:12px;color:rgba(238,240,229,0.45);margin-bottom:6px;">Epting Realty · DFW</div>
+            <div style="display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.07);border-radius:100px;padding:3px 10px;"><span style="font-family:'DM Mono',monospace;font-size:9px;color:rgba(238,240,229,0.4);">📍 Flower Mound, TX</span></div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:18px;">
+          <div style="width:90px;height:90px;position:relative;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg viewBox="0 0 90 90" style="position:absolute;inset:0;transform:rotate(-90deg);"><circle cx="45" cy="45" r="40" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8"/><circle cx="45" cy="45" r="40" fill="none" stroke="#B8E030" stroke-width="8" stroke-linecap="round" stroke-dasharray="251" stroke-dashoffset="63" style="filter:drop-shadow(0 0 6px #B8E030);"/></svg>
+            <div style="text-align:center;"><div style="font-family:'Fraunces',serif;font-size:30px;font-weight:700;color:#B8E030;line-height:1;">780</div><div style="font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;color:rgba(238,240,229,0.32);text-transform:uppercase;">Score</div></div>
+          </div>
+          <div style="flex:1;">
+            <div style="font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:#EEF0E5;margin-bottom:6px;">Gold Tier Agent</div>
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <div style="font-size:12px;color:rgba(238,240,229,0.55);">● Top 12% in DFW</div>
+              <div style="font-size:12px;color:rgba(238,240,229,0.55);">● +24 pts this month</div>
+              <div style="font-size:12px;color:rgba(238,240,229,0.55);">● 3rd consecutive Gold</div>
+              <div style="font-size:12px;color:rgba(238,240,229,0.55);">● 42 events hosted</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Stats strip -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1px;background:rgba(255,255,255,0.07);border-top:1px solid rgba(255,255,255,0.07);border-bottom:1px solid rgba(255,255,255,0.07);">
+        <div style="background:#0A0B07;padding:13px 10px;text-align:center;"><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:#B8E030;">42</div><div style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;color:rgba(238,240,229,0.32);margin-top:3px;">Events</div></div>
+        <div style="background:#0A0B07;padding:13px 10px;text-align:center;"><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:#B8E030;">98%</div><div style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;color:rgba(238,240,229,0.32);margin-top:3px;">Follow-Up</div></div>
+        <div style="background:#0A0B07;padding:13px 10px;text-align:center;"><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:#B8E030;">4.9★</div><div style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;color:rgba(238,240,229,0.32);margin-top:3px;">Rating</div></div>
+        <div style="background:#0A0B07;padding:13px 10px;text-align:center;"><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:#B8E030;">312</div><div style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;color:rgba(238,240,229,0.32);margin-top:3px;">Leads</div></div>
+      </div>
+      <!-- Score breakdown -->
+      <div style="padding:18px 20px 0;">
+        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(238,240,229,0.32);margin-bottom:12px;">Score Breakdown</div>
+        <div style="background:#13160D;border:1px solid rgba(255,255,255,0.07);border-radius:16px;overflow:hidden;margin-bottom:16px;">
+          <div class="score-br-row"><div class="score-br-lbl">Follow-Up Rate</div><div class="score-br-track"><div class="score-br-bar" style="width:98%"></div></div><div class="score-br-val">98%</div></div>
+          <div class="score-br-row"><div class="score-br-lbl">Buyer Satisfaction</div><div class="score-br-track"><div class="score-br-bar" style="width:94%"></div></div><div class="score-br-val">94%</div></div>
+          <div class="score-br-row"><div class="score-br-lbl">Data Accuracy</div><div class="score-br-track"><div class="score-br-bar" style="width:91%"></div></div><div class="score-br-val">91%</div></div>
+          <div class="score-br-row"><div class="score-br-lbl">Lead Quality</div><div class="score-br-track"><div class="score-br-bar" style="width:85%"></div></div><div class="score-br-val">85%</div></div>
+          <div class="score-br-row" style="border-bottom:none;"><div class="score-br-lbl">Avg Match Score</div><div class="score-br-track"><div class="score-br-bar" style="width:79%"></div></div><div class="score-br-val">79%</div></div>
+        </div>
+      </div>
+      <!-- Badges -->
+      <div style="padding:0 20px;">
+        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(238,240,229,0.32);margin-bottom:12px;">Badges Earned</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;">
+          <div style="background:#13160D;border:1px solid rgba(184,224,48,0.2);border-radius:14px;padding:14px 10px;text-align:center;"><div style="font-size:26px;margin-bottom:6px;">🔥</div><div style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;color:#B8E030;line-height:1.3;">Hot Lead Closer</div></div>
+          <div style="background:#13160D;border:1px solid rgba(184,224,48,0.2);border-radius:14px;padding:14px 10px;text-align:center;"><div style="font-size:26px;margin-bottom:6px;">⚡</div><div style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;color:#B8E030;line-height:1.3;">Follow-Up Streak</div></div>
+          <div style="background:#13160D;border:1px solid rgba(184,224,48,0.2);border-radius:14px;padding:14px 10px;text-align:center;"><div style="font-size:26px;margin-bottom:6px;">🥇</div><div style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;color:#B8E030;line-height:1.3;">Gold Tier ×3</div></div>
+          <div style="background:#13160D;border:1px solid rgba(184,224,48,0.2);border-radius:14px;padding:14px 10px;text-align:center;"><div style="font-size:26px;margin-bottom:6px;">📍</div><div style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;color:#B8E030;line-height:1.3;">Local Expert</div></div>
+          <div style="background:#13160D;border:1px solid rgba(184,224,48,0.2);border-radius:14px;padding:14px 10px;text-align:center;"><div style="font-size:26px;margin-bottom:6px;">🧬</div><div style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;color:#B8E030;line-height:1.3;">DNA Whisperer</div></div>
+          <div style="background:#13160D;border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:14px 10px;text-align:center;opacity:0.4;"><div style="font-size:26px;margin-bottom:6px;">🏆</div><div style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;color:rgba(238,240,229,0.32);line-height:1.3;">Platinum Tier<br><span style="font-size:8px;">820+ needed</span></div></div>
+        </div>
+      </div>
+      <!-- How to improve -->
+      <div style="padding:0 20px;">
+        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(238,240,229,0.32);margin-bottom:12px;">How to Improve</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+          <div class="score-tip-row"><div class="score-tip-icon" style="background:rgba(184,224,48,0.12);">📬</div><div class="score-tip-body"><div class="score-tip-title">Send follow-ups within 2 hours</div><div class="score-tip-sub">Your avg is 4.2 hrs · Top agents send within 90 min · <span style="color:#B8E030;">+8 pts potential</span></div></div></div>
+          <div class="score-tip-row"><div class="score-tip-icon" style="background:rgba(74,222,128,0.12);">🧬</div><div class="score-tip-body"><div class="score-tip-title">Target higher DNA match listings</div><div class="score-tip-sub">Apply to 90%+ match events · Your avg is 83% · <span style="color:#B8E030;">+6 pts potential</span></div></div></div>
+          <div class="score-tip-row"><div class="score-tip-icon" style="background:rgba(251,191,36,0.12);">📋</div><div class="score-tip-body"><div class="score-tip-title">Complete buyer profile data</div><div class="score-tip-sub">3 buyers have incomplete StyleDNA · <span style="color:#B8E030;">+5 pts potential</span></div></div></div>
+          <div class="score-tip-row"><div class="score-tip-icon" style="background:rgba(184,224,48,0.12);">🏡</div><div class="score-tip-body"><div class="score-tip-title">Host one more event this month</div><div class="score-tip-sub">Top agents average 52/yr · You are at 42 · <span style="color:#B8E030;">+4 pts potential</span></div></div></div>
+        </div>
+      </div>
+      <!-- Leaderboard -->
+      <div style="padding:0 20px 24px;">
+        <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(238,240,229,0.32);margin-bottom:12px;">DFW Leaderboard</div>
+        <div style="background:#13160D;border:1px solid rgba(255,255,255,0.07);border-radius:16px;overflow:hidden;">
+          <div style="padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.07);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(238,240,229,0.32);">Top Hosts This Month</div>
+          <div class="lb-peek-row"><div class="lb-peek-rank">1</div><div class="lb-peek-name">Sarah Okonkwo</div><div class="lb-peek-score">812</div></div>
+          <div class="lb-peek-row"><div class="lb-peek-rank">2</div><div class="lb-peek-name">Daniel Park</div><div class="lb-peek-score">801</div></div>
+          <div class="lb-peek-row" style="background:rgba(184,224,48,0.04);"><div class="lb-peek-rank" style="color:#B8E030;">3</div><div class="lb-peek-name" style="color:#B8E030;font-weight:600;">Marcus Rivera · You</div><div class="lb-peek-score" style="color:#B8E030;">780</div></div>
+          <div class="lb-peek-row"><div class="lb-peek-rank">4</div><div class="lb-peek-name">Priya Nair</div><div class="lb-peek-score">764</div></div>
+          <div class="lb-peek-row" style="border-bottom:none;"><div class="lb-peek-rank">5</div><div class="lb-peek-name">James Whitfield</div><div class="lb-peek-score">751</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHEET -->
+  <div class="sheet-backdrop" id="sheet-backdrop" onclick="closeSheet()"></div>
+  <div class="sheet" id="detail-sheet">
+    <div class="sheet-handle"></div>
+    <div id="sheet-content"></div>
+  </div>
+
+</div>
+
+<script>
+// ── THEME ──
+(function(){
+  const p=new URLSearchParams(window.location.search),root=document.documentElement;
+  const h=k=>p.get(k)?'#'+p.get(k):null;
+  const sv=(k,v)=>v&&root.style.setProperty(k,v);
+  const bg=h('bg'),ac=h('accent'),tx=h('text'),sf=h('surface');
+  sv('--bg',bg);sv('--accent',ac);sv('--text',tx);sv('--surface',sf);
+  if(ac){const r=parseInt(ac.slice(1,3),16),g=parseInt(ac.slice(3,5),16),b=parseInt(ac.slice(5,7),16);
+    root.style.setProperty('--accent-dim',`rgba(${r},${g},${b},0.10)`);
+    root.style.setProperty('--border',`rgba(${r},${g},${b},0.12)`);}
+  if(tx){const r=parseInt(tx.slice(1,3),16),g=parseInt(tx.slice(3,5),16),b=parseInt(tx.slice(5,7),16);
+    root.style.setProperty('--text-dim',`rgba(${r},${g},${b},0.55)`);
+    root.style.setProperty('--text-muted',`rgba(${r},${g},${b},0.32)`);}
+  if(bg){root.style.setProperty('--warm',bg);root.style.setProperty('--warm2',bg);}
+  const font=p.get('font')?decodeURIComponent(p.get('font')):null;
+  if(font){const l=document.createElement('link');l.rel='stylesheet';
+    l.href=`https://fonts.googleapis.com/css2?family=${font.replace(/ /g,'+')}:wght@400;600;700&display=swap`;
+    document.head.appendChild(l);
+    l.onload=()=>document.querySelectorAll('.pg-title,.lc-addr,.mc-addr').forEach(e=>e.style.fontFamily=`'${font}',serif`);}
+})();
+
+// ── VIEW TOGGLE ──
+let currentView = 'map';
+function setView(v) {
+  currentView = v;
+  document.getElementById('vt-map').classList.toggle('active', v==='map');
+  document.getElementById('vt-list').classList.toggle('active', v==='list');
+  document.getElementById('map-view').style.display  = v==='map'  ? 'flex' : 'none';
+  document.getElementById('list-view').style.display = v==='list' ? 'block' : 'none';
+}
+
+// ── FILTER ──
+const applied = new Set();
+const demandMap = {magnolia:'high',elmwood:'high',lakeside:'high',cedar:'med',oak:'low'};
+const matchSet  = new Set(['magnolia','lakeside']);
+
+function setFilter(el, type) {
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+
+  const keys = ['magnolia','elmwood','lakeside','cedar','oak'];
+  keys.forEach(key => {
+    const show =
+      type==='all'     ? true :
+      type==='high'    ? demandMap[key]==='high' :
+      type==='match'   ? matchSet.has(key) :
+      type==='weekend' ? true : true;
+
+    // List cards
+    const lc = document.getElementById('lc-'+key);
+    if(lc) lc.style.display = show ? '' : 'none';
+
+    // Map pins
+    const pin = document.getElementById('pin-'+key);
+    if(pin) pin.style.display = show ? '' : 'none';
+
+    // Map bottom cards
+    const mc = document.getElementById('mc-'+key);
+    if(mc) mc.style.display = show ? '' : 'none';
+  });
+}
+
+// ── PIN SELECT ──
+let selectedPin = null;
+
+function selectPin(key) {
+  selectedPin = key;
+  document.querySelectorAll('.map-pin').forEach(p=>p.classList.remove('active-pin'));
+  document.getElementById('pin-'+key)?.classList.add('active-pin');
+  document.querySelectorAll('.map-card').forEach(c=>c.classList.remove('selected'));
+  const mc = document.getElementById('mc-'+key);
+  if(mc){
+    mc.classList.add('selected');
+    mc.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
+  }
+  openSheet(key);
+}
+
+function scrollToCard(key) {
+  selectPin(key);
+}
+
+// Wire up touch events after DOM ready for more reliable iOS tap handling
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.map-pin').forEach(pin => {
+    const key = pin.id.replace('pin-','');
+    pin.addEventListener('touchend', function(e) {
+      e.preventDefault();
+      selectPin(key);
+    }, {passive: false});
+  });
+  document.querySelectorAll('.map-card').forEach(card => {
+    const key = card.id.replace('mc-','');
+    card.addEventListener('touchend', function(e) {
+      e.preventDefault();
+      scrollToCard(key);
+    }, {passive: false});
+  });
+});
+
+// ── APPLY ──
+function applyFromList(key) {
+  applied.add(key);
+  const btn = document.getElementById('lapply-'+key);
+  const card = document.getElementById('lc-'+key);
+  if(btn) { btn.textContent='✓ Applied'; btn.classList.add('applied'); }
+  if(card) card.classList.add('applied');
+  // Update map pin too
+  const pinBubble = document.querySelector(`#pin-${key} .pin-bubble`);
+  if(pinBubble) { pinBubble.className='pin-bubble applied'; }
+  showToast('📬','Application Sent','Your Host Score 780 profile has been sent. You will hear back within 24 hours.');
+}
+
+// ── PROPERTY DATA ──
+const propData = {
+  magnolia:{addr:'2847 Magnolia Drive',city:'Flower Mound, TX',date:'Sunday Mar 29 · 1–4pm',price:'$1,295,000',demand:87,buyers:14,match:'94%',dna:'Refined Modern',agent:'Elena Reyes · Compass',note:'Your highest-priority opportunity this weekend. 94% buyer pool match — the strongest alignment of any listing in your area right now. This type of profile converts at 2× your current rate.'},
+  elmwood: {addr:'412 Elmwood Court', city:'Southlake, TX',  date:'Saturday Mar 28 · 2–5pm',price:'$2,100,000',demand:82,buyers:11,match:'78%',dna:'Coastal Luxe',  agent:'James Whitfield · Briggs Freeman',note:'Ultra-luxury Southlake listing. Slightly off your core buyer profile at 78% but strong demand and high commission potential make this worth applying.'},
+  lakeside:{addr:'318 Lakeside Blvd',  city:'Grapevine, TX', date:'Saturday Mar 28 · 1–4pm',price:'$1,550,000',demand:79,buyers:12,match:'88%',dna:'Refined Modern',agent:'Sarah Okonkwo · Compass',note:'Strong Refined Modern match at 88%. Lakefront properties over-perform on buyer dwell time. Second-priority pick after Magnolia Drive.'},
+  cedar:   {addr:'1104 Cedar Ridge Ln',city:'Argyle, TX',    date:'Sunday Mar 29 · 12–3pm',price:'$875,000',  demand:71,buyers:8, match:'65%',dna:'Warm Organic',  agent:'Priya Nair · Keller Williams',note:'Moderate match at 65%. Lower demand score but good for Argyle market exposure. Lower priority given your current Refined Modern focus.'},
+  oak:     {addr:'88 Oak Hollow Drive',city:'Trophy Club, TX',date:'Sunday Mar 29 · 2–5pm',price:'$690,000',  demand:61,buyers:6, match:'52%',dna:'Bold Eclectic',  agent:'Daniel Park · Keller Williams',note:'Lower priority — 52% match with your buyer pool. Bold Eclectic profile does not align well with your Refined Modern buyers. Consider skipping unless you have downtime Sunday.'},
+};
+
+function openSheet(key) {
+  const d = propData[key];
+  const warm2 = getComputedStyle(document.documentElement).getPropertyValue('--warm2').trim()||'#222418';
+  const tc    = getComputedStyle(document.documentElement).getPropertyValue('--text').trim()||'#EEF0E5';
+  const td    = getComputedStyle(document.documentElement).getPropertyValue('--text-dim').trim()||'rgba(238,240,229,0.55)';
+  const tm    = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim()||'rgba(238,240,229,0.32)';
+  const ac    = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#B8E030';
+  document.getElementById('sheet-content').innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+      <div style="width:46px;height:46px;border-radius:12px;background:${warm2};display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🏡</div>
+      <div style="flex:1;"><div style="font-family:'Fraunces',serif;font-size:17px;font-weight:700;color:${tc};">${d.addr}</div><div style="font-size:12px;color:${tm};margin-top:2px;">${d.city}</div></div>
+      <div style="font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:${tc};">${d.price}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
+      <div style="background:${warm2};border-radius:10px;padding:10px;text-align:center;"><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:${ac};">${d.demand}</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:${tm};text-transform:uppercase;letter-spacing:1px;margin-top:2px;">Demand</div></div>
+      <div style="background:${warm2};border-radius:10px;padding:10px;text-align:center;"><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:${ac};">${d.match}</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:${tm};text-transform:uppercase;letter-spacing:1px;margin-top:2px;">DNA Match</div></div>
+      <div style="background:${warm2};border-radius:10px;padding:10px;text-align:center;"><div style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:${ac};">${d.buyers}</div><div style="font-family:'DM Mono',monospace;font-size:9px;color:${tm};text-transform:uppercase;letter-spacing:1px;margin-top:2px;">Buyers Est.</div></div>
+    </div>
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:${tm};margin-bottom:6px;">Date & Time</div>
+    <div style="font-size:13px;color:${td};margin-bottom:14px;">${d.date}</div>
+    <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:${tm};margin-bottom:6px;">Buyer DNA</div>
+    <div style="font-size:13px;color:${td};margin-bottom:14px;">${d.dna} dominant profile</div>
+    <div style="background:rgba(184,224,48,0.06);border:1px solid rgba(184,224,48,0.15);border-radius:12px;padding:13px;margin-bottom:14px;">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:${ac};margin-bottom:6px;">✨ Chloe's Priority Read</div>
+      <div style="font-size:13px;color:${td};line-height:1.6;">${d.note}</div>
+    </div>
+    <div style="font-size:12px;color:${tm};margin-bottom:14px;">Listed by ${d.agent}</div>
+    <div style="display:flex;gap:8px;">
+      <button onclick="closeSheet();applyFromList('${key}')" style="flex:1;background:${ac};color:#0A0B07;border:none;border-radius:11px;padding:13px;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:600;cursor:pointer;">Apply to Host →</button>
+      <button onclick="closeSheet()" style="background:${warm2};border:1px solid rgba(255,255,255,0.07);border-radius:11px;padding:13px 16px;color:${tm};font-size:13px;cursor:pointer;">Close</button>
+    </div>`;
+  document.getElementById('sheet-backdrop').classList.add('open');
+  document.getElementById('detail-sheet').classList.add('open');
+}
+function closeSheet() {
+  document.getElementById('sheet-backdrop').classList.remove('open');
+  document.getElementById('detail-sheet').classList.remove('open');
+}
+
+// ── TOAST ──
+function showToast(icon, title, msg) {
+  const ex = document.getElementById('ob-toast'); if(ex) ex.remove();
+  const tc = getComputedStyle(document.documentElement).getPropertyValue('--text').trim()||'#EEF0E5';
+  const td = getComputedStyle(document.documentElement).getPropertyValue('--text-dim').trim()||'rgba(238,240,229,0.55)';
+  const sb = getComputedStyle(document.documentElement).getPropertyValue('--surface').trim()||'#13160D';
+  const t = document.createElement('div');
+  t.id = 'ob-toast';
+  t.style.cssText = `position:absolute;bottom:88px;left:16px;right:16px;border-radius:14px;padding:14px 16px;z-index:150;display:flex;gap:12px;align-items:flex-start;box-shadow:0 8px 24px rgba(0,0,0,0.5);animation:obIn 0.3s ease;`;
+  t.style.background = sb; t.style.border = '1px solid rgba(255,255,255,0.08)';
+  t.innerHTML = `<div style="font-size:20px;">${icon}</div><div style="flex:1;"><div style="font-size:13px;font-weight:600;color:${tc};margin-bottom:3px;">${title}</div><div style="font-size:12px;color:${td};line-height:1.5;">${msg}</div></div><div id="ob-tx" style="color:rgba(238,240,229,0.32);cursor:pointer;font-size:16px;flex-shrink:0;">✕</div><style>@keyframes obIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}</style>`;
+  document.querySelector('.phone').appendChild(t);
+  document.getElementById('ob-tx').onclick = ()=>t.remove();
+  setTimeout(()=>{ if(t.parentNode) t.remove(); }, 4000);
+}
+
+
+
+// ── FULL SCORECARD OVERLAY ──
+function openFullScorecard() {
+  closeScoreSheet();
+  const overlay = document.getElementById('scorecard-overlay');
+  overlay.style.display = 'flex';
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    overlay.style.transform = 'translateY(0)';
+  }));
+}
+function closeFullScorecard() {
+  const overlay = document.getElementById('scorecard-overlay');
+  overlay.style.transform = 'translateY(100%)';
+  setTimeout(() => { if(overlay.parentNode) overlay.style.display = 'none'; }, 400);
+}
+document.addEventListener('DOMContentLoaded', function() {
+  const cb = document.getElementById('sc-close-btn');
+  if(cb) cb.addEventListener('click', closeFullScorecard);
+});
+
+// ── ALERTS SHEET ──
+function openAlertsSheet() {
+  closeScoreSheet();
+  document.getElementById('alerts-backdrop').classList.add('open');
+  document.getElementById('alerts-sheet').classList.add('open');
+}
+function closeAlertsSheet() {
+  document.getElementById('alerts-backdrop').classList.remove('open');
+  document.getElementById('alerts-sheet').classList.remove('open');
+}
+function toggleAlert(row) {
+  const toggle = row.querySelector('.alert-toggle');
+  toggle.classList.toggle('on');
+}
+
+// ── SCORE SHEET ──
+function openScoreSheet() {
+  closeAlertsSheet();
+  document.getElementById('score-backdrop').classList.add('open');
+  document.getElementById('score-sheet').classList.add('open');
+}
+function closeScoreSheet() {
+  document.getElementById('score-backdrop').classList.remove('open');
+  document.getElementById('score-sheet').classList.remove('open');
+}
+
+// ── APPLIED SHEET ──
+const pendingApps = [
+  { key:'elmwood',  addr:'412 Elmwood Court',  meta:'Southlake · Sat Mar 28 · 2–5pm' },
+  { key:'lakeside', addr:'318 Lakeside Blvd',  meta:'Grapevine · Sat Mar 28 · 1–4pm' },
+];
+
+function openAppliedSheet() {
+  // Render pending list dynamically so it reflects any new applications
+  const warm2 = getComputedStyle(document.documentElement).getPropertyValue('--warm2').trim()||'#222418';
+  const textColor = getComputedStyle(document.documentElement).getPropertyValue('--text').trim()||'#EEF0E5';
+  const textMuted = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim()||'rgba(238,240,229,0.32)';
+
+  const allPending = [...pendingApps];
+  // Add any newly applied keys that aren't already in the list
+  applied.forEach(key => {
+    if(key !== 'magnolia' && key !== 'cedar' && !allPending.find(p=>p.key===key)) {
+      const d = propData[key];
+      if(d) allPending.push({ key, addr: d.addr, meta: d.city });
+    }
+  });
+
+  const pendingEl = document.getElementById('applied-pending-list');
+  if(pendingEl) {
+    pendingEl.innerHTML = allPending.map(p => `
+      <div style="background:${warm2};border:1px solid rgba(251,191,36,0.2);border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+        <div style="width:38px;height:38px;border-radius:11px;background:rgba(251,191,36,0.1);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🏡</div>
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:500;color:${textColor};margin-bottom:2px;">${p.addr}</div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:${textMuted};">${p.meta}</div>
+        </div>
+        <div style="background:rgba(251,191,36,0.12);color:#FBBF24;font-size:10px;font-weight:600;padding:4px 10px;border-radius:100px;">⏳ Pending</div>
+      </div>`).join('');
+  }
+
+  document.getElementById('applied-backdrop').classList.add('open');
+  document.getElementById('applied-sheet').classList.add('open');
+}
+
+function closeAppliedSheet() {
+  document.getElementById('applied-backdrop').classList.remove('open');
+  document.getElementById('applied-sheet').classList.remove('open');
+}
+</script>
+</body>
+</html>

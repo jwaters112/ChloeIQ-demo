@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ChloeIQ — 2847 Magnolia Drive</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,300;1,600&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0A0B07;
+  --accent: #B8E030;
+  --accent-dim: rgba(184,224,48,0.12);
+  --surface: #13160D;
+  --surface2: #1A1E12;
+  --border: rgba(184,224,48,0.12);
+  --border2: rgba(255,255,255,0.07);
+  --text: #EEF0E5;
+  --text-dim: rgba(238,240,229,0.55);
+  --text-muted: rgba(238,240,229,0.35);
+  --linen: #F5F0E8;
+  --linen-dim: rgba(245,240,232,0.55);
+  --warm: #1C1A14;
+  --warm2: #242118;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: #111;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* PHONE SHELL */
+.phone {
+  width: 390px;
+  height: 844px;
+  background: var(--warm);
+  border-radius: 48px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.08), inset 0 0 0 1px rgba(255,255,255,0.04);
+  display: flex;
+  flex-direction: column;
+}
+
+/* STATUS BAR */
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 28px 0;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--linen);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+}
+
+.status-time { font-weight: 400; }
+.status-icons { display: flex; gap: 5px; align-items: center; font-size: 11px; }
+
+/* SCREENS */
+.screen {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: none;
+  flex-direction: column;
+  scrollbar-width: none;
+}
+.screen::-webkit-scrollbar { display: none; }
+.screen.active { display: flex; }
+
+/* ── SCREEN: SCAN (Welcome) ── */
+#screen-scan {
+  background: var(--bg);
+  align-items: center;
+  justify-content: center;
+  padding: 40px 28px;
+  position: relative;
+  overflow: hidden;
+}
+
+#screen-scan::before {
+  content: '';
+  position: absolute;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(184,224,48,0.1) 0%, transparent 70%);
+  top: 50%; left: 50%;
+  transform: translate(-50%,-60%);
+}
+
+.scan-logo {
+  font-family: 'Fraunces', serif;
+  font-size: 13px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 40px;
+  font-style: italic;
+}
+
+.qr-frame {
+  width: 180px; height: 180px;
+  border: 2px solid var(--accent);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 28px;
+  background: rgba(184,224,48,0.03);
+}
+
+.qr-corner {
+  position: absolute;
+  width: 20px; height: 20px;
+  border-color: var(--accent);
+  border-style: solid;
+}
+.qr-corner.tl { top: -2px; left: -2px; border-width: 3px 0 0 3px; border-radius: 6px 0 0 0; }
+.qr-corner.tr { top: -2px; right: -2px; border-width: 3px 3px 0 0; border-radius: 0 6px 0 0; }
+.qr-corner.bl { bottom: -2px; left: -2px; border-width: 0 0 3px 3px; border-radius: 0 0 0 6px; }
+.qr-corner.br { bottom: -2px; right: -2px; border-width: 0 3px 3px 0; border-radius: 0 0 6px 0; }
+
+.qr-inner {
+  font-size: 72px;
+  line-height: 1;
+  filter: grayscale(1) brightness(2);
+  opacity: 0.15;
+}
+
+.scan-pulse {
+  position: absolute;
+  width: 100%; height: 2px;
+  background: linear-gradient(to right, transparent, var(--accent), transparent);
+  animation: scanLine 2s ease-in-out infinite;
+  top: 0;
+}
+
+@keyframes scanLine {
+  0% { top: 10%; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { top: 90%; opacity: 0; }
+}
+
+.scan-code {
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 6px;
+  margin-bottom: 8px;
+}
+
+.scan-address {
+  font-size: 13px;
+  color: var(--text-dim);
+  margin-bottom: 40px;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.scan-cta {
+  width: 100%;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 14px;
+  padding: 16px;
+  font-family: 'Fraunces', serif;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  margin-bottom: 12px;
+}
+.scan-cta:active { opacity: 0.85; }
+
+.scan-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ── SCREEN: QUIZ ── */
+#screen-quiz {
+  background: var(--warm);
+}
+
+.quiz-header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  flex-shrink: 0;
+}
+
+.quiz-progress-bar {
+  height: 3px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.quiz-progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+.quiz-step-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.quiz-question {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--linen);
+  line-height: 1.3;
+}
+
+.quiz-sub {
+  font-size: 13px;
+  color: var(--linen-dim);
+  margin-top: 4px;
+}
+
+.quiz-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px;
+  scrollbar-width: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.quiz-body::-webkit-scrollbar { display: none; }
+
+.quiz-option {
+  background: var(--warm2);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quiz-option.selected {
+  border-color: var(--accent);
+  background: rgba(184,224,48,0.08);
+}
+
+.quiz-option-emoji { font-size: 24px; flex-shrink: 0; }
+
+.quiz-option-text { flex: 1; }
+.quiz-option-label { font-size: 15px; color: var(--linen); font-weight: 500; }
+.quiz-option-desc { font-size: 12px; color: var(--linen-dim); margin-top: 2px; }
+
+.quiz-check {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.2);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+  font-size: 12px;
+}
+.quiz-option.selected .quiz-check {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+}
+
+.quiz-footer {
+  padding: 16px 24px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.quiz-btn-back {
+  background: rgba(255,255,255,0.06);
+  border: none;
+  border-radius: 12px;
+  padding: 14px 18px;
+  color: var(--linen-dim);
+  font-size: 14px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.quiz-btn-next {
+  flex: 1;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 12px;
+  padding: 14px;
+  font-family: 'Fraunces', serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  opacity: 0.4;
+  pointer-events: none;
+}
+.quiz-btn-next.ready { opacity: 1; pointer-events: all; }
+
+/* ── SCREEN: MATCH ── */
+#screen-match {
+  background: var(--warm);
+  padding: 28px 24px;
+}
+
+.match-header {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 20px;
+}
+
+.match-score-ring {
+  width: 140px; height: 140px;
+  margin: 0 auto 20px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.match-score-ring svg {
+  position: absolute;
+  inset: 0;
+  transform: rotate(-90deg);
+}
+
+.ring-bg { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 8; }
+.ring-fill { fill: none; stroke: var(--accent); stroke-width: 8; stroke-linecap: round;
+  stroke-dasharray: 345; stroke-dashoffset: 45;
+  transition: stroke-dashoffset 1s ease;
+}
+
+.match-score-val {
+  font-family: 'Fraunces', serif;
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.match-score-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--linen-dim);
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.match-dna {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--linen);
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.match-desc {
+  font-size: 13px;
+  color: var(--linen-dim);
+  text-align: center;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.match-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 28px;
+}
+
+.match-tag {
+  padding: 6px 14px;
+  border-radius: 100px;
+  border: 1px solid rgba(184,224,48,0.25);
+  background: rgba(184,224,48,0.07);
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.5px;
+}
+
+.match-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.match-btn-primary {
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  border-radius: 14px;
+  padding: 16px;
+  font-family: 'Fraunces', serif;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.match-btn-secondary {
+  background: rgba(255,255,255,0.06);
+  color: var(--linen);
+  border: none;
+  border-radius: 14px;
+  padding: 14px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* ── SCREEN: CHLOE CHAT ── */
+#screen-chloe {
+  background: var(--warm);
+  display: flex;
+  flex-direction: column;
+}
+
+.chloe-header {
+  padding: 16px 24px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.chloe-avatar {
+  width: 38px; height: 38px;
+  background: var(--accent-dim);
+  border: 1px solid rgba(184,224,48,0.3);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.chloe-title { font-size: 15px; font-weight: 500; color: var(--linen); }
+.chloe-status { font-size: 11px; color: var(--accent); }
+
+.chloe-back {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: var(--linen-dim);
+  font-size: 22px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  scrollbar-width: none;
+}
+.chat-messages::-webkit-scrollbar { display: none; }
+
+.msg { display: flex; gap: 10px; align-items: flex-end; }
+.msg.user { flex-direction: row-reverse; }
+
+.msg-avatar {
+  width: 28px; height: 28px;
+  border-radius: 10px;
+  background: var(--accent-dim);
+  border: 1px solid rgba(184,224,48,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.msg-bubble {
+  max-width: 260px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.msg.chloe .msg-bubble {
+  background: var(--warm2);
+  color: var(--linen);
+  border-bottom-left-radius: 4px;
+}
+
+.msg.user .msg-bubble {
+  background: var(--accent);
+  color: var(--bg);
+  border-bottom-right-radius: 4px;
+  font-weight: 500;
+}
+
+.typing-dot {
+  display: inline-block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: typingBounce 1.2s ease-in-out infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes typingBounce {
+  0%, 100% { transform: translateY(0); opacity: 0.4; }
+  50% { transform: translateY(-4px); opacity: 1; }
+}
+
+.chat-suggestions {
+  padding: 0 16px 12px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex-shrink: 0;
+}
+.chat-suggestions::-webkit-scrollbar { display: none; }
+
+.suggestion-chip {
+  background: var(--warm2);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 100px;
+  padding: 8px 14px;
+  font-size: 12px;
+  color: var(--linen-dim);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.suggestion-chip:hover { border-color: var(--accent); color: var(--accent); }
+
+.chat-input-row {
+  padding: 12px 16px 16px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  flex-shrink: 0;
+}
+
+.chat-input {
+  flex: 1;
+  background: var(--warm2);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 14px;
+  color: var(--linen);
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+}
+.chat-input::placeholder { color: var(--linen-dim); }
+
+.chat-send {
+  width: 40px; height: 40px;
+  background: var(--accent);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s;
+}
+
+/* ── SCREEN: VISIONMATCH ── */
+#screen-vision {
+  background: var(--warm);
+}
+
+.vision-header {
+  padding: 16px 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.vision-back {
+  background: none;
+  border: none;
+  color: var(--linen-dim);
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.vision-title {
+  font-family: 'Fraunces', serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--linen);
+}
+
+.vision-badge {
+  margin-left: auto;
+  background: var(--accent-dim);
+  border: 1px solid rgba(184,224,48,0.3);
+  border-radius: 100px;
+  padding: 4px 10px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--accent);
+  letter-spacing: 1px;
+}
+
+.vision-scroll {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.vision-scroll::-webkit-scrollbar { display: none; }
+
+.vision-style-row {
+  display: flex;
+  gap: 8px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.vision-style-row::-webkit-scrollbar { display: none; }
+
+.style-pill {
+  padding: 7px 16px;
+  border-radius: 100px;
+  border: 1px solid rgba(255,255,255,0.1);
+  font-size: 12px;
+  color: var(--linen-dim);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.style-pill.active {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+  font-weight: 500;
+}
+
+.vision-rooms {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 16px;
+}
+
+.vision-room-card {
+  background: var(--warm2);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.vision-room-card:hover { border-color: rgba(184,224,48,0.3); }
+
+.room-visual {
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.room-visual.kitchen { background: linear-gradient(135deg, #1a1a12 0%, #2a2618 100%); }
+.room-visual.primary { background: linear-gradient(135deg, #14151A 0%, #1E1F28 100%); }
+.room-visual.living { background: linear-gradient(135deg, #12181A 0%, #162022 100%); }
+.room-visual.outdoor { background: linear-gradient(135deg, #101A0E 0%, #162212 100%); }
+
+.room-style-overlay {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.4s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+}
+.room-visual:hover .room-style-overlay { opacity: 1; }
+
+.room-info { padding: 10px 12px; }
+.room-name { font-size: 13px; font-weight: 500; color: var(--linen); }
+.room-dna { font-size: 11px; color: var(--accent); margin-top: 2px; font-family: 'DM Mono', monospace; }
+
+.vision-insight {
+  margin: 0 16px 16px;
+  background: rgba(184,224,48,0.06);
+  border: 1px solid rgba(184,224,48,0.15);
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+
+.insight-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.insight-text {
+  font-size: 13px;
+  color: var(--linen-dim);
+  line-height: 1.55;
+}
+
+/* BOTTOM NAV */
+.bottom-nav {
+  display: flex;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  padding: 10px 0 20px;
+  flex-shrink: 0;
+  background: var(--warm);
+}
+
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 4px 0;
+  transition: opacity 0.2s;
+}
+
+.nav-icon { font-size: 22px; }
+.nav-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--linen-dim);
+  text-transform: uppercase;
+}
+.nav-item.active .nav-label { color: var(--accent); }
+.nav-item.active .nav-icon { filter: drop-shadow(0 0 4px rgba(184,224,48,0.5)); }
+
+/* transitions */
+.screen { animation: screenFade 0.3s ease; }
+@keyframes screenFade { from { opacity: 0; } to { opacity: 1; } }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <span class="status-icons">●●● 5G 🔋</span>
+  </div>
+
+  <!-- ══ SCREEN: SCAN ══ -->
+  <div class="screen active" id="screen-scan">
+    <div class="scan-logo">ChloeIQ</div>
+    <div class="qr-frame">
+      <div class="qr-corner tl"></div>
+      <div class="qr-corner tr"></div>
+      <div class="qr-corner bl"></div>
+      <div class="qr-corner br"></div>
+      <div class="scan-pulse"></div>
+      <div class="qr-inner">⬛</div>
+    </div>
+    <div class="scan-code">MAGNOLIA</div>
+    <div class="scan-address">2847 Magnolia Drive<br>Flower Mound, TX 76226</div>
+    <button class="scan-cta" onclick="goScreen('screen-quiz')">Unlock This Home →</button>
+    <div class="scan-sub">No app download · No account required</div>
+  </div>
+
+  <!-- ══ SCREEN: QUIZ ══ -->
+  <div class="screen" id="screen-quiz">
+    <div class="quiz-header">
+      <div class="quiz-progress-bar">
+        <div class="quiz-progress-fill" id="quiz-fill" style="width:16.6%"></div>
+      </div>
+      <div class="quiz-step-label" id="quiz-step">Question 1 of 6 — StyleDNA</div>
+      <div class="quiz-question" id="quiz-q">When you walk into a home and instantly feel it, what does it look like?</div>
+      <div class="quiz-sub" id="quiz-sub">The gut reaction before you analyze anything</div>
+    </div>
+
+    <div class="quiz-body" id="quiz-options"></div>
+
+    <div class="quiz-footer">
+      <button class="quiz-btn-back" id="quiz-back" onclick="quizBack()">←</button>
+      <button class="quiz-btn-next" id="quiz-next" onclick="quizNext()">Continue →</button>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: MATCH ══ -->
+  <div class="screen" id="screen-match">
+    <div style="flex:1; overflow-y:auto; padding: 28px 24px; scrollbar-width:none;">
+      <div class="match-header">Your StyleDNA Match</div>
+
+      <div class="match-score-ring">
+        <svg viewBox="0 0 140 140" xmlns="http://www.w3.org/2000/svg">
+          <circle class="ring-bg" cx="70" cy="70" r="55"/>
+          <circle class="ring-fill" cx="70" cy="70" r="55"/>
+        </svg>
+        <div>
+          <div class="match-score-val">87%</div>
+        </div>
+      </div>
+
+      <div class="match-score-label">Home Match Score</div>
+      <div class="match-dna">Refined Modern</div>
+      <div class="match-desc">You prize intentional design, clean lines, and elevated materials. This home's slab hardware, spa primary suite, and open volume were built for you.</div>
+
+      <div class="match-tags">
+        <span class="match-tag">Clean Lines</span>
+        <span class="match-tag">Elevated Finishes</span>
+        <span class="match-tag">Indoor–Outdoor</span>
+        <span class="match-tag">Entertainer's Kitchen</span>
+      </div>
+
+      <div class="match-actions">
+        <button class="match-btn-primary" onclick="goScreen('screen-chloe'); navTo('chloe')">Ask Chloe About This Home →</button>
+        <button class="match-btn-secondary" onclick="goScreen('screen-vision'); navTo('vision')">Explore VisionMatch</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: CHLOE ══ -->
+  <div class="screen" id="screen-chloe">
+    <div class="chloe-header">
+      <div class="chloe-avatar">✨</div>
+      <div>
+        <div class="chloe-title">Ask Chloe</div>
+        <div class="chloe-status">● Live · Refined Modern mode</div>
+      </div>
+      <button class="chloe-back" onclick="goScreen('screen-match'); navTo('match')">×</button>
+    </div>
+
+    <div class="chat-messages" id="chat-messages">
+      <div class="msg chloe">
+        <div class="msg-avatar">✨</div>
+        <div class="msg-bubble">Hi Jordan! I'm Chloe, your guide for 2847 Magnolia Drive. I already know your Refined Modern profile — ask me anything about this home. 🏡</div>
+      </div>
+    </div>
+
+    <div class="chat-suggestions" id="chat-suggestions">
+      <div class="suggestion-chip" onclick="sendSuggestion(this, 'What are the kitchen appliances?')">Kitchen appliances?</div>
+      <div class="suggestion-chip" onclick="sendSuggestion(this, 'How big is the primary suite?')">Primary suite size?</div>
+      <div class="suggestion-chip" onclick="sendSuggestion(this, 'Is there storage for a family?')">Family storage?</div>
+      <div class="suggestion-chip" onclick="sendSuggestion(this, 'Tell me about the outdoor space')">Outdoor space?</div>
+    </div>
+
+    <div class="chat-input-row">
+      <input class="chat-input" id="chat-input" placeholder="Ask anything about this home…" onkeydown="if(event.key==='Enter') sendMessage()">
+      <button class="chat-send" onclick="sendMessage()">↑</button>
+    </div>
+  </div>
+
+  <!-- ══ SCREEN: VISIONMATCH ══ -->
+  <div class="screen" id="screen-vision">
+    <div class="vision-header">
+      <button class="vision-back" onclick="goScreen('screen-match'); navTo('match')">←</button>
+      <div class="vision-title">VisionMatch</div>
+      <div class="vision-badge">Refined Modern</div>
+    </div>
+
+    <div class="vision-scroll">
+      <div class="vision-style-row">
+        <div class="style-pill active" onclick="setStyle(this,'Refined Modern')">Refined Modern</div>
+        <div class="style-pill" onclick="setStyle(this,'Warm Organic')">Warm Organic</div>
+        <div class="style-pill" onclick="setStyle(this,'Coastal Luxe')">Coastal Luxe</div>
+        <div class="style-pill" onclick="setStyle(this,'Bold Eclectic')">Bold Eclectic</div>
+      </div>
+
+      <div class="vision-rooms">
+        <div class="vision-room-card">
+          <div class="room-visual kitchen">🍳
+            <div class="room-style-overlay" id="kitchen-overlay">🖤</div>
+          </div>
+          <div class="room-info">
+            <div class="room-name">Kitchen</div>
+            <div class="room-dna" id="kitchen-dna">Slab hardware · Unlacquered brass</div>
+          </div>
+        </div>
+        <div class="vision-room-card">
+          <div class="room-visual primary">🛏️
+            <div class="room-style-overlay" id="primary-overlay">✨</div>
+          </div>
+          <div class="room-info">
+            <div class="room-name">Primary Suite</div>
+            <div class="room-dna" id="primary-dna">Spa finish · Soaking tub</div>
+          </div>
+        </div>
+        <div class="vision-room-card">
+          <div class="room-visual living">🛋️
+            <div class="room-style-overlay" id="living-overlay">🪴</div>
+          </div>
+          <div class="room-info">
+            <div class="room-name">Living Room</div>
+            <div class="room-dna" id="living-dna">Volume ceilings · Clean lines</div>
+          </div>
+        </div>
+        <div class="vision-room-card">
+          <div class="room-visual outdoor">🌿
+            <div class="room-style-overlay" id="outdoor-overlay">☀️</div>
+          </div>
+          <div class="room-info">
+            <div class="room-name">Outdoor</div>
+            <div class="room-dna" id="outdoor-dna">Pool · Covered lanai</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="vision-insight">
+        <div class="insight-label">Chloe's Read</div>
+        <div class="insight-text" id="vision-insight-text">The kitchen's slab cabinetry and unlacquered brass fixtures align closely with your Refined Modern profile. The volume ceilings in the living space give it the intentional breathing room you responded to in your quiz.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM NAV (shown on match/chloe/vision screens) -->
+  <div class="bottom-nav" id="bottom-nav" style="display:none;">
+    <div class="nav-item active" id="nav-match" onclick="goScreen('screen-match'); navTo('match')">
+      <div class="nav-icon">🏠</div>
+      <div class="nav-label">Match</div>
+    </div>
+    <div class="nav-item" id="nav-chloe" onclick="goScreen('screen-chloe'); navTo('chloe')">
+      <div class="nav-icon">✨</div>
+      <div class="nav-label">Ask Chloe</div>
+    </div>
+    <div class="nav-item" id="nav-vision" onclick="goScreen('screen-vision'); navTo('vision')">
+      <div class="nav-icon">🎨</div>
+      <div class="nav-label">VisionMatch</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── THEME FROM URL PARAMS ──
+(function applyUrlTheme() {
+  const p = new URLSearchParams(window.location.search);
+  const root = document.documentElement;
+  const hex = k => p.get(k) ? '#' + p.get(k) : null;
+  const set = (k, v) => v && root.style.setProperty(k, v);
+
+  const bg      = hex('bg');
+  const accent  = hex('accent');
+  const text    = hex('text');
+  const surface = hex('surface');
+  const font    = p.get('font') ? decodeURIComponent(p.get('font')) : null;
+
+  set('--bg', bg);
+  set('--accent', accent);
+  set('--text', text);
+  set('--surface', surface);
+
+  if (accent) {
+    const r = parseInt(accent.slice(1,3),16);
+    const g = parseInt(accent.slice(3,5),16);
+    const b = parseInt(accent.slice(5,7),16);
+    root.style.setProperty('--accent-dim', `rgba(${r},${g},${b},0.12)`);
+  }
+  if (text) {
+    const r = parseInt(text.slice(1,3),16);
+    const g = parseInt(text.slice(3,5),16);
+    const b = parseInt(text.slice(5,7),16);
+    root.style.setProperty('--text-dim', `rgba(${r},${g},${b},0.55)`);
+    root.style.setProperty('--text-muted', `rgba(${r},${g},${b},0.35)`);
+  }
+  if (bg) {
+    // Derive warm tones from bg
+    root.style.setProperty('--warm', bg);
+    root.style.setProperty('--warm2', bg);
+  }
+  if (font) {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = `https://fonts.googleapis.com/css2?family=${font.replace(/ /g,'+')}:wght@400;600;700;800&display=swap`;
+    document.head.appendChild(link);
+    document.body.style.setProperty('--display-font', `'${font}', serif`);
+    // Apply to headings after fonts load
+    link.onload = () => {
+      document.querySelectorAll('.scan-code,.match-score-val,.match-dna,.scan-cta,.match-btn-primary,.quiz-question,.ring-val,.result-dna-name').forEach(el => {
+        el.style.fontFamily = `'${font}', serif`;
+      });
+    };
+  }
+})();
+
+// ── QUIZ DATA ──
+const questions = [
+  {
+    q: "When you walk into a home and instantly feel it — what does it look like?",
+    sub: "Your gut reaction before you analyze anything",
+    options: [
+      { emoji:"🖤", label:"Clean, minimal, intentional", desc:"Everything earns its place" },
+      { emoji:"🪵", label:"Warm, textured, lived-in", desc:"Natural materials everywhere" },
+      { emoji:"🌊", label:"Light, airy, coastal", desc:"Whites and organic shapes" },
+      { emoji:"🎨", label:"Bold, layered, collected", desc:"Personality in every corner" },
+    ]
+  },
+  {
+    q: "Your dream kitchen has…",
+    sub: "Be honest — you'll spend a lot of time here",
+    options: [
+      { emoji:"🔲", label:"Slab cabinets, no hardware", desc:"Clean as a museum" },
+      { emoji:"🪵", label:"Shaker cabinets, open shelving", desc:"Real and functional" },
+      { emoji:"🐚", label:"Curved edges, warm stone", desc:"Soft and sculptural" },
+      { emoji:"🔶", label:"Mixed metals, statement island", desc:"Designed to impress" },
+    ]
+  },
+  {
+    q: "The primary suite should feel like…",
+    sub: "Your daily reset",
+    options: [
+      { emoji:"🏨", label:"A luxury hotel", desc:"Spa finish, soaking tub" },
+      { emoji:"🌾", label:"A countryside retreat", desc:"Linen, wood, softness" },
+      { emoji:"🌙", label:"Calm and cocoon-like", desc:"Dark, quiet, restful" },
+      { emoji:"☀️", label:"Light-flooded and energizing", desc:"Morning light, high ceilings" },
+    ]
+  },
+  {
+    q: "For your outdoor space, you're picturing…",
+    sub: "How do you actually use it?",
+    options: [
+      { emoji:"🏊", label:"Pool and covered lanai", desc:"Summer entertaining" },
+      { emoji:"🌿", label:"Garden and landscaping", desc:"Quiet and private" },
+      { emoji:"🍽️", label:"Outdoor kitchen and dining", desc:"Year-round hosting" },
+      { emoji:"🌅", label:"A view and a great chair", desc:"Morning coffee, nothing else" },
+    ]
+  },
+  {
+    q: "How important are the finishes and details?",
+    sub: "Honesty here helps us match you better",
+    options: [
+      { emoji:"💎", label:"Everything — I notice hardware", desc:"Builder-grade is a dealbreaker" },
+      { emoji:"✅", label:"Quality over luxury", desc:"Solid and well-made matters" },
+      { emoji:"🛠️", label:"I'll renovate anyway", desc:"Good bones, I'll handle the rest" },
+      { emoji:"🙂", label:"Not really my thing", desc:"Function over form" },
+    ]
+  },
+  {
+    q: "Your lifestyle fits best described as…",
+    sub: "Be honest — this affects what kind of home fits you",
+    options: [
+      { emoji:"👨‍👩‍👧", label:"Family-first", desc:"Space, schools, community" },
+      { emoji:"🎉", label:"Entertainer", desc:"People are always over" },
+      { emoji:"🏡", label:"Quiet homebody", desc:"My home is my sanctuary" },
+      { emoji:"💼", label:"Work-from-home operator", desc:"Dedicated office is non-negotiable" },
+    ]
+  }
+];
+
+let currentQ = 0;
+let answers = new Array(6).fill(null);
+
+function renderQuestion() {
+  const q = questions[currentQ];
+  document.getElementById('quiz-fill').style.width = ((currentQ+1)/6*100)+'%';
+  document.getElementById('quiz-step').textContent = `Question ${currentQ+1} of 6 — StyleDNA`;
+  document.getElementById('quiz-q').textContent = q.q;
+  document.getElementById('quiz-sub').textContent = q.sub;
+
+  const container = document.getElementById('quiz-options');
+  container.innerHTML = q.options.map((o,i) => `
+    <div class="quiz-option ${answers[currentQ]===i?'selected':''}" onclick="selectOption(${i})">
+      <div class="quiz-option-emoji">${o.emoji}</div>
+      <div class="quiz-option-text">
+        <div class="quiz-option-label">${o.label}</div>
+        ${o.desc ? `<div class="quiz-option-desc">${o.desc}</div>` : ''}
+      </div>
+      <div class="quiz-check">${answers[currentQ]===i?'✓':''}</div>
+    </div>
+  `).join('');
+
+  const nextBtn = document.getElementById('quiz-next');
+  if (answers[currentQ] !== null) nextBtn.classList.add('ready');
+  else nextBtn.classList.remove('ready');
+
+  document.getElementById('quiz-back').style.opacity = currentQ === 0 ? '0.3' : '1';
+  document.getElementById('quiz-back').style.pointerEvents = currentQ === 0 ? 'none' : 'all';
+}
+
+function selectOption(i) {
+  answers[currentQ] = i;
+  renderQuestion();
+}
+
+function quizNext() {
+  if (answers[currentQ] === null) return;
+  if (currentQ < 5) {
+    currentQ++;
+    renderQuestion();
+  } else {
+    goScreen('screen-match');
+    document.getElementById('bottom-nav').style.display = 'flex';
+  }
+}
+
+function quizBack() {
+  if (currentQ > 0) { currentQ--; renderQuestion(); }
+}
+
+renderQuestion();
+
+// ── SCREEN NAVIGATION ──
+function goScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+
+  const showNav = ['screen-match','screen-chloe','screen-vision'].includes(id);
+  document.getElementById('bottom-nav').style.display = showNav ? 'flex' : 'none';
+}
+
+function navTo(tab) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('nav-'+tab)?.classList.add('active');
+}
+
+// ── CHLOE CHAT ──
+const chloAnswers = {
+  'What are the kitchen appliances?': "The kitchen features a Wolf 48\" dual-fuel range, Sub-Zero refrigerator, and Miele dishwasher. Given your Refined Modern profile, you'll appreciate that they're paneled — fully integrated, nothing breaks the slab cabinet line. 🔲",
+  'How big is the primary suite?': "The primary suite is 680 sq ft including the bath — master on main. The spa bath has radiant floors, a freestanding soaking tub, and a steam shower with Kohler fixtures. Very much aligned with your \"luxury hotel\" answer. 🏨",
+  'Is there storage for a family?': "Excellent question. There's a 3-car garage with built-in cabinetry, a large utility room, and every bedroom has a walk-in closet. The butler's pantry off the kitchen adds significant hidden storage for an entertainer. ✅",
+  'Tell me about the outdoor space': "The backyard is oriented southwest — you'll get afternoon sun on the pool from 2pm until sunset. The covered lanai is 800 sq ft with a built-in grill and outdoor fireplace. Lot is just under half an acre. 🌿"
+};
+
+function sendSuggestion(el, text) {
+  el.remove();
+  addUserMsg(text);
+  showTyping();
+  setTimeout(() => {
+    removeTyping();
+    addChloeMsg(chloAnswers[text] || "Great question! Let me pull that detail for you from the property data...");
+  }, 1200);
+}
+
+function sendMessage() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  addUserMsg(text);
+  showTyping();
+  setTimeout(() => {
+    removeTyping();
+    addChloeMsg("Based on your Refined Modern profile, here's what I'd highlight about that — " + text.toLowerCase() + " is definitely worth looking at closely in this home. Want me to pull the exact spec?");
+  }, 1400);
+}
+
+function addUserMsg(text) {
+  const msgs = document.getElementById('chat-messages');
+  msgs.innerHTML += `<div class="msg user"><div class="msg-bubble">${text}</div></div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addChloeMsg(text) {
+  const msgs = document.getElementById('chat-messages');
+  msgs.innerHTML += `<div class="msg chloe"><div class="msg-avatar">✨</div><div class="msg-bubble">${text}</div></div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping() {
+  const msgs = document.getElementById('chat-messages');
+  msgs.innerHTML += `<div class="msg chloe" id="typing-indicator"><div class="msg-avatar">✨</div><div class="msg-bubble" style="padding:14px 18px;"><span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span></div></div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeTyping() {
+  document.getElementById('typing-indicator')?.remove();
+}
+
+// ── VISIONMATCH ──
+const styleData = {
+  'Refined Modern': {
+    kitchen: 'Slab hardware · Unlacquered brass',
+    primary: 'Spa finish · Soaking tub',
+    living: 'Volume ceilings · Clean lines',
+    outdoor: 'Pool · Covered lanai',
+    insight: "The kitchen's slab cabinetry and unlacquered brass fixtures align closely with your Refined Modern profile. The volume ceilings in the living space give it the intentional breathing room you responded to in your quiz."
+  },
+  'Warm Organic': {
+    kitchen: 'Open shelving · Wood tones',
+    primary: 'Linen textures · Natural stone',
+    living: 'Layered textiles · Warm lighting',
+    outdoor: 'Garden beds · Mature trees',
+    insight: "The home's natural light and open volume work beautifully in a Warm Organic palette. The stone fireplace surround and wood ceiling beams in the living room are a natural fit."
+  },
+  'Coastal Luxe': {
+    kitchen: 'White shaker · Carrara marble',
+    primary: 'Soft whites · Linen drapes',
+    living: 'Bleached oak · Sea glass accents',
+    outdoor: 'Pool · White pergola',
+    insight: "The southwest-facing backyard and pool are made for a Coastal Luxe lifestyle. The open-plan main level captures the easy indoor–outdoor flow that defines this aesthetic."
+  },
+  'Bold Eclectic': {
+    kitchen: 'Mixed metals · Statement island',
+    primary: 'Rich jewel tones · Layered pattern',
+    living: 'Collected art · Mixed eras',
+    outdoor: 'Structured garden · Dramatic lighting',
+    insight: "The home's large footprint and high ceilings give you the canvas for a Bold Eclectic approach. The formal dining room and butler's pantry are ideal spaces for a strong design statement."
+  }
+};
+
+function setStyle(el, style) {
+  document.querySelectorAll('.style-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  const d = styleData[style];
+  document.getElementById('kitchen-dna').textContent = d.kitchen;
+  document.getElementById('primary-dna').textContent = d.primary;
+  document.getElementById('living-dna').textContent = d.living;
+  document.getElementById('outdoor-dna').textContent = d.outdoor;
+  document.getElementById('vision-insight-text').textContent = d.insight;
+  document.querySelector('.vision-badge').textContent = style;
+}
+</script>
+</body>
+</html>

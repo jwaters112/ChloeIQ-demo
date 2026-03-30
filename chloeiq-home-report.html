@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ChloeIQ — Home Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,300;1,600&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F5F0E8;
+  --bg2: #EDE8DC;
+  --accent: #2C4A0E;
+  --accent-bright: #B8E030;
+  --surface: #FFFFFF;
+  --surface2: #F0EBE0;
+  --border: rgba(44,74,14,0.12);
+  --border2: rgba(0,0,0,0.07);
+  --text: #1A1C10;
+  --text-dim: rgba(26,28,16,0.55);
+  --text-muted: rgba(26,28,16,0.35);
+  --score-green: #4A8C1C;
+  --score-amber: #C07020;
+  --score-red: #B03020;
+  --tag-bg: rgba(44,74,14,0.08);
+  --tag-border: rgba(44,74,14,0.18);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+body {
+  background: #2A2A2A;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* PHONE SHELL */
+.phone {
+  width: 375px;
+  height: 812px;
+  background: var(--bg);
+  border-radius: 44px;
+  overflow: hidden;
+  position: relative;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.07),
+    0 0 0 2px rgba(0,0,0,0.6),
+    0 32px 64px rgba(0,0,0,0.7),
+    inset 0 0 0 1px rgba(255,255,255,0.03);
+  display: flex;
+  flex-direction: column;
+}
+
+.notch {
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 120px; height: 30px;
+  background: #0A0A0A;
+  border-radius: 0 0 20px 20px;
+  z-index: 20;
+}
+
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 28px 0;
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--text);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+  opacity: 0.7;
+}
+
+/* SCROLLABLE CONTENT */
+.report-scroll {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.report-scroll::-webkit-scrollbar { display: none; }
+
+/* ── HERO HEADER ── */
+.report-hero {
+  background: var(--accent);
+  padding: 20px 24px 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.report-hero::before {
+  content: '';
+  position: absolute;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, rgba(184,224,48,0.15) 0%, transparent 70%);
+  top: -40px; right: -40px;
+}
+
+.report-hero-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--accent-bright);
+  opacity: 0.8;
+  margin-bottom: 6px;
+}
+
+.report-hero-address {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1.2;
+  margin-bottom: 3px;
+}
+
+.report-hero-city {
+  font-size: 13px;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 16px;
+}
+
+.hero-stats-row {
+  display: flex;
+  gap: 20px;
+}
+
+.hero-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hero-stat-val {
+  font-family: 'Fraunces', serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.hero-stat-lbl {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+}
+
+/* ── MATCH BANNER ── */
+.match-banner {
+  background: var(--accent-bright);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.match-banner-score {
+  font-family: 'Fraunces', serif;
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.match-banner-text { flex: 1; }
+
+.match-banner-title {
+  font-family: 'Fraunces', serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 2px;
+}
+
+.match-banner-sub {
+  font-size: 12px;
+  color: rgba(44,74,14,0.65);
+  line-height: 1.4;
+}
+
+/* ── SECTION BLOCKS ── */
+.section-block {
+  padding: 20px 20px 0;
+}
+
+.section-block:last-child { padding-bottom: 32px; }
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.section-meta {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--accent);
+}
+
+/* ── ROOMS VISITED ── */
+.rooms-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.room-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 14px;
+  padding: 14px;
+  position: relative;
+  overflow: hidden;
+}
+
+.room-card-accent {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+
+.room-card-icon { font-size: 22px; margin-bottom: 8px; }
+
+.room-card-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.room-card-dwell {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.dwell-bar {
+  height: 3px;
+  background: var(--bg2);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.dwell-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: var(--accent);
+}
+
+.room-card-signal {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 100px;
+  display: inline-block;
+}
+
+.signal-high { background: rgba(74,140,28,0.1); color: var(--score-green); }
+.signal-mid  { background: rgba(192,112,32,0.1); color: var(--score-amber); }
+.signal-low  { background: rgba(176,48,32,0.08); color: var(--score-red); }
+
+/* ── QUESTIONS ASKED ── */
+.questions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.question-item {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.question-icon {
+  width: 28px; height: 28px;
+  background: rgba(44,74,14,0.08);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.question-text {
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.45;
+  flex: 1;
+}
+
+.question-room {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+
+/* ── SCORE BREAKDOWN ── */
+.score-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.score-row {
+  display: flex;
+  align-items: center;
+  padding: 13px 16px;
+  gap: 12px;
+  border-bottom: 1px solid var(--border2);
+}
+
+.score-row:last-child { border-bottom: none; }
+
+.score-row-label {
+  font-size: 13px;
+  color: var(--text);
+  flex: 1;
+}
+
+.score-row-bar {
+  width: 80px;
+  height: 4px;
+  background: var(--bg2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.score-row-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: var(--accent);
+}
+
+.score-row-val {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--accent);
+  width: 28px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ── CHLOE INSIGHTS ── */
+.insights-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.insight-card {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  gap: 12px;
+}
+
+.insight-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+
+.insight-dot.green  { background: var(--score-green); }
+.insight-dot.amber  { background: var(--score-amber); }
+.insight-dot.accent { background: var(--accent); }
+
+.insight-text {
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.55;
+  flex: 1;
+}
+
+.insight-text strong { color: var(--accent); font-weight: 600; }
+
+/* ── NEXT STEPS ── */
+.next-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.next-step-item {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.next-step-item:hover { border-color: var(--accent); }
+
+.next-step-icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: rgba(44,74,14,0.08);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px;
+  flex-shrink: 0;
+}
+
+.next-step-text { flex: 1; }
+.next-step-title { font-size: 14px; font-weight: 500; color: var(--text); }
+.next-step-sub { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+.next-step-arrow { font-size: 16px; color: var(--text-muted); }
+
+/* ── AGENT CARD ── */
+.agent-card {
+  background: var(--accent);
+  border-radius: 16px;
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.agent-avatar {
+  width: 48px; height: 48px;
+  border-radius: 14px;
+  background: rgba(184,224,48,0.2);
+  border: 1px solid rgba(184,224,48,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.agent-info { flex: 1; }
+.agent-name { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 700; color: #FFFFFF; }
+.agent-role { font-size: 12px; color: rgba(255,255,255,0.55); margin-top: 1px; }
+.agent-score {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--accent-bright);
+  margin-top: 4px;
+}
+
+.agent-btn {
+  background: var(--accent-bright);
+  color: var(--accent);
+  border: none;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-family: 'Fraunces', serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ── DIVIDER ── */
+.block-divider {
+  height: 1px;
+  background: var(--border2);
+  margin: 16px 20px 0;
+}
+
+/* BOTTOM TAB BAR */
+.tab-bar {
+  display: flex;
+  border-top: 1px solid var(--border2);
+  padding: 10px 0 20px;
+  background: var(--surface);
+  flex-shrink: 0;
+}
+
+.tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.tab-icon { font-size: 20px; }
+.tab-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.tab-item.active .tab-label { color: var(--accent); }
+.tab-item.active .tab-icon { filter: saturate(0) brightness(0.3); }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="notch"></div>
+
+  <div class="status-bar">
+    <span>9:41</span>
+    <span>●●● 5G 🔋</span>
+  </div>
+
+  <div class="report-scroll">
+
+    <!-- HERO -->
+    <div class="report-hero">
+      <div class="report-hero-eyebrow">Post-Tour Report · Today 2:47pm</div>
+      <div class="report-hero-address">2847 Magnolia Drive</div>
+      <div class="report-hero-city">Flower Mound, TX 76226 · $1,295,000</div>
+      <div class="hero-stats-row">
+        <div class="hero-stat">
+          <div class="hero-stat-val">4 bed</div>
+          <div class="hero-stat-lbl">Bedrooms</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-val">3.5 ba</div>
+          <div class="hero-stat-lbl">Bathrooms</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-val">3,840</div>
+          <div class="hero-stat-lbl">Sq Ft</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-val">0.46 ac</div>
+          <div class="hero-stat-lbl">Lot</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MATCH BANNER -->
+    <div class="match-banner">
+      <div class="match-banner-score">87%</div>
+      <div class="match-banner-text">
+        <div class="match-banner-title">Strong Match · Refined Modern</div>
+        <div class="match-banner-sub">This home aligns closely with your StyleDNA profile across aesthetic, finishes, and lifestyle fit.</div>
+      </div>
+    </div>
+
+    <!-- ROOMS VISITED -->
+    <div class="section-block">
+      <div class="section-header">
+        <div class="section-title">Rooms Visited</div>
+        <div class="section-meta">6 of 8 rooms</div>
+      </div>
+      <div class="rooms-grid">
+        <div class="room-card">
+          <div class="room-card-accent" style="background:var(--accent)"></div>
+          <div class="room-card-icon">🍳</div>
+          <div class="room-card-name">Kitchen</div>
+          <div class="room-card-dwell">14 min · Most time spent</div>
+          <div class="dwell-bar"><div class="dwell-fill" style="width:95%"></div></div>
+          <div class="room-card-signal signal-high">High Interest</div>
+        </div>
+        <div class="room-card">
+          <div class="room-card-accent" style="background:var(--accent)"></div>
+          <div class="room-card-icon">🛁</div>
+          <div class="room-card-name">Primary Suite</div>
+          <div class="room-card-dwell">11 min · 2nd most time</div>
+          <div class="dwell-bar"><div class="dwell-fill" style="width:78%"></div></div>
+          <div class="room-card-signal signal-high">High Interest</div>
+        </div>
+        <div class="room-card">
+          <div class="room-card-accent" style="background:var(--score-amber)"></div>
+          <div class="room-card-icon">🛋️</div>
+          <div class="room-card-name">Living Room</div>
+          <div class="room-card-dwell">6 min · Average dwell</div>
+          <div class="dwell-bar"><div class="dwell-fill" style="width:44%"></div></div>
+          <div class="room-card-signal signal-mid">Moderate</div>
+        </div>
+        <div class="room-card">
+          <div class="room-card-accent" style="background:var(--score-green)"></div>
+          <div class="room-card-icon">🌿</div>
+          <div class="room-card-name">Backyard</div>
+          <div class="room-card-dwell">9 min · Pool view</div>
+          <div class="dwell-bar"><div class="dwell-fill" style="width:64%"></div></div>
+          <div class="room-card-signal signal-high">High Interest</div>
+        </div>
+        <div class="room-card">
+          <div class="room-card-accent" style="background:var(--score-amber)"></div>
+          <div class="room-card-icon">🏠</div>
+          <div class="room-card-name">Office</div>
+          <div class="room-card-dwell">4 min · Brief visit</div>
+          <div class="dwell-bar"><div class="dwell-fill" style="width:28%"></div></div>
+          <div class="room-card-signal signal-mid">Moderate</div>
+        </div>
+        <div class="room-card">
+          <div class="room-card-accent" style="background:var(--score-red)"></div>
+          <div class="room-card-icon">🛏️</div>
+          <div class="room-card-name">Bed 3</div>
+          <div class="room-card-dwell">2 min · Quick pass</div>
+          <div class="dwell-bar"><div class="dwell-fill" style="width:14%"></div></div>
+          <div class="room-card-signal signal-low">Low Interest</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block-divider"></div>
+
+    <!-- QUESTIONS ASKED -->
+    <div class="section-block">
+      <div class="section-header">
+        <div class="section-title">Questions You Asked Chloe</div>
+        <div class="section-meta">4 questions</div>
+      </div>
+      <div class="questions-list">
+        <div class="question-item">
+          <div class="question-icon">🍳</div>
+          <div>
+            <div class="question-text">What are the kitchen appliances?</div>
+            <div class="question-room">Kitchen · 9:14am</div>
+          </div>
+        </div>
+        <div class="question-item">
+          <div class="question-icon">📐</div>
+          <div>
+            <div class="question-text">How big is the primary suite and bath?</div>
+            <div class="question-room">Primary Suite · 9:22am</div>
+          </div>
+        </div>
+        <div class="question-item">
+          <div class="question-icon">🌿</div>
+          <div>
+            <div class="question-text">Which direction does the backyard face?</div>
+            <div class="question-room">Backyard · 9:31am</div>
+          </div>
+        </div>
+        <div class="question-item">
+          <div class="question-icon">🏫</div>
+          <div>
+            <div class="question-text">What's the school district here?</div>
+            <div class="question-room">Living Room · 9:38am</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block-divider"></div>
+
+    <!-- MATCH BREAKDOWN -->
+    <div class="section-block">
+      <div class="section-header">
+        <div class="section-title">Match Breakdown</div>
+        <div class="section-meta">vs. Your StyleDNA</div>
+      </div>
+      <div class="score-card">
+        <div class="score-row">
+          <div class="score-row-label">Aesthetic Alignment</div>
+          <div class="score-row-bar"><div class="score-row-fill" style="width:92%"></div></div>
+          <div class="score-row-val">92%</div>
+        </div>
+        <div class="score-row">
+          <div class="score-row-label">Kitchen Finishes</div>
+          <div class="score-row-bar"><div class="score-row-fill" style="width:95%"></div></div>
+          <div class="score-row-val">95%</div>
+        </div>
+        <div class="score-row">
+          <div class="score-row-label">Primary Suite</div>
+          <div class="score-row-bar"><div class="score-row-fill" style="width:88%"></div></div>
+          <div class="score-row-val">88%</div>
+        </div>
+        <div class="score-row">
+          <div class="score-row-label">Outdoor Space</div>
+          <div class="score-row-bar"><div class="score-row-fill" style="width:84%"></div></div>
+          <div class="score-row-val">84%</div>
+        </div>
+        <div class="score-row">
+          <div class="score-row-label">Layout & Flow</div>
+          <div class="score-row-bar"><div class="score-row-fill" style="width:76%"></div></div>
+          <div class="score-row-val">76%</div>
+        </div>
+        <div class="score-row">
+          <div class="score-row-label">Price vs. Profile</div>
+          <div class="score-row-bar"><div class="score-row-fill" style="width:72%"></div></div>
+          <div class="score-row-val">72%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block-divider"></div>
+
+    <!-- CHLOE INSIGHTS -->
+    <div class="section-block">
+      <div class="section-header">
+        <div class="section-title">Chloe's Insights</div>
+        <div class="section-meta">✨ Personalized</div>
+      </div>
+      <div class="insights-list">
+        <div class="insight-card">
+          <div class="insight-dot green"></div>
+          <div class="insight-text"><strong>Kitchen is your strongest signal.</strong> 14 minutes spent, 2 appliance questions asked — your Refined Modern profile is highly activated here. Wolf range and Sub-Zero are exactly the finishes your quiz predicted you'd respond to.</div>
+        </div>
+        <div class="insight-card">
+          <div class="insight-dot green"></div>
+          <div class="insight-text"><strong>Backyard overperformed.</strong> You spent 9 minutes outside — longer than the living room. The southwest orientation and pool coverage aligned closely with your outdoor priorities.</div>
+        </div>
+        <div class="insight-card">
+          <div class="insight-dot amber"></div>
+          <div class="insight-text"><strong>Living room flow may need a second look.</strong> Moderate dwell time suggests the volume ceilings read well but the layout didn't fully click. Worth revisiting with a furniture plan in mind.</div>
+        </div>
+        <div class="insight-card">
+          <div class="insight-dot accent"></div>
+          <div class="insight-text"><strong>You didn't visit the game room or media room.</strong> These are 680 sq ft of finished space that may address the layout concern you had in the living room.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block-divider"></div>
+
+    <!-- NEXT STEPS -->
+    <div class="section-block">
+      <div class="section-header">
+        <div class="section-title">What's Next</div>
+      </div>
+      <div class="next-steps">
+        <div class="next-step-item">
+          <div class="next-step-icon">🎨</div>
+          <div class="next-step-text">
+            <div class="next-step-title">Explore VisionMatch</div>
+            <div class="next-step-sub">See every room in your Refined Modern style</div>
+          </div>
+          <div class="next-step-arrow">→</div>
+        </div>
+        <div class="next-step-item">
+          <div class="next-step-icon">📅</div>
+          <div class="next-step-text">
+            <div class="next-step-title">Schedule a Private Showing</div>
+            <div class="next-step-sub">See the game room + media room you missed</div>
+          </div>
+          <div class="next-step-arrow">→</div>
+        </div>
+        <div class="next-step-item">
+          <div class="next-step-icon">📊</div>
+          <div class="next-step-text">
+            <div class="next-step-title">Compare to Similar Homes</div>
+            <div class="next-step-sub">3 nearby listings match your DNA profile</div>
+          </div>
+          <div class="next-step-arrow">→</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="block-divider"></div>
+
+    <!-- AGENT CARD -->
+    <div class="section-block" style="padding-bottom: 8px;">
+      <div class="section-header">
+        <div class="section-title">Your Host Agent</div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-avatar">👤</div>
+        <div class="agent-info">
+          <div class="agent-name">Marcus Rivera</div>
+          <div class="agent-role">Host Agent · Gold Tier</div>
+          <div class="agent-score">Host Score 780 · 98% follow-up rate</div>
+        </div>
+        <button class="agent-btn">Message</button>
+      </div>
+    </div>
+
+    <div style="height: 16px;"></div>
+
+  </div><!-- end scroll -->
+
+  <!-- TAB BAR -->
+  <div class="tab-bar">
+    <div class="tab-item active">
+      <div class="tab-icon">📋</div>
+      <div class="tab-label">Report</div>
+    </div>
+    <div class="tab-item">
+      <div class="tab-icon">✨</div>
+      <div class="tab-label">Ask Chloe</div>
+    </div>
+    <div class="tab-item">
+      <div class="tab-icon">🎨</div>
+      <div class="tab-label">VisionMatch</div>
+    </div>
+    <div class="tab-item">
+      <div class="tab-icon">🏠</div>
+      <div class="tab-label">Listings</div>
+    </div>
+  </div>
+
+</div><!-- end phone -->
+
+<script>
+// ── THEME FROM URL PARAMS ──
+(function applyUrlTheme() {
+  const p = new URLSearchParams(window.location.search);
+  const root = document.documentElement;
+  const hex = k => p.get(k) ? '#' + p.get(k) : null;
+  const set = (k, v) => v && root.style.setProperty(k, v);
+
+  const bg      = hex('bg');
+  const accent  = hex('accent');
+  const text    = hex('text');
+  const surface = hex('surface');
+  const font    = p.get('font') ? decodeURIComponent(p.get('font')) : null;
+
+  if (bg)     { set('--bg', bg); set('--bg2', bg); }
+  if (accent) {
+    set('--accent', accent);
+    set('--accent-bright', accent);
+    set('--score-green', accent);
+  }
+  if (text) {
+    set('--text', text);
+    const r = parseInt(text.slice(1,3),16);
+    const g = parseInt(text.slice(3,5),16);
+    const b = parseInt(text.slice(5,7),16);
+    root.style.setProperty('--text-dim',   `rgba(${r},${g},${b},0.55)`);
+    root.style.setProperty('--text-muted', `rgba(${r},${g},${b},0.35)`);
+  }
+  if (surface) set('--surface', surface);
+
+  if (font) {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = `https://fonts.googleapis.com/css2?family=${font.replace(/ /g,'+')}:wght@400;600;700;800&display=swap`;
+    document.head.appendChild(link);
+    link.onload = () => {
+      document.querySelectorAll('.report-hero-address,.match-banner-title,.match-banner-score,.agent-name,.hero-stat-val').forEach(el => {
+        el.style.fontFamily = `'${font}', serif`;
+      });
+    };
+  }
+})();
+</script>
+
+</body>
+</html>

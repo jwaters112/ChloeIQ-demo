@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ChloeIQ — Follow-Up Flow</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,300;1,600&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0A0B07;
+  --accent: #B8E030;
+  --accent-dim: rgba(184,224,48,0.10);
+  --surface: #13160D;
+  --surface2: #1C1F14;
+  --border: rgba(184,224,48,0.12);
+  --border2: rgba(255,255,255,0.07);
+  --text: #EEF0E5;
+  --text-dim: rgba(238,240,229,0.55);
+  --text-muted: rgba(238,240,229,0.32);
+  --warm: #1A1C12;
+  --warm2: #222418;
+  --green: #4ADE80;
+  --amber: #FBBF24;
+  --red: #F87171;
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body {
+  background: #0D0D0D;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Sans', sans-serif;
+  padding: 24px 16px;
+  gap: 20px;
+}
+.outer-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--accent); opacity: 0.6;
+}
+.phone {
+  width: 375px; height: 812px;
+  background: var(--bg);
+  border-radius: 44px; overflow: hidden; position: relative;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.07), 0 0 0 2px rgba(0,0,0,0.6), 0 32px 64px rgba(0,0,0,0.7);
+  display: flex; flex-direction: column;
+}
+.notch { position:absolute; top:0; left:50%; transform:translateX(-50%); width:120px; height:30px; background:#080808; border-radius:0 0 20px 20px; z-index:20; }
+.status-bar { display:flex; justify-content:space-between; align-items:center; padding:18px 28px 0; font-family:'DM Mono',monospace; font-size:12px; color:rgba(238,240,229,0.6); flex-shrink:0; z-index:10; }
+
+/* SCREENS */
+.screen { flex:1; display:none; flex-direction:column; overflow:hidden; }
+.screen.active { display:flex; }
+
+/* ══ SCREEN: LEAD LIST ══ */
+#s-list { background: var(--bg); }
+
+.list-header {
+  padding: 14px 20px 14px;
+  border-bottom: 1px solid var(--border2);
+  flex-shrink: 0;
+}
+.list-eyebrow { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--accent); margin-bottom:4px; }
+.list-title { font-family:'Fraunces',serif; font-size:20px; font-weight:700; color:var(--text); margin-bottom:10px; }
+
+.sort-row { display:flex; gap:6px; }
+.sort-chip {
+  padding:6px 14px; border-radius:100px;
+  border:1px solid var(--border2); background:var(--surface);
+  font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; color:var(--text-muted);
+  cursor:pointer; transition:all 0.2s; white-space:nowrap;
+}
+.sort-chip.active { background:var(--accent-dim); border-color:rgba(184,224,48,0.3); color:var(--accent); }
+
+.list-scroll { flex:1; overflow-y:auto; scrollbar-width:none; padding:14px 20px; }
+.list-scroll::-webkit-scrollbar { display:none; }
+
+/* Time group */
+.time-group { margin-bottom:20px; }
+.time-label {
+  font-family:'DM Mono',monospace; font-size:9px; letter-spacing:2px; text-transform:uppercase;
+  color:var(--text-muted); margin-bottom:10px; padding-left:2px;
+}
+
+/* Lead row */
+.lead-row {
+  background:var(--surface); border:1px solid var(--border2);
+  border-radius:14px; padding:13px 14px;
+  display:flex; align-items:center; gap:12px;
+  cursor:pointer; transition:all 0.2s; margin-bottom:8px;
+  position:relative; overflow:hidden;
+}
+.lead-row:hover { border-color:rgba(184,224,48,0.2); }
+.lead-row.hot { border-color:rgba(255,107,107,0.25); }
+.lead-row.sent { opacity:0.55; }
+
+.lr-bar { position:absolute; left:0; top:0; bottom:0; width:3px; border-radius:2px 0 0 2px; }
+
+.lr-avatar {
+  width:40px; height:40px; border-radius:50%;
+  background:var(--warm2); border:1.5px solid var(--border2);
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; flex-shrink:0; position:relative;
+}
+.lr-hot { position:absolute; top:-2px; right:-2px; width:11px; height:11px; border-radius:50%; background:var(--red); border:2px solid var(--surface); animation:hotP 1.2s ease-in-out infinite; }
+@keyframes hotP { 0%,100%{transform:scale(1)}50%{transform:scale(1.35)} }
+
+.lr-info { flex:1; }
+.lr-name { font-size:14px; font-weight:500; color:var(--text); margin-bottom:2px; }
+.lr-preview { font-size:12px; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:170px; }
+
+.lr-right { display:flex; flex-direction:column; align-items:flex-end; gap:5px; flex-shrink:0; }
+.lr-score { font-family:'Fraunces',serif; font-size:17px; font-weight:700; color:var(--accent); }
+.lr-badge { font-size:10px; font-weight:600; padding:3px 8px; border-radius:100px; }
+.badge-hot    { background:rgba(255,107,107,0.12); color:var(--red); }
+.badge-warm   { background:rgba(251,191,36,0.12);  color:var(--amber); }
+.badge-active { background:var(--accent-dim); color:var(--accent); }
+.badge-sent   { background:rgba(255,255,255,0.06); color:var(--text-muted); }
+
+/* ══ SCREEN: DRAFT ══ */
+#s-draft { background: var(--bg); }
+
+.draft-header {
+  padding: 14px 20px 14px;
+  border-bottom: 1px solid var(--border2);
+  display: flex; align-items: center; gap: 12px;
+  flex-shrink: 0;
+}
+.draft-back {
+  width:34px; height:34px; border-radius:10px;
+  background:var(--surface); border:1px solid var(--border2);
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; cursor:pointer; flex-shrink:0;
+}
+.draft-header-info { flex:1; }
+.draft-to { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px; color:var(--text-muted); margin-bottom:2px; }
+.draft-name { font-family:'Fraunces',serif; font-size:16px; font-weight:700; color:var(--text); }
+.draft-score { font-family:'Fraunces',serif; font-size:18px; font-weight:700; color:var(--accent); }
+
+.draft-scroll { flex:1; overflow-y:auto; scrollbar-width:none; padding:16px 20px; }
+.draft-scroll::-webkit-scrollbar { display:none; }
+
+/* Context card */
+.context-card {
+  background:var(--surface); border:1px solid var(--border2);
+  border-radius:14px; padding:14px; margin-bottom:16px;
+}
+.ctx-label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px; }
+.ctx-tags { display:flex; flex-wrap:wrap; gap:6px; }
+.ctx-tag {
+  padding:5px 12px; border-radius:100px;
+  font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted);
+  border:1px solid var(--border2); background:var(--warm2);
+}
+.ctx-tag.peak { color:var(--accent); border-color:rgba(184,224,48,0.25); background:var(--accent-dim); }
+
+/* Draft area */
+.draft-label-row {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:8px;
+}
+.draft-label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); }
+.draft-ai-badge {
+  display:flex; align-items:center; gap:5px;
+  background:var(--accent-dim); border:1px solid var(--border);
+  border-radius:100px; padding:4px 10px;
+  font-family:'DM Mono',monospace; font-size:9px; color:var(--accent); letter-spacing:1px;
+}
+.draft-ai-dot { width:5px; height:5px; border-radius:50%; background:var(--accent); animation:aiPulse 1.5s ease-in-out infinite; }
+@keyframes aiPulse { 0%,100%{opacity:1}50%{opacity:0.3} }
+
+.draft-textarea {
+  width:100%; background:var(--surface); border:1px solid var(--border2);
+  border-radius:14px; padding:14px;
+  font-family:'DM Sans',sans-serif; font-size:13px;
+  color:var(--text); line-height:1.65;
+  resize:none; outline:none; min-height:220px;
+  transition:border-color 0.2s;
+}
+.draft-textarea:focus { border-color:rgba(184,224,48,0.3); }
+
+/* Tone selector */
+.tone-row {
+  display:flex; gap:6px; margin:14px 0;
+  overflow-x:auto; scrollbar-width:none;
+}
+.tone-row::-webkit-scrollbar { display:none; }
+.tone-chip {
+  padding:7px 14px; border-radius:100px;
+  border:1px solid var(--border2); background:var(--surface);
+  font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1px;
+  color:var(--text-muted); cursor:pointer; transition:all 0.2s; white-space:nowrap;
+}
+.tone-chip.active { background:var(--accent-dim); border-color:rgba(184,224,48,0.3); color:var(--accent); }
+
+/* Subject line */
+.subject-wrap { margin-bottom:14px; }
+.subject-label { font-family:'DM Mono',monospace; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); margin-bottom:6px; }
+.subject-input {
+  width:100%; background:var(--surface); border:1px solid var(--border2);
+  border-radius:12px; padding:11px 14px;
+  font-family:'DM Sans',sans-serif; font-size:13px; color:var(--text);
+  outline:none; transition:border-color 0.2s;
+}
+.subject-input:focus { border-color:rgba(184,224,48,0.3); }
+
+/* Send actions */
+.send-actions {
+  padding:12px 20px 28px;
+  border-top:1px solid var(--border2);
+  display:flex; gap:8px;
+  flex-shrink:0;
+}
+.btn-send {
+  flex:1; background:var(--accent); color:var(--bg);
+  border:none; border-radius:14px; padding:15px;
+  font-family:'Fraunces',serif; font-size:16px; font-weight:700;
+  cursor:pointer; transition:opacity 0.15s; display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.btn-send:active { opacity:0.85; }
+.btn-save {
+  background:var(--surface); color:var(--text-muted);
+  border:1px solid var(--border2); border-radius:14px; padding:15px 16px;
+  font-size:13px; cursor:pointer; white-space:nowrap;
+}
+
+/* ══ SCREEN: SENT ══ */
+#s-sent { background:var(--bg); align-items:center; justify-content:center; padding:32px 28px 48px; }
+
+.sent-ring {
+  width:100px; height:100px; border-radius:50%;
+  background:rgba(74,222,128,0.12); border:2px solid rgba(74,222,128,0.3);
+  display:flex; align-items:center; justify-content:center;
+  font-size:44px; margin-bottom:20px;
+  animation:sentPop 0.5s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes sentPop { from{transform:scale(0.5);opacity:0} to{transform:scale(1);opacity:1} }
+
+.sent-title { font-family:'Fraunces',serif; font-size:26px; font-weight:700; color:var(--text); text-align:center; margin-bottom:8px; line-height:1.2; }
+.sent-sub { font-size:14px; color:var(--text-dim); text-align:center; line-height:1.65; max-width:280px; margin-bottom:28px; }
+
+.sent-receipt {
+  width:100%; background:var(--surface); border:1px solid var(--border2);
+  border-radius:16px; overflow:hidden; margin-bottom:28px;
+}
+.sr-row {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 16px; border-bottom:1px solid var(--border2);
+}
+.sr-row:last-child { border-bottom:none; }
+.sr-label { font-family:'DM Mono',monospace; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-muted); }
+.sr-val { font-size:13px; font-weight:500; color:var(--accent); }
+
+.sent-next { width:100%; display:flex; flex-direction:column; gap:8px; }
+.sent-btn-primary { width:100%; background:var(--accent); color:var(--bg); border:none; border-radius:14px; padding:15px; font-family:'Fraunces',serif; font-size:15px; font-weight:700; cursor:pointer; }
+.sent-btn-secondary { width:100%; background:transparent; color:var(--text-muted); border:1px solid var(--border2); border-radius:14px; padding:13px; font-size:13px; cursor:pointer; }
+</style>
+</head>
+<body>
+
+<div class="outer-label">ChloeIQ · Follow-Up Flow · Marcus Rivera</div>
+
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status-bar"><span>9:41</span><span>●●● 5G 🔋</span></div>
+
+  <!-- ══ LEAD LIST ══ -->
+  <div class="screen active" id="s-list">
+    <div class="list-header">
+      <div class="list-eyebrow">Post-Event · 2847 Magnolia Drive</div>
+      <div class="list-title">Follow-Up Queue</div>
+      <div class="sort-row">
+        <div class="sort-chip active" onclick="setSort(this,'priority')">By Priority</div>
+        <div class="sort-chip" onclick="setSort(this,'score')">By Score</div>
+        <div class="sort-chip" onclick="setSort(this,'dwell')">By Dwell</div>
+        <div class="sort-chip" onclick="setSort(this,'unsent')">Unsent Only</div>
+      </div>
+    </div>
+
+    <div class="list-scroll" id="list-scroll">
+      <!-- rendered by JS -->
+    </div>
+  </div>
+
+  <!-- ══ DRAFT SCREEN ══ -->
+  <div class="screen" id="s-draft">
+    <div class="draft-header">
+      <div class="draft-back" onclick="goScreen('s-list')">←</div>
+      <div class="draft-header-info">
+        <div class="draft-to">Follow-Up To</div>
+        <div class="draft-name" id="draft-name">Jordan Lee</div>
+      </div>
+      <div class="draft-score" id="draft-score">87%</div>
+    </div>
+
+    <div class="draft-scroll">
+      <!-- Context tags -->
+      <div class="context-card">
+        <div class="ctx-label">Chloe used this data to write the draft</div>
+        <div class="ctx-tags" id="ctx-tags">
+          <!-- injected -->
+        </div>
+      </div>
+
+      <!-- Subject -->
+      <div class="subject-wrap">
+        <div class="subject-label">Subject Line</div>
+        <input class="subject-input" id="draft-subject" type="text" value="Great meeting you at 2847 Magnolia Drive">
+      </div>
+
+      <!-- Tone -->
+      <div class="draft-label-row">
+        <div class="draft-label">Tone</div>
+      </div>
+      <div class="tone-row" id="tone-row">
+        <div class="tone-chip active" onclick="setTone(this,'Warm & Personal')">Warm & Personal</div>
+        <div class="tone-chip" onclick="setTone(this,'Professional')">Professional</div>
+        <div class="tone-chip" onclick="setTone(this,'Direct & Brief')">Direct & Brief</div>
+        <div class="tone-chip" onclick="setTone(this,'Consultative')">Consultative</div>
+      </div>
+
+      <!-- Draft body -->
+      <div class="draft-label-row">
+        <div class="draft-label">Message</div>
+        <div class="draft-ai-badge"><div class="draft-ai-dot"></div>AI Draft</div>
+      </div>
+      <textarea class="draft-textarea" id="draft-body"></textarea>
+
+      <div style="height:8px;"></div>
+    </div>
+
+    <div class="send-actions">
+      <div class="btn-save" onclick="goScreen('s-list')">Save</div>
+      <button class="btn-send" onclick="sendFollowUp()">Send Now ↑</button>
+    </div>
+  </div>
+
+  <!-- ══ SENT SCREEN ══ -->
+  <div class="screen" id="s-sent">
+    <div class="sent-ring">✓</div>
+    <div class="sent-title" id="sent-title">Follow-up sent<br>to Jordan.</div>
+    <div class="sent-sub">Chloe will notify you the moment they open it, click a link, or reply.</div>
+
+    <div class="sent-receipt">
+      <div class="sr-row">
+        <div class="sr-label">Sent To</div>
+        <div class="sr-val" id="sent-to">Jordan Lee</div>
+      </div>
+      <div class="sr-row">
+        <div class="sr-label">Match Score</div>
+        <div class="sr-val" id="sent-score">87%</div>
+      </div>
+      <div class="sr-row">
+        <div class="sr-label">Personalization</div>
+        <div class="sr-val">Kitchen · Primary · Yard</div>
+      </div>
+      <div class="sr-row">
+        <div class="sr-label">Expected Open Rate</div>
+        <div class="sr-val">68% (vs 22% avg)</div>
+      </div>
+    </div>
+
+    <div class="sent-next">
+      <button class="sent-btn-primary" onclick="nextFollowUp()">Next Follow-Up →</button>
+      <button class="sent-btn-secondary" onclick="goScreen('s-list')">Back to Queue</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── THEME ──
+(function(){
+  const p=new URLSearchParams(window.location.search),root=document.documentElement;
+  const h=k=>p.get(k)?'#'+p.get(k):null;
+  const sv=(k,v)=>v&&root.style.setProperty(k,v);
+  const bg=h('bg'),ac=h('accent'),tx=h('text'),sf=h('surface');
+  sv('--bg',bg);sv('--accent',ac);sv('--text',tx);sv('--surface',sf);
+  if(ac){const r=parseInt(ac.slice(1,3),16),g=parseInt(ac.slice(3,5),16),b=parseInt(ac.slice(5,7),16);
+    root.style.setProperty('--accent-dim',`rgba(${r},${g},${b},0.10)`);
+    root.style.setProperty('--border',`rgba(${r},${g},${b},0.12)`);}
+  if(tx){const r=parseInt(tx.slice(1,3),16),g=parseInt(tx.slice(3,5),16),b=parseInt(tx.slice(5,7),16);
+    root.style.setProperty('--text-dim',`rgba(${r},${g},${b},0.55)`);
+    root.style.setProperty('--text-muted',`rgba(${r},${g},${b},0.32)`);}
+  if(bg){root.style.setProperty('--warm',bg);root.style.setProperty('--warm2',bg);}
+  const font=p.get('font')?decodeURIComponent(p.get('font')):null;
+  if(font){const l=document.createElement('link');l.rel='stylesheet';
+    l.href=`https://fonts.googleapis.com/css2?family=${font.replace(/ /g,'+')}:wght@400;600;700&display=swap`;
+    document.head.appendChild(l);
+    l.onload=()=>document.querySelectorAll('.list-title,.draft-name,.sent-title,.btn-send').forEach(e=>e.style.fontFamily=`'${font}',serif`);}
+})();
+
+// ── LEAD DATA ──
+const LEADS = {
+  jordan: {
+    name:'Jordan Lee', score:'87%', subject:'Following up from 2847 Magnolia Drive',
+    tags:[{t:'Kitchen 14m',peak:true},{t:'Primary 11m',peak:true},{t:'Yard 9m',peak:false},{t:'4 Questions',peak:false},{t:'Refined Modern',peak:false},{t:'87% Match',peak:true}],
+    drafts:{
+      'Warm & Personal': `Hi Jordan,\n\nIt was great meeting you at 2847 Magnolia Drive today — I could tell the kitchen really resonated with you. Those 14 minutes you spent there were the longest of anyone on the tour, and I think the Wolf range and slab cabinetry are exactly what your Refined Modern aesthetic calls for.\n\nThe primary suite and backyard pool were clear draws too. I'd love to get you back in for a private showing so you can spend time in the game room and media room — two spaces you didn't get to see today.\n\nWould Thursday or Friday morning work for a 30-minute private tour?\n\nWarmly,\nMarcus Rivera`,
+      'Professional': `Dear Jordan,\n\nThank you for attending the open house at 2847 Magnolia Drive. Based on your engagement during the tour, particularly in the kitchen (14 minutes) and primary suite (11 minutes), this property appears to align well with your Refined Modern profile at an 87% match.\n\nI would welcome the opportunity to schedule a private showing at your convenience. Please let me know your availability.\n\nBest regards,\nMarcus Rivera`,
+      'Direct & Brief': `Hi Jordan — thanks for stopping by Magnolia Drive today.\n\nYou spent more time in the kitchen than anyone else on the tour. That's usually a strong signal.\n\n87% match with your Refined Modern profile. Want to book a private showing this week?\n\n— Marcus`,
+      'Consultative': `Hi Jordan,\n\nI've been thinking about your tour today. The 14 minutes in the kitchen and 11 in the primary suite tell me something — this home is working for you on a gut level, even if you haven't fully processed it yet.\n\nYour Refined Modern profile scores an 87% match here, which is the highest I've seen on this listing. The two rooms you didn't visit — the game room and media room — would likely push that even higher.\n\nBefore you move on to other properties, I'd encourage a second look. Private showings run about 30 minutes and I can accommodate your schedule. What works for you?\n\nMarcus Rivera`,
+    }
+  },
+  alex: {
+    name:'Alex & Sam Chen', score:'82%', subject:'Great meeting you both at Magnolia Drive',
+    tags:[{t:'Primary 18m',peak:true},{t:'Kitchen 8m',peak:false},{t:'Office 6m',peak:false},{t:'Warm Organic',peak:false},{t:'82% Match',peak:true},{t:'Family Buyer',peak:false}],
+    drafts:{
+      'Warm & Personal': `Hi Alex and Sam,\n\nIt was wonderful meeting you both today at 2847 Magnolia Drive. Your 18 minutes in the primary suite was the longest of any buyer — I think that spa bath and the Jack-and-Jill connection to the secondary wing really clicked for your family.\n\nThe home office with its separate entrance is a genuine differentiator here, especially for families where one or both partners work from home. The Flower Mound school district is also one of the strongest in DFW.\n\nI'd love to get you back in for a private showing — would this weekend work for both of you?\n\nWarmly,\nMarcus Rivera`,
+      'Professional': `Dear Alex and Sam,\n\nThank you for visiting 2847 Magnolia Drive today. Your extended time in the primary suite and home office suggests this property may align well with your family's priorities at an 82% match score.\n\nI would be happy to arrange a private showing at your convenience to explore the full property. Please let me know your availability.\n\nBest regards,\nMarcus Rivera`,
+      'Direct & Brief': `Hi Alex and Sam — appreciate you both coming out today.\n\nYou spent more time in the primary suite than anyone else on the tour (18 min). The school district and office layout seemed to land well too.\n\n82% match. Worth a second look — want to schedule a private showing?\n\n— Marcus`,
+      'Consultative': `Hi Alex and Sam,\n\nI wanted to share an observation from today's tour. Between the two of you, you spent more time evaluating this home than any other buyer — 18 minutes in the primary suite alone tells me this isn't casual browsing.\n\nThe Flower Mound school district, the dedicated home office, and the Jack-and-Jill layout for the secondary bedrooms all map directly to what I know about your priorities as a family.\n\nI'd suggest a private showing before this property moves to next steps. What does your week look like?\n\nMarcus Rivera`,
+    }
+  },
+  morgan: {
+    name:'Morgan Rivera', score:'79%', subject:'Following up — 2847 Magnolia Drive',
+    tags:[{t:'Backyard 12m',peak:true},{t:'Kitchen 6m',peak:false},{t:'Coastal Luxe',peak:false},{t:'79% Match',peak:false},{t:'Repeat Buyer',peak:false}],
+    drafts:{
+      'Warm & Personal': `Hi Morgan,\n\nGreat meeting you today at Magnolia Drive. I noticed you spent more time in the backyard than anywhere else — 12 minutes, and the longest of anyone on the tour in that space.\n\nThat southwest orientation means the pool gets afternoon sun from about 2pm until sunset. The covered lanai is 800 square feet with a built-in Lynx grill — it's a genuinely impressive outdoor setup that photographs can't fully capture.\n\nYour Coastal Luxe profile is a natural fit for the indoor-outdoor flow here. Up for a second look?\n\nMarcus Rivera`,
+      'Professional': `Dear Morgan,\n\nThank you for attending the open house at 2847 Magnolia Drive. Your time in the backyard and pool area was notable, and the outdoor living features of this property appear to align well with your Coastal Luxe profile.\n\nI would be happy to arrange a private showing at your convenience.\n\nBest regards,\nMarcus Rivera`,
+      'Direct & Brief': `Hi Morgan — nice meeting you today.\n\nBackyard was your room — 12 minutes, most of any buyer. Southwest pool, 800sqft lanai, built-in Lynx grill.\n\nWant a private look before it moves?\n\n— Marcus`,
+      'Consultative': `Hi Morgan,\n\nAs a repeat buyer, I know you've seen a lot of outdoor setups. What I noticed today was that you stayed in the backyard longer than anywhere else — and longer than any other buyer on the tour.\n\nThat's worth paying attention to. The southwest orientation, the heated pool, and the lanai footprint are the kind of features that are hard to replicate at this price point in Flower Mound.\n\nIf the outdoor space is your primary driver, this one deserves a second visit. When works for you?\n\nMarcus Rivera`,
+    }
+  },
+  casey: {
+    name:'Casey Nguyen', score:'71%', subject:'Quick follow-up from today\'s open house',
+    tags:[{t:'Kitchen 4m',peak:false},{t:'Primary 3m',peak:false},{t:'Refined Modern',peak:false},{t:'71% Match',peak:false}],
+    drafts:{
+      'Warm & Personal': `Hi Casey,\n\nThanks for stopping by 2847 Magnolia Drive today. I know tours can go quickly — you hit the two most important rooms (kitchen and primary suite), which tells me you had a clear idea of what you were evaluating.\n\nYour Refined Modern profile is a solid 71% match here. If the finishes and layout clicked for you, it might be worth a longer look before the property moves forward.\n\nHappy to set up a quick private showing — no pressure, just a better chance to see the full picture.\n\nMarcus Rivera`,
+      'Professional': `Dear Casey,\n\nThank you for attending the open house at 2847 Magnolia Drive. Should you wish to revisit the property for a more thorough evaluation, I would be happy to arrange a private showing.\n\nBest regards,\nMarcus Rivera`,
+      'Direct & Brief': `Hi Casey — appreciate you coming by today.\n\nKitchen and primary were your rooms. Refined Modern, 71% match. Want more time to evaluate properly?\n\n— Marcus`,
+      'Consultative': `Hi Casey,\n\nA quick tour isn't always enough to know. You focused on the kitchen and primary suite — which are exactly the right rooms for a Refined Modern buyer — but a few minutes in each doesn't tell the full story.\n\nI'd suggest a private showing before you write this one off or move on. It's 30 minutes and gives you a much cleaner read. Interested?\n\nMarcus Rivera`,
+    }
+  },
+  taylor: {
+    name:'Taylor Kim', score:'64%', subject:'Thanks for visiting 2847 Magnolia Drive',
+    tags:[{t:'Living 5m',peak:false},{t:'Dining 4m',peak:false},{t:'Bold Eclectic',peak:false},{t:'64% Match',peak:false}],
+    drafts:{
+      'Warm & Personal': `Hi Taylor,\n\nThanks for coming by 2847 Magnolia Drive today. The volume ceilings in the living room and the flow into the dining area are where you spent the most time — and those spaces do have real potential for a Bold Eclectic eye.\n\nThis home has strong bones. The formal dining room in particular has the ceiling height and millwork for a statement design move.\n\nIf you're still exploring the area, I'm happy to point you toward a few listings that might be a stronger fit for your aesthetic. Or if Magnolia is still in consideration, we can arrange another look.\n\nMarcus Rivera`,
+      'Professional': `Dear Taylor,\n\nThank you for attending today's open house. Please don't hesitate to reach out if you'd like additional information about 2847 Magnolia Drive or other available listings in the area.\n\nBest regards,\nMarcus Rivera`,
+      'Direct & Brief': `Hi Taylor — thanks for stopping by today.\n\nHappy to share a few other listings that might be a better fit for your style. Just let me know.\n\n— Marcus`,
+      'Consultative': `Hi Taylor,\n\nI want to be straightforward with you — at 64%, Magnolia Drive isn't your strongest match. Your Bold Eclectic profile tends to light up in homes with more architectural character and layered history.\n\nI have a couple of listings in mind that I think would resonate more. Want me to send them over? No obligation — I just think you'd respond differently to them.\n\nMarcus Rivera`,
+    }
+  },
+};
+
+let currentLead = 'jordan';
+let currentTone = 'Warm & Personal';
+
+// ── NAV ──
+function goScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ── LEAD LIST DATA ──
+const LIST_LEADS = [
+  { key:'jordan', name:'Jordan Lee',      preview:'Kitchen 14m · 4 questions · Refined Modern', score:87, dwell:34, signal:'hot',    sent:false, barColor:'var(--red)',    badgeClass:'badge-hot',    badgeText:'🔥 Hot',    hotDot:true },
+  { key:'alex',   name:'Alex & Sam Chen', preview:'Primary 18m · Office 6m · Warm Organic',     score:82, dwell:32, signal:'warm',   sent:false, barColor:'var(--amber)',  badgeClass:'badge-warm',   badgeText:'⚡ Warm',   hotDot:false },
+  { key:'morgan', name:'Morgan Rivera',   preview:'Backyard 12m · Kitchen 6m · Coastal Luxe',   score:79, dwell:26, signal:'warm',   sent:false, barColor:'var(--amber)',  badgeClass:'badge-warm',   badgeText:'⚡ Warm',   hotDot:false },
+  { key:'casey',  name:'Casey Nguyen',    preview:'Kitchen 4m · Primary 3m · Refined Modern',   score:71, dwell:7,  signal:'active', sent:false, barColor:'var(--accent)', badgeClass:'badge-active', badgeText:'✓ Active', hotDot:false },
+  { key:'taylor', name:'Taylor Kim',      preview:'Living 5m · Dining 4m · Bold Eclectic',       score:64, dwell:12, signal:'active', sent:false, barColor:'var(--border2)',badgeClass:'badge-active', badgeText:'✓ Active', hotDot:false },
+  { key:'chris',  name:'Chris Morales',   preview:'Sent 2h ago · Opened ✓',                      score:58, dwell:5,  signal:'sent',   sent:true,  barColor:'var(--border2)',badgeClass:'badge-sent',   badgeText:'✓ Sent',   hotDot:false },
+];
+
+const GROUP_LABELS = {
+  hot:    '🔥 Follow up now — High intent',
+  warm:   '⚡ Follow up today',
+  active: '· Follow up this week',
+  sent:   '✓ Sent',
+};
+
+function renderList(mode) {
+  const container = document.getElementById('list-scroll');
+  let leads = [...LIST_LEADS];
+
+  if (mode === 'score') {
+    // Flat list sorted by score desc, no groups
+    leads.sort((a,b) => b.score - a.score);
+    container.innerHTML = `<div style="padding-top:4px;"></div>` + leads.map(l => leadRowHtml(l)).join('') + `<div style="height:16px;"></div>`;
+    return;
+  }
+
+  if (mode === 'dwell') {
+    // Flat list sorted by dwell desc
+    leads.sort((a,b) => b.dwell - a.dwell);
+    container.innerHTML = `<div style="padding-top:4px;"></div>` + leads.map(l => leadRowHtml(l)).join('') + `<div style="height:16px;"></div>`;
+    return;
+  }
+
+  if (mode === 'unsent') {
+    // Only unsent leads, priority order
+    leads = leads.filter(l => !l.sent);
+    container.innerHTML = `
+      <div class="time-group" style="padding-top:4px;">
+        <div class="time-label">Unsent · ${leads.length} remaining</div>
+        ${leads.map(l => leadRowHtml(l)).join('')}
+      </div>
+      <div style="height:16px;"></div>`;
+    return;
+  }
+
+  // Default: priority groups
+  const groups = ['hot','warm','active','sent'];
+  container.innerHTML = groups.map(g => {
+    const group = leads.filter(l => l.signal === g);
+    if (!group.length) return '';
+    return `
+      <div class="time-group">
+        <div class="time-label">${GROUP_LABELS[g]}</div>
+        ${group.map(l => leadRowHtml(l)).join('')}
+      </div>`;
+  }).join('') + `<div style="height:16px;"></div>`;
+}
+
+function leadRowHtml(l) {
+  const sentClass = l.sent ? ' sent' : '';
+  const hotClass  = l.signal === 'hot' ? ' hot' : '';
+  const scoreStyle = l.sent ? 'color:var(--text-muted);' : '';
+  const onclick   = l.sent ? '' : `onclick="openDraft('${l.key}')"`;
+  const hotDot    = l.hotDot ? `<div class="lr-hot"></div>` : '';
+  return `
+    <div class="lead-row${sentClass}${hotClass}" ${onclick}>
+      <div class="lr-bar" style="background:${l.barColor};"></div>
+      <div class="lr-avatar">👤${hotDot}</div>
+      <div class="lr-info">
+        <div class="lr-name">${l.name}</div>
+        <div class="lr-preview">${l.preview}</div>
+      </div>
+      <div class="lr-right">
+        <div class="lr-score" style="${scoreStyle}">${l.score}%</div>
+        <div class="lr-badge ${l.badgeClass}">${l.badgeText}</div>
+      </div>
+    </div>`;
+}
+
+// ── SORT ──
+function setSort(el, mode) {
+  document.querySelectorAll('.sort-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderList(mode);
+}
+
+// ── OPEN DRAFT ──
+function openDraft(key){
+  currentLead = key;
+  currentTone = 'Warm & Personal';
+  const d = LEADS[key];
+
+  document.getElementById('draft-name').textContent  = d.name;
+  document.getElementById('draft-score').textContent = d.score;
+  document.getElementById('draft-subject').value     = d.subject;
+
+  // Context tags
+  document.getElementById('ctx-tags').innerHTML = d.tags.map(t=>
+    `<div class="ctx-tag${t.peak?' peak':''}">${t.t}</div>`
+  ).join('');
+
+  // Reset tone chips
+  document.querySelectorAll('.tone-chip').forEach(c=>{
+    c.classList.toggle('active', c.textContent==='Warm & Personal');
+  });
+
+  // Set draft body
+  document.getElementById('draft-body').value = d.drafts['Warm & Personal'];
+
+  goScreen('s-draft');
+}
+
+// ── TONE ──
+function setTone(el, tone){
+  document.querySelectorAll('.tone-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  currentTone = tone;
+  const d = LEADS[currentLead];
+  if(d && d.drafts[tone]){
+    document.getElementById('draft-body').value = d.drafts[tone];
+  }
+}
+
+// ── SEND ──
+function sendFollowUp(){
+  const d = LEADS[currentLead];
+  document.getElementById('sent-title').innerHTML = `Follow-up sent<br>to ${d.name.split(' ')[0]}.`;
+  document.getElementById('sent-to').textContent    = d.name;
+  document.getElementById('sent-score').textContent = d.score;
+  goScreen('s-sent');
+}
+
+// ── NEXT ──
+const ORDER = ['jordan','alex','morgan','casey','taylor'];
+function nextFollowUp(){
+  const idx = ORDER.indexOf(currentLead);
+  const next = ORDER[idx+1];
+  if(next) openDraft(next);
+  else goScreen('s-list');
+}
+
+// ── INIT ──
+renderList('priority');
+</script>
+</body>
+</html>

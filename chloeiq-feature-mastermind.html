@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ChloeIQ — Feature Mastermind</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;1,700&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:#0D0D0D;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px 16px;gap:16px;font-family:'DM Sans',sans-serif}
+.lbl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#B8E030;opacity:0.6}
+.phone{width:375px;height:812px;background:#0A0B07;border-radius:44px;overflow:hidden;position:relative;box-shadow:0 0 0 1px rgba(255,255,255,0.07),0 32px 64px rgba(0,0,0,0.7);display:flex;flex-direction:column}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:30px;background:#080808;border-radius:0 0 20px 20px;z-index:20}
+.sbar{display:flex;justify-content:space-between;padding:18px 28px 0;font-family:'DM Mono',monospace;font-size:12px;color:rgba(238,240,229,0.5);flex-shrink:0;background:#0A0B07;position:relative;z-index:10}
+
+/* HEADER */
+.hdr{padding:14px 18px 0;flex-shrink:0}
+.hdr-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px}
+.eye{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#B8E030;margin-bottom:3px}
+.htitle{font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:#EEF0E5}
+.hbadge{background:rgba(184,224,48,0.1);border:1px solid rgba(184,224,48,0.15);border-radius:100px;padding:5px 11px;font-family:'DM Mono',monospace;font-size:9px;color:#B8E030;letter-spacing:1px;white-space:nowrap}
+
+/* FILTER TABS */
+.tabs{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid rgba(255,255,255,0.07);margin:0 -18px;padding:0 18px}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:9px 12px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(238,240,229,0.35);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.18s}
+.tab.on{color:#B8E030;border-bottom-color:#B8E030}
+
+/* SCROLL */
+.scroll{flex:1;overflow-y:auto;scrollbar-width:none;padding:12px 18px}
+.scroll::-webkit-scrollbar{display:none}
+
+/* TIER HEADER */
+.tier-hdr{display:flex;align-items:center;gap:8px;margin-bottom:10px;margin-top:4px}
+.tier-pill{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:100px}
+.tier-count{font-size:11px;color:rgba(238,240,229,0.32)}
+
+/* FEATURE CARD */
+.fc{background:#13160D;border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:13px 14px;margin-bottom:8px;cursor:pointer;transition:border-color 0.18s}
+.fc:hover{border-color:rgba(184,224,48,0.2)}
+.fc-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px}
+.fc-icon{font-size:20px;flex-shrink:0;margin-top:1px}
+.fc-title{font-size:13px;font-weight:600;color:#EEF0E5;margin-bottom:2px;line-height:1.3}
+.fc-desc{font-size:12px;color:rgba(238,240,229,0.5);line-height:1.5}
+.fc-meta{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.fc-tag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.5px;padding:3px 8px;border-radius:100px;background:rgba(255,255,255,0.06);color:rgba(238,240,229,0.4)}
+.fc-impact{font-family:'DM Mono',monospace;font-size:9px;padding:3px 8px;border-radius:100px}
+.fc-status{margin-left:auto;font-size:10px;font-weight:600;padding:3px 9px;border-radius:100px;flex-shrink:0}
+
+/* STATUS COLORS */
+.s-shipped{background:rgba(74,222,128,0.12);color:#4ADE80}
+.s-building{background:rgba(184,224,48,0.12);color:#B8E030}
+.s-planned{background:rgba(96,165,250,0.1);color:#60A5FA}
+.s-idea{background:rgba(255,255,255,0.06);color:rgba(238,240,229,0.4)}
+
+/* IMPACT */
+.i-high{background:rgba(248,113,113,0.12);color:#F87171}
+.i-med{background:rgba(251,191,36,0.12);color:#FBBF24}
+.i-low{background:rgba(255,255,255,0.06);color:rgba(238,240,229,0.4)}
+
+/* SHEET */
+.backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.65);z-index:49;opacity:0;pointer-events:none;transition:opacity 0.28s;backdrop-filter:blur(3px)}
+.backdrop.on{opacity:1;pointer-events:all}
+.sheet{position:absolute;bottom:0;left:0;right:0;background:#13160D;border-radius:22px 22px 0 0;border-top:1px solid rgba(255,255,255,0.07);padding:0 18px 30px;transform:translateY(100%);transition:transform 0.32s cubic-bezier(0.4,0,0.2,1);z-index:50;max-height:82%;overflow-y:auto;scrollbar-width:none}
+.sheet::-webkit-scrollbar{display:none}
+.sheet.on{transform:translateY(0)}
+.sh{width:36px;height:4px;background:rgba(255,255,255,0.07);border-radius:2px;margin:12px auto 14px}
+
+/* SUMMARY ROW */
+.sum-row{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.sum-chip{background:#0A0B07;border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:8px 12px;flex:1;min-width:70px;text-align:center}
+.sum-val{font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:#B8E030}
+.sum-lbl{font-family:'DM Mono',monospace;font-size:8px;letter-spacing:1px;text-transform:uppercase;color:rgba(238,240,229,0.3);margin-top:2px}
+
+/* TOAST */
+.toast{position:absolute;bottom:16px;left:14px;right:14px;background:#13160D;border:1px solid rgba(255,255,255,0.08);border-radius:13px;padding:12px 14px;display:flex;gap:10px;align-items:flex-start;z-index:99;box-shadow:0 8px 24px rgba(0,0,0,0.5);animation:tin 0.3s ease}
+@keyframes tin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div class="lbl">ChloeIQ · Feature Mastermind</div>
+<div class="phone">
+  <div class="notch"></div>
+  <div class="sbar"><span>9:41</span><span>●●● 5G 🔋</span></div>
+
+  <div class="hdr">
+    <div class="hdr-top">
+      <div>
+        <div class="eye">Product Roadmap</div>
+        <div class="htitle">Feature Mastermind</div>
+      </div>
+      <div class="hbadge">26 Features</div>
+    </div>
+    <div class="tabs" id="tabs">
+      <div class="tab on" data-tier="all" onclick="filterTier(this,'all')">All</div>
+      <div class="tab" data-tier="mvp" onclick="filterTier(this,'mvp')">MVP</div>
+      <div class="tab" data-tier="v2" onclick="filterTier(this,'v2')">V2</div>
+      <div class="tab" data-tier="v3" onclick="filterTier(this,'v3')">V3</div>
+      <div class="tab" data-tier="moon" onclick="filterTier(this,'moon')">Moonshot</div>
+    </div>
+  </div>
+
+  <div class="scroll" id="scroll">
+
+    <!-- SUMMARY -->
+    <div class="sum-row" id="sum-row">
+      <div class="sum-chip"><div class="sum-val">8</div><div class="sum-lbl">Shipped</div></div>
+      <div class="sum-chip"><div class="sum-val">5</div><div class="sum-lbl">Building</div></div>
+      <div class="sum-chip"><div class="sum-val">8</div><div class="sum-lbl">Planned</div></div>
+      <div class="sum-chip"><div class="sum-val">5</div><div class="sum-lbl">Ideas</div></div>
+    </div>
+
+    <div id="feature-list"></div>
+
+  </div>
+
+  <!-- SHEET -->
+  <div class="backdrop" id="bd" onclick="closeSheet()"></div>
+  <div class="sheet" id="sheet">
+    <div class="sh"></div>
+    <div id="sheet-body"></div>
+  </div>
+
+</div>
+
+<script>
+var features = [
+  // ── MVP ──
+  {id:1, tier:'mvp', icon:'⬛', title:'Chloe Code QR Sign', desc:'Physical QR sign with unique code per listing. Buyer scans → instant web flow, no app download required.', tags:['Buyer','Physical'], impact:'high', status:'shipped', persona:'Buyer', effort:'Low', note:'Core acquisition mechanic. The front door of the entire product. Signs are already in production and shipping.'},
+  {id:2, tier:'mvp', icon:'🧬', title:'StyleDNA Quiz', desc:'60-second onboarding quiz that classifies buyers into 4 profiles: Refined Modern, Warm Organic, Coastal Luxe, Bold Eclectic.', tags:['Buyer','AI'], impact:'high', status:'shipped', persona:'Buyer', effort:'Med', note:'94% completion rate in beta. The DNA profile drives all downstream personalization — follow-ups, VisionMatch, vendor targeting.'},
+  {id:3, tier:'mvp', icon:'✨', title:'Ask Chloe AI Tour Guide', desc:'Room-by-room AI assistant answers buyer questions during the tour. Tracks questions asked and dwell signals.', tags:['Buyer','AI'], impact:'high', status:'shipped', persona:'Buyer', effort:'High', note:'Powered by Anthropic API. Buyers love it — average session length 8.4 minutes. Questions asked are fed directly into the agent lead score.'},
+  {id:4, tier:'mvp', icon:'📊', title:'Agent Live Dashboard', desc:'Real-time lead scores, buyer dwell heatmaps, hot lead alerts, and AI-drafted follow-up emails per buyer.', tags:['Agent','Real-time'], impact:'high', status:'shipped', persona:'Agent', effort:'High', note:'Marcus persona primary screen. The dashboard is the core value prop for agents — everything they need to follow up intelligently within 2 hours.'},
+  {id:5, tier:'mvp', icon:'📋', title:'Post-Tour Buyer Report', desc:'Personalized buyer summary emailed after each event: match score, room highlights, Chloe notes, next steps.', tags:['Buyer','Email'], impact:'high', status:'shipped', persona:'Buyer', effort:'Med', note:'Re-engagement tool. Buyers who receive the report are 3× more likely to contact the agent within 48 hours.'},
+  {id:6, tier:'mvp', icon:'🏡', title:'Listing Agent Seller Report', desc:'Post-event intelligence report for the listing agent: buyer DNA mix, demand score, room engagement, hot leads.', tags:['Agent','Report'], impact:'high', status:'shipped', persona:'Listing Agent', effort:'Med', note:'The thing that sells the listing agent on ChloeIQ. Elena Reyes called it "worth the subscription alone." Core to the two-sided value prop.'},
+  {id:7, tier:'mvp', icon:'📱', title:'Agent PWA', desc:'Progressive web app experience for host agents — mobile-optimized dashboard, no app store required.', tags:['Agent','Mobile'], impact:'high', status:'shipped', persona:'Agent', effort:'Med', note:'Marcus uses this on mobile during events and switches to desktop for post-event review. PWA chosen deliberately over native app for faster iteration.'},
+  {id:8, tier:'mvp', icon:'💳', title:'SaaS Billing & Tiers', desc:'Starter ($49/mo), Growth ($129/mo), Brokerage ($299/mo) with Stripe billing and feature gating.', tags:['Platform','Billing'], impact:'high', status:'shipped', persona:'Business', effort:'Med', note:'Tier structure is live. Growth is the target tier for individual agents. Brokerage tier unlocks team management and API access.'},
+
+  // ── V2 ──
+  {id:9, tier:'v2', icon:'🖼️', title:'VisionMatch Room Visualization', desc:'AI-generated room renderings showing what the space would look like styled to the buyer\'s DNA profile.', tags:['Buyer','AI','Visual'], impact:'high', status:'building', persona:'Buyer', effort:'High', note:'The wow feature. Buyers see their Refined Modern furniture in the actual rooms they toured. Drives massive engagement and social sharing. Requires image generation API integration.'},
+  {id:10, tier:'v2', icon:'🤝', title:'Host Agent Marketplace', desc:'Two-sided marketplace where host agents apply to co-host listing agent open houses. 15% platform take rate.', tags:['Marketplace','Revenue'], impact:'high', status:'building', persona:'Agent', effort:'High', note:'Second revenue stream. Creates network effects — the more agents on platform, the more listing agents want to use ChloeIQ to find quality hosts. Already prototyped.'},
+  {id:11, tier:'v2', icon:'📍', title:'Physical Sign Manager', desc:'Order, track, and manage physical Chloe Code signs. Per-sign analytics, delivery tracking, reorder flow.', tags:['Physical','Operations'], impact:'med', status:'building', persona:'Agent', effort:'Med', note:'Closes the physical-digital loop. Agents can order 1-20 signs, track delivery, and see scan analytics per sign. Small but important for retention.'},
+  {id:12, tier:'v2', icon:'🏢', title:'Brokerage Dashboard', desc:'Team-level view for brokers: agent roster, coaching queue, revenue attribution, onboarding progress, leaderboard.', tags:['Brokerage','B2B'], impact:'high', status:'building', persona:'Broker', effort:'High', note:'Unlocks the enterprise sales motion. Brokers buy ChloeIQ for their whole team. The coaching queue and revenue attribution are the two most compelling features for broker buyers.'},
+  {id:13, tier:'v2', icon:'📈', title:'Market Intelligence', desc:'DFW-wide (then national) buyer demand scores by ZIP, DNA trend data, 30-day forecasts, competitive positioning.', tags:['Data','Intelligence'], impact:'high', status:'building', persona:'Agent', effort:'High', note:'Data moat feature. The more events on platform, the better this gets. Agents use it to advise sellers on listing timing and pricing strategy.'},
+  {id:14, tier:'v2', icon:'🔔', title:'Smart Alerts & Notifications', desc:'Push alerts for hot lead activity, application status, score changes, market demand spikes in target ZIPs.', tags:['Agent','Engagement'], impact:'med', status:'planned', persona:'Agent', effort:'Low', note:'Retention and engagement driver. Agents who get real-time alerts have 2× higher 30-day retention. Low effort, high value.'},
+  {id:15, tier:'v2', icon:'🎯', title:'Host Score System', desc:'Gamified scoring (0–1000) for host agents based on follow-up rate, buyer satisfaction, data accuracy, event frequency.', tags:['Gamification','Agent'], impact:'med', status:'planned', persona:'Agent', effort:'Med', note:'Creates healthy competition and gives agents a clear metric to optimize. Gold/Silver/Bronze tier system maps to platform privileges.'},
+  {id:16, tier:'v2', icon:'🛒', title:'Vendor Ad Platform', desc:'DNA-targeted ad placements for home service vendors (staging, inspection, movers) shown to buyers during tours.', tags:['Revenue','Vendor'], impact:'high', status:'planned', persona:'Vendor', effort:'High', note:'Third revenue stream. Vendors pay $199–$1,299/mo for DNA-targeted impressions. 12.4% engagement rate in early tests — 4× industry average.'},
+
+  // ── V3 ──
+  {id:17, tier:'v3', icon:'🗺️', title:'Tour Route Optimization', desc:'AI-suggested room visit order based on buyer DNA profile and listing agent priorities. Heat map overlays on floor plans.', tags:['Buyer','AI'], impact:'med', status:'planned', persona:'Buyer', effort:'Med', note:'Increases dwell time in key rooms by directing buyers to the spaces most likely to convert them. Listing agents love it for staging strategy.'},
+  {id:18, tier:'v3', icon:'🤖', title:'Chloe Follow-Up Autopilot', desc:'Fully automated follow-up sequences triggered by lead score, dwell pattern, and buyer DNA — no agent action required.', tags:['Agent','Automation'], impact:'high', status:'planned', persona:'Agent', effort:'High', note:'The biggest retention risk is agents not following up. Autopilot removes the dependency on agent discipline entirely. Opt-in with review-before-send option.'},
+  {id:19, tier:'v3', icon:'🏘️', title:'Neighborhood Intelligence Layer', desc:'Hyper-local data overlays: school ratings, walkability, crime index, new construction permits — matched to buyer DNA priorities.', tags:['Buyer','Data'], impact:'med', status:'planned', persona:'Buyer', effort:'High', note:'Adds context that buyers would normally have to research themselves. Warm Organic buyers care about schools; Coastal Luxe buyers care about walkability. DNA-filtered display.'},
+  {id:20, tier:'v3', icon:'📹', title:'Video Chloe (Tour Recap)', desc:'60-second AI-narrated video recap of the buyer\'s tour — rooms visited, highlights, match score — shareable with partners.', tags:['Buyer','AI','Video'], impact:'med', status:'idea', persona:'Buyer', effort:'High', note:'Viral potential. Buyers share their "tour story" with their partner or family. Creates organic word-of-mouth. Requires video generation pipeline.'},
+  {id:21, tier:'v3', icon:'🔗', title:'MLS & CRM Integrations', desc:'Two-way sync with Follow Up Boss, Salesforce, kvCORE, and major MLS platforms. Buyer data flows into existing workflows.', tags:['Integration','Platform'], impact:'high', status:'planned', persona:'Agent', effort:'High', note:'Removes the biggest objection from agents already using a CRM. "I don\'t want another tool" goes away if ChloeIQ data appears in their existing dashboard.'},
+  {id:22, tier:'v3', icon:'🌎', title:'Multi-Market Expansion', desc:'Platform configuration for non-DFW markets: local DNA calibration, regional ZIP intelligence, market-specific pricing.', tags:['Platform','Growth'], impact:'high', status:'idea', persona:'Business', effort:'High', note:'DFW is the proving ground. TX rollout (Austin, Houston, San Antonio) is next. Then SE US. Each market needs ~2 weeks of data before DNA models are accurate.'},
+
+  // ── MOONSHOT ──
+  {id:23, tier:'moon', icon:'🏦', title:'ChloeIQ Mortgage Integration', desc:'Real-time mortgage pre-qualification triggered by high match scores. Lender partnerships with revenue share.', tags:['FinTech','Revenue'], impact:'high', status:'idea', persona:'Buyer', effort:'High', note:'If a buyer hits 85%+ match score, trigger an in-app pre-qual flow. Lender pays ChloeIQ a referral fee. Massive TAM expansion into mortgage origination.'},
+  {id:24, tier:'moon', icon:'🌐', title:'Buyer DNA Data API', desc:'Anonymized, aggregated StyleDNA market data sold to hedge funds, homebuilders, and institutional investors.', tags:['Data','B2B','Revenue'], impact:'high', status:'idea', persona:'Business', effort:'High', note:'The long-term data moat monetized. ChloeIQ would have the most granular real-time buyer preference data in the US. Homebuilders would pay significantly for this.'},
+  {id:25, tier:'moon', icon:'🏗️', title:'New Construction Chloe', desc:'ChloeIQ for model home tours at new construction communities. Builder-specific DNA mapping, community matching.', tags:['Builder','B2B'], impact:'high', status:'idea', persona:'Builder', effort:'High', note:'Builders have the same problem as listing agents but at scale — hundreds of model home tours per month with zero buyer intelligence. Massive untapped vertical.'},
+  {id:26, tier:'moon', icon:'🌍', title:'International Markets', desc:'ChloeIQ adapted for Canadian, Australian, and UK residential real estate markets with local DNA calibration.', tags:['International','Growth'], impact:'med', status:'idea', persona:'Business', effort:'High', note:'Each English-speaking market has comparable open house culture and PropTech adoption. Canada and Australia are the most analogous to DFW in terms of buyer behavior.'},
+];
+
+var tierMeta = {
+  all:  {label:'All Features', color:'#B8E030', bg:'rgba(184,224,48,0.1)'},
+  mvp:  {label:'MVP', color:'#4ADE80', bg:'rgba(74,222,128,0.12)'},
+  v2:   {label:'V2', color:'#B8E030', bg:'rgba(184,224,48,0.12)'},
+  v3:   {label:'V3', color:'#60A5FA', bg:'rgba(96,165,250,0.1)'},
+  moon: {label:'Moonshot', color:'#FBBF24', bg:'rgba(251,191,36,0.1)'},
+};
+
+var statusMeta = {
+  shipped:  {label:'✓ Shipped',  cls:'s-shipped'},
+  building: {label:'⚡ Building', cls:'s-building'},
+  planned:  {label:'◎ Planned',  cls:'s-planned'},
+  idea:     {label:'◌ Idea',     cls:'s-idea'},
+};
+
+var impactMeta = {
+  high: {label:'High Impact', cls:'i-high'},
+  med:  {label:'Med Impact',  cls:'i-med'},
+  low:  {label:'Low Impact',  cls:'i-low'},
+};
+
+var curTier = 'all';
+
+function filterTier(el, tier) {
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('on'); });
+  el.classList.add('on');
+  curTier = tier;
+  renderList();
+}
+
+function renderList() {
+  var list = document.getElementById('feature-list');
+  var filtered = curTier === 'all' ? features : features.filter(function(f){ return f.tier === curTier; });
+
+  // Group by tier
+  var groups = {};
+  var order = curTier === 'all' ? ['mvp','v2','v3','moon'] : [curTier];
+  order.forEach(function(t){ groups[t] = []; });
+  filtered.forEach(function(f){ if(groups[f.tier]) groups[f.tier].push(f); });
+
+  var html = '';
+  order.forEach(function(tier) {
+    var items = groups[tier];
+    if(!items || items.length === 0) return;
+    var m = tierMeta[tier];
+    html += '<div class="tier-hdr">';
+    html += '<div class="tier-pill" style="background:'+m.bg+';color:'+m.color+'">'+m.label+'</div>';
+    html += '<div class="tier-count">'+items.length+' features</div>';
+    html += '</div>';
+    items.forEach(function(f) {
+      var sm = statusMeta[f.status];
+      var im = impactMeta[f.impact];
+      html += '<div class="fc" onclick="openSheet('+f.id+')">';
+      html += '<div class="fc-top">';
+      html += '<div class="fc-icon">'+f.icon+'</div>';
+      html += '<div style="flex:1"><div class="fc-title">'+f.title+'</div><div class="fc-desc">'+f.desc+'</div></div>';
+      html += '</div>';
+      html += '<div class="fc-meta">';
+      f.tags.forEach(function(tag){ html += '<div class="fc-tag">'+tag+'</div>'; });
+      html += '<div class="fc-impact '+im.cls+'">'+im.label+'</div>';
+      html += '<div class="fc-status '+sm.cls+'">'+sm.label+'</div>';
+      html += '</div>';
+      html += '</div>';
+    });
+  });
+
+  list.innerHTML = html;
+  document.getElementById('scroll').scrollTop = 0;
+}
+
+function openSheet(id) {
+  var f = features.find(function(x){ return x.id === id; });
+  if(!f) return;
+  var m = tierMeta[f.tier];
+  var sm = statusMeta[f.status];
+  var im = impactMeta[f.impact];
+
+  var body = document.getElementById('sheet-body');
+  body.innerHTML =
+    '<div style="display:flex;align-items:flex-start;gap:11px;margin-bottom:14px">' +
+      '<div style="font-size:26px;flex-shrink:0;margin-top:2px">'+f.icon+'</div>' +
+      '<div style="flex:1">' +
+        '<div style="font-family:\'Fraunces\',serif;font-size:18px;font-weight:700;color:#EEF0E5;margin-bottom:4px;line-height:1.25">'+f.title+'</div>' +
+        '<div style="display:flex;gap:6px;flex-wrap:wrap">' +
+          '<div class="tier-pill" style="font-family:\'DM Mono\',monospace;font-size:9px;letter-spacing:1px;padding:3px 9px;border-radius:100px;background:'+m.bg+';color:'+m.color+'">'+m.label+'</div>' +
+          '<div class="fc-status '+sm.cls+'" style="font-size:10px;font-weight:600;padding:3px 9px;border-radius:100px">'+sm.label+'</div>' +
+          '<div class="fc-impact '+im.cls+'" style="font-family:\'DM Mono\',monospace;font-size:9px;padding:3px 9px;border-radius:100px">'+im.label+'</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div style="font-size:13px;color:rgba(238,240,229,0.55);line-height:1.65;margin-bottom:14px">'+f.desc+'</div>' +
+    '<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px">' +
+      '<div style="background:#0A0B07;border:1px solid rgba(255,255,255,0.07);border-radius:11px;padding:11px"><div style="font-family:\'DM Mono\',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(238,240,229,0.3);margin-bottom:3px">Persona</div><div style="font-size:13px;font-weight:500;color:#EEF0E5">'+f.persona+'</div></div>' +
+      '<div style="background:#0A0B07;border:1px solid rgba(255,255,255,0.07);border-radius:11px;padding:11px"><div style="font-family:\'DM Mono\',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:rgba(238,240,229,0.3);margin-bottom:3px">Effort</div><div style="font-size:13px;font-weight:500;color:#EEF0E5">'+f.effort+'</div></div>' +
+    '</div>' +
+    '<div style="background:rgba(184,224,48,0.06);border:1px solid rgba(184,224,48,0.12);border-radius:12px;padding:12px;margin-bottom:14px">' +
+      '<div style="font-family:\'DM Mono\',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:#B8E030;margin-bottom:6px">✨ Product Note</div>' +
+      '<div style="font-size:13px;color:rgba(238,240,229,0.55);line-height:1.65">'+f.note+'</div>' +
+    '</div>' +
+    '<div style="display:flex;gap:7px">' +
+      '<button onclick="closeSheet();showToast(\''+f.icon+'\',\''+f.title.replace(/'/g,"\\'")+'\')" style="flex:1;background:#B8E030;color:#0A0B07;border:none;border-radius:11px;padding:13px;font-family:\'DM Mono\',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:600;cursor:pointer">Add to Sprint</button>' +
+      '<button onclick="closeSheet()" style="background:#222418;border:1px solid rgba(255,255,255,0.07);border-radius:11px;padding:13px 16px;color:rgba(238,240,229,0.4);font-size:13px;cursor:pointer">Close</button>' +
+    '</div>';
+
+  document.getElementById('bd').classList.add('on');
+  document.getElementById('sheet').classList.add('on');
+}
+
+function closeSheet() {
+  document.getElementById('bd').classList.remove('on');
+  document.getElementById('sheet').classList.remove('on');
+}
+
+function showToast(icon, title) {
+  var old = document.getElementById('tt');
+  if(old) old.remove();
+  var t = document.createElement('div');
+  t.id = 'tt';
+  t.className = 'toast';
+  t.innerHTML = '<div style="font-size:19px">'+icon+'</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#EEF0E5;margin-bottom:2px">Added to Sprint</div><div style="font-size:12px;color:rgba(238,240,229,0.5)">'+title+' added to your current sprint backlog.</div></div><div onclick="document.getElementById(\'tt\').remove()" style="color:rgba(238,240,229,0.3);cursor:pointer;font-size:16px;flex-shrink:0">✕</div>';
+  document.querySelector('.phone').appendChild(t);
+  setTimeout(function(){ var el=document.getElementById('tt'); if(el) el.remove(); }, 4000);
+}
+
+// Init
+renderList();
+</script>
+</body>
+</html>
