@@ -1039,6 +1039,41 @@
 </style>
 </head>
 <body>
+<!-- PASSWORD GATE -->
+<div id="pw-gate" style="position:fixed;inset:0;background:#0A0B07;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;">
+  <div style="text-align:center;max-width:360px;padding:0 24px;">
+    <div style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:#B8E030;margin-bottom:24px;">ChloeIQ</div>
+    <div style="font-family:'Fraunces',serif;font-size:28px;font-weight:700;color:#EEF0E5;margin-bottom:8px;line-height:1.2;">Demo Access</div>
+    <div style="font-size:14px;color:rgba(238,240,229,0.5);margin-bottom:32px;line-height:1.6;">This demo is for authorized use only. Enter the access code to continue.</div>
+    <input id="pw-input" type="password" placeholder="Enter access code"
+      style="width:100%;background:#13160D;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:14px 18px;font-size:15px;color:#EEF0E5;outline:none;margin-bottom:10px;font-family:'DM Sans',sans-serif;text-align:center;letter-spacing:2px;"
+      onkeydown="if(event.key==='Enter')checkPw()">
+    <div id="pw-error" style="font-size:12px;color:#F87171;margin-bottom:10px;min-height:18px;"></div>
+    <button onclick="checkPw()" style="width:100%;background:#B8E030;color:#0A0B07;border:none;border-radius:12px;padding:14px;font-family:'Fraunces',serif;font-size:16px;font-weight:700;cursor:pointer;">Access Demo →</button>
+  </div>
+</div>
+
+<script>
+function checkPw() {
+  var val = document.getElementById('pw-input').value;
+  if (val === 'Demo2026') {
+    document.getElementById('pw-gate').style.display = 'none';
+    sessionStorage.setItem('chloeiq-auth', '1');
+  } else {
+    document.getElementById('pw-error').textContent = 'Incorrect access code. Try again.';
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-input').focus();
+  }
+}
+// Check if already authenticated this session
+if (sessionStorage.getItem('chloeiq-auth') === '1') {
+  document.addEventListener('DOMContentLoaded', function() {
+    var gate = document.getElementById('pw-gate');
+    if (gate) gate.style.display = 'none';
+  });
+}
+</script>
+
 
 <!-- MODAL: How to view artifacts -->
 <div class="modal-overlay" id="modal">
