@@ -7,17 +7,17 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{--bg:#0A0B07;--s1:#13160D;--s2:#1A1E12;--s3:#222818;--acc:#B8E030;--ad:rgba(184,224,48,.10);--tx:#EEF0E5;--txm:#8A8F7A;--txd:#4A5040;--br:rgba(184,224,48,.12);--bs:rgba(238,240,229,.06);--grn:#4ADE80;--red:#FF5A4A;--amb:#F5A623;--blu:#60A5FA;--pur:#A78BFA;}
-html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:14px;overflow-x:hidden;}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,sans-serif;font-size:14px;overflow-x:hidden;}
 .topbar{height:56px;display:flex;align-items:center;padding:0 28px;border-bottom:1px solid var(--bs);background:var(--bg);gap:12px;position:sticky;top:0;z-index:20;}
-.lm{width:28px;height:28px;background:var(--acc);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:var(--bg);}
-.lt{font-family:'Fraunces',serif;font-size:17px;}.lt b{color:var(--acc);font-weight:400;}
-.pt{font-family:'Fraunces',serif;font-size:18px;font-weight:400;}.pt em{color:var(--acc);font-style:italic;}
+.lm{width:28px;height:28px;background:var(--acc);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:Fraunces,serif;font-size:14px;font-weight:600;color:var(--bg);}
+.lt{font-family:Fraunces,serif;font-size:17px;}.lt b{color:var(--acc);font-weight:400;}
+.pt{font-family:Fraunces,serif;font-size:18px;font-weight:400;}.pt em{color:var(--acc);font-style:italic;}
 .sep{width:1px;height:20px;background:var(--bs);}
 .tr{margin-left:auto;display:flex;gap:8px;align-items:center;}
-.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 15px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;border:none;transition:all .13s;}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 15px;border-radius:8px;font-family:DM Sans,sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;border:none;transition:all .13s;}
 .bp{background:var(--acc);color:var(--bg);}.bp:hover{background:#c8f040;}
 .bs2{background:transparent;color:var(--txm);border:1px solid var(--bs);}.bs2:hover{border-color:var(--br);color:var(--tx);background:var(--s1);}
-.main{padding:28px 32px;display:flex;flex-direction:column;gap:22px;max-height:calc(100vh - 56px);overflow-y:auto;}
+.main{padding:28px 32px;display:flex;flex-direction:column;gap:22px;max-height:calc(100vh - 56px);overflow-y:auto;padding-bottom:80px;}
 .view{display:none;flex-direction:column;gap:20px;}.view.active{display:flex;animation:fu .18s ease;}
 @keyframes fu{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
 .panel{background:var(--s1);border:1px solid var(--bs);border-radius:11px;overflow:hidden;}
@@ -28,16 +28,16 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans'
 .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
 .kpi{background:var(--s1);border:1px solid var(--bs);border-radius:10px;padding:15px 17px;transition:border-color .13s;}
 .kpi:hover{border-color:var(--br);}.ka{border-left:2px solid var(--acc);}.ka .kv{color:var(--acc);}
-.kl{font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;}
-.kv{font-family:'Fraunces',serif;font-size:26px;line-height:1;}.kd{font-size:11px;margin-top:4px;}
+.kl{font-family:DM Mono,monospace;font-size:9px;color:var(--txd);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;}
+.kv{font-family:Fraunces,serif;font-size:26px;line-height:1;}.kd{font-size:11px;margin-top:4px;}
 .up{color:var(--grn);}.dn{color:var(--red);}.ne{color:var(--txm);}
-.pill{display:inline-flex;font-family:'DM Mono',monospace;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;}
+.pill{display:inline-flex;font-family:DM Mono,monospace;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;}
 .pg{background:rgba(74,222,128,.10);color:var(--grn);}.pa{background:rgba(245,166,35,.10);color:var(--amb);}
 .pr{background:rgba(255,90,74,.10);color:var(--red);}.pb{background:rgba(96,165,250,.10);color:var(--blu);}
 .pac{background:var(--ad);color:var(--acc);}.pm{background:var(--s3);color:var(--txd);}
 .bb{height:5px;background:var(--s3);border-radius:3px;overflow:hidden;}
 .bf{height:5px;border-radius:3px;background:var(--acc);}
-input,select,textarea{background:var(--s2);border:1px solid var(--bs);border-radius:7px;padding:9px 12px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;width:100%;transition:border-color .13s;}
+input,select,textarea{background:var(--s2);border:1px solid var(--bs);border-radius:7px;padding:9px 12px;color:var(--tx);font-family:DM Sans,sans-serif;font-size:13px;outline:none;width:100%;transition:border-color .13s;}
 input:focus,select:focus,textarea:focus{border-color:var(--br);}
 ::-webkit-scrollbar{width:3px;height:3px;}</style>
 </head>
@@ -52,18 +52,18 @@ input:focus,select:focus,textarea:focus{border-color:var(--br);}
 <div style="display:flex;gap:24px;align-items:flex-start;">
   <div style="display:flex;flex-direction:column;gap:20px;width:260px;flex-shrink:0;">
     <div style="background:var(--s1);border:1px solid var(--br);border-radius:12px;padding:24px;text-align:center;">
-      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--acc);letter-spacing:.8px;margin-bottom:10px;">HOST SCORE</div>
+      <div style="font-family:DM Mono,monospace;font-size:10px;color:var(--acc);letter-spacing:.8px;margin-bottom:10px;">HOST SCORE</div>
       <div style="position:relative;width:150px;height:150px;margin:0 auto 14px;">
         <svg width="150" height="150" viewBox="0 0 150 150">
           <circle cx="75" cy="75" r="62" fill="none" stroke="var(--s3)" stroke-width="11"/>
           <circle cx="75" cy="75" r="62" fill="none" stroke="var(--acc)" stroke-width="11" stroke-dasharray="390" stroke-dashoffset="86" stroke-linecap="round" transform="rotate(-90 75 75)"/>
         </svg>
         <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
-          <div style="font-family:'Fraunces',serif;font-size:42px;color:var(--tx);">780</div>
-          <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);">/ 1000</div>
+          <div style="font-family:Fraunces,serif;font-size:42px;color:var(--tx);">780</div>
+          <div style="font-family:DM Mono,monospace;font-size:9px;color:var(--txd);">/ 1000</div>
         </div>
       </div>
-      <div style="background:var(--acc);color:var(--bg);font-family:'DM Mono',monospace;font-size:11px;font-weight:600;padding:5px 16px;border-radius:20px;display:inline-block;margin-bottom:10px;">🥇 GOLD TIER</div>
+      <div style="background:var(--acc);color:var(--bg);font-family:DM Mono,monospace;font-size:11px;font-weight:600;padding:5px 16px;border-radius:20px;display:inline-block;margin-bottom:10px;">🥇 GOLD TIER</div>
       <div style="font-size:12px;color:var(--txm);margin-bottom:12px;">Top 15% of DFW · #6 leaderboard</div>
       <div style="text-align:left;">
         <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--txm);margin-bottom:4px;"><span>Gold 700</span><span>Platinum 900</span></div>
@@ -72,7 +72,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--br);}
       </div>
     </div>
     <div class="panel">
-      <div class="ph"><div class="pht">Badges</div><span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--txm);background:var(--s3);padding:2px 6px;border-radius:7px;">4 of 6</span></div>
+      <div class="ph"><div class="pht">Badges</div><span style="font-family:DM Mono,monospace;font-size:10px;color:var(--txm);background:var(--s3);padding:2px 6px;border-radius:7px;">4 of 6</span></div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:14px;" id="badges"></div>
     </div>
   </div>
@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded',function(){
   var sb=document.getElementById('score-bars');
   breakdown.forEach(function(b){
     var color=b.v>=85?'var(--acc)':b.v>=70?'var(--blu)':'var(--amb)';
-    sb.innerHTML+='<div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;"><span style="color:var(--txm);">'+b.k+'</span><span style="font-family:'DM Mono',monospace;font-size:11px;color:'+color+';">'+b.v+'/100</span></div><div class="bb" style="height:6px;"><div style="height:6px;border-radius:3px;background:'+color+';width:'+b.v+'%;transition:width .8s;"></div></div></div>';
+    sb.innerHTML+='<div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;"><span style="color:var(--txm);">'+b.k+'</span><span style="font-family:DM Mono,monospace;font-size:11px;color:'+color+';">'+b.v+'/100</span></div><div class="bb" style="height:6px;"><div style="height:6px;border-radius:3px;background:'+color+';width:'+b.v+'%;transition:width .8s;"></div></div></div>';
   });
   var bg=document.getElementById('badges');
   badges.forEach(function(b){
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded',function(){
   document.querySelectorAll('[data-badge]').forEach(function(b){b.addEventListener('click',function(){var l=b.dataset.badge;var earned=b.style.opacity!=='0.4';toast(l+(earned?' — earned this month ✓':' — keep going to unlock!'),earned?'ok':'');});});
   var lr=document.getElementById('lb-rows');
   lb.forEach(function(a,i){
-    lr.innerHTML+='<div style="display:grid;grid-template-columns:28px 28px 1fr 80px;align-items:center;padding:10px 18px;border-bottom:1px solid var(--bs);gap:10px;cursor:pointer;transition:background .11s;background:'+(a.you?'var(--ad)':'transparent')+';"><span style="font-family:'DM Mono',monospace;font-size:11px;color:'+(i<3?'var(--acc)':'var(--txd)')+';">'+(i<3?['🥇','🥈','🥉'][i]:(i+1))+'</span><div style="width:26px;height:26px;border-radius:50%;background:'+(a.you?'var(--acc)':'var(--s3)')+';display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:'+(a.you?'var(--bg)':'var(--tx)')+';">'+a.i+'</div><span style="font-size:13px;'+(a.you?'color:var(--acc);font-weight:500;':'')+'">'+a.n+(a.you?' ← you':'')+'</span><span style="font-family:'DM Mono',monospace;font-size:12px;color:'+(a.you?'var(--acc)':'var(--txm)')+';">'+a.s+'</span></div>';
+    lr.innerHTML+='<div style="display:grid;grid-template-columns:28px 28px 1fr 80px;align-items:center;padding:10px 18px;border-bottom:1px solid var(--bs);gap:10px;cursor:pointer;transition:background .11s;background:'+(a.you?'var(--ad)':'transparent')+';"><span style="font-family:DM Mono,monospace;font-size:11px;color:'+(i<3?'var(--acc)':'var(--txd)')+';">'+(i<3?['🥇','🥈','🥉'][i]:(i+1))+'</span><div style="width:26px;height:26px;border-radius:50%;background:'+(a.you?'var(--acc)':'var(--s3)')+';display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:'+(a.you?'var(--bg)':'var(--tx)')+';">'+a.i+'</div><span style="font-size:13px;'+(a.you?'color:var(--acc);font-weight:500;':'')+'">'+a.n+(a.you?' ← you':'')+'</span><span style="font-family:DM Mono,monospace;font-size:12px;color:'+(a.you?'var(--acc)':'var(--txm)')+';">'+a.s+'</span></div>';
   });
   document.getElementById('sc-share').addEventListener('click',function(){toast('Score card link copied ✓','ok');});
   document.getElementById('sc-boost').addEventListener('click',function(){modal('Boost Your Score','Complete these actions to earn +40 pts this week:<br><br>• Send 2 pending follow-ups (+15 pts)<br>• Set up Ridgecrest Chloe Code (+10 pts)<br>• Invite 3 buyers to StyleDNA quiz (+15 pts)','Go to Follow-Up',function(){toast('Opening follow-up queue...','');});});

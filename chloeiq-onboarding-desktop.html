@@ -459,9 +459,13 @@
       if (line) line.classList.toggle('done', i < current);
     }
     document.getElementById('btnBack').disabled = current === 1;
-    document.getElementById('btnNext').textContent = current === TOTAL ? 'View Home Report →' : 'Continue →';
+    const btn = document.getElementById('btnNext');
     if (current === TOTAL) {
-      document.getElementById('btnNext').onclick = () => window.location.href = 'chloeiq-home-report-desktop.html';
+      btn.textContent = 'View Home Report →';
+      btn.onclick = () => window.location.href = 'chloeiq-home-report-desktop.html';
+    } else {
+      btn.textContent = 'Continue →';
+      btn.onclick = nextStep;
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }

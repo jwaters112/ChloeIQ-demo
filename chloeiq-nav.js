@@ -117,17 +117,38 @@
 
   // ── APP REGISTRY ──
   var APPS = [
-    { id: 'agent',       label: 'Agent Dashboard',      file: 'chloeiq-agent-dashboard-desktop.html',       icon: '🏠', color: '#B8E030' },
-    { id: 'brokerage',   label: 'Brokerage',            file: 'chloeiq-brokerage-dashboard-desktop.html',   icon: '🏢', color: '#60A5FA' },
-    { id: 'market',      label: 'Market Intelligence',  file: 'chloeiq-market-intelligence-desktop.html',   icon: '📊', color: '#F5A623' },
-    { id: 'opportunity', label: 'Opportunity Board',    file: 'chloeiq-opportunity-board-desktop.html',     icon: '📍', color: '#4ADE80' },
-    { id: 'vendor',      label: 'Vendor Dashboard',     file: 'chloeiq-vendor-dashboard-desktop.html',      icon: '🎯', color: '#A78BFA' },
-    { id: 'seed',        label: 'Seed Deck',            file: 'chloeiq-seed-deck-desktop.html',             icon: '💼', color: '#FB923C' },
+    // ── Agent Flow ──
+    { id: 'agent',   label: 'Agent Dashboard',      file: 'chloeiq-agent-dashboard-desktop.html',       icon: '🏠', color: '#B8E030', group: 'agent' },
+    { id: 'followup',          label: 'Follow-Up',            file: 'chloeiq-followup-desktop.html',              icon: '✉️',  color: '#B8E030', group: 'agent' },
+    { id: 'listing-dashboard', label: 'Listing Dashboard',    file: 'chloeiq-listing-dashboard-desktop.html',     icon: '📋', color: '#B8E030', group: 'agent' },
+    { id: 'agent-scorecard',   label: 'Agent Scorecard',      file: 'chloeiq-agent-scorecard-desktop.html',       icon: '🏆', color: '#B8E030', group: 'agent' },
+    { id: 'roi-calculator',    label: 'ROI Calculator',       file: 'chloeiq-roi-calculator-desktop.html',        icon: '📈', color: '#B8E030', group: 'agent' },
+    { id: 'agent-setup',       label: 'Agent Setup',          file: 'chloeiq-agent-setup-desktop.html',           icon: '⚙️',  color: '#B8E030', group: 'agent' },
+    // ── Buyer Journey ──
+    { id: 'buyer-app',         label: 'Buyer App',            file: 'chloeiq-buyer-app-desktop.html',             icon: '👤', color: '#60A5FA', group: 'buyer' },
+    { id: 'styledna-quiz',     label: 'StyleDNA Quiz',        file: 'chloeiq-styledna-quiz-desktop.html',         icon: '🧬', color: '#60A5FA', group: 'buyer' },
+    { id: 'home-report',       label: 'Home Report',          file: 'chloeiq-home-report-desktop.html',           icon: '📄', color: '#60A5FA', group: 'buyer' },
+    { id: 'onboarding',        label: 'Buyer Onboarding',     file: 'chloeiq-onboarding-desktop.html',            icon: '🎯', color: '#60A5FA', group: 'buyer' },
+    { id: 'tour',              label: 'Live Tour',            file: 'chloeiq-tour-desktop.html',                  icon: '🔴', color: '#60A5FA', group: 'buyer' },
+    { id: 'buyer-heatmap',     label: 'Buyer Heatmap',        file: 'chloeiq-buyer-heatmap-desktop.html',         icon: '🗺', color: '#60A5FA', group: 'buyer' },
+    // ── Marketplace ──
+    { id: 'opportunity',       label: 'Opportunity Board',    file: 'chloeiq-opportunity-board-desktop.html',     icon: '📍', color: '#4ADE80', group: 'mktplace' },
+    { id: 'marketplace',       label: 'Marketplace',          file: 'chloeiq-marketplace-desktop.html',           icon: '🏪', color: '#4ADE80', group: 'mktplace' },
+    { id: 'sign-manager',      label: 'Sign Manager',         file: 'chloeiq-sign-manager-desktop.html',          icon: '🪧', color: '#4ADE80', group: 'mktplace' },
+    // ── Platform & Data ──
+    { id: 'brokerage',         label: 'Brokerage',            file: 'chloeiq-brokerage-dashboard-desktop.html',   icon: '🏢', color: '#F5A623', group: 'platform' },
+    { id: 'market',            label: 'Market Intelligence',  file: 'chloeiq-market-intelligence-desktop.html',   icon: '📊', color: '#F5A623', group: 'platform' },
+    { id: 'vendor',            label: 'Vendor Dashboard',     file: 'chloeiq-vendor-dashboard-desktop.html',      icon: '🎯', color: '#F5A623', group: 'platform' },
+    // ── Investor & Strategy ──
+    { id: 'seed',              label: 'Seed Deck',            file: 'chloeiq-seed-deck-desktop.html',             icon: '💼', color: '#FB923C', group: 'investor' },
+    { id: 'feature-mastermind',label: 'Feature Mastermind',   file: 'chloeiq-feature-mastermind-desktop.html',    icon: '🗺', color: '#FB923C', group: 'investor' },
+    { id: 'outreach-kit',      label: 'Outreach Kit',         file: 'chloeiq-outreach-kit-desktop.html',          icon: '📦', color: '#FB923C', group: 'investor' },
+    { id: 'landing',           label: 'Landing Page',         file: 'chloeiq-landing-desktop.html',               icon: '🌐', color: '#FB923C', group: 'investor' },
   ];
 
   // Detect current app from filename
   var currentFile = window.location.pathname.split('/').pop() || '';
-  var currentApp = APPS.find(function(a) { return currentFile.indexOf(a.id) !== -1; }) || APPS[0];
+  var currentApp = APPS.find(function(a) { return a.file === currentFile; }) || APPS[0];
 
   // ── URL PARAM HELPERS ──
   function getParam(key) {
@@ -245,7 +266,7 @@
     var nav = document.createElement('div');
     nav.id = 'ciq-demo-nav';
 
-    // Back button (show if there's history)
+    // Back button
     var backBtn = document.createElement('button');
     backBtn.id = 'ciq-back-btn';
     backBtn.innerHTML = '← Back';
@@ -253,14 +274,27 @@
     backBtn.onclick = function() { window.history.back(); };
     nav.appendChild(backBtn);
 
-    if (window.history.length > 1) {
-      var sep0 = document.createElement('div');
-      sep0.className = 'ciq-nav-sep';
-      nav.appendChild(sep0);
-    }
+    // Hub button — always show
+    var hubBtn = document.createElement('button');
+    hubBtn.className = 'ciq-nav-btn';
+    hubBtn.innerHTML = '<span class="ciq-nav-icon">🗂</span>Hub';
+    hubBtn.title = 'Demo Hub';
+    hubBtn.onclick = function() { window.location.href = 'chloeiq-demo-hub.html'; };
+    nav.appendChild(hubBtn);
 
-    // App buttons
-    APPS.forEach(function(app, i) {
+    var sep0 = document.createElement('div');
+    sep0.className = 'ciq-nav-sep';
+    nav.appendChild(sep0);
+
+    // Show apps in same group as current page, or all if no group match
+    var groupApps = currentApp.group
+      ? APPS.filter(function(a) { return a.group === currentApp.group; })
+      : APPS;
+
+    // If group has more than 6, just show current + 5 nearest
+    if (groupApps.length > 6) groupApps = groupApps.slice(0, 6);
+
+    groupApps.forEach(function(app, i) {
       var btn = document.createElement('button');
       btn.className = 'ciq-nav-btn' + (app.id === currentApp.id ? ' current' : '');
       btn.innerHTML = '<span class="ciq-nav-icon">' + app.icon + '</span>' + app.label;
@@ -271,7 +305,7 @@
       };
       nav.appendChild(btn);
 
-      if (i < APPS.length - 1) {
+      if (i < groupApps.length - 1) {
         var sep = document.createElement('div');
         sep.className = 'ciq-nav-sep';
         nav.appendChild(sep);

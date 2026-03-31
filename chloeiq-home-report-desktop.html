@@ -7,17 +7,17 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{--bg:#0A0B07;--s1:#13160D;--s2:#1A1E12;--s3:#222818;--acc:#B8E030;--ad:rgba(184,224,48,.10);--tx:#EEF0E5;--txm:#8A8F7A;--txd:#4A5040;--br:rgba(184,224,48,.12);--bs:rgba(238,240,229,.06);--grn:#4ADE80;--red:#FF5A4A;--amb:#F5A623;--blu:#60A5FA;--pur:#A78BFA;}
-html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:14px;overflow-x:hidden;}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,sans-serif;font-size:14px;overflow-x:hidden;}
 .topbar{height:56px;display:flex;align-items:center;padding:0 28px;border-bottom:1px solid var(--bs);background:var(--bg);gap:12px;position:sticky;top:0;z-index:20;}
-.lm{width:28px;height:28px;background:var(--acc);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:var(--bg);}
-.lt{font-family:'Fraunces',serif;font-size:17px;}.lt b{color:var(--acc);font-weight:400;}
-.pt{font-family:'Fraunces',serif;font-size:18px;font-weight:400;}.pt em{color:var(--acc);font-style:italic;}
+.lm{width:28px;height:28px;background:var(--acc);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:Fraunces,serif;font-size:14px;font-weight:600;color:var(--bg);}
+.lt{font-family:Fraunces,serif;font-size:17px;}.lt b{color:var(--acc);font-weight:400;}
+.pt{font-family:Fraunces,serif;font-size:18px;font-weight:400;}.pt em{color:var(--acc);font-style:italic;}
 .sep{width:1px;height:20px;background:var(--bs);}
 .tr{margin-left:auto;display:flex;gap:8px;align-items:center;}
-.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 15px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;border:none;transition:all .13s;}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 15px;border-radius:8px;font-family:DM Sans,sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;border:none;transition:all .13s;}
 .bp{background:var(--acc);color:var(--bg);}.bp:hover{background:#c8f040;}
 .bs2{background:transparent;color:var(--txm);border:1px solid var(--bs);}.bs2:hover{border-color:var(--br);color:var(--tx);background:var(--s1);}
-.main{padding:28px 32px;display:flex;flex-direction:column;gap:22px;max-height:calc(100vh - 56px);overflow-y:auto;}
+.main{padding:28px 32px;display:flex;flex-direction:column;gap:22px;max-height:calc(100vh - 56px);overflow-y:auto;padding-bottom:80px;}
 .panel{background:var(--s1);border:1px solid var(--bs);border-radius:11px;overflow:hidden;}
 .ph{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--bs);}
 .pht{font-size:13px;font-weight:600;}
@@ -26,8 +26,8 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans'
 .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
 .kpi{background:var(--s1);border:1px solid var(--bs);border-radius:10px;padding:15px 17px;transition:border-color .13s;}
 .kpi:hover{border-color:var(--br);}.ka{border-left:2px solid var(--acc);}.ka .kv{color:var(--acc);}
-.kl{font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;}
-.kv{font-family:'Fraunces',serif;font-size:26px;line-height:1;}.kd{font-size:11px;margin-top:4px;}
+.kl{font-family:DM Mono,monospace;font-size:9px;color:var(--txd);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;}
+.kv{font-family:Fraunces,serif;font-size:26px;line-height:1;}.kd{font-size:11px;margin-top:4px;}
 .up{color:var(--grn);}.ne{color:var(--txm);}
 .chip{padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--bs);background:var(--s2);color:var(--txm);transition:all .12s;}
 .chip:hover{border-color:var(--br);color:var(--tx);}.chip.active{background:var(--ad);border-color:var(--br);color:var(--acc);}
@@ -44,12 +44,12 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans'
 <div class="g2" style="align-items:start;">
   <div style="display:flex;flex-direction:column;gap:16px;">
     <div style="background:linear-gradient(135deg,var(--s1),var(--s2));border:1px solid var(--br);border-radius:12px;padding:24px;">
-      <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--acc);letter-spacing:.8px;margin-bottom:6px;">YOUR MATCH SCORE</div>
-      <div style="font-family:'Fraunces',serif;font-size:64px;color:var(--acc);line-height:1;">87<span style="font-size:24px;color:var(--txm);">%</span></div>
+      <div style="font-family:DM Mono,monospace;font-size:10px;color:var(--acc);letter-spacing:.8px;margin-bottom:6px;">YOUR MATCH SCORE</div>
+      <div style="font-family:Fraunces,serif;font-size:64px;color:var(--acc);line-height:1;">87<span style="font-size:24px;color:var(--txm);">%</span></div>
       <div style="font-size:13px;color:var(--txm);margin-top:4px;">Exceptional match — Top 8% of all visitors</div>
       <div style="margin-top:14px;font-size:13px;color:var(--tx);font-weight:500;">2847 Magnolia Drive</div>
       <div style="font-size:12px;color:var(--txm);">Flower Mound, TX 75022 · $724,000</div>
-      <div style="margin-top:12px;display:flex;gap:8px;"><span style="font-family:'DM Mono',monospace;font-size:10px;background:var(--ad);border:1px solid var(--br);color:var(--acc);padding:2px 8px;border-radius:6px;">4 BD</span><span style="font-family:'DM Mono',monospace;font-size:10px;background:var(--ad);border:1px solid var(--br);color:var(--acc);padding:2px 8px;border-radius:6px;">3 BA</span><span style="font-family:'DM Mono',monospace;font-size:10px;background:var(--ad);border:1px solid var(--br);color:var(--acc);padding:2px 8px;border-radius:6px;">2,847 sqft</span></div>
+      <div style="margin-top:12px;display:flex;gap:8px;"><span style="font-family:DM Mono,monospace;font-size:10px;background:var(--ad);border:1px solid var(--br);color:var(--acc);padding:2px 8px;border-radius:6px;">4 BD</span><span style="font-family:DM Mono,monospace;font-size:10px;background:var(--ad);border:1px solid var(--br);color:var(--acc);padding:2px 8px;border-radius:6px;">3 BA</span><span style="font-family:DM Mono,monospace;font-size:10px;background:var(--ad);border:1px solid var(--br);color:var(--acc);padding:2px 8px;border-radius:6px;">2,847 sqft</span></div>
     </div>
     <div class="panel">
       <div class="ph"><div class="pht">Why It Matches You</div></div>
@@ -98,9 +98,9 @@ document.addEventListener('DOMContentLoaded',function(){
   });
   var tb=document.getElementById('trait-bars');
   traits.forEach(function(t){
-    tb.innerHTML+='<div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--txm);">'+t.label+'</span><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--acc);">'+t.match+'%</span></div><div style="height:4px;background:var(--s3);border-radius:2px;overflow:hidden;"><div style="height:4px;background:var(--acc);border-radius:2px;width:'+t.match+'%;"></div></div></div>';
+    tb.innerHTML+='<div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--txm);">'+t.label+'</span><span style="font-family:DM Mono,monospace;font-size:11px;color:var(--acc);">'+t.match+'%</span></div><div style="height:4px;background:var(--s3);border-radius:2px;overflow:hidden;"><div style="height:4px;background:var(--acc);border-radius:2px;width:'+t.match+'%;"></div></div></div>';
   });
-  document.getElementById('hr-contact').addEventListener('click',function(){modal('Schedule a Showing','Request a private showing of 2847 Magnolia Drive with Marcus Rivera. He'll reach out within 2 hours.','Request Showing',function(){toast('Showing request sent to Marcus Rivera ✓','ok');});});
+  document.getElementById('hr-contact').addEventListener('click',function(){modal('Schedule a Showing','Request a private showing of 2847 Magnolia Drive with Marcus Rivera. He will reach out within 2 hours.','Request Showing',function(){toast('Showing request sent to Marcus Rivera ✓','ok');});});
   document.getElementById('hr-save').addEventListener('click',function(){toast('Home report saved to your profile ✓','ok');});
 });
 

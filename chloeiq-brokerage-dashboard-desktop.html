@@ -112,7 +112,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .sf-bar { height: 3px; background: var(--accent); border-radius: 2px; }
 
 /* ── MAIN ── */
-.main { overflow-y: auto; background: var(--bg); }
+.main { overflow-y: auto; background: var(--bg); padding-bottom: 80px; }
 .view { display: none; padding: 26px 30px; flex-direction: column; gap: 22px; animation: fadeUp 0.18s ease; }
 .view.active { display: flex; }
 @keyframes fadeUp { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
@@ -913,7 +913,7 @@ canvas { display: block; }
       <div class="ph"><div class="ph-title">Scheduled Reports</div></div>
       <div style="padding:16px 18px;display:flex;flex-direction:column;gap:14px;">
         <div style="background:var(--surface2);border:1px solid var(--border-s);border-radius:10px;padding:13px 15px;display:flex;align-items:center;gap:12px;">
-          <div style="flex:1;"><div style="font-size:13px;font-weight:500;">Weekly Overview</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Every Monday 8 AM · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e882879b80a89a8d89848a9a87838d9ac68b8785">[email&#160;protected]</a></div></div>
+          <div style="flex:1;"><div style="font-size:13px;font-weight:500;">Weekly Overview</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Every Monday 8 AM · josh@realbroker.com</div></div>
           <span class="pill pill-green">Active</span>
         </div>
         <div style="background:var(--surface2);border:1px solid var(--border-s);border-radius:10px;padding:13px 15px;display:flex;align-items:center;gap:12px;">
@@ -933,7 +933,7 @@ canvas { display: block; }
 </main>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 // ══════════════════════════════════════════
 // CHLOEIQ BROKERAGE DASHBOARD — INTERACTIONS
 // ══════════════════════════════════════════
@@ -1386,13 +1386,14 @@ document.addEventListener('DOMContentLoaded', function() {
   // ── CHIP FILTERS ──
   document.querySelectorAll('.chip-bar').forEach(function(bar) {
     bar.querySelectorAll('.chip').forEach(function(chip) {
-      chip.addEventListener('click', function      chip.addEventListener('click', function() {
+      chip.addEventListener('click', function() {
         bar.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('active'); });
         chip.classList.add('active');
       });
     });
   });
 
+}); // end DOMContentLoaded
 </script>
 <script src="chloeiq-nav.js"></script>
 </body>

@@ -7,17 +7,17 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{--bg:#0A0B07;--s1:#13160D;--s2:#1A1E12;--s3:#222818;--acc:#B8E030;--ad:rgba(184,224,48,.10);--tx:#EEF0E5;--txm:#8A8F7A;--txd:#4A5040;--br:rgba(184,224,48,.12);--bs:rgba(238,240,229,.06);--grn:#4ADE80;--red:#FF5A4A;--amb:#F5A623;--blu:#60A5FA;--pur:#A78BFA;}
-html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:14px;overflow-x:hidden;}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,sans-serif;font-size:14px;overflow-x:hidden;}
 .topbar{height:56px;display:flex;align-items:center;padding:0 28px;border-bottom:1px solid var(--bs);background:var(--bg);gap:12px;position:sticky;top:0;z-index:20;}
-.lm{width:28px;height:28px;background:var(--acc);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:var(--bg);}
-.lt{font-family:'Fraunces',serif;font-size:17px;}.lt b{color:var(--acc);font-weight:400;}
-.pt{font-family:'Fraunces',serif;font-size:18px;font-weight:400;}.pt em{color:var(--acc);font-style:italic;}
+.lm{width:28px;height:28px;background:var(--acc);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:Fraunces,serif;font-size:14px;font-weight:600;color:var(--bg);}
+.lt{font-family:Fraunces,serif;font-size:17px;}.lt b{color:var(--acc);font-weight:400;}
+.pt{font-family:Fraunces,serif;font-size:18px;font-weight:400;}.pt em{color:var(--acc);font-style:italic;}
 .sep{width:1px;height:20px;background:var(--bs);}
 .tr{margin-left:auto;display:flex;gap:8px;align-items:center;}
-.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 15px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;border:none;transition:all .13s;}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 15px;border-radius:8px;font-family:DM Sans,sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;border:none;transition:all .13s;}
 .bp{background:var(--acc);color:var(--bg);}.bp:hover{background:#c8f040;}
 .bs2{background:transparent;color:var(--txm);border:1px solid var(--bs);}.bs2:hover{border-color:var(--br);color:var(--tx);background:var(--s1);}
-.main{padding:28px 32px;display:flex;flex-direction:column;gap:22px;max-height:calc(100vh - 56px);overflow-y:auto;}
+.main{padding:28px 32px;display:flex;flex-direction:column;gap:22px;max-height:calc(100vh - 56px);overflow-y:auto;padding-bottom:80px;}
 .panel{background:var(--s1);border:1px solid var(--bs);border-radius:11px;overflow:hidden;}
 .ph{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--bs);}
 .pht{font-size:13px;font-weight:600;}
@@ -26,8 +26,8 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans'
 .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
 .kpi{background:var(--s1);border:1px solid var(--bs);border-radius:10px;padding:15px 17px;transition:border-color .13s;}
 .kpi:hover{border-color:var(--br);}.ka{border-left:2px solid var(--acc);}.ka .kv{color:var(--acc);}
-.kl{font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;}
-.kv{font-family:'Fraunces',serif;font-size:26px;line-height:1;}.kd{font-size:11px;margin-top:4px;}
+.kl{font-family:DM Mono,monospace;font-size:9px;color:var(--txd);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;}
+.kv{font-family:Fraunces,serif;font-size:26px;line-height:1;}.kd{font-size:11px;margin-top:4px;}
 .up{color:var(--grn);}.ne{color:var(--txm);}
 .chip{padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--bs);background:var(--s2);color:var(--txm);transition:all .12s;}
 .chip:hover{border-color:var(--br);color:var(--tx);}.chip.active{background:var(--ad);border-color:var(--br);color:var(--acc);}
@@ -49,7 +49,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans'
 </div>
 <div class="g2">
   <div class="panel">
-    <div class="ph"><div class="pht">Your StyleDNA Profile</div><span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--acc);background:var(--ad);border:1px solid var(--br);padding:2px 9px;border-radius:20px;">Refined Modern</span></div>
+    <div class="ph"><div class="pht">Your StyleDNA Profile</div><span style="font-family:DM Mono,monospace;font-size:10px;color:var(--acc);background:var(--ad);border:1px solid var(--br);padding:2px 9px;border-radius:20px;">Refined Modern</span></div>
     <div style="padding:20px;display:flex;flex-direction:column;gap:12px;" id="dna-traits"></div>
   </div>
   <div class="panel">
@@ -89,17 +89,17 @@ var recs=[
 document.addEventListener('DOMContentLoaded',function(){
   var dt=document.getElementById('dna-traits');
   traits.forEach(function(t){
-    dt.innerHTML+='<div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--txm);">'+t.label+'</span><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--acc);">'+t.strength+'%</span></div><div style="height:4px;background:var(--s3);border-radius:2px;overflow:hidden;"><div style="height:4px;background:var(--acc);border-radius:2px;width:'+t.strength+'%;"></div></div></div>';
+    dt.innerHTML+='<div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--txm);">'+t.label+'</span><span style="font-family:DM Mono,monospace;font-size:11px;color:var(--acc);">'+t.strength+'%</span></div><div style="height:4px;background:var(--s3);border-radius:2px;overflow:hidden;"><div style="height:4px;background:var(--acc);border-radius:2px;width:'+t.strength+'%;"></div></div></div>';
   });
   var hv=document.getElementById('homes-visited');
   homes.forEach(function(h){
-    hv.innerHTML+='<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 18px;border-bottom:1px solid var(--bs);cursor:pointer;transition:background .11s;" class="hrow"><div><div style="font-size:13px;font-weight:500;">'+h.addr+'</div><div style="font-size:11px;color:var(--txm);">'+h.area+' · '+h.date+'</div></div><div style="display:flex;align-items:center;gap:10px;"><span style="font-family:'DM Mono',monospace;font-size:14px;color:var(--acc);">'+h.match+'%</span><button class="btn bp" style="font-size:10px;padding:3px 9px;" data-hv="'+h.addr+'">View Report</button></div></div>';
+    hv.innerHTML+='<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 18px;border-bottom:1px solid var(--bs);cursor:pointer;transition:background .11s;" class="hrow"><div><div style="font-size:13px;font-weight:500;">'+h.addr+'</div><div style="font-size:11px;color:var(--txm);">'+h.area+' · '+h.date+'</div></div><div style="display:flex;align-items:center;gap:10px;"><span style="font-family:DM Mono,monospace;font-size:14px;color:var(--acc);">'+h.match+'%</span><button class="btn bp" style="font-size:10px;padding:3px 9px;" data-hv="'+h.addr+'">View Report</button></div></div>';
   });
   document.querySelectorAll('[data-hv]').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();toast('Opening home report for '+b.dataset.hv+'...','');});});
   document.querySelectorAll('.hrow').forEach(function(r){r.addEventListener('mouseover',function(){r.style.background='var(--s2)';});r.addEventListener('mouseout',function(){r.style.background='';});});
   var rg=document.getElementById('recs-grid');
   recs.forEach(function(r){
-    rg.innerHTML+='<div style="background:var(--s2);border:1px solid var(--bs);border-radius:9px;padding:16px;cursor:pointer;transition:border-color .12s;" class="rec-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;"><div><div style="font-size:13px;font-weight:500;">'+r.addr+'</div><div style="font-size:11px;color:var(--txm);">'+r.area+' · '+r.price+'</div></div><div style="font-family:'Fraunces',serif;font-size:22px;color:var(--acc);">'+r.match+'%</div></div><div style="font-size:12px;color:var(--txm);line-height:1.5;">'+r.why+'</div><button class="btn bp" style="width:100%;justify-content:center;font-size:11px;margin-top:12px;" data-rec="'+r.addr+'">View This Home</button></div>';
+    rg.innerHTML+='<div style="background:var(--s2);border:1px solid var(--bs);border-radius:9px;padding:16px;cursor:pointer;transition:border-color .12s;" class="rec-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;"><div><div style="font-size:13px;font-weight:500;">'+r.addr+'</div><div style="font-size:11px;color:var(--txm);">'+r.area+' · '+r.price+'</div></div><div style="font-family:Fraunces,serif;font-size:22px;color:var(--acc);">'+r.match+'%</div></div><div style="font-size:12px;color:var(--txm);line-height:1.5;">'+r.why+'</div><button class="btn bp" style="width:100%;justify-content:center;font-size:11px;margin-top:12px;" data-rec="'+r.addr+'">View This Home</button></div>';
   });
   document.querySelectorAll('[data-rec]').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();toast('Opening home details for '+b.dataset.rec+'...','');});});
   document.querySelectorAll('.rec-card').forEach(function(c){c.addEventListener('mouseover',function(){c.style.borderColor='var(--br)';});c.addEventListener('mouseout',function(){c.style.borderColor='var(--bs)';});});

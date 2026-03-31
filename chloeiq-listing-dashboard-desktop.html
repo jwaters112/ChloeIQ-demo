@@ -7,17 +7,17 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{--bg:#0A0B07;--s1:#13160D;--s2:#1A1E12;--s3:#222818;--acc:#B8E030;--ad:rgba(184,224,48,.10);--tx:#EEF0E5;--txm:#8A8F7A;--txd:#4A5040;--br:rgba(184,224,48,.12);--bs:rgba(238,240,229,.06);--grn:#4ADE80;--red:#FF5A4A;--amb:#F5A623;--blu:#60A5FA;--pur:#A78BFA;}
-html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:14px;overflow-x:hidden;}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,sans-serif;font-size:14px;overflow-x:hidden;}
 .topbar{height:56px;display:flex;align-items:center;padding:0 28px;border-bottom:1px solid var(--bs);background:var(--bg);gap:12px;position:sticky;top:0;z-index:20;}
-.lm{width:28px;height:28px;background:var(--acc);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:var(--bg);}
-.lt{font-family:'Fraunces',serif;font-size:17px;}.lt b{color:var(--acc);font-weight:400;}
-.pt{font-family:'Fraunces',serif;font-size:18px;font-weight:400;}.pt em{color:var(--acc);font-style:italic;}
+.lm{width:28px;height:28px;background:var(--acc);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:Fraunces,serif;font-size:14px;font-weight:600;color:var(--bg);}
+.lt{font-family:Fraunces,serif;font-size:17px;}.lt b{color:var(--acc);font-weight:400;}
+.pt{font-family:Fraunces,serif;font-size:18px;font-weight:400;}.pt em{color:var(--acc);font-style:italic;}
 .sep{width:1px;height:20px;background:var(--bs);}
 .tr{margin-left:auto;display:flex;gap:8px;align-items:center;}
-.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 15px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;border:none;transition:all .13s;}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 15px;border-radius:8px;font-family:DM Sans,sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;border:none;transition:all .13s;}
 .bp{background:var(--acc);color:var(--bg);}.bp:hover{background:#c8f040;}
 .bs2{background:transparent;color:var(--txm);border:1px solid var(--bs);}.bs2:hover{border-color:var(--br);color:var(--tx);background:var(--s1);}
-.main{padding:28px 32px;display:flex;flex-direction:column;gap:22px;max-height:calc(100vh - 56px);overflow-y:auto;}
+.main{padding:28px 32px;display:flex;flex-direction:column;gap:22px;max-height:calc(100vh - 56px);overflow-y:auto;padding-bottom:80px;}
 .panel{background:var(--s1);border:1px solid var(--bs);border-radius:11px;overflow:hidden;}
 .ph{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--bs);}
 .pht{font-size:13px;font-weight:600;}
@@ -26,17 +26,17 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans'
 .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
 .kpi{background:var(--s1);border:1px solid var(--bs);border-radius:10px;padding:15px 17px;transition:border-color .13s;}
 .kpi:hover{border-color:var(--br);}.ka{border-left:2px solid var(--acc);}.ka .kv{color:var(--acc);}
-.kl{font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;}
-.kv{font-family:'Fraunces',serif;font-size:26px;line-height:1;}.kd{font-size:11px;margin-top:4px;}
+.kl{font-family:DM Mono,monospace;font-size:9px;color:var(--txd);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;}
+.kv{font-family:Fraunces,serif;font-size:26px;line-height:1;}.kd{font-size:11px;margin-top:4px;}
 .up{color:var(--grn);}.dn{color:var(--red);}.ne{color:var(--txm);}
-.pill{display:inline-flex;font-family:'DM Mono',monospace;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;}
+.pill{display:inline-flex;font-family:DM Mono,monospace;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;}
 .pg{background:rgba(74,222,128,.10);color:var(--grn);}.pa{background:rgba(245,166,35,.10);color:var(--amb);}
 .pb{background:rgba(96,165,250,.10);color:var(--blu);}.pac{background:var(--ad);color:var(--acc);}
 .bb{height:5px;background:var(--s3);border-radius:3px;overflow:hidden;}
 .bf{height:5px;border-radius:3px;background:var(--acc);}
 .chip{padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--bs);background:var(--s2);color:var(--txm);transition:all .12s;}
 .chip:hover{border-color:var(--br);color:var(--tx);}.chip.active{background:var(--ad);border-color:var(--br);color:var(--acc);}
-input,select,textarea{background:var(--s2);border:1px solid var(--bs);border-radius:7px;padding:9px 12px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;width:100%;transition:border-color .13s;}
+input,select,textarea{background:var(--s2);border:1px solid var(--bs);border-radius:7px;padding:9px 12px;color:var(--tx);font-family:DM Sans,sans-serif;font-size:13px;outline:none;width:100%;transition:border-color .13s;}
 input:focus,select:focus{border-color:var(--br);}
 ::-webkit-scrollbar{width:3px;}</style>
 </head>
@@ -63,17 +63,17 @@ input:focus,select:focus{border-color:var(--br);}
   <div class="panel">
     <div class="ph"><div class="pht">Buyer DNA Breakdown</div></div>
     <div style="padding:16px 18px;display:flex;flex-direction:column;gap:10px;">
-      <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--txm);">Refined Modern</span><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--acc);">42% · 104 buyers</span></div><div class="bb"><div class="bf" style="width:42%;"></div></div></div>
-      <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--txm);">Coastal Luxe</span><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--amb);">28% · 69 buyers</span></div><div class="bb"><div style="height:5px;border-radius:3px;background:var(--amb);width:28%;"></div></div></div>
-      <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--txm);">Warm Organic</span><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--blu);">20% · 49 buyers</span></div><div class="bb"><div style="height:5px;border-radius:3px;background:var(--blu);width:20%;"></div></div></div>
-      <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--txm);">Bold Eclectic</span><span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--pur);">10% · 25 buyers</span></div><div class="bb"><div style="height:5px;border-radius:3px;background:var(--pur);width:10%;"></div></div></div>
+      <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--txm);">Refined Modern</span><span style="font-family:DM Mono,monospace;font-size:11px;color:var(--acc);">42% · 104 buyers</span></div><div class="bb"><div class="bf" style="width:42%;"></div></div></div>
+      <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--txm);">Coastal Luxe</span><span style="font-family:DM Mono,monospace;font-size:11px;color:var(--amb);">28% · 69 buyers</span></div><div class="bb"><div style="height:5px;border-radius:3px;background:var(--amb);width:28%;"></div></div></div>
+      <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--txm);">Warm Organic</span><span style="font-family:DM Mono,monospace;font-size:11px;color:var(--blu);">20% · 49 buyers</span></div><div class="bb"><div style="height:5px;border-radius:3px;background:var(--blu);width:20%;"></div></div></div>
+      <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--txm);">Bold Eclectic</span><span style="font-family:DM Mono,monospace;font-size:11px;color:var(--pur);">10% · 25 buyers</span></div><div class="bb"><div style="height:5px;border-radius:3px;background:var(--pur);width:10%;"></div></div></div>
     </div>
   </div>
 </div>
 <div class="g2">
   <div class="panel">
     <div class="ph"><div class="pht">Top Leads by Match Score</div></div>
-    <div style="display:grid;grid-template-columns:1fr 70px 110px 80px;padding:9px 18px;border-bottom:1px solid var(--bs);font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:.5px;text-transform:uppercase;gap:12px;">
+    <div style="display:grid;grid-template-columns:1fr 70px 110px 80px;padding:9px 18px;border-bottom:1px solid var(--bs);font-family:DM Mono,monospace;font-size:9px;color:var(--txd);letter-spacing:.5px;text-transform:uppercase;gap:12px;">
       <span>Buyer</span><span>Match</span><span>DNA</span><span>Status</span>
     </div>
     <div id="lead-rows"></div>
@@ -118,13 +118,13 @@ document.addEventListener('DOMContentLoaded',function(){
   var lr=document.getElementById('lead-rows');
   leads.forEach(function(l){
     var p=l.status==='hot'?'<span class="pill pg">Hot</span>':'<span class="pill pa">Warm</span>';
-    lr.innerHTML+='<div style="display:grid;grid-template-columns:1fr 70px 110px 80px;align-items:center;padding:10px 18px;border-bottom:1px solid var(--bs);cursor:pointer;transition:background .11s;gap:12px;" class="lr-row"><span style="font-size:13px;font-weight:500;">'+l.name+'</span><span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--acc);">'+l.match+'%</span><span style="font-size:12px;color:var(--txm);">'+l.dna+'</span>'+p+'</div>';
+    lr.innerHTML+='<div style="display:grid;grid-template-columns:1fr 70px 110px 80px;align-items:center;padding:10px 18px;border-bottom:1px solid var(--bs);cursor:pointer;transition:background .11s;gap:12px;" class="lr-row"><span style="font-size:13px;font-weight:500;">'+l.name+'</span><span style="font-family:DM Mono,monospace;font-size:12px;color:var(--acc);">'+l.match+'%</span><span style="font-size:12px;color:var(--txm);">'+l.dna+'</span>'+p+'</div>';
   });
   document.querySelectorAll('.lr-row').forEach(function(r){r.addEventListener('mouseover',function(){r.style.background='var(--s2)';});r.addEventListener('mouseout',function(){r.style.background='';});r.addEventListener('click',function(){toast(r.querySelector('span').textContent+' — viewing lead profile','');});});
   var rr=document.getElementById('room-rows');
   rooms.forEach(function(r){
     var color=r.pct>55?'var(--acc)':r.pct>40?'var(--blu)':'var(--amb)';
-    rr.innerHTML+='<div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--txm);">'+r.room+'</span><span style="font-family:'DM Mono',monospace;font-size:11px;color:'+color+';">'+r.pct+'% · '+r.time+'</span></div><div class="bb"><div style="height:5px;border-radius:3px;background:'+color+';width:'+r.pct+'%;"></div></div></div>';
+    rr.innerHTML+='<div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--txm);">'+r.room+'</span><span style="font-family:DM Mono,monospace;font-size:11px;color:'+color+';">'+r.pct+'% · '+r.time+'</span></div><div class="bb"><div style="height:5px;border-radius:3px;background:'+color+';width:'+r.pct+'%;"></div></div></div>';
   });
   document.getElementById('ld-export').addEventListener('click',function(){toast('Exporting listing report...','');setTimeout(function(){toast('listing-report-magnolia.pdf downloaded ✓','ok');},1000);});
   document.getElementById('ld-share').addEventListener('click',function(){toast('Dashboard share link copied ✓','ok');});

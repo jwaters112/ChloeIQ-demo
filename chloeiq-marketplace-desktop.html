@@ -68,7 +68,7 @@
   .sidebar-btn:hover { background: var(--accent2); }
 
   /* CONTENT */
-  .content { flex: 1; overflow-y: auto; padding: 28px; }
+  .content { flex: 1; overflow-y: auto; padding: 28px 28px 100px; }
 
   /* TABS */
   .tab-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
@@ -387,7 +387,11 @@
   function toggleFilter() { const s = document.getElementById('sidebar'); s.style.display = s.style.display === 'none' ? '' : 'none'; }
 
   function openModal(type, id) {
-    if (type === 'apply' && id) {
+    if (type === 'post') {
+      document.getElementById('modalTitle').textContent = 'Post a Listing';
+      document.getElementById('modalListing').textContent = 'Your listing will be visible to all agents in the DFW marketplace';
+      document.getElementById('modalMatch').textContent = '—';
+    } else if (type === 'apply' && id) {
       const l = LISTINGS.find(x => x.id === id);
       if (l) {
         document.getElementById('modalTitle').textContent = l.applied ? 'Application Submitted' : 'Apply to ' + l.title;
