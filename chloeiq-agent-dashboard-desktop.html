@@ -1583,17 +1583,144 @@
     <div class="view" id="view-analytics">
       <div class="view-header">
         <div>
-          <div class="view-title">Analytics <span>— Coming Soon</span></div>
-          <div class="view-subtitle">Deep performance analytics across all open houses and buyer journeys</div>
+          <div class="view-title">Analytics <span>Dashboard</span></div>
+          <div class="view-subtitle">Performance across all open houses and buyer journeys · Last 30 days</div>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-ghost" id="an-export">Export Report</button>
+          <div style="display:flex;gap:0;border:1px solid var(--border-subtle);border-radius:8px;overflow:hidden;">
+            <button class="btn btn-ghost an-period active-period" data-period="30" style="border:none;border-radius:0;font-size:12px;padding:7px 14px;">30D</button>
+            <button class="btn btn-ghost an-period" data-period="90" style="border:none;border-radius:0;font-size:12px;padding:7px 14px;border-left:1px solid var(--border-subtle);">90D</button>
+            <button class="btn btn-ghost an-period" data-period="365" style="border:none;border-radius:0;font-size:12px;padding:7px 14px;border-left:1px solid var(--border-subtle);">1Y</button>
+          </div>
         </div>
       </div>
-      <div style="flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:16px; min-height:380px;">
-        <div style="width:72px;height:72px;border-radius:20px;background:var(--surface);border:1px solid var(--border-subtle);display:flex;align-items:center;justify-content:center;">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+
+      <!-- KPI Row -->
+      <div class="stats-grid" style="grid-template-columns:repeat(5,1fr);margin-bottom:20px;">
+        <div class="stat-card">
+          <div class="stat-label">Open Houses</div>
+          <div class="stat-value" id="an-kpi-oh">8</div>
+          <div class="stat-delta up">↑ 3 vs prior period</div>
         </div>
-        <div style="font-family:'Fraunces',serif;font-size:22px;color:var(--text);">Analytics Dashboard</div>
-        <div style="font-size:13px;color:var(--text-muted);max-width:360px;text-align:center;line-height:1.6;">Funnel analysis, DNA segment trends, follow-up conversion rates, and market benchmarks — launching with V2.</div>
-        <div style="margin-top:8px;background:var(--accent-dim);border:1px solid rgba(184,224,48,0.2);border-radius:8px;padding:10px 20px;font-family:'DM Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:0.5px;">COMING IN V2</div>
+        <div class="stat-card">
+          <div class="stat-label">Total Visitors</div>
+          <div class="stat-value" id="an-kpi-vis">224</div>
+          <div class="stat-delta up">↑ 12% vs avg</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Leads Captured</div>
+          <div class="stat-value" id="an-kpi-leads">47</div>
+          <div class="stat-delta up">↑ 18 this period</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Follow-Up Rate</div>
+          <div class="stat-value" id="an-kpi-fu">78%</div>
+          <div class="stat-delta up">↑ 6pts</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Avg Match Score</div>
+          <div class="stat-value" id="an-kpi-match">67%</div>
+          <div class="stat-delta neutral">Steady</div>
+        </div>
+      </div>
+
+      <!-- Row 1: Visitor Trend + Funnel -->
+      <div style="display:grid;grid-template-columns:1fr 320px;gap:20px;margin-bottom:20px;">
+
+        <!-- Visitor Trend Chart -->
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Visitor &amp; Lead Trend</span>
+            <span class="panel-action" style="font-size:11px;color:var(--text-muted);">Visitors &nbsp;●&nbsp;<span style="color:var(--accent);">Leads</span></span>
+          </div>
+          <div style="padding:20px 20px 12px;">
+            <canvas id="an-trend-chart" height="160" style="width:100%;display:block;"></canvas>
+          </div>
+        </div>
+
+        <!-- Conversion Funnel -->
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Conversion Funnel</span>
+          </div>
+          <div style="padding:20px 20px 16px;display:flex;flex-direction:column;gap:10px;">
+            <div id="an-funnel"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Row 2: DNA Breakdown + Open House Perf + Top Sources -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 280px;gap:20px;margin-bottom:20px;">
+
+        <!-- StyleDNA Segments -->
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">StyleDNA Segments</span>
+            <span class="panel-count">6 types</span>
+          </div>
+          <div style="padding:20px;">
+            <div id="an-dna-bars" class="breakdown-list"></div>
+          </div>
+        </div>
+
+        <!-- Open House Performance Table -->
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Open House Performance</span>
+          </div>
+          <div>
+            <div style="display:grid;grid-template-columns:1fr 60px 55px 60px 80px;gap:8px;padding:8px 16px;border-bottom:1px solid var(--border-subtle);">
+              <span style="font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.06em;">Property</span>
+              <span style="font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.06em;">Visitors</span>
+              <span style="font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.06em;">Leads</span>
+              <span style="font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.06em;">Match</span>
+              <span style="font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.06em;">Conv.</span>
+            </div>
+            <div id="an-oh-table"></div>
+          </div>
+        </div>
+
+        <!-- Follow-Up Status Donut -->
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Follow-Up Status</span>
+          </div>
+          <div style="padding:16px;display:flex;flex-direction:column;align-items:center;gap:14px;">
+            <canvas id="an-donut" width="140" height="140"></canvas>
+            <div id="an-donut-legend" style="width:100%;display:flex;flex-direction:column;gap:7px;"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Row 3: Chloe Code Activity + Insights Feed -->
+      <div style="display:grid;grid-template-columns:1fr 300px;gap:20px;">
+
+        <!-- Chloe Code Scan Activity -->
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Chloe Code Scan Activity</span>
+            <span class="panel-action" style="font-size:11px;">113 total scans</span>
+          </div>
+          <div style="padding:20px 20px 14px;">
+            <canvas id="an-scan-chart" height="120" style="width:100%;display:block;"></canvas>
+          </div>
+        </div>
+
+        <!-- AI Insights Feed -->
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="var(--accent)"><circle cx="12" cy="12" r="10"/></svg>
+              Chloe Insights
+            </span>
+            <span class="panel-count">4 new</span>
+          </div>
+          <div id="an-insights"></div>
+        </div>
+
       </div>
     </div>
 
@@ -2307,6 +2434,452 @@
 </script>
 </script>
 <script src="chloeiq-nav.js"></script>
+<script>
+// ── ANALYTICS DASHBOARD ──────────────────────────────────────────────────────
+
+(function() {
+
+  // ── DATA SETS ──
+  var data = {
+    30: {
+      kpi: { oh:8, vis:224, leads:47, fu:'78%', match:'67%' },
+      trend: {
+        labels: ['Apr 1','Apr 5','Apr 8','Apr 12','Apr 15','Apr 18','Apr 22','Apr 25','Apr 28','May 1'],
+        visitors: [18,24,31,28,22,35,40,29,26,24],
+        leads:    [4, 6, 9, 7, 5, 10,12, 8, 7, 6]
+      },
+      dna: [
+        { label:'Refined Modern',  pct:32, count:15 },
+        { label:'Coastal Luxe',    pct:24, count:11 },
+        { label:'Warm Organic',    pct:18, count:8  },
+        { label:'Bold Eclectic',   pct:12, count:6  },
+        { label:'Classic Formal',  pct:9,  count:4  },
+        { label:'Minimalist Zen',  pct:5,  count:3  }
+      ],
+      funnel: [
+        { label:'Chloe Code Scans', val:113, pct:100 },
+        { label:'Quiz Completed',   val:79,  pct:70  },
+        { label:'Leads Captured',   val:47,  pct:42  },
+        { label:'Follow-Up Sent',   val:37,  pct:33  },
+        { label:'Replies Received', val:21,  pct:19  }
+      ],
+      ohTable: [
+        { addr:'2847 Magnolia Dr', vis:24, leads:8,  match:'74%', conv:'33%', status:'live'     },
+        { addr:'1105 Ridgecrest',  vis:0,  leads:0,  match:'—',   conv:'—',   status:'upcoming' },
+        { addr:'504 Lakeview Ct',  vis:31, leads:9,  match:'68%', conv:'29%', status:'done'     },
+        { addr:'812 Cedar Hollow', vis:28, leads:7,  match:'71%', conv:'25%', status:'done'     },
+        { addr:'319 Elmwood Pl',   vis:19, leads:5,  match:'59%', conv:'26%', status:'done'     },
+        { addr:'1420 Stoneridge',  vis:22, leads:6,  match:'63%', conv:'27%', status:'done'     }
+      ],
+      donut: [
+        { label:'Sent',        val:37, color:'#B8E030' },
+        { label:'Replied',     val:21, color:'#7AB800' },
+        { label:'Pending',     val:10, color:'#2A3A10' },
+        { label:'No Contact',  val:6,  color:'#1A1E12' }
+      ],
+      scans: [18,9,14,22,8,31,17,24,11,19,15,27]
+    },
+    90: {
+      kpi: { oh:21, vis:588, leads:124, fu:'82%', match:'69%' },
+      trend: {
+        labels: ['Feb','Feb 2','Mar','Mar 2','Apr','Apr 2'],
+        visitors: [52,71,88,65,94,112],
+        leads:    [12,17,22,15,24,28]
+      },
+      dna: [
+        { label:'Refined Modern',  pct:29, count:36 },
+        { label:'Coastal Luxe',    pct:26, count:32 },
+        { label:'Warm Organic',    pct:20, count:25 },
+        { label:'Bold Eclectic',   pct:14, count:17 },
+        { label:'Classic Formal',  pct:7,  count:9  },
+        { label:'Minimalist Zen',  pct:4,  count:5  }
+      ],
+      funnel: [
+        { label:'Chloe Code Scans', val:298, pct:100 },
+        { label:'Quiz Completed',   val:211, pct:71  },
+        { label:'Leads Captured',   val:124, pct:42  },
+        { label:'Follow-Up Sent',   val:102, pct:34  },
+        { label:'Replies Received', val:61,  pct:20  }
+      ],
+      ohTable: [
+        { addr:'2847 Magnolia Dr', vis:24,  leads:8,  match:'74%', conv:'33%', status:'live'     },
+        { addr:'504 Lakeview Ct',  vis:31,  leads:9,  match:'68%', conv:'29%', status:'done'     },
+        { addr:'812 Cedar Hollow', vis:28,  leads:7,  match:'71%', conv:'25%', status:'done'     },
+        { addr:'319 Elmwood Pl',   vis:19,  leads:5,  match:'59%', conv:'26%', status:'done'     },
+        { addr:'1420 Stoneridge',  vis:22,  leads:6,  match:'63%', conv:'27%', status:'done'     },
+        { addr:'77 Birchwood Ct',  vis:41,  leads:12, match:'77%', conv:'29%', status:'done'     }
+      ],
+      donut: [
+        { label:'Sent',        val:102, color:'#B8E030' },
+        { label:'Replied',     val:61,  color:'#7AB800' },
+        { label:'Pending',     val:22,  color:'#2A3A10' },
+        { label:'No Contact',  val:18,  color:'#1A1E12' }
+      ],
+      scans: [28,41,19,55,33,47,38,62,29,44,51,67]
+    },
+    365: {
+      kpi: { oh:64, vis:1840, leads:412, fu:'84%', match:'71%' },
+      trend: {
+        labels: ['May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb'],
+        visitors: [88,112,145,167,134,188,201,155,178,210],
+        leads:    [18, 24, 34, 39, 29, 44, 47, 36, 41, 51]
+      },
+      dna: [
+        { label:'Refined Modern',  pct:31, count:128 },
+        { label:'Coastal Luxe',    pct:25, count:103 },
+        { label:'Warm Organic',    pct:19, count:78  },
+        { label:'Bold Eclectic',   pct:13, count:54  },
+        { label:'Classic Formal',  pct:8,  count:33  },
+        { label:'Minimalist Zen',  pct:4,  count:16  }
+      ],
+      funnel: [
+        { label:'Chloe Code Scans', val:971,  pct:100 },
+        { label:'Quiz Completed',   val:688,  pct:71  },
+        { label:'Leads Captured',   val:412,  pct:42  },
+        { label:'Follow-Up Sent',   val:346,  pct:36  },
+        { label:'Replies Received', val:198,  pct:20  }
+      ],
+      ohTable: [
+        { addr:'2847 Magnolia Dr',  vis:24,  leads:8,  match:'74%', conv:'33%', status:'live' },
+        { addr:'77 Birchwood Ct',   vis:41,  leads:12, match:'77%', conv:'29%', status:'done' },
+        { addr:'504 Lakeview Ct',   vis:31,  leads:9,  match:'68%', conv:'29%', status:'done' },
+        { addr:'1201 Ashford Rd',   vis:55,  leads:18, match:'81%', conv:'33%', status:'done' },
+        { addr:'812 Cedar Hollow',  vis:28,  leads:7,  match:'71%', conv:'25%', status:'done' },
+        { addr:'319 Elmwood Pl',    vis:19,  leads:5,  match:'59%', conv:'26%', status:'done' }
+      ],
+      donut: [
+        { label:'Sent',        val:346, color:'#B8E030' },
+        { label:'Replied',     val:198, color:'#7AB800' },
+        { label:'Pending',     val:66,  color:'#2A3A10' },
+        { label:'No Contact',  val:68,  color:'#1A1E12' }
+      ],
+      scans: [72,88,115,134,108,152,167,124,143,168,141,181]
+    }
+  };
+
+  var insights = [
+    { icon:'↑', color:'#B8E030', text:'<strong>Refined Modern</strong> buyers convert 2.1× faster — prioritize matching listings.' },
+    { icon:'🔥', color:'#FF8C42', text:'<strong>Jordan Lee</strong> viewed the listing 3× — strong intent signal. Follow up today.' },
+    { icon:'⚡', color:'#60A5FA', text:'Chloe Codes at <strong>Magnolia Drive</strong> have your highest scan-to-lead rate: 21%.' },
+    { icon:'📅', color:'#A78BFA', text:'Tuesday 2–4 PM is your peak visitor window. Schedule your next open house accordingly.' }
+  ];
+
+  var currentPeriod = 30;
+  var trendCtx, donutCtx, scanCtx;
+  var trendAnim, donutAnim, scanAnim;
+
+  // ── RENDER FUNCTIONS ──────────────────────────────────────────────────────
+
+  function renderKPIs(d) {
+    var k = d.kpi;
+    setText('an-kpi-oh',    k.oh);
+    setText('an-kpi-vis',   k.vis);
+    setText('an-kpi-leads', k.leads);
+    setText('an-kpi-fu',    k.fu);
+    setText('an-kpi-match', k.match);
+  }
+
+  function setText(id, val) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = val;
+  }
+
+  function renderFunnel(d) {
+    var el = document.getElementById('an-funnel');
+    if (!el) return;
+    el.innerHTML = d.funnel.map(function(f) {
+      return '<div style="margin-bottom:10px;">'
+        + '<div style="display:flex;justify-content:space-between;margin-bottom:5px;">'
+        + '<span style="font-size:12px;color:var(--text-muted);">' + f.label + '</span>'
+        + '<span style="font-family:DM Mono,monospace;font-size:11px;color:var(--accent);">' + f.val.toLocaleString() + '</span>'
+        + '</div>'
+        + '<div class="bar-bg"><div class="bar-fill" style="width:' + f.pct + '%;background:' + (f.pct === 100 ? 'rgba(184,224,48,0.3)' : 'var(--accent)') + ';"></div></div>'
+        + '</div>';
+    }).join('');
+  }
+
+  function renderDNA(d) {
+    var el = document.getElementById('an-dna-bars');
+    if (!el) return;
+    el.innerHTML = d.dna.map(function(item) {
+      return '<div class="breakdown-item">'
+        + '<div class="breakdown-row">'
+        + '<span class="breakdown-name">' + item.label + '</span>'
+        + '<span class="breakdown-score">' + item.pct + '% · ' + item.count + ' buyers</span>'
+        + '</div>'
+        + '<div class="bar-bg"><div class="bar-fill" style="width:' + item.pct + '%;"></div></div>'
+        + '</div>';
+    }).join('');
+  }
+
+  function renderOHTable(d) {
+    var el = document.getElementById('an-oh-table');
+    if (!el) return;
+    var statusColors = { live:'var(--green)', upcoming:'var(--blue)', done:'var(--text-dim)' };
+    var statusLabels = { live:'● LIVE', upcoming:'UPCOMING', done:'DONE' };
+    el.innerHTML = d.ohTable.map(function(row) {
+      return '<div style="display:grid;grid-template-columns:1fr 60px 55px 60px 80px;gap:8px;padding:10px 16px;border-bottom:1px solid var(--border-subtle);align-items:center;">'
+        + '<div style="font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + row.addr + '</div>'
+        + '<span style="font-size:12px;color:var(--text-muted);font-family:DM Mono,monospace;">' + (row.vis || '—') + '</span>'
+        + '<span style="font-size:12px;color:var(--text-muted);font-family:DM Mono,monospace;">' + (row.leads || '—') + '</span>'
+        + '<span style="font-size:12px;color:var(--accent);font-family:DM Mono,monospace;">' + row.match + '</span>'
+        + '<span style="font-family:DM Mono,monospace;font-size:10px;color:' + statusColors[row.status] + ';">' + statusLabels[row.status] + '</span>'
+        + '</div>';
+    }).join('');
+  }
+
+  function renderDonut(d) {
+    var canvas = document.getElementById('an-donut');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var W = 140, H = 140, cx = 70, cy = 70, r = 54, inner = 34;
+    ctx.clearRect(0, 0, W, H);
+
+    var total = d.donut.reduce(function(s, x) { return s + x.val; }, 0);
+    var start = -Math.PI / 2;
+    d.donut.forEach(function(seg) {
+      var sweep = (seg.val / total) * Math.PI * 2;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, r, start, start + sweep);
+      ctx.closePath();
+      ctx.fillStyle = seg.color;
+      ctx.fill();
+
+      // inner circle cutout
+      ctx.beginPath();
+      ctx.arc(cx, cy, inner, 0, Math.PI * 2);
+      ctx.fillStyle = '#13160D';
+      ctx.fill();
+
+      start += sweep;
+    });
+
+    // center text
+    ctx.fillStyle = '#EEF0E5';
+    ctx.font = 'bold 18px Fraunces, serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(d.donut[0].val + d.donut[1].val, cx, cy - 8);
+    ctx.font = '9px DM Mono, monospace';
+    ctx.fillStyle = '#8A8F7A';
+    ctx.fillText('CONTACTED', cx, cy + 8);
+
+    // Legend
+    var leg = document.getElementById('an-donut-legend');
+    if (leg) {
+      leg.innerHTML = d.donut.map(function(seg) {
+        var pct = Math.round((seg.val / total) * 100);
+        return '<div style="display:flex;align-items:center;justify-content:space-between;">'
+          + '<div style="display:flex;align-items:center;gap:7px;">'
+          + '<div style="width:8px;height:8px;border-radius:2px;background:' + seg.color + ';flex-shrink:0;border:1px solid rgba(238,240,229,0.1);"></div>'
+          + '<span style="font-size:12px;color:var(--text-muted);">' + seg.label + '</span>'
+          + '</div>'
+          + '<span style="font-family:DM Mono,monospace;font-size:11px;color:var(--text-muted);">' + seg.val + ' <span style="color:var(--text-dim);">(' + pct + '%)</span></span>'
+          + '</div>';
+      }).join('');
+    }
+  }
+
+  function renderTrendChart(d) {
+    var canvas = document.getElementById('an-trend-chart');
+    if (!canvas) return;
+    canvas.width = canvas.offsetWidth || 500;
+    canvas.height = 160;
+    var ctx = canvas.getContext('2d');
+    var W = canvas.width, H = 160;
+    var pad = { top:12, right:16, bottom:28, left:36 };
+    var iW = W - pad.left - pad.right;
+    var iH = H - pad.top - pad.bottom;
+
+    ctx.clearRect(0, 0, W, H);
+
+    var labels = d.trend.labels;
+    var vis    = d.trend.visitors;
+    var leads  = d.trend.leads;
+    var maxV   = Math.max.apply(null, vis) * 1.15;
+    var n      = labels.length;
+
+    function xPos(i) { return pad.left + (i / (n - 1)) * iW; }
+    function yPos(v, max) { return pad.top + iH - (v / max) * iH; }
+
+    // Grid lines
+    ctx.strokeStyle = 'rgba(238,240,229,0.04)';
+    ctx.lineWidth = 1;
+    for (var g = 0; g <= 4; g++) {
+      var gy = pad.top + (g / 4) * iH;
+      ctx.beginPath(); ctx.moveTo(pad.left, gy); ctx.lineTo(W - pad.right, gy); ctx.stroke();
+    }
+
+    // X labels
+    ctx.fillStyle = '#5A5F4A';
+    ctx.font = '10px DM Mono, monospace';
+    ctx.textAlign = 'center';
+    labels.forEach(function(lbl, i) {
+      if (i % 2 === 0 || n <= 6) ctx.fillText(lbl, xPos(i), H - 6);
+    });
+
+    // Y labels
+    ctx.textAlign = 'right';
+    for (var yi = 0; yi <= 4; yi++) {
+      var yv = Math.round((maxV / 4) * (4 - yi));
+      ctx.fillText(yv, pad.left - 6, pad.top + (yi / 4) * iH + 4);
+    }
+
+    // Visitor area
+    ctx.beginPath();
+    vis.forEach(function(v, i) { i === 0 ? ctx.moveTo(xPos(i), yPos(v, maxV)) : ctx.lineTo(xPos(i), yPos(v, maxV)); });
+    ctx.lineTo(xPos(n-1), pad.top + iH);
+    ctx.lineTo(xPos(0), pad.top + iH);
+    ctx.closePath();
+    var grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + iH);
+    grad.addColorStop(0, 'rgba(184,224,48,0.12)');
+    grad.addColorStop(1, 'rgba(184,224,48,0)');
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // Visitor line
+    ctx.beginPath();
+    vis.forEach(function(v, i) { i === 0 ? ctx.moveTo(xPos(i), yPos(v, maxV)) : ctx.lineTo(xPos(i), yPos(v, maxV)); });
+    ctx.strokeStyle = 'rgba(184,224,48,0.4)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Lead line (scaled to same axis)
+    ctx.beginPath();
+    leads.forEach(function(v, i) { i === 0 ? ctx.moveTo(xPos(i), yPos(v, maxV)) : ctx.lineTo(xPos(i), yPos(v, maxV)); });
+    ctx.strokeStyle = '#B8E030';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Lead dots
+    ctx.fillStyle = '#B8E030';
+    leads.forEach(function(v, i) {
+      ctx.beginPath();
+      ctx.arc(xPos(i), yPos(v, maxV), 3, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  }
+
+  function renderScanChart(d) {
+    var canvas = document.getElementById('an-scan-chart');
+    if (!canvas) return;
+    canvas.width = canvas.offsetWidth || 500;
+    canvas.height = 120;
+    var ctx = canvas.getContext('2d');
+    var W = canvas.width, H = 120;
+    var scans = d.scans;
+    var n = scans.length;
+    var barW = Math.floor((W - 20) / n) - 4;
+    var maxS = Math.max.apply(null, scans) * 1.1;
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+    ctx.clearRect(0, 0, W, H);
+
+    scans.forEach(function(v, i) {
+      var x = 10 + i * ((W - 20) / n);
+      var bH = ((v / maxS) * (H - 28));
+      var y = H - 18 - bH;
+
+      // Bar gradient
+      var g = ctx.createLinearGradient(0, y, 0, y + bH);
+      g.addColorStop(0, 'rgba(184,224,48,0.8)');
+      g.addColorStop(1, 'rgba(184,224,48,0.2)');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.roundRect(x, y, barW, bH, [3, 3, 0, 0]);
+      ctx.fill();
+
+      // Month label
+      ctx.fillStyle = '#5A5F4A';
+      ctx.font = '9px DM Mono, monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(months[i % 12], x + barW / 2, H - 4);
+    });
+  }
+
+  function renderInsights() {
+    var el = document.getElementById('an-insights');
+    if (!el) return;
+    el.innerHTML = insights.map(function(ins) {
+      return '<div style="display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border-subtle);cursor:pointer;transition:background 0.12s;" onmouseover="this.style.background=\'var(--surface2)\'" onmouseout="this.style.background=\'\'">'
+        + '<div style="width:28px;height:28px;border-radius:8px;background:var(--surface3);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">' + ins.icon + '</div>'
+        + '<div style="font-size:12px;color:var(--text-muted);line-height:1.5;">' + ins.text + '</div>'
+        + '</div>';
+    }).join('');
+  }
+
+  function renderAll(period) {
+    var d = data[period];
+    if (!d) return;
+    renderKPIs(d);
+    renderFunnel(d);
+    renderDNA(d);
+    renderOHTable(d);
+    renderDonut(d);
+    renderInsights();
+    // Charts need a tick for canvas to have dimensions
+    setTimeout(function() {
+      renderTrendChart(d);
+      renderScanChart(d);
+    }, 50);
+  }
+
+  // ── PERIOD TOGGLE ─────────────────────────────────────────────────────────
+  function initAnalytics() {
+    document.querySelectorAll('.an-period').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.an-period').forEach(function(b) {
+          b.classList.remove('active-period');
+          b.style.background = '';
+          b.style.color = '';
+        });
+        btn.classList.add('active-period');
+        btn.style.background = 'var(--accent-dim)';
+        btn.style.color = 'var(--accent)';
+        currentPeriod = parseInt(btn.getAttribute('data-period'));
+        renderAll(currentPeriod);
+      });
+    });
+
+    // Export button
+    var expBtn = document.getElementById('an-export');
+    if (expBtn) expBtn.addEventListener('click', function() {
+      if (window.toast) toast('Generating analytics report…', '');
+      setTimeout(function() { if (window.toast) toast('Report exported · ChloeIQ-Analytics.pdf ✓', 'success'); }, 1400);
+    });
+
+    // Style default active period button
+    var defaultBtn = document.querySelector('.an-period[data-period="30"]');
+    if (defaultBtn) { defaultBtn.style.background = 'var(--accent-dim)'; defaultBtn.style.color = 'var(--accent)'; }
+
+    renderAll(30);
+  }
+
+  // Run when analytics view becomes visible (re-render on switch)
+  var originalSwitch = window.switchView;
+  document.addEventListener('DOMContentLoaded', function() {
+    // Patch switchView to trigger analytics render on entry
+    var origSw = window.switchView;
+    if (origSw) {
+      window.switchView = function(viewId, label, navEl) {
+        origSw(viewId, label, navEl);
+        if (viewId === 'analytics') {
+          setTimeout(function() { renderAll(currentPeriod); }, 60);
+        }
+      };
+    }
+    initAnalytics();
+  });
+
+  // Also handle direct nav clicks via nav.js (which fires before DOMContentLoaded wraps)
+  window.addEventListener('load', function() {
+    initAnalytics();
+  });
+
+})();
+</script>
+
 <script>
   // ── NEW OPEN HOUSE MODAL ─────────────────────────────────────────────────
   function showNewOHModal() {
