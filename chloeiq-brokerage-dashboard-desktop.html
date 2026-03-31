@@ -913,7 +913,7 @@ canvas { display: block; }
       <div class="ph"><div class="ph-title">Scheduled Reports</div></div>
       <div style="padding:16px 18px;display:flex;flex-direction:column;gap:14px;">
         <div style="background:var(--surface2);border:1px solid var(--border-s);border-radius:10px;padding:13px 15px;display:flex;align-items:center;gap:12px;">
-          <div style="flex:1;"><div style="font-size:13px;font-weight:500;">Weekly Overview</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Every Monday 8 AM · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1973766a71596b7c78757b6b76727c6b377a7674">[email&#160;protected]</a></div></div>
+          <div style="flex:1;"><div style="font-size:13px;font-weight:500;">Weekly Overview</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Every Monday 8 AM · josh@realbroker.com</div></div>
           <span class="pill pill-green">Active</span>
         </div>
         <div style="background:var(--surface2);border:1px solid var(--border-s);border-radius:10px;padding:13px 15px;display:flex;align-items:center;gap:12px;">
@@ -933,7 +933,7 @@ canvas { display: block; }
 </main>
 </div>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 // ══════════════════════════════════════════
 // CHLOEIQ BROKERAGE DASHBOARD — INTERACTIONS
 // ══════════════════════════════════════════
@@ -1387,4 +1387,15 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelectorAll('.chip-bar').forEach(function(bar) {
     bar.querySelectorAll('.chip').forEach(function(chip) {
       chip.addEventListener('click', function() {
-        bar.querySe
+        bar.querySelAll('.chip-active').forEach(function(c){ c.classList.remove('chip-active'); });
+        chip.classList.add('chip-active');
+      });
+    });
+  });
+
+});
+
+</script>
+<script src="chloeiq-nav.js"></script>
+</body>
+</html>
