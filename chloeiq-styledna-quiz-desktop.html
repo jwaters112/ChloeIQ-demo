@@ -2,133 +2,671 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ChloeIQ — StyleDNA Quiz</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-:root{--bg:#0A0B07;--s1:#13160D;--s2:#1A1E12;--s3:#222818;--acc:#B8E030;--ad:rgba(184,224,48,.10);--tx:#EEF0E5;--txm:#8A8F7A;--txd:#4A5040;--br:rgba(184,224,48,.12);--bs:rgba(238,240,229,.06);--grn:#4ADE80;--red:#FF5A4A;--amb:#F5A623;--blu:#60A5FA;--pur:#A78BFA;}
-html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:14px;overflow-x:hidden;}
-.topbar{height:56px;display:flex;align-items:center;padding:0 28px;border-bottom:1px solid var(--bs);background:var(--bg);gap:12px;position:sticky;top:0;z-index:20;}
-.lm{width:28px;height:28px;background:var(--acc);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:var(--bg);}
-.lt{font-family:'Fraunces',serif;font-size:17px;}.lt b{color:var(--acc);font-weight:400;}
-.pt{font-family:'Fraunces',serif;font-size:18px;font-weight:400;}.pt em{color:var(--acc);font-style:italic;}
-.sep{width:1px;height:20px;background:var(--bs);}
-.tr{margin-left:auto;display:flex;gap:8px;align-items:center;}
-.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 15px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;border:none;transition:all .13s;}
-.bp{background:var(--acc);color:var(--bg);}.bp:hover{background:#c8f040;}
-.bs2{background:transparent;color:var(--txm);border:1px solid var(--bs);}.bs2:hover{border-color:var(--br);color:var(--tx);background:var(--s1);}
-.main{padding:28px 32px;display:flex;flex-direction:column;gap:22px;max-height:calc(100vh - 56px);overflow-y:auto;}
-.panel{background:var(--s1);border:1px solid var(--bs);border-radius:11px;overflow:hidden;}
-.ph{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--bs);}
-.pht{font-size:13px;font-weight:600;}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
-.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
-.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
-.kpi{background:var(--s1);border:1px solid var(--bs);border-radius:10px;padding:15px 17px;transition:border-color .13s;}
-.kpi:hover{border-color:var(--br);}.ka{border-left:2px solid var(--acc);}.ka .kv{color:var(--acc);}
-.kl{font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;}
-.kv{font-family:'Fraunces',serif;font-size:26px;line-height:1;}.kd{font-size:11px;margin-top:4px;}
-.up{color:var(--grn);}.ne{color:var(--txm);}
-.chip{padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--bs);background:var(--s2);color:var(--txm);transition:all .12s;}
-.chip:hover{border-color:var(--br);color:var(--tx);}.chip.active{background:var(--ad);border-color:var(--br);color:var(--acc);}
-::-webkit-scrollbar{width:3px;}</style>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0A0B07;
+    --bg2: #0E1008;
+    --bg3: #13160A;
+    --accent: #B8E030;
+    --accent2: #9DC420;
+    --text: #E8EDD4;
+    --text2: #A8B090;
+    --text3: #6B7260;
+    --border: rgba(184,224,48,0.12);
+    --border2: rgba(232,237,212,0.08);
+    --card: #0E1008;
+    --selected: rgba(184,224,48,0.12);
+    --selected-border: rgba(184,224,48,0.6);
+  }
+  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; overflow-x: hidden; }
+
+  /* LAYOUT */
+  .shell { display: flex; flex-direction: column; min-height: 100vh; }
+
+  /* NAV */
+  .topnav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px; height: 64px; border-bottom: 1px solid var(--border2);
+    background: rgba(10,11,7,0.95); backdrop-filter: blur(12px);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-mark {
+    width: 32px; height: 32px; background: var(--accent); border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif; font-weight: 700; font-size: 16px; color: var(--bg);
+  }
+  .logo-name { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; color: var(--text); }
+  .logo-name span { font-style: italic; font-weight: 300; }
+  .nav-meta { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); letter-spacing: 2px; text-transform: uppercase; }
+
+  /* PROGRESS BAR */
+  .progress-shell {
+    padding: 20px 40px 0;
+    max-width: 860px; margin: 0 auto; width: 100%;
+  }
+  .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .progress-label { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); letter-spacing: 2px; text-transform: uppercase; }
+  .progress-count { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--accent); }
+  .progress-track { height: 3px; background: var(--border2); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.5s cubic-bezier(0.4,0,0.2,1); }
+
+  /* MAIN QUIZ AREA */
+  .quiz-main {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    justify-content: flex-start; padding: 32px 40px 100px;
+  }
+  .quiz-wrap { width: 100%; max-width: 860px; }
+
+  /* QUESTION */
+  .question-block { margin-bottom: 36px; }
+  .question-tag {
+    display: inline-block; font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: 3px; text-transform: uppercase; color: var(--accent);
+    background: rgba(184,224,48,0.08); border: 1px solid var(--border);
+    padding: 4px 12px; border-radius: 4px; margin-bottom: 16px;
+  }
+  .question-text {
+    font-family: 'Fraunces', serif; font-size: 32px; font-weight: 400;
+    line-height: 1.25; color: var(--text); letter-spacing: -0.5px;
+  }
+  .question-text em { font-style: italic; color: var(--accent); font-weight: 300; }
+  .question-sub { font-size: 14px; color: var(--text2); margin-top: 8px; font-weight: 300; }
+
+  /* OPTIONS GRID */
+  .options-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+  .options-grid.four-col { grid-template-columns: repeat(4, 1fr); }
+
+  .option-card {
+    background: var(--card); border: 1.5px solid var(--border2);
+    border-radius: 14px; padding: 22px 20px; cursor: pointer;
+    transition: all 0.2s ease; position: relative; overflow: hidden;
+  }
+  .option-card::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(184,224,48,0.04), transparent);
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .option-card:hover { border-color: rgba(184,224,48,0.3); transform: translateY(-2px); }
+  .option-card:hover::before { opacity: 1; }
+  .option-card.selected {
+    border-color: var(--selected-border);
+    background: var(--selected);
+  }
+  .option-card.selected::before { opacity: 1; }
+
+  .option-icon { font-size: 28px; margin-bottom: 12px; display: block; }
+  .option-title { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .option-desc { font-size: 13px; color: var(--text2); line-height: 1.5; font-weight: 300; }
+  .option-check {
+    position: absolute; top: 14px; right: 14px;
+    width: 20px; height: 20px; border-radius: 50%;
+    background: var(--accent); display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity 0.2s; font-size: 11px; color: var(--bg);
+  }
+  .option-card.selected .option-check { opacity: 1; }
+
+  /* VISUAL OPTION (image-style) */
+  .option-visual {
+    background: var(--card); border: 1.5px solid var(--border2);
+    border-radius: 14px; cursor: pointer; overflow: hidden;
+    transition: all 0.2s ease;
+  }
+  .option-visual:hover { border-color: rgba(184,224,48,0.3); transform: translateY(-2px); }
+  .option-visual.selected { border-color: var(--selected-border); }
+  .option-visual-swatch {
+    height: 90px; position: relative;
+    display: flex; align-items: center; justify-content: center; font-size: 32px;
+  }
+  .option-visual-label { padding: 12px 16px; }
+  .option-visual-title { font-family: 'Fraunces', serif; font-size: 15px; font-weight: 600; color: var(--text); }
+  .option-visual-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+  .option-visual .option-check { position: absolute; top: 10px; right: 10px; }
+
+  /* NAVIGATION */
+  .quiz-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 36px; padding-top: 28px; border-top: 1px solid var(--border2);
+  }
+  .btn-back {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 24px; border-radius: 10px; border: 1px solid var(--border2);
+    background: transparent; color: var(--text2); font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-back:hover { border-color: var(--border); color: var(--text); }
+  .btn-next {
+    display: flex; align-items: center; gap: 8px;
+    padding: 14px 32px; border-radius: 10px; border: none;
+    background: var(--accent); color: var(--bg); font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-next:hover { background: var(--accent2); transform: translateY(-1px); }
+  .btn-next:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+  .skip-link { font-size: 13px; color: var(--text3); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+  .skip-link:hover { color: var(--text2); }
+
+  /* RESULTS SCREEN */
+  .results-screen { display: none; width: 100%; max-width: 860px; animation: fadeUp 0.6s ease; }
+  .results-screen.active { display: block; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  .result-hero {
+    background: linear-gradient(135deg, rgba(184,224,48,0.08), rgba(184,224,48,0.02));
+    border: 1px solid var(--border); border-radius: 20px; padding: 48px;
+    text-align: center; margin-bottom: 28px; position: relative; overflow: hidden;
+  }
+  .result-hero::before {
+    content: ''; position: absolute; top: -60px; right: -60px;
+    width: 240px; height: 240px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(184,224,48,0.08), transparent 70%);
+  }
+  .result-dna-icon { font-size: 56px; margin-bottom: 16px; display: block; }
+  .result-tag {
+    display: inline-block; font-family: 'DM Mono', monospace; font-size: 10px;
+    letter-spacing: 3px; text-transform: uppercase; color: var(--accent);
+    background: rgba(184,224,48,0.1); border: 1px solid var(--border);
+    padding: 5px 14px; border-radius: 4px; margin-bottom: 16px;
+  }
+  .result-name { font-family: 'Fraunces', serif; font-size: 42px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+  .result-sub { font-size: 16px; color: var(--text2); font-weight: 300; margin-bottom: 24px; }
+  .result-score-row { display: flex; align-items: center; justify-content: center; gap: 32px; }
+  .result-score-item { text-align: center; }
+  .result-score-num { font-family: 'Fraunces', serif; font-size: 36px; font-weight: 600; color: var(--accent); }
+  .result-score-label { font-size: 12px; color: var(--text2); margin-top: 2px; font-family: 'DM Mono', monospace; letter-spacing: 1px; }
+
+  .result-traits { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 28px; }
+  .trait-card {
+    background: var(--card); border: 1px solid var(--border2); border-radius: 12px; padding: 20px;
+  }
+  .trait-icon { font-size: 22px; margin-bottom: 8px; }
+  .trait-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .trait-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
+
+  .result-match {
+    background: var(--card); border: 1px solid var(--border2); border-radius: 16px; padding: 28px;
+    display: flex; align-items: center; gap: 28px; margin-bottom: 28px;
+  }
+  .match-badge {
+    width: 90px; height: 90px; border-radius: 50%; flex-shrink: 0;
+    background: conic-gradient(var(--accent) 313deg, rgba(184,224,48,0.1) 0deg);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; color: var(--accent);
+    position: relative;
+  }
+  .match-badge::before {
+    content: ''; position: absolute; inset: 6px; border-radius: 50%; background: var(--card);
+  }
+  .match-badge span { position: relative; z-index: 1; }
+  .match-info { flex: 1; }
+  .match-title { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .match-sub { font-size: 13px; color: var(--text2); margin-bottom: 12px; }
+  .match-address { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--accent); }
+
+  .result-actions { display: flex; gap: 14px; }
+  .btn-primary {
+    flex: 1; padding: 16px; border-radius: 12px; border: none;
+    background: var(--accent); color: var(--bg); font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-primary:hover { background: var(--accent2); }
+  .btn-secondary {
+    flex: 1; padding: 16px; border-radius: 12px;
+    border: 1px solid var(--border); background: transparent;
+    color: var(--text); font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 500; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* QUESTION TRANSITIONS */
+  .quiz-wrap.transitioning { opacity: 0; transform: translateX(20px); transition: all 0.2s ease; }
+  .quiz-wrap { transition: opacity 0.2s ease, transform 0.2s ease; }
+</style>
 </head>
 <body>
-<header class="topbar">
-  <div class="lm">C</div><div class="lt">Chloe<b>IQ</b></div>
-  <div class="sep"></div>
-  <div class="pt">Style<em>DNA</em> Quiz</div><div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--txm);" id="quiz-progress">Question 1 of 8</div><div class="tr"><button class="btn bs2" id="quiz-back">← Back</button><button class="btn bp" id="quiz-next">Next →</button></div>
-</header>
-<div class="main">
+<div class="shell">
 
-<div style="max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:24px;">
-  <div style="height:4px;background:var(--s3);border-radius:2px;overflow:hidden;"><div id="quiz-bar" style="height:4px;background:var(--acc);border-radius:2px;width:12.5%;transition:width .4s;"></div></div>
-  <div id="quiz-body"></div>
-</div>
+  <!-- TOP NAV -->
+  <nav class="topnav">
+    <a class="logo" href="#">
+      <div class="logo-mark">C</div>
+      <div class="logo-name">Chloe<span>IQ</span></div>
+    </a>
+    <div class="nav-meta">StyleDNA · Buyer Profile</div>
+  </nav>
 
-</div>
+  <!-- PROGRESS -->
+  <div class="progress-shell" id="progressShell">
+    <div class="progress-header">
+      <span class="progress-label">Style Profile</span>
+      <span class="progress-count" id="progressCount">Question 1 of 8</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill" style="width:12.5%"></div>
+    </div>
+  </div>
+
+  <!-- QUIZ MAIN -->
+  <div class="quiz-main">
+    <div class="quiz-wrap" id="quizWrap">
+
+      <!-- Q1 -->
+      <div class="question-block" id="q1" style="display:block">
+        <div class="question-tag">Question 01 · Space & Layout</div>
+        <div class="question-text">How do you feel about <em>open floor plans?</em></div>
+        <div class="question-sub">Choose the description that feels most like you.</div>
+      </div>
+      <div class="options-grid" id="opts1">
+        <div class="option-card" onclick="selectOption(this,1)">
+          <span class="option-icon">🏛️</span>
+          <div class="option-title">Love them — wide open</div>
+          <div class="option-desc">Flowing spaces, no visual barriers. Kitchen, living, dining all connected.</div>
+          <div class="option-check">✓</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this,1)">
+          <span class="option-icon">🚪</span>
+          <div class="option-title">Prefer defined rooms</div>
+          <div class="option-desc">Distinct spaces for each function. Walls create privacy and purpose.</div>
+          <div class="option-check">✓</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this,1)">
+          <span class="option-icon">⚖️</span>
+          <div class="option-title">Mix of both</div>
+          <div class="option-desc">Open main living areas but private spaces for work and bedrooms.</div>
+          <div class="option-check">✓</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this,1)">
+          <span class="option-icon">✨</span>
+          <div class="option-title">Depends on the light</div>
+          <div class="option-desc">Natural light guides everything — the flow follows the sun.</div>
+          <div class="option-check">✓</div>
+        </div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="question-block" id="q2" style="display:none">
+        <div class="question-tag">Question 02 · Aesthetic</div>
+        <div class="question-text">Which <em>visual style</em> resonates most?</div>
+        <div class="question-sub">Go with your gut — first instinct is usually right.</div>
+      </div>
+      <div class="options-grid four-col" id="opts2" style="display:none">
+        <div class="option-card" onclick="selectOption(this,2)">
+          <span class="option-icon">🪵</span>
+          <div class="option-title">Warm & Natural</div>
+          <div class="option-desc">Wood tones, linen, organic textures.</div>
+          <div class="option-check">✓</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this,2)">
+          <span class="option-icon">🔲</span>
+          <div class="option-title">Refined Modern</div>
+          <div class="option-desc">Clean lines, quartz, minimal trim.</div>
+          <div class="option-check">✓</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this,2)">
+          <span class="option-icon">🌊</span>
+          <div class="option-title">Coastal Luxe</div>
+          <div class="option-desc">Light, airy, high-end beachside feel.</div>
+          <div class="option-check">✓</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this,2)">
+          <span class="option-icon">🎨</span>
+          <div class="option-title">Bold Eclectic</div>
+          <div class="option-desc">Statement pieces, layered personality.</div>
+          <div class="option-check">✓</div>
+        </div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="question-block" id="q3" style="display:none">
+        <div class="question-tag">Question 03 · Light</div>
+        <div class="question-text">How important is <em>natural light</em> to you?</div>
+        <div class="question-sub">Think about how you feel in your current space.</div>
+      </div>
+      <div class="options-grid" id="opts3" style="display:none">
+        <div class="option-card" onclick="selectOption(this,3)">
+          <span class="option-icon">☀️</span>
+          <div class="option-title">Non-negotiable</div>
+          <div class="option-desc">Floor-to-ceiling windows, south-facing rooms, sunlight all day.</div>
+          <div class="option-check">✓</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this,3)">
+          <span class="option-icon">🌤️</span>
+          <div class="option-title">Important but flexible</div>
+          <div class="option-desc">I love light but can work around it with the right finishes.</div>
+          <div class="option-check">✓</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this,3)">
+          <span class="option-icon">🕯️</span>
+          <div class="option-title">Prefer cozy & dim</div>
+          <div class="option-desc">Moody, intimate spaces. Controlled artificial lighting.</div>
+          <div class="option-check">✓</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this,3)">
+          <span class="option-icon">🔆</span>
+          <div class="option-title">Outdoor connection</div>
+          <div class="option-desc">Light that connects interior to nature. Sliding doors, patios.</div>
+          <div class="option-check">✓</div>
+        </div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="question-block" id="q4" style="display:none">
+        <div class="question-tag">Question 04 · Kitchen</div>
+        <div class="question-text">Your dream <em>kitchen</em> looks like…</div>
+        <div class="question-sub">Kitchens reveal more about buyers than any other room.</div>
+      </div>
+      <div class="options-grid" id="opts4" style="display:none">
+        <div class="option-card" onclick="selectOption(this,4)">
+          <span class="option-icon">🍳</span>
+          <div class="option-title">Chef's workspace</div>
+          <div class="option-desc">Professional-grade appliances, large island, prep-first design.</div>
+          <div class="option-check">✓</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this,4)">
+          <span class="option-icon">🥂</span>
+          <div class="option-title">Entertainer's stage</div>
+          <div class="option-desc">Open to living area, seating at the island, designed for hosting.</div>
+          <div class="option-check">✓</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this,4)">
+          <span class="option-icon">☕</span>
+          <div class="option-title">Morning ritual sanctuary</div>
+          <div class="option-desc">Coffee nook, window light, thoughtful storage, calm efficiency.</div>
+          <div class="option-check">✓</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this,4)">
+          <span class="option-icon">🎭</span>
+          <div class="option-title">Design statement</div>
+          <div class="option-desc">Bold cabinetry, unique backsplash, a kitchen people talk about.</div>
+          <div class="option-check">✓</div>
+        </div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="question-block" id="q5" style="display:none">
+        <div class="question-tag">Question 05 · Work & Life</div>
+        <div class="question-text">Do you need a <em>dedicated office</em> or workspace?</div>
+        <div class="question-sub">Think about your actual current work situation.</div>
+      </div>
+      <div class="options-grid" id="opts5" style="display:none">
+        <div class="option-card" onclick="selectOption(this,5)">
+          <span class="option-icon">💼</span>
+          <div class="option-title">Yes — critical requirement</div>
+          <div class="option-desc">I work from home daily. A proper office is a must-have.</div>
+          <div class="option-check">✓</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this,5)">
+          <span class="option-icon">🔄</span>
+          <div class="option-title">Flex room would work</div>
+          <div class="option-desc">A room that can double as office + guest room or gym.</div>
+          <div class="option-check">✓</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this,5)">
+          <span class="option-icon">📱</span>
+          <div class="option-title">I work from anywhere</div>
+          <div class="option-desc">Laptop + good wifi. Any quiet corner works for me.</div>
+          <div class="option-check">✓</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this,5)">
+          <span class="option-icon">🏢</span>
+          <div class="option-title">I go to an office</div>
+          <div class="option-desc">I commute daily — home is for living, not working.</div>
+          <div class="option-check">✓</div>
+        </div>
+      </div>
+
+      <!-- Q6 -->
+      <div class="question-block" id="q6" style="display:none">
+        <div class="question-tag">Question 06 · Outdoor</div>
+        <div class="question-text">How do you <em>use outdoor spaces?</em></div>
+        <div class="question-sub">Outdoor priorities shift match scores significantly.</div>
+      </div>
+      <div class="options-grid" id="opts6" style="display:none">
+        <div class="option-card" onclick="selectOption(this,6)">
+          <span class="option-icon">🏊</span>
+          <div class="option-title">Pool is a must</div>
+          <div class="option-desc">Texas summers require a pool. It's the centerpiece of outdoor life.</div>
+          <div class="option-check">✓</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this,6)">
+          <span class="option-icon">🌿</span>
+          <div class="option-title">Garden & green space</div>
+          <div class="option-desc">Room to grow things. Mature trees, lawn, maybe raised beds.</div>
+          <div class="option-check">✓</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this,6)">
+          <span class="option-icon">🔥</span>
+          <div class="option-title">Entertaining patio</div>
+          <div class="option-desc">Covered outdoor kitchen, string lights, room for guests.</div>
+          <div class="option-check">✓</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this,6)">
+          <span class="option-icon">🧘</span>
+          <div class="option-title">Private retreat</div>
+          <div class="option-desc">Quiet, screened, low maintenance. A place to decompress.</div>
+          <div class="option-check">✓</div>
+        </div>
+      </div>
+
+      <!-- Q7 -->
+      <div class="question-block" id="q7" style="display:none">
+        <div class="question-tag">Question 07 · Tech & Comfort</div>
+        <div class="question-text">How important is a <em>smart home system?</em></div>
+        <div class="question-sub">Integrated tech is now a top-5 buyer priority in DFW.</div>
+      </div>
+      <div class="options-grid" id="opts7" style="display:none">
+        <div class="option-card" onclick="selectOption(this,7)">
+          <span class="option-icon">🤖</span>
+          <div class="option-title">Fully integrated</div>
+          <div class="option-desc">Lights, locks, climate, security — all on one app. Essential.</div>
+          <div class="option-check">✓</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this,7)">
+          <span class="option-icon">📡</span>
+          <div class="option-title">Nice to have</div>
+          <div class="option-desc">I'd use it if it's there but won't pay extra for it.</div>
+          <div class="option-check">✓</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this,7)">
+          <span class="option-icon">🔌</span>
+          <div class="option-title">Just good wiring</div>
+          <div class="option-desc">Solid infrastructure I can build on. Pre-wired for the future.</div>
+          <div class="option-check">✓</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this,7)">
+          <span class="option-icon">🪴</span>
+          <div class="option-title">Not a priority</div>
+          <div class="option-desc">I prefer analog. Technology should be invisible.</div>
+          <div class="option-check">✓</div>
+        </div>
+      </div>
+
+      <!-- Q8 -->
+      <div class="question-block" id="q8" style="display:none">
+        <div class="question-tag">Question 08 · Primary Suite</div>
+        <div class="question-text">Your <em>primary suite</em> is your…</div>
+        <div class="question-sub">Last question — then we reveal your StyleDNA.</div>
+      </div>
+      <div class="options-grid" id="opts8" style="display:none">
+        <div class="option-card" onclick="selectOption(this,8)">
+          <span class="option-icon">🛁</span>
+          <div class="option-title">Spa sanctuary</div>
+          <div class="option-desc">Freestanding tub, walk-in shower, double vanity, heated floors.</div>
+          <div class="option-check">✓</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this,8)">
+          <span class="option-icon">👔</span>
+          <div class="option-title">Closet-forward</div>
+          <div class="option-desc">The closet IS the room. Built-ins, island, natural light.</div>
+          <div class="option-check">✓</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this,8)">
+          <span class="option-icon">🌅</span>
+          <div class="option-title">View & light first</div>
+          <div class="option-desc">Wake up to natural light. The room frames the outside world.</div>
+          <div class="option-check">✓</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this,8)">
+          <span class="option-icon">🔇</span>
+          <div class="option-title">Private escape</div>
+          <div class="option-desc">Quiet, separate from the house. A true retreat from everything.</div>
+          <div class="option-check">✓</div>
+        </div>
+      </div>
+
+      <!-- QUIZ NAV -->
+      <div class="quiz-nav" id="quizNav">
+        <button class="btn-back" id="btnBack" onclick="prevQuestion()" style="visibility:hidden">← Back</button>
+        <span class="skip-link" onclick="skipQuestion()">Skip this question</span>
+        <button class="btn-next" id="btnNext" onclick="nextQuestion()" disabled>Next →</button>
+      </div>
+
+    </div><!-- /quiz-wrap -->
+
+    <!-- RESULTS SCREEN -->
+    <div class="results-screen" id="resultsScreen">
+      <div class="result-hero">
+        <span class="result-dna-icon">✦</span>
+        <div class="result-tag">Your StyleDNA · Revealed</div>
+        <div class="result-name">Refined Modern</div>
+        <div class="result-sub">Defined, curated, intentional — you know exactly what you want.</div>
+        <div class="result-score-row">
+          <div class="result-score-item">
+            <div class="result-score-num">87%</div>
+            <div class="result-score-label">Profile Strength</div>
+          </div>
+          <div class="result-score-item">
+            <div class="result-score-num">#1</div>
+            <div class="result-score-label">DNA Ranking</div>
+          </div>
+          <div class="result-score-item">
+            <div class="result-score-num">38%</div>
+            <div class="result-score-label">DFW Market Share</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="result-traits">
+        <div class="trait-card">
+          <div class="trait-icon">🏛️</div>
+          <div class="trait-title">Open Floor Plans</div>
+          <div class="trait-desc">Flowing connected spaces with no visual clutter.</div>
+        </div>
+        <div class="trait-card">
+          <div class="trait-icon">☀️</div>
+          <div class="trait-title">Natural Light</div>
+          <div class="trait-desc">Floor-to-ceiling windows, south-facing orientation.</div>
+        </div>
+        <div class="trait-card">
+          <div class="trait-icon">🔲</div>
+          <div class="trait-title">Clean Architecture</div>
+          <div class="trait-desc">Minimal trim, quartz surfaces, purposeful design.</div>
+        </div>
+        <div class="trait-card">
+          <div class="trait-icon">💼</div>
+          <div class="trait-title">Dedicated Office</div>
+          <div class="trait-desc">A real workspace, not a converted closet.</div>
+        </div>
+        <div class="trait-card">
+          <div class="trait-icon">🤖</div>
+          <div class="trait-title">Smart Integration</div>
+          <div class="trait-desc">Technology woven invisibly into the home.</div>
+        </div>
+        <div class="trait-card">
+          <div class="trait-icon">🛁</div>
+          <div class="trait-title">Spa Primary Suite</div>
+          <div class="trait-desc">Freestanding tub, walk-in shower, double vanity.</div>
+        </div>
+      </div>
+
+      <div class="result-match">
+        <div class="match-badge"><span>87%</span></div>
+        <div class="match-info">
+          <div class="match-title">Your Top Match: 2847 Magnolia Drive</div>
+          <div class="match-sub">This property scores in the top 8% for Refined Modern buyers. Every trait you flagged as important is present.</div>
+          <div class="match-address">2847 Magnolia Drive · Flower Mound, TX 75022 · $724,000</div>
+        </div>
+      </div>
+
+      <div class="result-actions">
+        <button class="btn-primary" onclick="window.location.href='chloeiq-home-report-desktop.html'">View My Home Report →</button>
+        <button class="btn-secondary" onclick="window.location.href='chloeiq-buyer-app-desktop.html'">Open Buyer Dashboard</button>
+      </div>
+    </div>
+
+  </div><!-- /quiz-main -->
+</div><!-- /shell -->
+
 <script>
-function toast(msg,type){var o=document.getElementById('_t');if(o)o.remove();var t=document.createElement('div');t.id='_t';t.textContent=msg;var bg=type==='ok'?'#B8E030':'#1A1E12';var c=type==='ok'?'#0A0B07':'#EEF0E5';t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:'+bg+';color:'+c+';padding:10px 20px;border-radius:8px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all .2s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.4);border:1px solid rgba(184,224,48,.15);';document.body.appendChild(t);requestAnimationFrame(function(){t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';});clearTimeout(t._x);t._x=setTimeout(function(){t.style.opacity='0';},2600);}
-function modal(title,body,label,cb){var o=document.getElementById('_m');if(o)o.remove();var el=document.createElement('div');el.id='_m';el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9990;display:flex;align-items:center;justify-content:center;';el.innerHTML='<div style="background:#13160D;border:1px solid rgba(184,224,48,.15);border-radius:13px;padding:26px 28px;min-width:380px;max-width:460px;box-shadow:0 20px 60px rgba(0,0,0,.6);"><div style="font-family:Fraunces,serif;font-size:19px;margin-bottom:9px;">'+title+'</div><div style="font-size:13px;color:#8A8F7A;line-height:1.6;margin-bottom:20px;">'+body+'</div><div style="display:flex;gap:9px;justify-content:flex-end;"><button id="_mc" style="padding:7px 16px;border-radius:7px;border:1px solid rgba(238,240,229,.08);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:12px;cursor:pointer;">Cancel</button><button id="_mo" style="padding:7px 16px;border-radius:7px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:12px;font-weight:600;cursor:pointer;">'+(label||'OK')+'</button></div></div>';document.body.appendChild(el);el.querySelector('#_mc').onclick=function(){el.remove();};el.querySelector('#_mo').onclick=function(){el.remove();if(cb)cb();};el.onclick=function(e){if(e.target===el)el.remove();};}
+  const TOTAL = 8;
+  let current = 1;
+  const answers = {};
 
-var questions=[
-  {q:"When you walk into a home, what's the first thing you notice?",opts:["The flow of natural light","The architectural details and lines","The warmth of the materials","The boldness of the design choices","The practicality of the layout","The overall feeling of serenity"]},
-  {q:"Your ideal kitchen looks like...",opts:["Bright white with integrated appliances","Sleek handle-less cabinetry, quartz counters","Warm wood tones, farmhouse sink","Open shelves, colorful accents","Professional-grade appliances, functional","Minimal, hidden storage everywhere"]},
-  {q:"For your living room, you'd choose...",opts:["A statement sofa, curated art wall","Clean-lined furniture, one accent piece","Cozy layered textiles, plants","Eclectic mix of vintage and modern","Comfortable, kid-friendly, durable","Nothing unnecessary — pure function"]},
-  {q:"Your outdoor space should be...",opts:["A resort-style pool area","A clean patio with architectural planters","A garden with raised beds and fire pit","A creative space for entertaining","A safe yard for kids and pets","A low-maintenance, private escape"]},
-  {q:"How many bedrooms do you need?",opts:["2 — just us","3 — room to grow","4 — family is everything","5+ — we host often","1 — minimalist life","Flexible — open to anything"]},
-  {q:"What's your budget range?",opts:["Under $400K","$400K–$600K","$600K–$800K","$800K–$1.1M","$1.1M–$1.5M","$1.5M+"]},
-  {q:"How soon are you looking to move?",opts:["Immediately — actively searching","1–3 months","3–6 months","6–12 months","Just exploring for now","Depends on finding the right place"]},
-  {q:"What matters most in your next home?",opts:["Location above everything","Design and aesthetic","Space for family","Investment potential","Good schools nearby","Privacy and land"]},
-];
-var dnaTypes={
-  0:"Coastal Luxe",1:"Refined Modern",2:"Warm Organic",3:"Bold Eclectic",4:"Family Forward",5:"Minimalist Zen"
-};
-var answers=[];
-var cur=0;
-function renderQ(n){
-  var q=questions[n];
-  var body=document.getElementById('quiz-body');
-  body.innerHTML='<div style="display:flex;flex-direction:column;gap:20px;">'
-    +'<div style="font-family:'Fraunces',serif;font-size:22px;line-height:1.4;">'+q.q+'</div>'
-    +'<div class="g2" style="gap:12px;" id="opts-grid"></div>'
-    +'</div>';
-  var grid=document.getElementById('opts-grid');
-  q.opts.forEach(function(opt,i){
-    var isSelected=answers[n]===i;
-    var card=document.createElement('div');
-    card.style.cssText='padding:16px 18px;background:'+(isSelected?'var(--ad)':'var(--s1)')+';border:1px solid '+(isSelected?'var(--acc)':'var(--bs)')+';border-radius:10px;cursor:pointer;transition:all .13s;font-size:13px;color:'+(isSelected?'var(--acc)':'var(--txm)')+';';
-    card.textContent=opt;
-    card.dataset.opt=i;
-    card.addEventListener('click',function(){answers[n]=i;renderQ(n);});
-    card.addEventListener('mouseover',function(){if(answers[n]!==i){card.style.borderColor='var(--br)';card.style.color='var(--tx)';}});
-    card.addEventListener('mouseout',function(){if(answers[n]!==i){card.style.borderColor='var(--bs)';card.style.color='var(--txm)';}});
-    grid.appendChild(card);
-  });
-  document.getElementById('quiz-progress').textContent='Question '+(n+1)+' of '+questions.length;
-  document.getElementById('quiz-bar').style.width=(((n+1)/questions.length)*100)+'%';
-  document.getElementById('quiz-back').style.display=n===0?'none':'';
-  document.getElementById('quiz-next').textContent=n===questions.length-1?'See My Results →':'Next →';
-}
-function showResults(){
-  var counts={};for(var i=0;i<6;i++)counts[i]=0;
-  answers.forEach(function(a){if(a!==undefined)counts[a]=(counts[a]||0)+1;});
-  var topDNA=0,topCount=0;
-  Object.keys(counts).forEach(function(k){if(counts[k]>topCount){topCount=counts[k];topDNA=parseInt(k);}});
-  var dna=dnaTypes[topDNA]||'Refined Modern';
-  var desc={
-    "Refined Modern":"You value clean lines, intentional design, and spaces where form meets function. Open-concept living, neutral palettes with one bold element, and seamless indoor-outdoor flow define your ideal home.",
-    "Coastal Luxe":"Light-filled, resort-inspired spaces with quality materials and a relaxed elegance. You want a home that feels like a retreat — pool, great natural light, and elevated finishes throughout.",
-    "Warm Organic":"Natural textures, earthy tones, and spaces that feel alive. You love wood, stone, plants, and homes that connect you to nature without sacrificing comfort or practicality.",
-    "Bold Eclectic":"You're not afraid of color, texture, or a statement piece. Your home should tell a story — a curated mix of styles, eras, and materials that's unmistakably yours.",
-    "Family Forward":"Livability is everything. Great schools, durable materials, a yard for kids, and enough space for everyone to have their own corner. Home is the center of life.",
-    "Minimalist Zen":"Less is infinitely more. You want a home that's calm, clutter-free, and considered. Every object should earn its place. Privacy, simplicity, and function above all."
-  };
-  document.getElementById('quiz-body').innerHTML='<div style="display:flex;flex-direction:column;gap:20px;">'
-    +'<div style="background:var(--s1);border:1px solid var(--br);border-radius:14px;padding:28px;text-align:center;">'
-    +'<div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--acc);letter-spacing:.8px;margin-bottom:8px;">YOUR STYLE DNA</div>'
-    +'<div style="font-family:'Fraunces',serif;font-size:36px;color:var(--acc);margin-bottom:10px;">'+dna+'</div>'
-    +'<div style="font-size:14px;color:var(--txm);line-height:1.7;max-width:560px;margin:0 auto 20px;">'+desc[dna]+'</div>'
-    +'<div style="display:flex;gap:10px;justify-content:center;">'
-    +'<button class="btn bp" style="font-size:14px;padding:10px 24px;" id="dna-homes">See Matching Homes →</button>'
-    +'<button class="btn bs2" id="dna-retry">Retake Quiz</button>'
-    +'</div></div></div>';
-  document.getElementById('quiz-progress').textContent='Complete!';
-  document.getElementById('quiz-bar').style.width='100%';
-  document.getElementById('quiz-back').style.display='none';
-  document.getElementById('quiz-next').style.display='none';
-  document.getElementById('dna-retry').addEventListener('click',function(){answers=[];cur=0;document.getElementById('quiz-next').style.display='';renderQ(0);});
-  document.getElementById('dna-homes').addEventListener('click',function(){toast('Loading homes matching '+dna+' DNA...','');setTimeout(function(){window.location.href='chloeiq-buyer-app-desktop.html?dna='+encodeURIComponent(dna);},600);});
-}
-document.addEventListener('DOMContentLoaded',function(){
-  renderQ(0);
-  document.getElementById('quiz-next').addEventListener('click',function(){
-    if(cur===questions.length-1){showResults();}
-    else{cur++;renderQ(cur);}
-  });
-  document.getElementById('quiz-back').addEventListener('click',function(){if(cur>0){cur--;renderQ(cur);}});
-});
+  function selectOption(el, q) {
+    const grid = el.closest('[id^="opts"]');
+    grid.querySelectorAll('.option-card, .option-visual').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    answers[q] = el.querySelector('.option-title')?.textContent || '';
+    document.getElementById('btnNext').disabled = false;
+  }
 
+  function showQuestion(n) {
+    for (let i = 1; i <= TOTAL; i++) {
+      const qEl = document.getElementById('q' + i);
+      const oEl = document.getElementById('opts' + i);
+      if (qEl) qEl.style.display = i === n ? 'block' : 'none';
+      if (oEl) oEl.style.display = i === n ? (oEl.classList.contains('four-col') ? 'grid' : 'grid') : 'none';
+    }
+    document.getElementById('progressCount').textContent = `Question ${n} of ${TOTAL}`;
+    document.getElementById('progressFill').style.width = `${(n / TOTAL) * 100}%`;
+    document.getElementById('btnBack').style.visibility = n > 1 ? 'visible' : 'hidden';
+    document.getElementById('btnNext').disabled = !answers[n];
+    document.getElementById('btnNext').textContent = n === TOTAL ? 'See My DNA →' : 'Next →';
+    current = n;
+  }
+
+  function nextQuestion() {
+    if (current < TOTAL) {
+      const wrap = document.getElementById('quizWrap');
+      wrap.style.opacity = '0'; wrap.style.transform = 'translateX(-20px)';
+      setTimeout(() => {
+        showQuestion(current + 1);
+        wrap.style.opacity = '1'; wrap.style.transform = 'translateX(0)';
+      }, 180);
+    } else {
+      showResults();
+    }
+  }
+
+  function prevQuestion() {
+    if (current > 1) {
+      const wrap = document.getElementById('quizWrap');
+      wrap.style.opacity = '0'; wrap.style.transform = 'translateX(20px)';
+      setTimeout(() => {
+        showQuestion(current - 1);
+        wrap.style.opacity = '1'; wrap.style.transform = 'translateX(0)';
+      }, 180);
+    }
+  }
+
+  function skipQuestion() {
+    if (current < TOTAL) nextQuestion();
+    else showResults();
+  }
+
+  function showResults() {
+    document.getElementById('progressShell').style.display = 'none';
+    document.getElementById('quizWrap').style.display = 'none';
+    document.getElementById('resultsScreen').style.display = 'block';
+    document.getElementById('resultsScreen').classList.add('active');
+  }
+
+  // init
+  showQuestion(1);
 </script>
 <script src="chloeiq-nav.js"></script>
 </body>

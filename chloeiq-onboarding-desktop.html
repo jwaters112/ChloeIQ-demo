@@ -2,102 +2,496 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ChloeIQ — Buyer Onboarding</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-:root{--bg:#0A0B07;--s1:#13160D;--s2:#1A1E12;--s3:#222818;--acc:#B8E030;--ad:rgba(184,224,48,.10);--tx:#EEF0E5;--txm:#8A8F7A;--txd:#4A5040;--br:rgba(184,224,48,.12);--bs:rgba(238,240,229,.06);--grn:#4ADE80;--red:#FF5A4A;--amb:#F5A623;--blu:#60A5FA;--pur:#A78BFA;}
-html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:14px;overflow-x:hidden;}
-.topbar{height:56px;display:flex;align-items:center;padding:0 28px;border-bottom:1px solid var(--bs);background:var(--bg);gap:12px;position:sticky;top:0;z-index:20;}
-.lm{width:28px;height:28px;background:var(--acc);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:var(--bg);}
-.lt{font-family:'Fraunces',serif;font-size:17px;}.lt b{color:var(--acc);font-weight:400;}
-.pt{font-family:'Fraunces',serif;font-size:18px;font-weight:400;}.pt em{color:var(--acc);font-style:italic;}
-.sep{width:1px;height:20px;background:var(--bs);}
-.tr{margin-left:auto;display:flex;gap:8px;align-items:center;}
-.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 15px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;border:none;transition:all .13s;}
-.bp{background:var(--acc);color:var(--bg);}.bp:hover{background:#c8f040;}
-.bs2{background:transparent;color:var(--txm);border:1px solid var(--bs);}.bs2:hover{border-color:var(--br);color:var(--tx);background:var(--s1);}
-.main{padding:28px 32px;display:flex;flex-direction:column;gap:22px;max-height:calc(100vh - 56px);overflow-y:auto;}
-.panel{background:var(--s1);border:1px solid var(--bs);border-radius:11px;overflow:hidden;}
-.ph{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--bs);}
-.pht{font-size:13px;font-weight:600;}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
-.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
-.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
-.kpi{background:var(--s1);border:1px solid var(--bs);border-radius:10px;padding:15px 17px;transition:border-color .13s;}
-.kpi:hover{border-color:var(--br);}.ka{border-left:2px solid var(--acc);}.ka .kv{color:var(--acc);}
-.kl{font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;}
-.kv{font-family:'Fraunces',serif;font-size:26px;line-height:1;}.kd{font-size:11px;margin-top:4px;}
-.up{color:var(--grn);}.ne{color:var(--txm);}
-::-webkit-scrollbar{width:3px;}</style>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0A0B07; --bg2: #0E1008; --bg3: #13160A;
+    --accent: #B8E030; --accent2: #9DC420;
+    --text: #E8EDD4; --text2: #A8B090; --text3: #6B7260;
+    --border: rgba(184,224,48,0.12); --border2: rgba(232,237,212,0.08); --card: #0E1008;
+  }
+  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; overflow-x: hidden; }
+  .shell { display: flex; flex-direction: column; min-height: 100vh; }
+
+  /* NAV */
+  .topnav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px; height: 64px; border-bottom: 1px solid var(--border2);
+    background: rgba(10,11,7,0.97); position: sticky; top: 0; z-index: 100;
+  }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .logo-mark { width: 32px; height: 32px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Fraunces', serif; font-weight: 700; font-size: 16px; color: var(--bg); }
+  .logo-name { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; color: var(--text); }
+  .logo-name span { font-style: italic; font-weight: 300; }
+  .nav-agent { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text2); }
+  .agent-dot { width: 28px; height: 28px; border-radius: 50%; background: rgba(184,224,48,0.15); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; }
+
+  /* PROGRESS DOTS */
+  .progress-shell { padding: 28px 40px 0; display: flex; justify-content: center; }
+  .progress-dots { display: flex; align-items: center; gap: 0; }
+  .prog-dot {
+    width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--border2);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text3);
+    transition: all 0.3s; cursor: default; background: var(--bg2);
+  }
+  .prog-dot.active { border-color: var(--accent); color: var(--accent); background: rgba(184,224,48,0.08); box-shadow: 0 0 0 4px rgba(184,224,48,0.08); }
+  .prog-dot.done { border-color: var(--accent); background: var(--accent); color: var(--bg); }
+  .prog-line { width: 48px; height: 2px; background: var(--border2); transition: background 0.3s; }
+  .prog-line.done { background: rgba(184,224,48,0.4); }
+  .prog-label { font-size: 11px; color: var(--text3); margin-top: 6px; text-align: center; font-family: 'DM Mono', monospace; letter-spacing: 1px; }
+  .prog-item { display: flex; flex-direction: column; align-items: center; }
+
+  /* MAIN */
+  .onboard-main { flex: 1; display: flex; justify-content: center; align-items: flex-start; padding: 36px 40px 120px; }
+  .onboard-wrap { width: 100%; max-width: 680px; }
+
+  .step-panel { display: none; animation: fadeUp 0.35s ease; }
+  .step-panel.active { display: block; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* PANEL HEADER */
+  .panel-header { text-align: center; margin-bottom: 40px; }
+  .panel-icon { font-size: 48px; margin-bottom: 16px; }
+  .panel-tag { display: inline-block; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); background: rgba(184,224,48,0.08); border: 1px solid var(--border); padding: 4px 14px; border-radius: 4px; margin-bottom: 14px; }
+  .panel-title { font-family: 'Fraunces', serif; font-size: 32px; font-weight: 400; color: var(--text); margin-bottom: 8px; line-height: 1.2; }
+  .panel-title em { font-style: italic; color: var(--accent); font-weight: 300; }
+  .panel-desc { font-size: 15px; color: var(--text2); font-weight: 300; line-height: 1.6; }
+
+  /* FORM */
+  .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+  .form-label { font-size: 12px; font-weight: 600; color: var(--text2); letter-spacing: 0.5px; text-transform: uppercase; font-family: 'DM Mono', monospace; }
+  .form-input, .form-select {
+    background: var(--bg2); border: 1px solid var(--border2); border-radius: 12px;
+    padding: 14px 18px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px;
+    transition: border-color 0.2s; outline: none; width: 100%;
+  }
+  .form-input:focus, .form-select:focus { border-color: rgba(184,224,48,0.4); }
+  .form-input::placeholder { color: var(--text3); }
+  .form-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-select option { background: #1a1f10; }
+
+  /* BUDGET SLIDER */
+  .budget-display {
+    background: linear-gradient(135deg, rgba(184,224,48,0.08), rgba(184,224,48,0.02));
+    border: 1px solid var(--border); border-radius: 16px; padding: 28px;
+    text-align: center; margin-bottom: 24px;
+  }
+  .budget-amount { font-family: 'Fraunces', serif; font-size: 44px; font-weight: 600; color: var(--accent); margin-bottom: 4px; }
+  .budget-label { font-size: 13px; color: var(--text2); font-family: 'DM Mono', monospace; letter-spacing: 1px; }
+  .budget-slider { width: 100%; margin: 20px 0 8px; -webkit-appearance: none; height: 4px; background: linear-gradient(to right, var(--accent) 60%, var(--border2) 60%); border-radius: 2px; outline: none; }
+  .budget-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); cursor: pointer; border: 3px solid var(--bg); box-shadow: 0 2px 8px rgba(184,224,48,0.3); }
+  .budget-range { display: flex; justify-content: space-between; font-size: 12px; color: var(--text3); font-family: 'DM Mono', monospace; }
+
+  /* DNA INTRO CARDS */
+  .dna-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 24px; }
+  .dna-card {
+    background: var(--card); border: 1.5px solid var(--border2); border-radius: 14px;
+    padding: 20px 16px; cursor: pointer; text-align: center; transition: all 0.2s;
+  }
+  .dna-card:hover { border-color: rgba(184,224,48,0.3); transform: translateY(-2px); }
+  .dna-card.selected { border-color: rgba(184,224,48,0.6); background: rgba(184,224,48,0.06); }
+  .dna-icon { font-size: 28px; margin-bottom: 10px; }
+  .dna-name { font-family: 'Fraunces', serif; font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .dna-trait { font-size: 12px; color: var(--text2); }
+
+  /* PREFERENCES CHECKLIST */
+  .pref-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .pref-item {
+    display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+    background: var(--card); border: 1.5px solid var(--border2); border-radius: 12px;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .pref-item:hover { border-color: rgba(184,224,48,0.3); }
+  .pref-item.selected { border-color: rgba(184,224,48,0.5); background: rgba(184,224,48,0.05); }
+  .pref-check { width: 20px; height: 20px; border-radius: 5px; border: 2px solid var(--border2); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; font-size: 12px; }
+  .pref-item.selected .pref-check { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+  .pref-icon { font-size: 18px; }
+  .pref-label { font-size: 13px; font-weight: 500; color: var(--text); }
+
+  /* MATCH REVEAL */
+  .match-reveal {
+    background: linear-gradient(135deg, rgba(184,224,48,0.1), rgba(184,224,48,0.02));
+    border: 1px solid var(--border); border-radius: 20px; padding: 40px;
+    text-align: center; margin-bottom: 24px; position: relative; overflow: hidden;
+  }
+  .match-reveal::before { content: ''; position: absolute; top: -80px; right: -80px; width: 280px; height: 280px; border-radius: 50%; background: radial-gradient(circle, rgba(184,224,48,0.06), transparent 70%); }
+  .match-score-big { font-family: 'Fraunces', serif; font-size: 88px; font-weight: 700; color: var(--accent); line-height: 1; margin-bottom: 4px; }
+  .match-score-label { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 3px; color: var(--text2); text-transform: uppercase; margin-bottom: 20px; }
+  .match-dna-pill { display: inline-flex; align-items: center; gap: 8px; background: rgba(184,224,48,0.1); border: 1px solid var(--border); border-radius: 100px; padding: 8px 20px; font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 20px; }
+  .match-property { background: var(--bg2); border: 1px solid var(--border2); border-radius: 14px; padding: 20px; text-align: left; }
+  .match-prop-title { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .match-prop-sub { font-size: 13px; color: var(--text2); margin-bottom: 12px; }
+  .match-prop-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+  .match-tag { font-size: 11px; background: rgba(184,224,48,0.08); color: var(--accent); border: 1px solid var(--border); border-radius: 4px; padding: 3px 10px; font-family: 'DM Mono', monospace; }
+
+  /* FOOTER */
+  .onboard-footer {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: rgba(10,11,7,0.97); border-top: 1px solid var(--border2);
+    padding: 16px 40px; display: flex; justify-content: space-between; align-items: center;
+    backdrop-filter: blur(12px); z-index: 90;
+  }
+  .footer-info { font-size: 13px; color: var(--text3); }
+  .footer-btns { display: flex; gap: 12px; }
+  .btn-back { padding: 12px 24px; border-radius: 10px; border: 1px solid var(--border2); background: transparent; color: var(--text2); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+  .btn-back:hover { border-color: var(--border); color: var(--text); }
+  .btn-back:disabled { opacity: 0.3; cursor: not-allowed; }
+  .btn-next { padding: 12px 32px; border-radius: 10px; border: none; background: var(--accent); color: var(--bg); font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .btn-next:hover { background: var(--accent2); }
+</style>
 </head>
 <body>
-<header class="topbar">
-  <div class="lm">C</div><div class="lt">Chloe<b>IQ</b></div>
-  <div class="sep"></div>
-  <div class="pt">Buyer <em>Onboarding</em></div><div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--txm);" id="ob-step-lbl">Step 1 of 5</div><div class="tr"><button class="btn bp" id="ob-next">Continue →</button></div>
-</header>
-<div class="main">
+<div class="shell">
 
-<div style="max-width:740px;margin:0 auto;display:flex;flex-direction:column;gap:24px;">
-  <div style="height:4px;background:var(--s3);border-radius:2px;overflow:hidden;"><div id="ob-bar" style="height:4px;background:var(--acc);border-radius:2px;width:20%;transition:width .4s;"></div></div>
-  <div id="ob-body"></div>
+  <nav class="topnav">
+    <a class="logo" href="#">
+      <div class="logo-mark">C</div>
+      <div class="logo-name">Chloe<span>IQ</span></div>
+    </a>
+    <div class="nav-agent">
+      <div class="agent-dot">🏠</div>
+      <span>2847 Magnolia Drive Open House</span>
+      <span style="color:var(--text3)">·</span>
+      <span style="color:var(--accent)">● Live</span>
+    </div>
+  </nav>
+
+  <!-- PROGRESS DOTS -->
+  <div class="progress-shell">
+    <div style="display:flex;flex-direction:column;align-items:center">
+      <div class="progress-dots" id="progressDots">
+        <div class="prog-item">
+          <div class="prog-dot active" id="pd1">1</div>
+          <div class="prog-label">You</div>
+        </div>
+        <div class="prog-line" id="pl1"></div>
+        <div class="prog-item">
+          <div class="prog-dot" id="pd2">2</div>
+          <div class="prog-label">Budget</div>
+        </div>
+        <div class="prog-line" id="pl2"></div>
+        <div class="prog-item">
+          <div class="prog-dot" id="pd3">3</div>
+          <div class="prog-label">Style</div>
+        </div>
+        <div class="prog-line" id="pl3"></div>
+        <div class="prog-item">
+          <div class="prog-dot" id="pd4">4</div>
+          <div class="prog-label">Prefs</div>
+        </div>
+        <div class="prog-line" id="pl4"></div>
+        <div class="prog-item">
+          <div class="prog-dot" id="pd5">5</div>
+          <div class="prog-label">Match</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ONBOARD MAIN -->
+  <div class="onboard-main">
+    <div class="onboard-wrap">
+
+      <!-- STEP 1: NAME & CONTACT -->
+      <div class="step-panel active" id="step1">
+        <div class="panel-header">
+          <div class="panel-icon">👋</div>
+          <div class="panel-tag">Step 1 of 5 · Welcome</div>
+          <div class="panel-title">Hi! I'm <em>Chloe.</em><br>Let's start with your name.</div>
+          <div class="panel-desc">I'll create your buyer profile and find your match score for this home — takes about 60 seconds.</div>
+        </div>
+        <div class="form-grid2">
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            <input class="form-input" type="text" placeholder="Jordan" value="Jordan">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            <input class="form-input" type="text" placeholder="Lee" value="Lee">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input class="form-input" type="email" placeholder="jordan@example.com" value="jordan.lee@gmail.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number <span style="font-weight:300;text-transform:none;letter-spacing:0;font-size:11px">(optional — for follow-up texts)</span></label>
+          <input class="form-input" type="tel" placeholder="(214) 555-0189" value="(214) 555-0189">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Are you working with a buyer's agent?</label>
+          <select class="form-select">
+            <option>No — I'm looking independently</option>
+            <option>Yes — I have an agent already</option>
+            <option>Not sure yet</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- STEP 2: BUDGET -->
+      <div class="step-panel" id="step2">
+        <div class="panel-header">
+          <div class="panel-icon">💰</div>
+          <div class="panel-tag">Step 2 of 5 · Budget</div>
+          <div class="panel-title">What's your <em>budget range?</em></div>
+          <div class="panel-desc">Chloe uses your budget to weight your match score — a perfect-style home that's way out of range scores lower.</div>
+        </div>
+        <div class="budget-display">
+          <div class="budget-amount" id="budgetAmt">$650,000 – $800,000</div>
+          <div class="budget-label">Target Purchase Range</div>
+        </div>
+        <input type="range" class="budget-slider" id="budgetSlider" min="0" max="10" value="6" oninput="updateBudget(this.value)">
+        <div class="budget-range">
+          <span>$300K</span>
+          <span>$500K</span>
+          <span>$750K</span>
+          <span>$1M</span>
+          <span>$1.5M+</span>
+        </div>
+        <div style="margin-top:28px">
+          <div class="form-group">
+            <label class="form-label">Pre-approval Status</label>
+            <select class="form-select">
+              <option>Pre-approved and ready</option>
+              <option>Pre-qualified (not yet approved)</option>
+              <option>Not yet started</option>
+              <option>Cash buyer</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Purchase Timeline</label>
+            <select class="form-select">
+              <option>Within 30 days</option>
+              <option selected>1–3 months</option>
+              <option>3–6 months</option>
+              <option>6–12 months</option>
+              <option>Just exploring</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: STYLE DNA INTRO -->
+      <div class="step-panel" id="step3">
+        <div class="panel-header">
+          <div class="panel-icon">🧬</div>
+          <div class="panel-tag">Step 3 of 5 · StyleDNA</div>
+          <div class="panel-title">Which style feels most <em>like you?</em></div>
+          <div class="panel-desc">Pick the one that resonates — your StyleDNA shapes how Chloe scores every home for you.</div>
+        </div>
+        <div class="dna-grid">
+          <div class="dna-card selected" onclick="selectDNA(this)">
+            <div class="dna-icon">✦</div>
+            <div class="dna-name">Refined Modern</div>
+            <div class="dna-trait">Clean, curated, intentional</div>
+          </div>
+          <div class="dna-card" onclick="selectDNA(this)">
+            <div class="dna-icon">🌿</div>
+            <div class="dna-name">Warm Organic</div>
+            <div class="dna-trait">Natural, textured, earthy</div>
+          </div>
+          <div class="dna-card" onclick="selectDNA(this)">
+            <div class="dna-icon">🌊</div>
+            <div class="dna-name">Coastal Luxe</div>
+            <div class="dna-trait">Light, airy, elevated</div>
+          </div>
+          <div class="dna-card" onclick="selectDNA(this)">
+            <div class="dna-icon">🎨</div>
+            <div class="dna-name">Bold Eclectic</div>
+            <div class="dna-trait">Statement, layered, vibrant</div>
+          </div>
+          <div class="dna-card" onclick="selectDNA(this)">
+            <div class="dna-icon">🏛️</div>
+            <div class="dna-name">Classic Traditional</div>
+            <div class="dna-trait">Timeless, symmetrical, rich</div>
+          </div>
+          <div class="dna-card" onclick="selectDNA(this)">
+            <div class="dna-icon">🔩</div>
+            <div class="dna-name">Urban Industrial</div>
+            <div class="dna-trait">Raw, exposed, utilitarian</div>
+          </div>
+        </div>
+        <div style="text-align:center;margin-top:4px">
+          <span style="font-size:13px;color:var(--text3)">Not sure? </span>
+          <span style="font-size:13px;color:var(--accent);cursor:pointer;text-decoration:underline;text-underline-offset:3px" onclick="window.location.href='chloeiq-styledna-quiz-desktop.html'">Take the full StyleDNA quiz →</span>
+        </div>
+      </div>
+
+      <!-- STEP 4: PREFERENCES -->
+      <div class="step-panel" id="step4">
+        <div class="panel-header">
+          <div class="panel-icon">🏠</div>
+          <div class="panel-tag">Step 4 of 5 · Must-Haves</div>
+          <div class="panel-title">What are your <em>must-haves?</em></div>
+          <div class="panel-desc">Select everything that matters to you. Chloe weights these heavily in your match score.</div>
+        </div>
+        <div class="pref-grid">
+          <div class="pref-item selected" onclick="togglePref(this)">
+            <div class="pref-check">✓</div>
+            <span class="pref-icon">🏛️</span>
+            <span class="pref-label">Open Floor Plan</span>
+          </div>
+          <div class="pref-item selected" onclick="togglePref(this)">
+            <div class="pref-check">✓</div>
+            <span class="pref-icon">☀️</span>
+            <span class="pref-label">Natural Light</span>
+          </div>
+          <div class="pref-item selected" onclick="togglePref(this)">
+            <div class="pref-check">✓</div>
+            <span class="pref-icon">💼</span>
+            <span class="pref-label">Home Office</span>
+          </div>
+          <div class="pref-item" onclick="togglePref(this)">
+            <div class="pref-check"></div>
+            <span class="pref-icon">🏊</span>
+            <span class="pref-label">Pool</span>
+          </div>
+          <div class="pref-item" onclick="togglePref(this)">
+            <div class="pref-check"></div>
+            <span class="pref-icon">🏡</span>
+            <span class="pref-label">Large Backyard</span>
+          </div>
+          <div class="pref-item selected" onclick="togglePref(this)">
+            <div class="pref-check">✓</div>
+            <span class="pref-icon">🤖</span>
+            <span class="pref-label">Smart Home</span>
+          </div>
+          <div class="pref-item" onclick="togglePref(this)">
+            <div class="pref-check"></div>
+            <span class="pref-icon">🚗</span>
+            <span class="pref-label">3+ Car Garage</span>
+          </div>
+          <div class="pref-item selected" onclick="togglePref(this)">
+            <div class="pref-check">✓</div>
+            <span class="pref-icon">🛁</span>
+            <span class="pref-label">Spa Primary Suite</span>
+          </div>
+          <div class="pref-item" onclick="togglePref(this)">
+            <div class="pref-check"></div>
+            <span class="pref-icon">🔥</span>
+            <span class="pref-label">Outdoor Kitchen</span>
+          </div>
+          <div class="pref-item" onclick="togglePref(this)">
+            <div class="pref-check"></div>
+            <span class="pref-icon">🍷</span>
+            <span class="pref-label">Wine Cellar / Bar</span>
+          </div>
+          <div class="pref-item" onclick="togglePref(this)">
+            <div class="pref-check"></div>
+            <span class="pref-icon">🌳</span>
+            <span class="pref-label">Mature Trees</span>
+          </div>
+          <div class="pref-item" onclick="togglePref(this)">
+            <div class="pref-check"></div>
+            <span class="pref-icon">🎓</span>
+            <span class="pref-label">Top-Rated Schools</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 5: MATCH REVEAL -->
+      <div class="step-panel" id="step5">
+        <div class="panel-header">
+          <div class="panel-tag">Step 5 of 5 · Your Match</div>
+          <div class="panel-title">Jordan, here's your <em>match score</em></div>
+          <div class="panel-desc">Based on your Refined Modern DNA, budget, and must-haves.</div>
+        </div>
+        <div class="match-reveal">
+          <div class="match-score-big">87%</div>
+          <div class="match-score-label">Match Score · Top 8% of all visitors</div>
+          <div class="match-dna-pill">✦ Refined Modern DNA</div>
+          <div class="match-property">
+            <div class="match-prop-title">2847 Magnolia Drive</div>
+            <div class="match-prop-sub">Flower Mound, TX 75022 · $724,000 · 4BD / 3BA / 2,847 sqft</div>
+            <div class="match-prop-tags">
+              <span class="match-tag">Open Floor Plan ✓</span>
+              <span class="match-tag">Natural Light ✓</span>
+              <span class="match-tag">Home Office ✓</span>
+              <span class="match-tag">Smart Home ✓</span>
+              <span class="match-tag">Spa Suite ✓</span>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:14px">
+          <button class="btn-next" style="flex:1;padding:16px" onclick="window.location.href='chloeiq-home-report-desktop.html'">View Full Home Report →</button>
+          <button class="btn-back" style="flex:1;padding:16px;border-radius:12px" onclick="window.location.href='chloeiq-buyer-app-desktop.html'">Open Buyer Dashboard</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="onboard-footer">
+    <div class="footer-info" id="footerInfo">Presented by Marcus Rivera · REAL Broker, LLC</div>
+    <div class="footer-btns">
+      <button class="btn-back" id="btnBack" onclick="prevStep()" disabled>← Back</button>
+      <button class="btn-next" id="btnNext" onclick="nextStep()">Continue →</button>
+    </div>
+  </div>
+
 </div>
 
-</div>
 <script>
-function toast(msg,type){var o=document.getElementById('_t');if(o)o.remove();var t=document.createElement('div');t.id='_t';t.textContent=msg;var bg=type==='ok'?'#B8E030':'#1A1E12';var c=type==='ok'?'#0A0B07':'#EEF0E5';t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:'+bg+';color:'+c+';padding:10px 20px;border-radius:8px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all .2s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.4);border:1px solid rgba(184,224,48,.15);';document.body.appendChild(t);requestAnimationFrame(function(){t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';});clearTimeout(t._x);t._x=setTimeout(function(){t.style.opacity='0';},2600);}
-function modal(title,body,label,cb){var o=document.getElementById('_m');if(o)o.remove();var el=document.createElement('div');el.id='_m';el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9990;display:flex;align-items:center;justify-content:center;';el.innerHTML='<div style="background:#13160D;border:1px solid rgba(184,224,48,.15);border-radius:13px;padding:26px 28px;min-width:380px;max-width:460px;box-shadow:0 20px 60px rgba(0,0,0,.6);"><div style="font-family:Fraunces,serif;font-size:19px;margin-bottom:9px;">'+title+'</div><div style="font-size:13px;color:#8A8F7A;line-height:1.6;margin-bottom:20px;">'+body+'</div><div style="display:flex;gap:9px;justify-content:flex-end;"><button id="_mc" style="padding:7px 16px;border-radius:7px;border:1px solid rgba(238,240,229,.08);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:12px;cursor:pointer;">Cancel</button><button id="_mo" style="padding:7px 16px;border-radius:7px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:12px;font-weight:600;cursor:pointer;">'+(label||'OK')+'</button></div></div>';document.body.appendChild(el);el.querySelector('#_mc').onclick=function(){el.remove();};el.querySelector('#_mo').onclick=function(){el.remove();if(cb)cb();};el.onclick=function(e){if(e.target===el)el.remove();};}
+  const TOTAL = 5;
+  let current = 1;
 
-var steps=[
-  {
-    title:"Welcome to ChloeIQ",
-    sub:"The smarter way to find your perfect home.",
-    content:function(){return '<div style="display:flex;flex-direction:column;gap:16px;"><div style="background:var(--s1);border:1px solid var(--bs);border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:14px;"><label style="font-family:'DM Mono',monospace;font-size:10px;color:var(--txm);letter-spacing:.5px;display:block;margin-bottom:4px;">YOUR NAME</label><input id="ob-name" placeholder="Jordan Lee" value="Jordan Lee"><label style="font-family:'DM Mono',monospace;font-size:10px;color:var(--txm);letter-spacing:.5px;display:block;margin-bottom:4px;">EMAIL</label><input id="ob-email" placeholder="jordan@example.com" type="email"><label style="font-family:'DM Mono',monospace;font-size:10px;color:var(--txm);letter-spacing:.5px;display:block;margin-bottom:4px;">PHONE</label><input id="ob-phone" placeholder="(214) 555-0123" type="tel"></div></div>';}
-  },
-  {
-    title:"Take the StyleDNA Quiz",
-    sub:"8 quick questions to define your buyer profile.",
-    content:function(){return '<div style="background:var(--s1);border:1px solid var(--br);border-radius:12px;padding:28px;text-align:center;"><div style="font-size:48px;margin-bottom:12px;">🧬</div><div style="font-family:'Fraunces',serif;font-size:22px;margin-bottom:8px;">Discover Your Style<em style='color:var(--acc);font-style:italic;'>DNA</em></div><div style="font-size:13px;color:var(--txm);line-height:1.7;max-width:440px;margin:0 auto 20px;">8 questions, 2 minutes. Chloe uses your answers to match you with homes that actually fit your lifestyle — not just your price range.</div><div style="display:flex;gap:8px;justify-content:center;"><button class="btn bp" style="font-size:14px;padding:10px 24px;" id="ob-quiz">Take Quiz Now →</button><button class="btn bs2" id="ob-skip-quiz">Skip for now</button></div><div style="margin-top:16px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:420px;margin:16px auto 0;">'+["Refined Modern","Coastal Luxe","Warm Organic","Bold Eclectic","Family Forward","Minimalist Zen"].map(function(d){return '<div style="background:var(--s2);border:1px solid var(--bs);border-radius:8px;padding:8px;font-size:11px;color:var(--txm);">'+d+'</div>';}).join('')+'</div></div>';}
-  },
-  {
-    title:"Your Search Preferences",
-    sub:"Help us narrow the search.",
-    content:function(){return '<div style="background:var(--s1);border:1px solid var(--bs);border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:16px;"><div class="g2" style="gap:12px;"><div><label style="font-family:'DM Mono',monospace;font-size:10px;color:var(--txm);letter-spacing:.5px;display:block;margin-bottom:5px;">BUDGET RANGE</label><select><option>$400K – $600K</option><option selected>$600K – $800K</option><option>$800K – $1.1M</option><option>$1.1M+</option></select></div><div><label style="font-family:'DM Mono',monospace;font-size:10px;color:var(--txm);letter-spacing:.5px;display:block;margin-bottom:5px;">BEDROOMS</label><select><option>2+</option><option selected>3+</option><option>4+</option><option>5+</option></select></div><div><label style="font-family:'DM Mono',monospace;font-size:10px;color:var(--txm);letter-spacing:.5px;display:block;margin-bottom:5px;">TARGET AREA</label><select><option selected>Flower Mound / Lewisville</option><option>Frisco / McKinney</option><option>Southlake / Grapevine</option><option>Plano / Allen</option></select></div><div><label style="font-family:'DM Mono',monospace;font-size:10px;color:var(--txm);letter-spacing:.5px;display:block;margin-bottom:5px;">TIMELINE</label><select><option>ASAP</option><option selected>1–3 months</option><option>3–6 months</option><option>Just exploring</option></select></div></div></div>';}
-  },
-  {
-    title:"Connect with an Agent",
-    sub:"Get matched with a ChloeIQ-certified agent in your area.",
-    content:function(){return '<div style="display:flex;flex-direction:column;gap:12px;"><div style="background:var(--s1);border:1px solid var(--br);border-radius:12px;padding:20px;display:flex;gap:16px;align-items:center;cursor:pointer;" id="agent-card"><div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#7AB800,var(--acc));display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:var(--bg);flex-shrink:0;">MR</div><div style="flex:1;"><div style="font-size:15px;font-weight:600;">Marcus Rivera</div><div style="font-size:12px;color:var(--txm);">REAL Broker · Flower Mound · Host Score 780</div><div style="font-size:12px;color:var(--acc);margin-top:4px;">🥇 Gold Tier · 47 leads this month · 38% conversion</div></div><button class="btn bp" style="flex-shrink:0;" id="ob-connect">Connect</button></div><div style="background:var(--s2);border:1px solid var(--bs);border-radius:12px;padding:20px;display:flex;gap:16px;align-items:center;cursor:pointer;opacity:.7;"><div style="width:52px;height:52px;border-radius:50%;background:var(--s3);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:var(--txm);flex-shrink:0;">ER</div><div style="flex:1;"><div style="font-size:15px;font-weight:600;">Elena Reyes</div><div style="font-size:12px;color:var(--txm);">Compass · Southlake · Host Score 720</div><div style="font-size:12px;color:var(--txm);margin-top:4px;">Silver Tier · 28 leads this month</div></div><button class="btn bs2" style="flex-shrink:0;">Select</button></div></div>';}
-  },
-  {
-    title:"You're All Set!",
-    sub:"",
-    content:function(){return '<div style="text-align:center;display:flex;flex-direction:column;gap:18px;align-items:center;min-height:280px;justify-content:center;"><div style="font-size:56px;">🎉</div><div style="font-family:'Fraunces',serif;font-size:30px;">Welcome to <em style='color:var(--acc);font-style:italic;'>ChloeIQ</em></div><div style="font-size:14px;color:var(--txm);max-width:460px;line-height:1.7;">Your profile is set up. Head to your buyer dashboard to explore matched homes, view your StyleDNA breakdown, and connect with Marcus about showings.</div><button class="btn bp" style="font-size:14px;padding:10px 28px;" id="ob-go">Open My Dashboard →</button></div>';}
+  function nextStep() {
+    if (current < TOTAL) { current++; renderStep(); }
   }
-];
-var cur=0;
-function render(n){
-  var s=steps[n];
-  document.getElementById('ob-step-lbl').textContent='Step '+(n+1)+' of '+steps.length;
-  document.getElementById('ob-bar').style.width=(((n+1)/steps.length)*100)+'%';
-  document.getElementById('ob-next').textContent=n===steps.length-1?'Go to Dashboard →':'Continue →';
-  document.getElementById('ob-body').innerHTML='<div style="display:flex;flex-direction:column;gap:16px;"><div style="font-family:'Fraunces',serif;font-size:24px;font-weight:400;">'+s.title+(s.sub?'<div style='font-size:14px;color:var(--txm);margin-top:4px;font-family:DM Sans,sans-serif;font-weight:400;'>'+s.sub+'</div>':'')+'</div>'+s.content()+'</div>';
-  // wire
-  var quiz=document.getElementById('ob-quiz');if(quiz)quiz.addEventListener('click',function(){window.location.href='chloeiq-styledna-quiz-desktop.html?from=onboarding';});
-  var skip=document.getElementById('ob-skip-quiz');if(skip)skip.addEventListener('click',function(){cur++;render(cur);});
-  var conn=document.getElementById('ob-connect');if(conn)conn.addEventListener('click',function(){toast('Connected with Marcus Rivera ✓','ok');});
-  var ac=document.getElementById('agent-card');if(ac)ac.addEventListener('click',function(){toast('Viewing Marcus Rivera profile...','');});
-  var go=document.getElementById('ob-go');if(go)go.addEventListener('click',function(){window.location.href='chloeiq-buyer-app-desktop.html?from=onboarding';});
-}
-document.addEventListener('DOMContentLoaded',function(){
-  render(0);
-  document.getElementById('ob-next').addEventListener('click',function(){
-    if(cur===steps.length-1){window.location.href='chloeiq-buyer-app-desktop.html?from=onboarding';}
-    else{cur++;render(cur);}
-  });
-});
+  function prevStep() {
+    if (current > 1) { current--; renderStep(); }
+  }
 
+  function renderStep() {
+    for (let i = 1; i <= TOTAL; i++) {
+      document.getElementById('step' + i).classList.toggle('active', i === current);
+      const dot = document.getElementById('pd' + i);
+      dot.classList.remove('active', 'done');
+      if (i < current) { dot.classList.add('done'); dot.textContent = '✓'; }
+      else if (i === current) { dot.classList.add('active'); dot.textContent = i; }
+      else { dot.textContent = i; }
+      const line = document.getElementById('pl' + i);
+      if (line) line.classList.toggle('done', i < current);
+    }
+    document.getElementById('btnBack').disabled = current === 1;
+    document.getElementById('btnNext').textContent = current === TOTAL ? 'View Home Report →' : 'Continue →';
+    if (current === TOTAL) {
+      document.getElementById('btnNext').onclick = () => window.location.href = 'chloeiq-home-report-desktop.html';
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  const budgetRanges = [
+    '$250K – $350K','$350K – $450K','$450K – $550K','$550K – $650K',
+    '$600K – $700K','$650K – $800K','$750K – $900K',
+    '$850K – $1.1M','$1M – $1.3M','$1.2M – $1.6M','$1.5M+'
+  ];
+  function updateBudget(v) {
+    document.getElementById('budgetAmt').textContent = budgetRanges[v] || '$650K – $800K';
+    const pct = (v / 10) * 100;
+    this.event?.target && (this.event.target.style.background = `linear-gradient(to right, var(--accent) ${pct}%, var(--border2) ${pct}%)`);
+  }
+  document.getElementById('budgetSlider').addEventListener('input', function() {
+    document.getElementById('budgetAmt').textContent = budgetRanges[this.value];
+    const pct = (this.value / 10) * 100;
+    this.style.background = `linear-gradient(to right, var(--accent) ${pct}%, var(--border2) ${pct}%)`;
+  });
+
+  function selectDNA(el) {
+    document.querySelectorAll('.dna-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function togglePref(el) {
+    el.classList.toggle('selected');
+    const chk = el.querySelector('.pref-check');
+    chk.textContent = el.classList.contains('selected') ? '✓' : '';
+  }
 </script>
 <script src="chloeiq-nav.js"></script>
 </body>
