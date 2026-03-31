@@ -842,8 +842,10 @@ function drawDemandChart(){
   canvas.width=W;canvas.height=H;
   ctx.clearRect(0,0,W,H);
 
-  var visitors=[88,102,95,118,141,127,155,148,172,168,191,184,210,198,222,217,238,231,247,241,258,252,271,264,284,278,291,287,304,298];
-  var leads=[32,38,35,45,53,48,58,55,65,62,72,69,79,74,84,80,90,87,94,91,98,95,103,99,108,104,112,109,116,112];
+  var period = (typeof activePeriod !== 'undefined') ? activePeriod : '30';
+  var dataset = (typeof demandData !== 'undefined') ? demandData[period] : null;
+  var visitors = dataset ? dataset.visitors : [88,102,95,118,141,127,155,148,172,168,191,184,210,198,222,217,238,231,247,241,258,252,271,264,284,278,291,287,304,298];
+  var leads    = dataset ? dataset.leads    : [32,38,35,45,53,48,58,55,65,62,72,69,79,74,84,80,90,87,94,91,98,95,103,99,108,104,112,109,116,112];
   var days=visitors.length;
   var maxV=Math.max.apply(null,visitors);
 
@@ -964,17 +966,54 @@ function drawForecastChart(){
   ctx.fillText('TODAY',ptX(projStart),8);
 }
 
+// ── DATE RANGE DATA ──
+var demandData = {
+  '7': {
+    visitors: [271,264,284,278,291,287,304],
+    leads:    [103,99,108,104,112,109,116],
+    labels:   ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+    kpis:     { visitors:'2,079', events:'21', leads:'751', match:'71%', heat:'84' },
+    note:     'Last 7 days'
+  },
+  '30': {
+    visitors: [88,102,95,118,141,127,155,148,172,168,191,184,210,198,222,217,238,231,247,241,258,252,271,264,284,278,291,287,304,298],
+    leads:    [32,38,35,45,53,48,58,55,65,62,72,69,79,74,84,80,90,87,94,91,98,95,103,99,108,104,112,109,116,112],
+    labels:   null,
+    kpis:     { visitors:'4,821', events:'87', leads:'1,847', match:'71%', heat:'84' },
+    note:     'Last 30 days'
+  },
+  '90': {
+    visitors: [42,38,51,47,60,55,68,64,75,71,84,79,91,87,98,94,105,101,114,109,121,117,128,124,135,131,142,138,149,145,156,151,164,159,172,168,181,175,191,185,201,195,211,205,221,215,231,224,241,235,251,245,261,255,271,264,284,278,291,287,304,298,316,309,325,318,338,330,348,341,361,353,374,366,388,379,401,393,416,406,428,419,441,431,456,445,468,458,482,471],
+    leads:    [16,14,19,18,23,21,26,24,29,27,32,30,35,33,38,36,41,39,44,42,47,45,51,48,54,52,57,55,60,58,63,61,66,64,70,67,73,70,77,74,81,78,85,82,89,86,93,90,97,94,101,98,105,102,109,106,113,110,117,114,121,118,125,122,129,126,133,130,137,134,141,138,145,142,149,146,153,150,157,154,161,158,165,162,169,166,173,170,177,174],
+    labels:   null,
+    kpis:     { visitors:'14,826', events:'247', leads:'5,634', match:'69%', heat:'81' },
+    note:     'Last 90 days'
+  }
+};
+var activePeriod = '30';
+
 // ── DATE RANGE BUTTONS ──
 function wireRangeBtns(){
   ['7','30','90'].forEach(function(r){
     var el=document.getElementById('dem-range-'+r);
     if(!el)return;
     el.addEventListener('click',function(){
+      activePeriod = r;
       document.querySelectorAll('[id^="dem-range-"]').forEach(function(b){
-        b.style.background='';b.style.borderColor='';b.style.color='';b.classList.remove('active-range');
+        b.style.background='';b.style.borderColor='';b.style.color='';
       });
       el.style.background='var(--acc-d)';el.style.borderColor='rgba(184,224,48,.3)';el.style.color='var(--acc)';
-      toast('Showing last '+r+' days','');
+      // Redraw chart with new period
+      drawDemandChart();
+      // Update KPI cards
+      var d = demandData[r];
+      var kpiEls = document.querySelectorAll('#view-demand .kv');
+      if(kpiEls[0]) kpiEls[0].textContent = d.kpis.visitors;
+      if(kpiEls[1]) kpiEls[1].textContent = d.kpis.events;
+      if(kpiEls[2]) kpiEls[2].textContent = d.kpis.leads;
+      if(kpiEls[3]) kpiEls[3].textContent = d.kpis.match;
+      if(kpiEls[4]) kpiEls[4].textContent = d.kpis.heat;
+      toast('Showing '+d.note,'');
     });
   });
 }
