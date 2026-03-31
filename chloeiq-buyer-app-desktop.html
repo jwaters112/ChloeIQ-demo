@@ -95,20 +95,814 @@ document.addEventListener('DOMContentLoaded',function(){
   homes.forEach(function(h){
     hv.innerHTML+='<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 18px;border-bottom:1px solid var(--bs);cursor:pointer;transition:background .11s;" class="hrow"><div><div style="font-size:13px;font-weight:500;">'+h.addr+'</div><div style="font-size:11px;color:var(--txm);">'+h.area+' · '+h.date+'</div></div><div style="display:flex;align-items:center;gap:10px;"><span style="font-family:DM Mono,monospace;font-size:14px;color:var(--acc);">'+h.match+'%</span><button class="btn bp" style="font-size:10px;padding:3px 9px;" data-hv="'+h.addr+'">View Report</button></div></div>';
   });
-  document.querySelectorAll('[data-hv]').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();toast('Opening home report for '+b.dataset.hv+'...','');});});
-  document.querySelectorAll('.hrow').forEach(function(r){r.addEventListener('mouseover',function(){r.style.background='var(--s2)';});r.addEventListener('mouseout',function(){r.style.background='';});});
+  document.querySelectorAll('[data-hv]').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();showVisitReport(b.dataset.hv);});});
+  document.querySelectorAll('.hrow').forEach(function(r){r.addEventListener('click',function(e){if(!e.target.closest('[data-hv]')){var btn=r.querySelector('[data-hv]');if(btn)showVisitReport(btn.dataset.hv);}});});
   var rg=document.getElementById('recs-grid');
   recs.forEach(function(r){
     rg.innerHTML+='<div style="background:var(--s2);border:1px solid var(--bs);border-radius:9px;padding:16px;cursor:pointer;transition:border-color .12s;" class="rec-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;"><div><div style="font-size:13px;font-weight:500;">'+r.addr+'</div><div style="font-size:11px;color:var(--txm);">'+r.area+' · '+r.price+'</div></div><div style="font-family:Fraunces,serif;font-size:22px;color:var(--acc);">'+r.match+'%</div></div><div style="font-size:12px;color:var(--txm);line-height:1.5;">'+r.why+'</div><button class="btn bp" style="width:100%;justify-content:center;font-size:11px;margin-top:12px;" data-rec="'+r.addr+'">View This Home</button></div>';
   });
-  document.querySelectorAll('[data-rec]').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();toast('Opening home details for '+b.dataset.rec+'...','');});});
-  document.querySelectorAll('.rec-card').forEach(function(c){c.addEventListener('mouseover',function(){c.style.borderColor='var(--br)';});c.addEventListener('mouseout',function(){c.style.borderColor='var(--bs)';});});
+  document.querySelectorAll('[data-rec]').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();showHomeDetail(b.dataset.rec);});});
+  document.querySelectorAll('.rec-card').forEach(function(c){
+    c.addEventListener('mouseover',function(){c.style.borderColor='var(--br)';});
+    c.addEventListener('mouseout',function(){c.style.borderColor='var(--bs)';});
+    c.addEventListener('click',function(e){if(!e.target.closest('[data-rec]')){var addr=c.querySelector('[data-rec]');if(addr)showHomeDetail(addr.dataset.rec);}});
+  });
   document.getElementById('ba-contact').addEventListener('click',function(){modal('Contact Marcus Rivera','Send a message to your agent to schedule a showing or ask questions about any property.','Send Message',function(){toast('Message sent to Marcus Rivera ✓','ok');});});
   document.getElementById('ba-share').addEventListener('click',function(){toast('Buyer profile link copied ✓','ok');});
   document.getElementById('ba-more').addEventListener('click',function(){toast('Loading more recommendations...','');});
 });
 
+
+// ── HOME DETAIL MODAL ────────────────────────────────────────────────────────
+var homeDetails = {
+  '2847 Magnolia Drive': {
+    addr: '2847 Magnolia Drive', area: 'Flower Mound, TX 75022', price: '$724,000',
+    match: 87, matchClass: 'high', dna: 'Refined Modern DNA',
+    beds: 4, baths: 3.5, sqft: '3,240', garage: 2, year: 2019, lot: '0.28 ac',
+    tags: ['Open Concept','Smart Home','Primary Suite','3-Car Garage','Pool Ready'],
+    matchReasons: [
+      { trait: 'Open-concept living', score: 94 },
+      { trait: 'Natural light priority', score: 91 },
+      { trait: 'Clean modern lines', score: 88 },
+      { trait: 'Smart home integration', score: 84 },
+    ],
+    topRooms: ['Primary Suite','Open Kitchen','Great Room'],
+    description: 'Stunning modern farmhouse in the heart of Flower Mound with soaring ceilings, waterfall island, and a spa-like primary suite. Designed for the buyer who values clean lines and functional luxury.',
+    agent: 'Marcus Rivera',
+    agentNote: 'Jordan — this one checks every box on your profile. The kitchen remodel was completed in 2023 with the exact appliance suite you flagged. Worth a private tour.',
+    listed: '12 days ago', status: 'Active', hoa: '$185/mo',
+    showings: 14, savedBy: 9,
+  },
+  '1445 Clearwater Ct': {
+    addr: '1445 Clearwater Ct', area: 'Colleyville, TX 76034', price: '$891,000',
+    match: 82, matchClass: 'high', dna: 'Refined Modern DNA',
+    beds: 5, baths: 4, sqft: '3,890', garage: 3, year: 2021, lot: '0.35 ac',
+    tags: ['Smart Home','Chef Kitchen','Home Theater','Primary Down','Corner Lot'],
+    matchReasons: [
+      { trait: 'Smart home integration', score: 96 },
+      { trait: 'Clean architecture', score: 89 },
+      { trait: 'Open-concept living', score: 85 },
+      { trait: 'Natural light priority', score: 79 },
+    ],
+    topRooms: ['Chef Kitchen','Primary Suite','Media Room'],
+    description: 'Architecturally distinctive 2021 build with fully integrated Control4 smart system, chef-grade appliances, and a media room pre-wired for 4K. A rare find in Colleyville\'s most sought-after pocket.',
+    agent: 'Marcus Rivera',
+    agentNote: 'Jordan — the smart home build-out here is next level. Control4 full integration, automated blinds throughout. Your tech preference score puts this at 96% alignment.',
+    listed: '8 days ago', status: 'Active', hoa: '$210/mo',
+    showings: 21, savedBy: 14,
+  },
+  '3820 Summit Ridge': {
+    addr: '3820 Summit Ridge', area: 'Southlake, TX 76092', price: '$1,050,000',
+    match: 78, matchClass: 'mid', dna: 'Refined Modern DNA',
+    beds: 5, baths: 4.5, sqft: '4,420', garage: 3, year: 2020, lot: '0.41 ac',
+    tags: ['Floor-to-Ceiling Windows','Pool','Outdoor Kitchen','Office','Game Room'],
+    matchReasons: [
+      { trait: 'Natural light priority', score: 97 },
+      { trait: 'Open-concept living', score: 88 },
+      { trait: 'Clean modern lines', score: 80 },
+      { trait: 'Dedicated home office', score: 76 },
+    ],
+    topRooms: ['Great Room','Outdoor Living','Home Office'],
+    description: 'Statement home with dramatic floor-to-ceiling windows overlooking a resort-style pool. The great room is bathed in natural light from dawn to dusk — built for buyers who refuse to compromise on light.',
+    agent: 'Marcus Rivera',
+    agentNote: 'Jordan — your natural light score is 85%. This home hits 97% on that trait alone. The outdoor living space is exceptional — plan for 30 min just for the backyard.',
+    listed: '22 days ago', status: 'Active', hoa: '$250/mo',
+    showings: 31, savedBy: 22,
+  }
+};
+
+function showHomeDetail(addr) {
+  var h = homeDetails[addr];
+  if (!h) { toast('Opening ' + addr + '...', ''); return; }
+
+  var existing = document.getElementById('_hd');
+  if (existing) existing.remove();
+
+  var matchColor = h.matchClass === 'high' ? '#B8E030' : h.matchClass === 'mid' ? '#F5A623' : '#FF5A4A';
+
+  var html = '';
+
+  // Overlay
+  html += '<div id="_hd" style="position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:9990;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:32px 16px;">';
+  html += '<div style="background:#13160D;border:1px solid rgba(184,224,48,0.15);border-radius:16px;width:720px;max-width:95vw;box-shadow:0 28px 80px rgba(0,0,0,0.7);overflow:hidden;">';
+
+  // ── Hero bar ──
+  html += '<div style="background:linear-gradient(135deg,#1A1E12,#0E1108);padding:24px 28px;border-bottom:1px solid rgba(184,224,48,0.1);display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">';
+  html += '<div style="flex:1;">';
+  html += '<div style="font-family:Fraunces,serif;font-size:24px;color:#EEF0E5;line-height:1.1;">' + h.addr + '</div>';
+  html += '<div style="font-size:12px;color:#8A8F7A;margin-top:4px;">' + h.area + '</div>';
+  html += '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;">';
+  h.tags.forEach(function(tag) {
+    html += '<span style="font-size:11px;padding:3px 10px;border-radius:20px;background:rgba(184,224,48,0.08);border:1px solid rgba(184,224,48,0.15);color:#B8E030;font-family:DM Mono,monospace;">' + tag + '</span>';
+  });
+  html += '</div></div>';
+  html += '<div style="text-align:right;flex-shrink:0;">';
+  html += '<div style="font-family:Fraunces,serif;font-size:42px;color:' + matchColor + ';line-height:1;">' + h.match + '%</div>';
+  html += '<div style="font-size:10px;color:#8A8F7A;font-family:DM Mono,monospace;letter-spacing:0.06em;">MATCH SCORE</div>';
+  html += '<div style="font-size:11px;color:#8A8F7A;margin-top:6px;">' + h.dna + '</div>';
+  html += '</div>';
+  html += '</div>';
+
+  // ── Property specs row ──
+  var specs = [
+    { label:'Price', val: h.price },
+    { label:'Beds', val: h.beds },
+    { label:'Baths', val: h.baths },
+    { label:'Sq Ft', val: h.sqft },
+    { label:'Garage', val: h.garage + ' car' },
+    { label:'Built', val: h.year },
+    { label:'Lot', val: h.lot },
+    { label:'HOA', val: h.hoa },
+  ];
+  html += '<div style="display:grid;grid-template-columns:repeat(8,1fr);border-bottom:1px solid rgba(238,240,229,0.06);">';
+  specs.forEach(function(s, i) {
+    html += '<div style="padding:12px 0;text-align:center;' + (i < 7 ? 'border-right:1px solid rgba(238,240,229,0.06);' : '') + '">';
+    html += '<div style="font-family:Fraunces,serif;font-size:16px;color:#EEF0E5;">' + s.val + '</div>';
+    html += '<div style="font-size:9px;color:#8A8F7A;text-transform:uppercase;letter-spacing:0.07em;margin-top:3px;">' + s.label + '</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+
+  // ── Body: two columns ──
+  html += '<div style="display:grid;grid-template-columns:1fr 260px;gap:0;border-bottom:1px solid rgba(238,240,229,0.06);">';
+
+  // Left col
+  html += '<div style="padding:22px 24px;border-right:1px solid rgba(238,240,229,0.06);">';
+
+  // Description
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:10px;">About This Home</div>';
+  html += '<div style="font-size:13px;color:#8A8F7A;line-height:1.7;margin-bottom:20px;">' + h.description + '</div>';
+
+  // Match breakdown
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:12px;">Why It Matches You</div>';
+  h.matchReasons.forEach(function(r) {
+    html += '<div style="margin-bottom:10px;">';
+    html += '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;">';
+    html += '<span style="color:#8A8F7A;">' + r.trait + '</span>';
+    html += '<span style="font-family:DM Mono,monospace;font-size:11px;color:#B8E030;">' + r.score + '%</span>';
+    html += '</div>';
+    html += '<div style="height:4px;background:#1A1E12;border-radius:2px;overflow:hidden;">';
+    html += '<div style="height:4px;background:#B8E030;border-radius:2px;width:' + r.score + '%;"></div>';
+    html += '</div></div>';
+  });
+
+  // Top rooms
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-top:18px;margin-bottom:10px;">Top Rooms for Your Profile</div>';
+  html += '<div style="display:flex;gap:8px;flex-wrap:wrap;">';
+  h.topRooms.forEach(function(room) {
+    html += '<div style="background:#1A1E12;border:1px solid rgba(238,240,229,0.08);border-radius:8px;padding:8px 14px;font-size:12px;color:#EEF0E5;">📍 ' + room + '</div>';
+  });
+  html += '</div>';
+
+  html += '</div>';
+
+  // Right col
+  html += '<div style="padding:22px 20px;display:flex;flex-direction:column;gap:16px;">';
+
+  // Listing stats
+  html += '<div style="background:#0E1108;border:1px solid rgba(238,240,229,0.06);border-radius:10px;padding:14px 16px;">';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:10px;">Listing Activity</div>';
+  html += '<div style="display:flex;flex-direction:column;gap:8px;">';
+  [
+    { k:'Status', v:'● ' + h.status, accent: true },
+    { k:'Listed', v: h.listed },
+    { k:'Showings', v: h.showings + ' scheduled' },
+    { k:'Saved By', v: h.savedBy + ' buyers' },
+  ].forEach(function(row) {
+    html += '<div style="display:flex;justify-content:space-between;font-size:12px;">';
+    html += '<span style="color:#8A8F7A;">' + row.k + '</span>';
+    html += '<span style="color:' + (row.accent ? '#4ADE80' : '#EEF0E5') + ';font-family:DM Mono,monospace;font-size:11px;">' + row.v + '</span>';
+    html += '</div>';
+  });
+  html += '</div></div>';
+
+  // Agent note
+  html += '<div style="background:#0E1108;border:1px solid rgba(184,224,48,0.12);border-radius:10px;padding:14px 16px;">';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:8px;">Agent Note · ' + h.agent + '</div>';
+  html += '<div style="font-size:12px;color:#8A8F7A;line-height:1.6;font-style:italic;">"' + h.agentNote + '"</div>';
+  html += '</div>';
+
+  html += '</div>'; // end right col
+  html += '</div>'; // end body grid
+
+  // ── Footer CTA ──
+  html += '<div style="padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;">';
+  html += '<button id="_hd-close" style="padding:10px 20px;border-radius:8px;border:1px solid rgba(238,240,229,0.1);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Close</button>';
+  html += '<div style="display:flex;gap:10px;">';
+  html += '<button id="_hd-save" style="padding:10px 18px;border-radius:8px;border:1px solid rgba(184,224,48,0.2);background:rgba(184,224,48,0.08);color:#B8E030;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">♡ Save Home</button>';
+  html += '<button id="_hd-tour" style="padding:10px 22px;border-radius:8px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Schedule a Showing →</button>';
+  html += '</div></div>';
+
+  html += '</div></div>'; // end card + overlay
+
+  document.body.insertAdjacentHTML('beforeend', html);
+
+  var overlay = document.getElementById('_hd');
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+  document.getElementById('_hd-close').addEventListener('click', function() { overlay.remove(); });
+
+  var saved = false;
+  document.getElementById('_hd-save').addEventListener('click', function() {
+    saved = !saved;
+    this.textContent = saved ? '♥ Saved' : '♡ Save Home';
+    this.style.color = saved ? '#EEF0E5' : '#B8E030';
+    this.style.background = saved ? 'rgba(184,224,48,0.15)' : 'rgba(184,224,48,0.08)';
+    toast(saved ? h.addr + ' saved to your list ✓' : 'Removed from saved homes', saved ? 'ok' : '');
+  });
+
+  document.getElementById('_hd-tour').addEventListener('click', function() {
+    overlay.remove();
+    showScheduleModal(h);
+  });
+}
 </script>
 <script src="chloeiq-nav.js"></script>
+<script>
+// ── SCHEDULE A SHOWING MODAL ──────────────────────────────────────────────
+function showScheduleModal(h) {
+  var existing = document.getElementById('_sm');
+  if (existing) existing.remove();
+
+  var overlay = document.createElement('div');
+  overlay.id = '_sm';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:9995;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:32px 16px;';
+
+  var html = '';
+  html += '<div style="background:#13160D;border:1px solid rgba(184,224,48,0.18);border-radius:16px;width:500px;max-width:95vw;box-shadow:0 24px 72px rgba(0,0,0,0.7);">';
+
+  // Header
+  html += '<div style="padding:26px 28px 0;">';
+  html += '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px;">';
+  html += '<div>';
+  html += '<div style="font-family:Fraunces,serif;font-size:21px;color:#EEF0E5;">Schedule a <em style=\'color:#B8E030;\'>Showing</em></div>';
+  html += '<div style="font-size:12px;color:#8A8F7A;margin-top:4px;">' + h.addr + ' · with ' + h.agent + '</div>';
+  html += '</div>';
+  html += '<button id="_sm-x" style="background:none;border:none;color:#8A8F7A;font-size:18px;cursor:pointer;padding:2px 6px;">✕</button>';
+  html += '</div>';
+  html += '<div style="height:1px;background:rgba(184,224,48,0.1);margin:18px 0 20px;"></div>';
+
+  // Date + Time row
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:12px;">Preferred Date &amp; Time</div>';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;">';
+  html += inpField('_sm-date', 'Date', 'date', '');
+  html += inpField('_sm-time1', 'Start Time', 'time', '');
+  html += inpField('_sm-time2', 'End Time', 'time', '');
+  html += '</div>';
+
+  // Alternate date
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:12px;">Alternate Date <span style=\'color:#4A4F3A;font-weight:400;text-transform:none;\'>(optional)</span></div>';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;">';
+  html += inpField('_sm-alt-date', 'Alt Date', 'date', '');
+  html += inpField('_sm-alt-time1', 'Start Time', 'time', '');
+  html += inpField('_sm-alt-time2', 'End Time', 'time', '');
+  html += '</div>';
+
+  html += '<div style="height:1px;background:rgba(184,224,48,0.1);margin-bottom:16px;"></div>';
+
+  // Tour type
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:12px;">Tour Type</div>';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;">';
+  var tourTypes = [
+    { id:'tt-in', label:'In-Person', sub:'Walk the property', icon:'🏠' },
+    { id:'tt-vd', label:'Video Tour', sub:'Live walkthrough call', icon:'📹' },
+    { id:'tt-sl', label:'Self-Led', sub:'Unaccompanied access', icon:'🔑' },
+  ];
+  tourTypes.forEach(function(t, i) {
+    var active = i === 0 ? 'border-color:rgba(184,224,48,0.4);background:rgba(184,224,48,0.06);' : '';
+    html += '<div class="_tt-card" data-tt="' + t.id + '" style="background:#0E1108;border:1px solid rgba(238,240,229,0.08);' + active + 'border-radius:10px;padding:12px 14px;cursor:pointer;transition:all 0.12s;">';
+    html += '<div style="font-size:18px;margin-bottom:6px;">' + t.icon + '</div>';
+    html += '<div style="font-size:12px;color:#EEF0E5;font-weight:500;">' + t.label + '</div>';
+    html += '<div style="font-size:11px;color:#8A8F7A;margin-top:2px;">' + t.sub + '</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+
+  html += '<div style="height:1px;background:rgba(184,224,48,0.1);margin-bottom:16px;"></div>';
+
+  // Questions / notes
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:10px;">Questions for the Agent <span style=\'color:#4A4F3A;font-weight:400;text-transform:none;\'>(optional)</span></div>';
+  html += '<textarea id="_sm-note" rows="3" placeholder="e.g. Can we see the backyard? Is the pool permit transferred? What&#39;s the HOA include?" style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;resize:none;outline:none;box-sizing:border-box;"></textarea>';
+
+  html += '</div>'; // end padding wrapper
+
+  // Footer
+  html += '<div style="padding:18px 28px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(184,224,48,0.1);margin-top:20px;">';
+  html += '<div style="font-size:11px;color:#4A4F3A;line-height:1.5;">' + h.agent + ' will confirm within 2 hours.</div>';
+  html += '<div style="display:flex;gap:10px;">';
+  html += '<button id="_sm-cancel" style="padding:10px 18px;border-radius:8px;border:1px solid rgba(238,240,229,0.1);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Cancel</button>';
+  html += '<button id="_sm-confirm" style="padding:10px 22px;border-radius:8px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Request Showing →</button>';
+  html += '</div></div>';
+
+  html += '</div>'; // end card
+  overlay.innerHTML = html;
+  document.body.appendChild(overlay);
+
+  // Tour type card toggle
+  overlay.querySelectorAll('._tt-card').forEach(function(card) {
+    card.addEventListener('click', function() {
+      overlay.querySelectorAll('._tt-card').forEach(function(c) {
+        c.style.borderColor = 'rgba(238,240,229,0.08)';
+        c.style.background = '#0E1108';
+      });
+      card.style.borderColor = 'rgba(184,224,48,0.4)';
+      card.style.background = 'rgba(184,224,48,0.06)';
+    });
+  });
+
+  // Close handlers
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+  document.getElementById('_sm-x').addEventListener('click', function() { overlay.remove(); });
+  document.getElementById('_sm-cancel').addEventListener('click', function() { overlay.remove(); });
+
+  // Confirm + validation
+  document.getElementById('_sm-confirm').addEventListener('click', function() {
+    var date = (document.getElementById('_sm-date').value || '').trim();
+    var time = (document.getElementById('_sm-time1').value || '').trim();
+    if (!date || !time) {
+      toast('Please select a date and start time', '');
+      return;
+    }
+    var tourLabel = (overlay.querySelector('._tt-card[style*="rgba(184,224,48,0.4)"]') || {}).querySelector ? overlay.querySelector('._tt-card[style*="rgba(184,224,48,0.4)"] div:nth-child(2)') : null;
+    var type = tourLabel ? tourLabel.textContent : 'In-Person';
+    overlay.remove();
+    toast('Showing requested · ' + h.agent + ' will confirm shortly ✓', 'ok');
+    setTimeout(function() { toast(type + ' tour · ' + h.addr + ' · ' + date, 'ok'); }, 1600);
+  });
+}
+
+function inpField(id, label, type, placeholder) {
+  return '<div>'
+    + '<label style="display:block;font-size:11px;color:#8A8F7A;margin-bottom:6px;">' + label + '</label>'
+    + '<input id="' + id + '" type="' + type + '" placeholder="' + placeholder + '" style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;color-scheme:dark;" />'
+    + '</div>';
+}
+
+
+// ── VISIT REPORT DATA ────────────────────────────────────────────────────────
+var visitData = {
+  '2847 Magnolia Drive': {
+    addr: '2847 Magnolia Drive', area: 'Flower Mound, TX 75022',
+    date: 'Today, 2:14 PM', duration: '38 min', match: 87, price: '$724,000',
+    beds: 4, baths: 3.5, sqft: '3,240',
+    rooms: [
+      { name:'Primary Suite',    time:'11 min', interest: 92, note:'Spent most time here — opened closets, tested faucets' },
+      { name:'Open Kitchen',     time:'9 min',  interest: 88, note:'Checked island, appliances, and pantry storage' },
+      { name:'Great Room',       time:'7 min',  interest: 84, note:'Commented on ceiling height and natural light' },
+      { name:'Home Office',      time:'5 min',  interest: 78, note:'Measured the room, asked about fiber availability' },
+      { name:'Backyard / Pool',  time:'6 min',  interest: 74, note:'Walked the full yard, reviewed pool equipment' },
+    ],
+    matchReasons: [
+      { trait:'Open-concept living', score:94 },
+      { trait:'Natural light priority', score:91 },
+      { trait:'Clean modern lines', score:88 },
+      { trait:'Smart home integration', score:84 },
+    ],
+    agentNotes: 'Jordan spent the most time in the primary suite and asked detailed questions about the kitchen remodel timeline. Strong buying signals throughout — recommended following up within 24 hours.',
+    draft: 'Hi Jordan — it was great having you at Magnolia Drive today! Based on your Refined Modern profile, the primary suite and open-concept kitchen are a near-perfect fit. Would you like to schedule a second showing or discuss an offer? Happy to answer any questions.',
+    chloesTake: 'This is your strongest match yet. You spent 11 minutes in the primary suite — longest of any room across all your tours. The open kitchen scored 88% on your top trait. One thing to dig into: ask about natural light in the main living area during morning hours. Based on your profile, that could be the deciding factor.',
+    yourNotes: '',
+    status: 'Hot Lead',
+    statusClass: 'hot',
+  },
+  '1105 Ridgecrest Lane': {
+    addr: '1105 Ridgecrest Lane', area: 'Southlake, TX 76092',
+    date: 'Mar 22, 1:30 PM', duration: '24 min', match: 79, price: '$865,000',
+    beds: 4, baths: 4, sqft: '3,540',
+    rooms: [
+      { name:'Kitchen',          time:'8 min',  interest: 82, note:'Compared appliances to Magnolia Drive' },
+      { name:'Primary Suite',    time:'7 min',  interest: 78, note:'Liked the layout but noted smaller closet' },
+      { name:'Game Room',        time:'5 min',  interest: 71, note:'Asked if room could serve as home office' },
+      { name:'Front Exterior',   time:'4 min',  interest: 65, note:'Noted curb appeal, asked about HOA landscaping rules' },
+    ],
+    matchReasons: [
+      { trait:'Open-concept living', score:86 },
+      { trait:'Natural light priority', score:80 },
+      { trait:'Clean modern lines', score:77 },
+      { trait:'Smart home integration', score:71 },
+    ],
+    agentNotes: 'Jordan compared this home to Magnolia Drive throughout the tour. Positive on the kitchen but concerned about closet size in the primary. May need a follow-up to address storage concerns.',
+    draft: 'Hi Jordan — thank you for touring Ridgecrest Lane! I noticed you comparing it to Magnolia Drive — both have great kitchens but different strengths. I can pull comps for both and walk you through the tradeoffs. Want to hop on a quick call?',
+    chloesTake: 'You kept comparing this to Magnolia Drive — which tells Chloe a lot. The kitchen scored slightly higher here, but your time in the primary suite dropped by 4 minutes vs. your top match. The smaller closet is a real friction point for your profile. Worth a second visit only if storage can be added.',
+    yourNotes: '',
+    status: 'Follow Up',
+    statusClass: 'fu',
+  },
+  '3310 Elmhurst Blvd': {
+    addr: '3310 Elmhurst Blvd', area: 'Frisco, TX 75034',
+    date: 'Mar 15, 3:00 PM', duration: '19 min', match: 74, price: '$698,000',
+    beds: 4, baths: 3, sqft: '3,010',
+    rooms: [
+      { name:'Living Room',      time:'6 min',  interest: 76, note:'Noted layout but found it less open than preferred' },
+      { name:'Kitchen',          time:'5 min',  interest: 72, note:'Commented on counter space and dated appliances' },
+      { name:'Primary Suite',    time:'5 min',  interest: 70, note:'Measured room, asked about natural light east/west' },
+      { name:'Backyard',         time:'3 min',  interest: 62, note:'Brief walkthrough, noted limited square footage' },
+    ],
+    matchReasons: [
+      { trait:'Open-concept living', score:72 },
+      { trait:'Natural light priority', score:75 },
+      { trait:'Clean modern lines', score:74 },
+      { trait:'Smart home integration', score:58 },
+    ],
+    agentNotes: 'Shorter visit — Jordan seemed less engaged than previous tours. The dated kitchen and smaller backyard appeared to be friction points. Likely not a top contender.',
+    draft: 'Hi Jordan — thanks for checking out Elmhurst Blvd! I know the kitchen wasn\'t quite what you had in mind — I\'m keeping an eye out for listings with updated finishes in Frisco at a similar price point. I\'ll send anything that matches.',
+    chloesTake: 'Your shortest tour so far at 19 minutes — Chloe reads that as a signal. The kitchen scored 11 points below your average interest level and the backyard was well below your match threshold. This one is likely not your fit at current condition, but the Frisco location is solid if a renovated version came available.',
+    yourNotes: '',
+    status: 'Low Interest',
+    statusClass: 'low',
+  },
+  '504 Lakeview Court': {
+    addr: '504 Lakeview Court', area: 'Grapevine, TX 76051',
+    date: 'Mar 10, 11:00 AM', duration: '22 min', match: 61, price: '$589,000',
+    beds: 3, baths: 2.5, sqft: '2,620',
+    rooms: [
+      { name:'Kitchen',          time:'7 min',  interest: 67, note:'Liked the layout, asked about quartz vs granite' },
+      { name:'Backyard',         time:'8 min',  interest: 63, note:'Longest stop — discussed pool addition feasibility' },
+      { name:'Primary Suite',    time:'4 min',  interest: 58, note:'Noted adequate size but preferred Magnolia layout' },
+      { name:'Front Exterior',   time:'3 min',  interest: 54, note:'Parked and walked street — assessed neighborhood feel' },
+    ],
+    matchReasons: [
+      { trait:'Open-concept living', score:64 },
+      { trait:'Natural light priority', score:68 },
+      { trait:'Clean modern lines', score:60 },
+      { trait:'Smart home integration', score:45 },
+    ],
+    agentNotes: 'Jordan was most interested in the backyard potential and asked about adding a pool. The lower match score reflects the 3-bed configuration vs. their stated 4-bed preference. Worth revisiting if budget becomes a factor.',
+    draft: 'Hi Jordan — I appreciated you touring Lakeview Court! The backyard has real potential for a pool addition, and the price point leaves room for upgrades. If your search evolves toward a value-add play, this one deserves a second look. Let me know.',
+    chloesTake: 'Your interest peaked in the backyard — 8 minutes there versus 4 in the primary suite. That\'s unusual for your profile. The 3-bed layout is a mismatch with your stated needs, but the $589K price leaves real budget for a 4th bedroom addition or pool. This one only makes sense as a value-add play.',
+    yourNotes: '',
+    status: 'Low Match',
+    statusClass: 'low',
+  },
+};
+
+// ── VISIT REPORT MODAL ───────────────────────────────────────────────────────
+function showVisitReport(addr) {
+  var h = visitData[addr];
+  if (!h) { toast('Opening report for ' + addr + '...', ''); return; }
+
+  var existing = document.getElementById('_vr');
+  if (existing) existing.remove();
+
+  var statusColors = { hot:'#4ADE80', fu:'#F5A623', low:'#8A8F7A' };
+  var statusLabels = { hot:'● Hot Lead', fu:'Follow Up', low:h.status };
+  var matchColor = h.match >= 80 ? '#B8E030' : h.match >= 70 ? '#F5A623' : '#8A8F7A';
+
+  var overlay = document.createElement('div');
+  overlay.id = '_vr';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:9990;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:32px 16px;';
+
+  var html = '';
+  html += '<div style="background:#13160D;border:1px solid rgba(184,224,48,0.15);border-radius:16px;width:700px;max-width:95vw;box-shadow:0 28px 80px rgba(0,0,0,0.7);overflow:hidden;">';
+
+  // Hero
+  html += '<div style="background:linear-gradient(135deg,#1A1E12,#0E1108);padding:22px 26px;border-bottom:1px solid rgba(184,224,48,0.1);display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">';
+  html += '<div>';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#B8E030;text-transform:uppercase;margin-bottom:6px;font-family:DM Mono,monospace;">Visit Report</div>';
+  html += '<div style="font-family:Fraunces,serif;font-size:22px;color:#EEF0E5;line-height:1.1;">' + h.addr + '</div>';
+  html += '<div style="font-size:12px;color:#8A8F7A;margin-top:4px;">' + h.area + ' · Visited ' + h.date + '</div>';
+  html += '<div style="display:flex;gap:16px;margin-top:12px;">';
+  [
+    { k:'Duration', v: h.duration },
+    { k:'List Price', v: h.price },
+    { k:h.beds + ' bed / ' + h.baths + ' bath', v: h.sqft + ' sqft' },
+  ].forEach(function(s) {
+    html += '<div style="font-size:11px;color:#8A8F7A;">' + s.k + ' <span style="color:#EEF0E5;font-family:DM Mono,monospace;">· ' + s.v + '</span></div>';
+  });
+  html += '</div></div>';
+  html += '<div style="text-align:right;flex-shrink:0;">';
+  html += '<div style="font-family:Fraunces,serif;font-size:40px;color:' + matchColor + ';line-height:1;">' + h.match + '%</div>';
+  html += '<div style="font-size:10px;color:#8A8F7A;font-family:DM Mono,monospace;letter-spacing:0.06em;margin-top:2px;">MATCH SCORE</div>';
+  html += '<div style="font-size:11px;color:' + statusColors[h.statusClass] + ';margin-top:8px;font-family:DM Mono,monospace;">' + statusLabels[h.statusClass] + '</div>';
+  html += '</div>';
+  html += '<button id="_vr-x" style="background:none;border:none;color:#8A8F7A;font-size:18px;cursor:pointer;padding:2px 6px;align-self:flex-start;">✕</button>';
+  html += '</div>';
+
+  // Body: two columns
+  html += '<div style="display:grid;grid-template-columns:1fr 240px;gap:0;">';
+
+  // Left col
+  html += '<div style="padding:20px 22px;border-right:1px solid rgba(238,240,229,0.06);">';
+
+  // Rooms visited
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:12px;">Rooms Visited</div>';
+  h.rooms.forEach(function(r) {
+    html += '<div style="margin-bottom:12px;background:#0E1108;border:1px solid rgba(238,240,229,0.06);border-radius:9px;padding:12px 14px;">';
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">';
+    html += '<span style="font-size:13px;color:#EEF0E5;font-weight:500;">📍 ' + r.name + '</span>';
+    html += '<div style="display:flex;align-items:center;gap:10px;">';
+    html += '<span style="font-size:11px;color:#8A8F7A;font-family:DM Mono,monospace;">' + r.time + '</span>';
+    html += '<span style="font-family:DM Mono,monospace;font-size:11px;color:' + (r.interest >= 85 ? '#B8E030' : r.interest >= 70 ? '#F5A623' : '#8A8F7A') + ';">' + r.interest + '% interest</span>';
+    html += '</div></div>';
+    html += '<div style="height:3px;background:#1A1E12;border-radius:2px;overflow:hidden;margin-bottom:7px;">';
+    html += '<div style="height:3px;background:' + (r.interest >= 85 ? '#B8E030' : r.interest >= 70 ? '#F5A623' : '#8A8F7A') + ';border-radius:2px;width:' + r.interest + '%;transition:width 0.6s ease;"></div>';
+    html += '</div>';
+    html += '<div style="font-size:11px;color:#8A8F7A;line-height:1.5;font-style:italic;">' + r.note + '</div>';
+    html += '</div>';
+  });
+
+  // Match breakdown
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin:16px 0 12px;">DNA Match Breakdown</div>';
+  h.matchReasons.forEach(function(r) {
+    html += '<div style="margin-bottom:9px;">';
+    html += '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">';
+    html += '<span style="color:#8A8F7A;">' + r.trait + '</span>';
+    html += '<span style="font-family:DM Mono,monospace;font-size:11px;color:#B8E030;">' + r.score + '%</span>';
+    html += '</div>';
+    html += '<div style="height:3px;background:#1A1E12;border-radius:2px;overflow:hidden;">';
+    html += '<div style="height:3px;background:#B8E030;border-radius:2px;width:' + r.score + '%;"></div>';
+    html += '</div></div>';
+  });
+
+  html += '</div>'; // end left col
+
+  // Right col
+  html += '<div style="padding:20px 18px;display:flex;flex-direction:column;gap:14px;">';
+
+  // Chloe's Take
+  html += '<div style="background:#0E1108;border:1px solid rgba(184,224,48,0.12);border-radius:10px;padding:14px;">';
+  html += '<div style="display:flex;align-items:center;gap:7px;margin-bottom:9px;">';
+  html += '<svg width="10" height="10" viewBox="0 0 24 24" fill="#B8E030"><circle cx="12" cy="12" r="10"/></svg>';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;">Chloe&#39;s Take</div>';
+  html += '</div>';
+  html += '<div style="font-size:12px;color:#8A8F7A;line-height:1.7;">' + h.chloesTake + '</div>';
+  html += '</div>';
+
+  // Your Notes
+  html += '<div style="background:#0E1108;border:1px solid rgba(238,240,229,0.06);border-radius:10px;padding:14px;flex:1;">';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:8px;">Your Notes</div>';
+  html += '<textarea id="_vr-notes" rows="5" placeholder="Jot down your thoughts — what you loved, what gave you pause, questions to ask at a second showing…" style="width:100%;background:transparent;border:none;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:12px;line-height:1.6;resize:none;outline:none;box-sizing:border-box;">' + (h.yourNotes || '') + '</textarea>';
+  html += '</div>';
+
+  html += '</div>'; // end right col
+  html += '</div>'; // end body grid
+
+  // Footer
+  html += '<div style="padding:16px 22px;display:flex;gap:10px;justify-content:flex-end;border-top:1px solid rgba(184,224,48,0.08);">';
+  html += '<button id="_vr-close" style="padding:9px 18px;border-radius:8px;border:1px solid rgba(238,240,229,0.1);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Close</button>';
+  html += '<button id="_vr-send" style="padding:9px 18px;border-radius:8px;border:1px solid rgba(184,224,48,0.2);background:rgba(184,224,48,0.08);color:#B8E030;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Send Follow-Up</button>';
+  html += '<button id="_vr-tour" style="padding:9px 20px;border-radius:8px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Schedule Showing →</button>';
+  html += '</div>';
+
+  html += '</div>'; // end card
+  overlay.innerHTML = html;
+  document.body.appendChild(overlay);
+
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+  document.getElementById('_vr-x').addEventListener('click', function() { overlay.remove(); });
+  document.getElementById('_vr-close').addEventListener('click', function() { overlay.remove(); });
+
+  // Save notes on close
+  var notesArea = document.getElementById('_vr-notes');
+  if (notesArea && h.yourNotes !== undefined) {
+    notesArea.addEventListener('input', function() {
+      h.yourNotes = notesArea.value;
+    });
+  }
+
+  document.getElementById('_vr-send').addEventListener('click', function() {
+    overlay.remove();
+    showFollowUpModal(h);
+  });
+
+  document.getElementById('_vr-tour').addEventListener('click', function() {
+    overlay.remove();
+    // Build a minimal h-like object for the schedule modal
+    showScheduleModal({ addr: h.addr, agent: 'Marcus Rivera' });
+  });
+}
+
+// ── SEND FOLLOW-UP MODAL (Step 1: Edit draft, Step 2: Pick channel) ──────────
+function showFollowUpModal(h) {
+  var existing = document.getElementById('_fu');
+  if (existing) existing.remove();
+
+  var overlay = document.createElement('div');
+  overlay.id = '_fu';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:9996;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:32px 16px;';
+
+  function renderStep1() {
+    overlay.innerHTML = buildStep1(h);
+    wireStep1();
+  }
+
+  function renderStep2(draft) {
+    overlay.innerHTML = buildStep2(h, draft);
+    wireStep2(draft);
+  }
+
+  function buildStep1(h) {
+    var html = '';
+    html += '<div style="background:#13160D;border:1px solid rgba(184,224,48,0.18);border-radius:16px;width:520px;max-width:95vw;box-shadow:0 24px 72px rgba(0,0,0,0.7);">';
+
+    // Header
+    html += '<div style="padding:24px 26px 0;">';
+    html += '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;">';
+    html += '<div>';
+    html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#B8E030;text-transform:uppercase;font-family:DM Mono,monospace;margin-bottom:6px;">Step 1 of 2 · Review Draft</div>';
+    html += '<div style="font-family:Fraunces,serif;font-size:20px;color:#EEF0E5;">Send <em style=\'color:#B8E030;\'>Follow-Up</em></div>';
+    html += '<div style="font-size:12px;color:#8A8F7A;margin-top:3px;">To: Jordan Lee &nbsp;·&nbsp; Re: ' + h.addr + '</div>';
+    html += '</div>';
+    html += '<button id="_fu-x" style="background:none;border:none;color:#8A8F7A;font-size:18px;cursor:pointer;padding:2px 6px;">✕</button>';
+    html += '</div>';
+    html += '<div style="height:1px;background:rgba(184,224,48,0.1);margin:16px 0 18px;"></div>';
+
+    // Tone selector
+    html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:10px;">Tone</div>';
+    html += '<div style="display:flex;gap:8px;margin-bottom:18px;">';
+    var tones = [
+      { id:'tone-warm',   label:'Warm',       active: true  },
+      { id:'tone-pro',    label:'Professional', active: false },
+      { id:'tone-urgent', label:'Urgent',      active: false },
+    ];
+    tones.forEach(function(t) {
+      var act = t.active ? 'background:rgba(184,224,48,0.1);border-color:rgba(184,224,48,0.4);color:#B8E030;' : 'background:#0E1108;border-color:rgba(238,240,229,0.08);color:#8A8F7A;';
+      html += '<div class="_fu-tone" data-tone="' + t.id + '" style="' + act + 'border:1px solid;border-radius:8px;padding:7px 16px;font-size:12px;cursor:pointer;transition:all 0.12s;">' + t.label + '</div>';
+    });
+    html += '</div>';
+
+    // Subject line
+    html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:8px;">Subject Line</div>';
+    html += '<input id="_fu-subject" type="text" value="Following up on ' + h.addr + '" style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;margin-bottom:16px;" />';
+
+    // Draft body
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">';
+    html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;">Message</div>';
+    html += '<span id="_fu-regen" style="font-size:11px;color:#B8E030;cursor:pointer;">↺ Regenerate with Chloe AI</span>';
+    html += '</div>';
+    html += '<textarea id="_fu-body" rows="6" style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;line-height:1.6;resize:vertical;outline:none;box-sizing:border-box;">' + h.draft + '</textarea>';
+    html += '</div>'; // end padding
+
+    // Footer
+    html += '<div style="padding:16px 26px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(184,224,48,0.08);margin-top:18px;">';
+    html += '<div style="font-size:11px;color:#4A4F3A;">Powered by Chloe AI · Personalized to Jordan\'s DNA profile</div>';
+    html += '<div style="display:flex;gap:10px;">';
+    html += '<button id="_fu-cancel" style="padding:9px 18px;border-radius:8px;border:1px solid rgba(238,240,229,0.1);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Cancel</button>';
+    html += '<button id="_fu-next" style="padding:9px 22px;border-radius:8px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Choose Channel →</button>';
+    html += '</div></div>';
+
+    html += '</div>'; // end card
+    return html;
+  }
+
+  function wireStep1() {
+    overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+    document.getElementById('_fu-x').addEventListener('click', function() { overlay.remove(); });
+    document.getElementById('_fu-cancel').addEventListener('click', function() { overlay.remove(); });
+
+    // Tone toggle
+    overlay.querySelectorAll('._fu-tone').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        overlay.querySelectorAll('._fu-tone').forEach(function(b) {
+          b.style.background = '#0E1108';
+          b.style.borderColor = 'rgba(238,240,229,0.08)';
+          b.style.color = '#8A8F7A';
+        });
+        btn.style.background = 'rgba(184,224,48,0.1)';
+        btn.style.borderColor = 'rgba(184,224,48,0.4)';
+        btn.style.color = '#B8E030';
+      });
+    });
+
+    // Regenerate
+    document.getElementById('_fu-regen').addEventListener('click', function() {
+      var el = this;
+      el.textContent = '↺ Generating…';
+      el.style.opacity = '0.5';
+      setTimeout(function() {
+        var area = document.getElementById('_fu-body');
+        if (area) area.value = 'Hi Jordan — just wanted to circle back on ' + h.addr + '. Given your Refined Modern profile, I believe this is one of the strongest matches we\'ve seen at this price point. I\'d love to get your thoughts — are you available for a quick call or a second walkthrough this week?';
+        el.textContent = '↺ Regenerate with Chloe AI';
+        el.style.opacity = '1';
+        toast('Draft regenerated ✓', 'ok');
+      }, 1100);
+    });
+
+    // Next → step 2
+    document.getElementById('_fu-next').addEventListener('click', function() {
+      var draft = (document.getElementById('_fu-body').value || '').trim();
+      if (!draft) { toast('Please write a message first', ''); return; }
+      renderStep2(draft);
+    });
+  }
+
+  function buildStep2(h, draft) {
+    var html = '';
+    html += '<div style="background:#13160D;border:1px solid rgba(184,224,48,0.18);border-radius:16px;width:520px;max-width:95vw;box-shadow:0 24px 72px rgba(0,0,0,0.7);">';
+
+    html += '<div style="padding:24px 26px 0;">';
+    html += '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;">';
+    html += '<div>';
+    html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#B8E030;text-transform:uppercase;font-family:DM Mono,monospace;margin-bottom:6px;">Step 2 of 2 · Choose Channel</div>';
+    html += '<div style="font-family:Fraunces,serif;font-size:20px;color:#EEF0E5;">Send <em style=\'color:#B8E030;\'>Follow-Up</em></div>';
+    html += '<div style="font-size:12px;color:#8A8F7A;margin-top:3px;">To: Jordan Lee &nbsp;·&nbsp; Re: ' + h.addr + '</div>';
+    html += '</div>';
+    html += '<button id="_fu-x2" style="background:none;border:none;color:#8A8F7A;font-size:18px;cursor:pointer;padding:2px 6px;">✕</button>';
+    html += '</div>';
+    html += '<div style="height:1px;background:rgba(184,224,48,0.1);margin:16px 0 18px;"></div>';
+
+    // Channel cards
+    html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:12px;">Send Via</div>';
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px;">';
+    var channels = [
+      { id:'ch-email', icon:'✉️', label:'Email',      sub:'jordan@email.com',   active:false },
+      { id:'ch-text',  icon:'💬', label:'Text',       sub:'(214) 555-0182',      active:false },
+      { id:'ch-both',  icon:'⚡', label:'Email + Text', sub:'Both channels',    active:true  },
+    ];
+    channels.forEach(function(ch) {
+      var act = ch.active ? 'border-color:rgba(184,224,48,0.4);background:rgba(184,224,48,0.06);' : 'border-color:rgba(238,240,229,0.08);background:#0E1108;';
+      html += '<div class="_fu-ch" data-ch="' + ch.id + '" style="' + act + 'border:1px solid;border-radius:10px;padding:14px;cursor:pointer;transition:all 0.12s;text-align:center;">';
+      html += '<div style="font-size:20px;margin-bottom:6px;">' + ch.icon + '</div>';
+      html += '<div style="font-size:13px;color:#EEF0E5;font-weight:500;margin-bottom:3px;">' + ch.label + '</div>';
+      html += '<div style="font-size:10px;color:#8A8F7A;font-family:DM Mono,monospace;">' + ch.sub + '</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+
+    // Schedule toggle
+    html += '<div style="background:#0E1108;border:1px solid rgba(238,240,229,0.06);border-radius:10px;padding:14px 16px;margin-bottom:20px;">';
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;">';
+    html += '<div>';
+    html += '<div style="font-size:13px;color:#EEF0E5;font-weight:500;margin-bottom:2px;">Send Now</div>';
+    html += '<div style="font-size:11px;color:#8A8F7A;">Or schedule for a specific time</div>';
+    html += '</div>';
+    html += '<div style="display:flex;gap:0;border:1px solid rgba(238,240,229,0.1);border-radius:8px;overflow:hidden;">';
+    html += '<button class="_fu-when active-when" data-when="now" style="padding:6px 14px;font-size:12px;border:none;background:rgba(184,224,48,0.1);color:#B8E030;cursor:pointer;font-family:DM Sans,sans-serif;">Now</button>';
+    html += '<button class="_fu-when" data-when="schedule" style="padding:6px 14px;font-size:12px;border:none;border-left:1px solid rgba(238,240,229,0.1);background:transparent;color:#8A8F7A;cursor:pointer;font-family:DM Sans,sans-serif;">Schedule</button>';
+    html += '</div>';
+    html += '</div>';
+    html += '<div id="_fu-schedule-row" style="display:none;margin-top:12px;display:none;">';
+    html += '<input id="_fu-sched-time" type="datetime-local" style="background:#13160D;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:8px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;outline:none;color-scheme:dark;width:100%;box-sizing:border-box;" />';
+    html += '</div>';
+    html += '</div>';
+
+    html += '</div>'; // end padding
+
+    // Footer
+    html += '<div style="padding:16px 26px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(184,224,48,0.08);">';
+    html += '<button id="_fu-back" style="padding:9px 16px;border-radius:8px;border:1px solid rgba(238,240,229,0.1);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">← Back</button>';
+    html += '<div style="display:flex;gap:10px;">';
+    html += '<button id="_fu-cancel2" style="padding:9px 18px;border-radius:8px;border:1px solid rgba(238,240,229,0.1);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Cancel</button>';
+    html += '<button id="_fu-send-final" style="padding:9px 22px;border-radius:8px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Send Follow-Up ✓</button>';
+    html += '</div></div>';
+
+    html += '</div>'; // end card
+    return html;
+  }
+
+  function wireStep2(draft) {
+    overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+    document.getElementById('_fu-x2').addEventListener('click', function() { overlay.remove(); });
+    document.getElementById('_fu-cancel2').addEventListener('click', function() { overlay.remove(); });
+    document.getElementById('_fu-back').addEventListener('click', function() { renderStep1(); });
+
+    // Channel toggle
+    overlay.querySelectorAll('._fu-ch').forEach(function(card) {
+      card.addEventListener('click', function() {
+        overlay.querySelectorAll('._fu-ch').forEach(function(c) {
+          c.style.borderColor = 'rgba(238,240,229,0.08)';
+          c.style.background = '#0E1108';
+        });
+        card.style.borderColor = 'rgba(184,224,48,0.4)';
+        card.style.background = 'rgba(184,224,48,0.06)';
+      });
+    });
+
+    // Now / Schedule toggle
+    overlay.querySelectorAll('._fu-when').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        overlay.querySelectorAll('._fu-when').forEach(function(b) {
+          b.style.background = 'transparent';
+          b.style.color = '#8A8F7A';
+        });
+        btn.style.background = 'rgba(184,224,48,0.1)';
+        btn.style.color = '#B8E030';
+        var row = document.getElementById('_fu-schedule-row');
+        if (row) row.style.display = btn.getAttribute('data-when') === 'schedule' ? 'block' : 'none';
+      });
+    });
+
+    // Send
+    document.getElementById('_fu-send-final').addEventListener('click', function() {
+      var activeChannel = overlay.querySelector('._fu-ch[style*="rgba(184,224,48,0.4)"]');
+      var channelLabel = activeChannel ? activeChannel.querySelector('div:nth-child(2)').textContent : 'Email + Text';
+      var schedRow = document.getElementById('_fu-schedule-row');
+      var isScheduled = schedRow && schedRow.style.display !== 'none';
+      var schedTime = isScheduled ? (document.getElementById('_fu-sched-time').value || '') : '';
+
+      overlay.remove();
+
+      if (isScheduled && schedTime) {
+        toast('Follow-up scheduled · ' + channelLabel + ' · ' + schedTime + ' ✓', 'ok');
+      } else {
+        toast('Follow-up sent via ' + channelLabel + ' to Jordan Lee ✓', 'ok');
+        setTimeout(function() { toast('Delivery confirmed · Message opened ✓', 'ok'); }, 1600);
+      }
+    });
+  }
+
+  document.body.appendChild(overlay);
+  renderStep1();
+}
+</script>
 </body>
 </html>
