@@ -1386,4 +1386,14 @@ document.addEventListener('DOMContentLoaded', function() {
   // ── CHIP FILTERS ──
   document.querySelectorAll('.chip-bar').forEach(function(bar) {
     bar.querySelectorAll('.chip').forEach(function(chip) {
-      chip.addEventListener('click', function
+      chip.addEventListener('click', function      chip.addEventListener('click', function() {
+        bar.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('active'); });
+        chip.classList.add('active');
+      });
+    });
+  });
+
+</script>
+<script src="chloeiq-nav.js"></script>
+</body>
+</html>
