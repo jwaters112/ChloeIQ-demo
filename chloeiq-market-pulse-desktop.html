@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ChloeIQ — Market Pulse</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0A0B07;--s1:#13160D;--s2:#1A1E12;--s3:#222818;
+  --acc:#B8E030;--ad:rgba(184,224,48,.10);--am:rgba(184,224,48,.22);
+  --tx:#EEF0E5;--txm:#8A8F7A;--txd:#4A5040;
+  --br:rgba(184,224,48,.12);--bs:rgba(238,240,229,.06);
+  --grn:#4ADE80;--red:#FF5A4A;--amb:#F5A623;--blu:#60A5FA;--pur:#A78BFA;
+}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,sans-serif;font-size:14px;overflow-x:hidden;}
+.topbar{height:56px;display:flex;align-items:center;padding:0 28px;border-bottom:1px solid var(--bs);background:var(--bg);gap:12px;position:sticky;top:0;z-index:20;}
+.lm{width:28px;height:28px;background:var(--acc);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:Fraunces,serif;font-size:14px;font-weight:600;color:var(--bg);}
+.lt{font-family:Fraunces,serif;font-size:17px;}.lt b{color:var(--acc);font-weight:400;}
+.sep{width:1px;height:20px;background:var(--bs);}
+.pt{font-family:Fraunces,serif;font-size:18px;font-weight:400;}.pt em{color:var(--acc);font-style:italic;}
+.tr{margin-left:auto;display:flex;gap:8px;align-items:center;}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 15px;border-radius:8px;font-family:DM Sans,sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;border:none;transition:all .13s;}
+.bp{background:var(--acc);color:var(--bg);}.bp:hover{background:#c8f040;}
+.bs2{background:transparent;color:var(--txm);border:1px solid var(--bs);}.bs2:hover{border-color:var(--br);color:var(--tx);}
+.main{padding:28px 32px;display:flex;flex-direction:column;gap:22px;overflow-y:auto;padding-bottom:80px;}
+.panel{background:var(--s1);border:1px solid var(--bs);border-radius:12px;overflow:hidden;}
+.ph{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--bs);}
+.pht{font-size:13px;font-weight:600;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.kpi{background:var(--s1);border:1px solid var(--bs);border-radius:10px;padding:15px 17px;transition:border-color .13s;}
+.kpi:hover{border-color:var(--br);}
+.ka{border-left:3px solid var(--acc);}
+.ka .kv{color:var(--acc);}
+.kr{border-left:3px solid var(--red);}
+.kr .kv{color:var(--red);}
+.kl{font-family:DM Mono,monospace;font-size:9px;color:var(--txd);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;}
+.kv{font-family:Fraunces,serif;font-size:26px;line-height:1;}
+.kd{font-size:11px;margin-top:4px;}
+.up{color:var(--grn);}.ne{color:var(--txm);}.dn{color:var(--red);}
+::-webkit-scrollbar{width:3px;}
+
+/* Urgency banner */
+.urgency-banner{
+  background:linear-gradient(135deg,rgba(255,90,74,0.12),rgba(255,90,74,0.04));
+  border:1px solid rgba(255,90,74,0.3);
+  border-radius:12px;padding:16px 20px;
+  display:flex;align-items:center;gap:14px;
+  animation:pulseRed 3s ease-in-out infinite;
+}
+@keyframes pulseRed{0%,100%{box-shadow:0 0 0 0 rgba(255,90,74,0);}50%{box-shadow:0 0 14px rgba(255,90,74,0.12);}}
+
+/* Activity feed */
+.feed-item{display:flex;align-items:flex-start;gap:12px;padding:11px 18px;border-bottom:1px solid var(--bs);transition:background .11s;}
+.feed-item:last-child{border-bottom:none;}
+.feed-item:hover{background:var(--s2);}
+.feed-dot{width:8px;height:8px;border-radius:50%;margin-top:4px;flex-shrink:0;}
+.feed-dot.hot{background:var(--red);}
+.feed-dot.warn{background:var(--amb);}
+.feed-dot.info{background:var(--acc);}
+.feed-dot.neu{background:var(--blu);}
+
+/* Demand bar */
+.demand-bar-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--bs);}
+.demand-bar-row:last-child{border-bottom:none;}
+
+/* Competitor card */
+.comp-card{background:var(--s2);border:1px solid var(--bs);border-radius:10px;padding:14px 16px;transition:border-color .13s;}
+.comp-card:hover{border-color:var(--br);}
+.comp-card.yours{border-color:rgba(184,224,48,0.3);background:var(--ad);}
+
+/* Area chip */
+.area-chip{padding:6px 14px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--bs);background:var(--s2);color:var(--txm);transition:all .12s;font-weight:500;}
+.area-chip:hover{border-color:var(--br);color:var(--tx);}
+.area-chip.active{background:var(--ad);border-color:var(--br);color:var(--acc);}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="lm">C</div>
+  <div class="lt">Chloe<b>IQ</b></div>
+  <div class="sep"></div>
+  <div class="pt">Market <em>Pulse</em></div>
+  <div style="font-size:12px;color:var(--txm);background:var(--s2);border:1px solid var(--bs);border-radius:20px;padding:4px 12px;">Jordan Lee · Refined Modern</div>
+  <div class="tr">
+    <button class="btn bs2" id="mp-alert">🔔 Set Alert</button>
+    <button class="btn bp" id="mp-report">Get Full Report</button>
+  </div>
+</header>
+
+<div class="main">
+
+  <!-- Urgency Banner -->
+  <div class="urgency-banner" id="mp-banner">
+    <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,90,74,0.15);border:1px solid rgba(255,90,74,0.3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">⚠️</div>
+    <div style="flex:1;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
+        <span style="font-size:13px;font-weight:600;color:#EEF0E5;">2847 Magnolia Drive</span>
+        <span style="font-size:10px;font-family:DM Mono,monospace;color:#B8E030;background:rgba(184,224,48,0.1);border:1px solid rgba(184,224,48,0.2);padding:2px 8px;border-radius:10px;">87% MATCH · YOUR #1</span>
+        <span style="font-size:10px;font-family:DM Mono,monospace;color:#FF5A4A;background:rgba(255,90,74,0.1);border:1px solid rgba(255,90,74,0.25);padding:2px 8px;border-radius:10px;">⏱ DAY 11 OF 11 AVG</span>
+      </div>
+      <div style="font-size:12px;color:var(--txm);">This home has been listed <span style="color:var(--red);font-weight:600;">11 days</span> — identical homes in 75022 go under contract in 11 days on average · 14 buyers have it saved · 3 showings scheduled today · Your window is closing</div>
+    </div>
+    <button class="btn bp" style="flex-shrink:0;font-size:12px;white-space:nowrap;" id="mp-act">Act on This Home →</button>
+  </div>
+
+  <!-- KPI Row -->
+  <div class="g4">
+    <div class="kpi ka">
+      <div class="kl">Active Buyers Like You</div>
+      <div class="kv" id="kpi-buyers">47</div>
+      <div class="kd up">↑ 12 joined this week</div>
+    </div>
+    <div class="kpi kr">
+      <div class="kl">Avg Days on Market</div>
+      <div class="kv" id="kpi-dom">11</div>
+      <div class="kd dn">↓ from 18 last month</div>
+    </div>
+    <div class="kpi" style="border-left:3px solid var(--amb);">
+      <div class="kl">Offers This Week</div>
+      <div class="kv" style="color:var(--amb);" id="kpi-offers">9</div>
+      <div class="kd" style="color:var(--amb);">On homes matching your profile</div>
+    </div>
+    <div class="kpi">
+      <div class="kl">Your Match Tier</div>
+      <div class="kv" style="font-size:16px;">Top 8%</div>
+      <div class="kd ne">Refined Modern · DFW</div>
+    </div>
+  </div>
+
+  <!-- Area Filter -->
+  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+    <span style="font-size:11px;color:var(--txm);font-family:DM Mono,monospace;letter-spacing:0.06em;text-transform:uppercase;margin-right:4px;">Your Areas</span>
+    <div class="area-chip active" data-area="flower-mound">Flower Mound</div>
+    <div class="area-chip" data-area="southlake">Southlake</div>
+    <div class="area-chip" data-area="colleyville">Colleyville</div>
+    <div class="area-chip" data-area="frisco">Frisco</div>
+    <div class="area-chip" data-area="grapevine">Grapevine</div>
+  </div>
+
+  <!-- Row 1: Demand Map + Live Activity -->
+  <div class="g2">
+
+    <!-- Demand Map (SVG) -->
+    <div class="panel">
+      <div class="ph">
+        <span class="pht">Buyer Demand by ZIP</span>
+        <span style="font-size:11px;color:var(--txm);font-family:DM Mono,monospace;">DFW Metroplex · Live</span>
+      </div>
+      <!-- Column headers -->
+      <div style="display:grid;grid-template-columns:1fr 90px 72px 80px 90px;gap:8px;padding:8px 18px;border-bottom:1px solid var(--bs);">
+        <span style="font-size:10px;color:var(--txd);text-transform:uppercase;letter-spacing:0.06em;font-family:DM Mono,monospace;">Area</span>
+        <span style="font-size:10px;color:var(--txd);text-transform:uppercase;letter-spacing:0.06em;font-family:DM Mono,monospace;">Demand</span>
+        <span style="font-size:10px;color:var(--txd);text-transform:uppercase;letter-spacing:0.06em;font-family:DM Mono,monospace;">Score</span>
+        <span style="font-size:10px;color:var(--txd);text-transform:uppercase;letter-spacing:0.06em;font-family:DM Mono,monospace;">Avg DOM</span>
+        <span style="font-size:10px;color:var(--txd);text-transform:uppercase;letter-spacing:0.06em;font-family:DM Mono,monospace;">Trend</span>
+      </div>
+      <div id="mp-zip-table"></div>
+    </div>
+
+    <!-- Live Activity Feed -->
+    <div class="panel">
+      <div class="ph">
+        <span class="pht">
+          <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--red);margin-right:6px;animation:pulseRed 1.5s infinite;"></span>
+          Live Activity Feed
+        </span>
+        <span style="font-size:11px;color:var(--acc);cursor:pointer;" id="mp-pause">Pause</span>
+      </div>
+      <div id="mp-feed" style="max-height:262px;overflow-y:auto;"></div>
+    </div>
+
+  </div>
+
+  <!-- Row 2: Competition Intel + DNA Demand -->
+  <div class="g2">
+
+    <!-- Homes Being Watched -->
+    <div class="panel">
+      <div class="ph">
+        <span class="pht">Homes Being Watched Right Now</span>
+        <span style="font-size:11px;color:var(--txm);">Matching your DNA + budget</span>
+      </div>
+      <div style="padding:12px 0;" id="mp-watched"></div>
+    </div>
+
+    <!-- DNA Demand Breakdown -->
+    <div class="panel">
+      <div class="ph">
+        <span class="pht">Buyer DNA Competition</span>
+        <span style="font-size:11px;color:var(--txm);">Who else is searching your area</span>
+      </div>
+      <div style="padding:16px 20px;" id="mp-dna"></div>
+    </div>
+
+  </div>
+
+  <!-- Row 3: Price Velocity + Chloe's Advice -->
+  <div class="g2">
+
+    <!-- Price Velocity Chart -->
+    <div class="panel">
+      <div class="ph">
+        <span class="pht">List Price vs. Sale Price · 90 Days</span>
+        <span style="font-size:11px;color:var(--txm);">Your match tier · Flower Mound</span>
+      </div>
+      <div style="padding:16px 20px 14px;">
+        <canvas id="mp-velocity" height="150" style="width:100%;display:block;"></canvas>
+      </div>
+    </div>
+
+    <!-- Chloe's Market Advice -->
+    <div class="panel">
+      <div class="ph">
+        <span class="pht" style="display:flex;align-items:center;gap:7px;">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="var(--acc)"><circle cx="12" cy="12" r="10"/></svg>
+          Chloe's Advice for Jordan
+        </span>
+        <span style="font-size:10px;font-family:DM Mono,monospace;color:var(--acc);background:var(--ad);border:1px solid var(--br);padding:2px 8px;border-radius:20px;">Live</span>
+      </div>
+      <div id="mp-advice" style="padding:4px 0;"></div>
+    </div>
+
+  </div>
+
+  <!-- Row 4: Recent MLS Closings -->
+  <div class="panel">
+    <div class="ph" style="flex-wrap:wrap;gap:10px;">
+      <div>
+        <span class="pht" style="display:flex;align-items:center;gap:8px;">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--acc)" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Recent Closed Sales · MLS Data
+        </span>
+        <div style="font-size:11px;color:var(--txm);margin-top:3px;">Refined Modern DNA match tier · Flower Mound &amp; surrounding areas · Last 90 days</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;margin-left:auto;">
+        <div style="display:flex;gap:0;border:1px solid var(--bs);border-radius:8px;overflow:hidden;">
+          <button class="mls-filter active-filter" data-filter="all"   style="padding:5px 12px;font-size:11px;border:none;background:var(--ad);color:var(--acc);cursor:pointer;font-family:DM Sans,sans-serif;">All</button>
+          <button class="mls-filter"               data-filter="match" style="padding:5px 12px;font-size:11px;border:none;border-left:1px solid var(--bs);background:transparent;color:var(--txm);cursor:pointer;font-family:DM Sans,sans-serif;">High Match</button>
+          <button class="mls-filter"               data-filter="zip"   style="padding:5px 12px;font-size:11px;border:none;border-left:1px solid var(--bs);background:transparent;color:var(--txm);cursor:pointer;font-family:DM Sans,sans-serif;">75022 Only</button>
+        </div>
+        <span style="font-size:11px;color:var(--txm);font-family:DM Mono,monospace;" id="mls-count">Showing 8 closings</span>
+      </div>
+    </div>
+
+    <!-- Summary stat strip -->
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);border-bottom:1px solid var(--bs);border-top:1px solid var(--bs);">
+      <div style="padding:12px 0;text-align:center;border-right:1px solid var(--bs);">
+        <div style="font-family:Fraunces,serif;font-size:20px;color:var(--acc);">$741K</div>
+        <div style="font-size:9px;color:var(--txd);text-transform:uppercase;letter-spacing:0.07em;font-family:DM Mono,monospace;margin-top:2px;">Avg Closed Price</div>
+      </div>
+      <div style="padding:12px 0;text-align:center;border-right:1px solid var(--bs);">
+        <div style="font-family:Fraunces,serif;font-size:20px;color:var(--red);">101.3%</div>
+        <div style="font-size:9px;color:var(--txd);text-transform:uppercase;letter-spacing:0.07em;font-family:DM Mono,monospace;margin-top:2px;">Avg List-to-Sale</div>
+      </div>
+      <div style="padding:12px 0;text-align:center;border-right:1px solid var(--bs);">
+        <div style="font-family:Fraunces,serif;font-size:20px;color:var(--amb);">11 days</div>
+        <div style="font-size:9px;color:var(--txd);text-transform:uppercase;letter-spacing:0.07em;font-family:DM Mono,monospace;margin-top:2px;">Avg Days on Market</div>
+      </div>
+      <div style="padding:12px 0;text-align:center;border-right:1px solid var(--bs);">
+        <div style="font-family:Fraunces,serif;font-size:20px;color:var(--acc);">23 days</div>
+        <div style="font-size:9px;color:var(--txd);text-transform:uppercase;letter-spacing:0.07em;font-family:DM Mono,monospace;margin-top:2px;">Avg Showing → Close</div>
+      </div>
+      <div style="padding:12px 0;text-align:center;">
+        <div style="font-family:Fraunces,serif;font-size:20px;color:var(--grn);">94%</div>
+        <div style="font-size:9px;color:var(--txd);text-transform:uppercase;letter-spacing:0.07em;font-family:DM Mono,monospace;margin-top:2px;">Buyers Who Moved Fast Won</div>
+      </div>
+    </div>
+
+    <!-- Column headers -->
+    <div style="display:grid;grid-template-columns:2fr 110px 90px 90px 80px 90px 110px;gap:8px;padding:8px 18px;border-bottom:1px solid var(--bs);">
+      <span style="font-size:10px;color:var(--txd);text-transform:uppercase;letter-spacing:0.06em;font-family:DM Mono,monospace;">Address</span>
+      <span style="font-size:10px;color:var(--txd);text-transform:uppercase;letter-spacing:0.06em;font-family:DM Mono,monospace;">Closed</span>
+      <span style="font-size:10px;color:var(--txd);text-transform:uppercase;letter-spacing:0.06em;font-family:DM Mono,monospace;">List Price</span>
+      <span style="font-size:10px;color:var(--txd);text-transform:uppercase;letter-spacing:0.06em;font-family:DM Mono,monospace;">Sold Price</span>
+      <span style="font-size:10px;color:var(--txd);text-transform:uppercase;letter-spacing:0.06em;font-family:DM Mono,monospace;">DOM</span>
+      <span style="font-size:10px;color:var(--txd);text-transform:uppercase;letter-spacing:0.06em;font-family:DM Mono,monospace;">DNA Match</span>
+      <span style="font-size:10px;color:var(--txd);text-transform:uppercase;letter-spacing:0.06em;font-family:DM Mono,monospace;">vs Your Search</span>
+    </div>
+
+    <div id="mls-table"></div>
+
+    <!-- Chloe insight strip -->
+    <div style="padding:12px 18px;background:rgba(184,224,48,0.03);border-top:1px solid var(--bs);display:flex;align-items:flex-start;gap:10px;">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="var(--acc)" style="margin-top:3px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/></svg>
+      <div style="font-size:12px;color:var(--txm);line-height:1.6;">
+        <strong style="color:var(--tx);">Chloe's read on these closings:</strong> Refined Modern buyers in your budget tier who moved within 7 days of their first showing won 94% of the time — and paid an average of 101.3% of list. Buyers who waited past 14 days saw their target homes go under contract 71% of the time. Your 87% match on Magnolia Drive puts you in the same profile as the buyers who closed the 4 comps above it.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function toast(msg,type){var o=document.getElementById('_t');if(o)o.remove();var t=document.createElement('div');t.id='_t';t.textContent=msg;var bg=type==='ok'?'#B8E030':'#1A1E12';var c=type==='ok'?'#0A0B07':'#EEF0E5';t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:'+bg+';color:'+c+';padding:10px 20px;border-radius:8px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all .2s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.4);border:1px solid rgba(184,224,48,.15);';document.body.appendChild(t);requestAnimationFrame(function(){t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';});t._x=setTimeout(function(){t.style.opacity='0';},2600);}
+
+// ── DATA ────────────────────────────────────────────────────────────────────
+
+var feedEvents = [
+  { type:'hot',  text:'<strong>Showing surge</strong> · 2847 Magnolia Drive has 3 showings scheduled today · High buyer interest', time:'just now' },
+  { type:'warn', text:'<strong>47 buyers</strong> saved a home matching your profile in the last 24 hrs', time:'2 min ago' },
+  { type:'info', text:'<strong>1105 Ridgecrest Lane</strong> price reduced $15K · Now $850K', time:'8 min ago' },
+  { type:'hot',  text:'<strong>Bidding war</strong> on 3820 Summit Ridge · 4 offers received', time:'14 min ago' },
+  { type:'neu',  text:'<strong>New listing</strong> matching your DNA — 2201 Brookside Ct, Flower Mound · $698K', time:'22 min ago' },
+  { type:'warn', text:'<strong>Refined Modern inventory</strong> in 75022 down 18% vs last month', time:'31 min ago' },
+  { type:'info', text:'<strong>Open house announced</strong> — 812 Cedar Hollow, Southlake · This Saturday 1–4 PM', time:'45 min ago' },
+  { type:'hot',  text:'<strong>3 buyers</strong> with your DNA toured 1445 Clearwater Ct today', time:'1 hr ago' },
+  { type:'neu',  text:'<strong>Avg list-to-sale ratio</strong> in your tier hit 101.3% this week — homes selling over ask', time:'2 hrs ago' },
+  { type:'warn', text:'<strong>504 Lakeview Court</strong> back on market after failed contract', time:'3 hrs ago' },
+];
+
+var watchedHomes = [
+  { addr:'2847 Magnolia Drive',  area:'Flower Mound', price:'$724K', match:87, watchers:14, offers:1, dom:0,  status:'live',   yours:true },
+  { addr:'1445 Clearwater Ct',   area:'Colleyville',  price:'$891K', match:82, watchers:21, offers:0, dom:8,  status:'active', yours:false },
+  { addr:'3820 Summit Ridge',    area:'Southlake',    price:'$1.05M',match:78, watchers:31, offers:4, dom:22, status:'hot',    yours:false },
+  { addr:'2201 Brookside Ct',    area:'Flower Mound', price:'$698K', match:76, watchers:8,  offers:0, dom:1,  status:'new',    yours:false },
+  { addr:'812 Cedar Hollow',     area:'Southlake',    price:'$779K', match:72, watchers:17, offers:2, dom:15, status:'active', yours:false },
+];
+
+var dnaCompetition = [
+  { dna:'Refined Modern',    count:47, pct:100, yours:true },
+  { dna:'Coastal Luxe',      count:31, pct:66,  yours:false },
+  { dna:'Warm Organic',      count:24, pct:51,  yours:false },
+  { dna:'Bold Eclectic',     count:18, pct:38,  yours:false },
+  { dna:'Classic Traditional',count:12,pct:26,  yours:false },
+  { dna:'Urban Industrial',  count:7,  pct:15,  yours:false },
+];
+
+var velocityData = {
+  labels: ['Nov','Dec','Jan','Feb','Mar','Apr'],
+  list:   [715, 728, 742, 751, 760, 772],
+  sale:   [718, 735, 749, 762, 774, 783],
+};
+
+var advice = [
+  { icon:'⚡', color:'var(--red)',  text:'<strong>Move within 7 days.</strong> The 75022 ZIP has had 3 offers this week on Refined Modern homes at your price point. At 11 days avg DOM, waiting costs you listings.' },
+  { icon:'📊', color:'var(--amb)', text:'<strong>Offer above ask.</strong> Homes in your match tier are closing at 101.3% of list price. Budget for at least $10–15K over list on a strong match.' },
+  { icon:'💡', color:'var(--acc)', text:'<strong>Your strongest window is now.</strong> Spring inventory in Flower Mound peaks in 3 weeks — more competition, not less. This is the best selection you\'ll see before summer.' },
+  { icon:'🎯', color:'var(--blu)', text:'<strong>Magnolia Drive is your best shot.</strong> 87% match, 14 buyers watching, 3 showings today — and it\'s at the average DOM threshold for this ZIP. A showing request now puts you ahead of the queue.' },
+];
+
+// ── RENDER ──────────────────────────────────────────────────────────────────
+
+function renderFeed() {
+  var el = document.getElementById('mp-feed');
+  if (!el) return;
+  el.innerHTML = feedEvents.map(function(e) {
+    return '<div class="feed-item">'
+      + '<div class="feed-dot ' + e.type + '"></div>'
+      + '<div style="flex:1;font-size:12.5px;color:var(--txm);line-height:1.5;">' + e.text + '</div>'
+      + '<div style="font-size:10px;font-family:DM Mono,monospace;color:var(--txd);flex-shrink:0;margin-left:8px;">' + e.time + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+function renderWatched() {
+  var el = document.getElementById('mp-watched');
+  if (!el) return;
+  el.innerHTML = watchedHomes.map(function(h) {
+    var statusColor = h.status === 'hot' ? 'var(--red)' : h.status === 'new' ? 'var(--acc)' : h.status === 'live' ? 'var(--grn)' : 'var(--txm)';
+    var statusLabel = h.status === 'hot' ? '🔥 HOT' : h.status === 'new' ? '✦ NEW' : h.status === 'live' ? '● LIVE' : 'ACTIVE';
+    return '<div style="display:flex;align-items:center;gap:12px;padding:10px 18px;border-bottom:1px solid var(--bs);transition:background .11s;cursor:pointer;" onmouseover="this.style.background=\'var(--s2)\'" onmouseout="this.style.background=\'\'">'
+      + '<div style="flex:1;">'
+      + '<div style="font-size:13px;font-weight:500;color:' + (h.yours ? 'var(--acc)' : 'var(--tx)') + ';">' + h.addr + (h.yours ? ' <span style="font-size:10px;font-family:DM Mono,monospace;background:var(--ad);border:1px solid var(--br);padding:1px 7px;border-radius:20px;color:var(--acc);">YOURS</span>' : '') + '</div>'
+      + '<div style="font-size:11px;color:var(--txm);margin-top:1px;">' + h.area + ' · ' + h.price + ' · ' + (h.dom === 0 ? 'Listed today' : h.dom + 'd on market') + '</div>'
+      + '</div>'
+      + '<div style="text-align:right;flex-shrink:0;">'
+      + '<div style="font-family:Fraunces,serif;font-size:18px;color:var(--acc);">' + h.match + '%</div>'
+      + '<div style="font-size:10px;font-family:DM Mono,monospace;color:' + statusColor + ';margin-top:2px;">' + statusLabel + '</div>'
+      + '</div>'
+      + '<div style="text-align:right;flex-shrink:0;min-width:60px;">'
+      + '<div style="font-size:12px;color:var(--txm);">👀 ' + h.watchers + '</div>'
+      + '<div style="font-size:11px;color:' + (h.offers > 0 ? 'var(--red)' : 'var(--txd)') + ';margin-top:2px;">' + (h.offers > 0 ? h.offers + ' offer' + (h.offers > 1 ? 's' : '') : 'No offers') + '</div>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+function renderDNA() {
+  var el = document.getElementById('mp-dna');
+  if (!el) return;
+  el.innerHTML = dnaCompetition.map(function(d) {
+    return '<div style="margin-bottom:12px;">'
+      + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">'
+      + '<div style="display:flex;align-items:center;gap:8px;">'
+      + '<span style="font-size:12px;color:' + (d.yours ? 'var(--acc)' : 'var(--txm)') + ';font-weight:' + (d.yours ? '600' : '400') + ';">' + d.dna + '</span>'
+      + (d.yours ? '<span style="font-size:9px;font-family:DM Mono,monospace;color:var(--acc);background:var(--ad);border:1px solid var(--br);padding:1px 6px;border-radius:10px;">YOU</span>' : '')
+      + '</div>'
+      + '<span style="font-size:11px;font-family:DM Mono,monospace;color:' + (d.yours ? 'var(--red)' : 'var(--txd)') + ';">' + d.count + ' buyers</span>'
+      + '</div>'
+      + '<div style="height:4px;background:var(--s3);border-radius:2px;overflow:hidden;">'
+      + '<div style="height:4px;background:' + (d.yours ? 'var(--red)' : 'var(--acc)') + ';opacity:' + (d.yours ? '1' : '0.4') + ';width:' + d.pct + '%;border-radius:2px;transition:width 0.8s ease;"></div>'
+      + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+function renderVelocity() {
+  var canvas = document.getElementById('mp-velocity');
+  if (!canvas) return;
+  canvas.width = canvas.offsetWidth || 480;
+  canvas.height = 150;
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width, H = 150;
+  var pad = { top:12, right:16, bottom:28, left:52 };
+  var iW = W - pad.left - pad.right;
+  var iH = H - pad.top - pad.bottom;
+  var n = velocityData.labels.length;
+
+  ctx.clearRect(0, 0, W, H);
+
+  var allVals = velocityData.list.concat(velocityData.sale);
+  var minV = Math.min.apply(null, allVals) * 0.995;
+  var maxV = Math.max.apply(null, allVals) * 1.005;
+
+  function xPos(i) { return pad.left + (i / (n-1)) * iW; }
+  function yPos(v)  { return pad.top + iH - ((v - minV) / (maxV - minV)) * iH; }
+
+  // Gridlines
+  ctx.strokeStyle = 'rgba(238,240,229,0.04)';
+  ctx.lineWidth = 1;
+  for (var g = 0; g <= 3; g++) {
+    var gy = pad.top + (g / 3) * iH;
+    ctx.beginPath(); ctx.moveTo(pad.left, gy); ctx.lineTo(W - pad.right, gy); ctx.stroke();
+  }
+
+  // X labels
+  ctx.fillStyle = '#4A5040';
+  ctx.font = '10px DM Mono, monospace';
+  ctx.textAlign = 'center';
+  velocityData.labels.forEach(function(l, i) { ctx.fillText(l, xPos(i), H - 6); });
+
+  // Y labels
+  ctx.textAlign = 'right';
+  for (var yi = 0; yi <= 3; yi++) {
+    var yv = minV + ((maxV - minV) / 3) * (3 - yi);
+    ctx.fillText('$' + Math.round(yv) + 'K', pad.left - 6, pad.top + (yi / 3) * iH + 4);
+  }
+
+  // List price line (muted)
+  ctx.beginPath();
+  velocityData.list.forEach(function(v, i) { i===0 ? ctx.moveTo(xPos(i),yPos(v)) : ctx.lineTo(xPos(i),yPos(v)); });
+  ctx.strokeStyle = 'rgba(184,224,48,0.3)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([4,4]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Sale price line (solid accent)
+  ctx.beginPath();
+  velocityData.sale.forEach(function(v, i) { i===0 ? ctx.moveTo(xPos(i),yPos(v)) : ctx.lineTo(xPos(i),yPos(v)); });
+  ctx.strokeStyle = '#B8E030';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+
+  // Dots on sale price
+  ctx.fillStyle = '#B8E030';
+  velocityData.sale.forEach(function(v, i) {
+    ctx.beginPath(); ctx.arc(xPos(i), yPos(v), 3.5, 0, Math.PI*2); ctx.fill();
+  });
+
+  // Legend
+  ctx.font = '10px DM Mono, monospace';
+  ctx.textAlign = 'left';
+  ctx.fillStyle = 'rgba(184,224,48,0.5)';
+  ctx.fillRect(pad.left, pad.top - 2, 16, 2);
+  ctx.fillStyle = '#4A5040';
+  ctx.fillText('List Price', pad.left + 20, pad.top + 4);
+  ctx.strokeStyle = '#B8E030';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath(); ctx.moveTo(pad.left + 90, pad.top - 1); ctx.lineTo(pad.left + 106, pad.top - 1); ctx.stroke();
+  ctx.fillStyle = '#B8E030';
+  ctx.fillText('Sale Price', pad.left + 110, pad.top + 4);
+}
+
+function renderZipTable() {
+  var el = document.getElementById('mp-zip-table');
+  if (!el) return;
+
+  var zones = [
+    { zip:'75022', area:'Flower Mound',  city:'TX', demand:88, dom:11, trend:'+14%', yours:true  },
+    { zip:'75025', area:'Frisco',        city:'TX', demand:82, dom:13, trend:'+9%',  yours:false },
+    { zip:'76092', area:'Southlake',     city:'TX', demand:76, dom:15, trend:'+6%',  yours:false },
+    { zip:'76034', area:'Colleyville',   city:'TX', demand:61, dom:19, trend:'+2%',  yours:false },
+    { zip:'75056', area:'The Colony',    city:'TX', demand:69, dom:17, trend:'+4%',  yours:false },
+    { zip:'75028', area:'Flwr Mnd South',city:'TX', demand:54, dom:22, trend:'-1%',  yours:false },
+    { zip:'75024', area:'Plano North',   city:'TX', demand:58, dom:20, trend:'+1%',  yours:false },
+    { zip:'76051', area:'Grapevine',     city:'TX', demand:45, dom:26, trend:'-3%',  yours:false },
+    { zip:'76262', area:'Roanoke',       city:'TX', demand:43, dom:28, trend:'-2%',  yours:false },
+    { zip:'76048', area:'Granbury',      city:'TX', demand:37, dom:33, trend:'-5%',  yours:false },
+  ];
+
+  function demandLabel(d) {
+    if (d >= 80) return { label:'Very High', color:'#FF5A4A', bg:'rgba(255,90,74,0.1)' };
+    if (d >= 60) return { label:'High',      color:'#F5A623', bg:'rgba(245,166,35,0.1)' };
+    if (d >= 40) return { label:'Moderate',  color:'#B8E030', bg:'rgba(184,224,48,0.1)' };
+    return               { label:'Low',      color:'#60A5FA', bg:'rgba(96,165,250,0.1)' };
+  }
+
+  function trendColor(t) {
+    return t.startsWith('+') ? '#4ADE80' : t === '0%' ? '#8A8F7A' : '#FF5A4A';
+  }
+
+  el.innerHTML = zones.map(function(z) {
+    var dl = demandLabel(z.demand);
+    var barW = z.demand;
+    var rowBg = z.yours ? 'background:rgba(184,224,48,0.04);' : '';
+    return '<div style="display:grid;grid-template-columns:1fr 90px 72px 80px 90px;gap:8px;padding:10px 18px;border-bottom:1px solid var(--bs);align-items:center;transition:background 0.11s;' + rowBg + '" onmouseover="this.style.background=\'var(--s2)\'" onmouseout="this.style.background=\'' + (z.yours ? 'rgba(184,224,48,0.04)' : '') + '\'">'
+
+      // Area
+      + '<div>'
+      + '<div style="display:flex;align-items:center;gap:7px;">'
+      + '<span style="font-size:13px;font-weight:500;color:' + (z.yours ? 'var(--acc)' : 'var(--tx)') + ';">' + z.area + '</span>'
+      + (z.yours ? '<span style="font-size:9px;font-family:DM Mono,monospace;color:var(--acc);background:var(--ad);border:1px solid var(--br);padding:1px 6px;border-radius:10px;">YOUR AREA</span>' : '')
+      + '</div>'
+      + '<div style="font-size:10px;color:var(--txd);font-family:DM Mono,monospace;margin-top:2px;">' + z.zip + '</div>'
+      + '</div>'
+
+      // Demand pill + bar
+      + '<div>'
+      + '<span style="font-size:11px;font-family:DM Mono,monospace;color:' + dl.color + ';background:' + dl.bg + ';padding:3px 8px;border-radius:4px;">' + dl.label + '</span>'
+      + '</div>'
+
+      // Score with mini bar
+      + '<div>'
+      + '<div style="font-family:Fraunces,serif;font-size:16px;color:' + dl.color + ';line-height:1;">' + z.demand + '%</div>'
+      + '<div style="height:3px;background:var(--s3);border-radius:2px;margin-top:4px;overflow:hidden;">'
+      + '<div style="height:3px;background:' + dl.color + ';width:' + barW + '%;border-radius:2px;"></div>'
+      + '</div>'
+      + '</div>'
+
+      // Avg DOM
+      + '<div style="font-family:DM Mono,monospace;font-size:13px;color:' + (z.dom <= 15 ? '#FF5A4A' : z.dom <= 22 ? '#F5A623' : 'var(--txm)') + ';">' + z.dom + ' days</div>'
+
+      // Trend
+      + '<div style="font-family:DM Mono,monospace;font-size:12px;color:' + trendColor(z.trend) + ';">' + z.trend + ' <span style="font-size:10px;color:var(--txd);">vs last mo.</span></div>'
+
+      + '</div>';
+  }).join('');
+}
+
+
+// ── RECENT MLS CLOSINGS ────────────────────────────────────────────────────
+var mlsClosings = [
+  {
+    addr:'2901 Ridgeview Ln',    zip:'75022', city:'Flower Mound',
+    closed:'Apr 18, 2026', list:719000, sold:738000, dom:8,
+    beds:4, baths:3,   sqft:'3,180',
+    dna:'Refined Modern', dnaMatch:91,
+    relevance:'high', note:'Sold $19K over ask in 8 days — nearly identical profile to Magnolia Dr'
+  },
+  {
+    addr:'1204 Ashford Ridge Rd', zip:'75022', city:'Flower Mound',
+    closed:'Apr 12, 2026', list:695000, sold:708000, dom:11,
+    beds:4, baths:3.5, sqft:'2,980',
+    dna:'Refined Modern', dnaMatch:88,
+    relevance:'high', note:'Open concept + smart home features. Matched your top 4 must-haves'
+  },
+  {
+    addr:'3140 Briarwood Ct',    zip:'75022', city:'Flower Mound',
+    closed:'Apr 3, 2026',  list:742000, sold:742000, dom:14,
+    beds:5, baths:4,   sqft:'3,450',
+    dna:'Coastal Luxe',    dnaMatch:72,
+    relevance:'mid',  note:'Larger footprint, different DNA — useful price anchor for the ZIP'
+  },
+  {
+    addr:'811 Clearbrook Dr',    zip:'76092', city:'Southlake',
+    closed:'Mar 28, 2026', list:868000, sold:895000, dom:7,
+    beds:5, baths:4.5, sqft:'3,890',
+    dna:'Refined Modern', dnaMatch:84,
+    relevance:'high', note:'Southlake comp — shows what your DNA tier looks like at $850K+'
+  },
+  {
+    addr:'422 Heatherton Way',   zip:'75022', city:'Flower Mound',
+    closed:'Mar 22, 2026', list:724000, sold:731000, dom:9,
+    beds:4, baths:3,   sqft:'3,060',
+    dna:'Warm Organic',   dnaMatch:68,
+    relevance:'mid',  note:'Same ZIP and price as Magnolia Dr — different DNA, still useful DOM comp'
+  },
+  {
+    addr:'2047 Stonebrook Blvd', zip:'75025', city:'Frisco',
+    closed:'Mar 15, 2026', list:698000, sold:712000, dom:10,
+    beds:4, baths:3.5, sqft:'3,120',
+    dna:'Refined Modern', dnaMatch:86,
+    relevance:'high', note:'Frisco Refined Modern buyer — closed in 10 days, 2% over ask'
+  },
+  {
+    addr:'519 Elmwood Pl',       zip:'75022', city:'Flower Mound',
+    closed:'Mar 8, 2026',  list:659000, sold:659000, dom:18,
+    beds:3, baths:2.5, sqft:'2,620',
+    dna:'Bold Eclectic',  dnaMatch:55,
+    relevance:'low',  note:'Took longer to close — different DNA and smaller footprint than your profile'
+  },
+  {
+    addr:'1388 Lakemont Dr',     zip:'76034', city:'Colleyville',
+    closed:'Feb 28, 2026', list:885000, sold:871000, dom:22,
+    beds:5, baths:4,   sqft:'4,100',
+    dna:'Classic Traditional', dnaMatch:61,
+    relevance:'low',  note:'Slower close, below ask — different DNA tier and higher price band'
+  },
+];
+
+var activeFilter = 'all';
+
+function filteredClosings() {
+  if (activeFilter === 'match') return mlsClosings.filter(function(c) { return c.dnaMatch >= 80; });
+  if (activeFilter === 'zip')   return mlsClosings.filter(function(c) { return c.zip === '75022'; });
+  return mlsClosings;
+}
+
+function renderClosings() {
+  var el = document.getElementById('mls-table');
+  var countEl = document.getElementById('mls-count');
+  if (!el) return;
+
+  var rows = filteredClosings();
+  if (countEl) countEl.textContent = 'Showing ' + rows.length + ' closing' + (rows.length !== 1 ? 's' : '');
+
+  if (rows.length === 0) {
+    el.innerHTML = '<div style="padding:24px;text-align:center;color:var(--txm);font-size:13px;">No closings match this filter.</div>';
+    return;
+  }
+
+  el.innerHTML = rows.map(function(c) {
+    var over = c.sold - c.list;
+    var overPct = ((c.sold / c.list) * 100).toFixed(1);
+    var overColor = c.sold > c.list ? 'var(--red)' : c.sold < c.list ? 'var(--grn)' : 'var(--txm)';
+    var overLabel = c.sold > c.list ? '+$' + (over/1000).toFixed(0) + 'K over ask' : c.sold < c.list ? '-$' + (Math.abs(over)/1000).toFixed(0) + 'K under ask' : 'At ask';
+    var domColor = c.dom <= 10 ? 'var(--red)' : c.dom <= 16 ? 'var(--amb)' : 'var(--txm)';
+    var relBg = c.relevance === 'high' ? 'rgba(184,224,48,0.04)' : '';
+    var dnaColor = c.dnaMatch >= 85 ? 'var(--acc)' : c.dnaMatch >= 70 ? 'var(--amb)' : 'var(--txm)';
+
+    // Relevance tag
+    var relTag = c.relevance === 'high'
+      ? '<span style="font-size:9px;font-family:DM Mono,monospace;color:var(--acc);background:var(--ad);border:1px solid var(--br);padding:1px 6px;border-radius:10px;margin-left:6px;">STRONG COMP</span>'
+      : c.relevance === 'mid'
+      ? '<span style="font-size:9px;font-family:DM Mono,monospace;color:var(--amb);background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.2);padding:1px 6px;border-radius:10px;margin-left:6px;">USEFUL COMP</span>'
+      : '';
+
+    return '<div style="display:grid;grid-template-columns:2fr 110px 90px 90px 80px 90px 110px;gap:8px;padding:11px 18px;border-bottom:1px solid var(--bs);align-items:start;background:' + relBg + ';transition:background 0.11s;cursor:pointer;" class="mls-row" onmouseover="if(!this.dataset.base)this.dataset.base=this.style.background;this.style.background=\'var(--s2)\'" onmouseout="this.style.background=this.dataset.base||\'\';">'
+
+      // Address + note
+      + '<div>'
+      + '<div style="display:flex;align-items:center;flex-wrap:wrap;">'
+      + '<span style="font-size:13px;font-weight:500;color:var(--tx);">' + c.addr + '</span>'
+      + relTag
+      + '</div>'
+      + '<div style="font-size:10px;color:var(--txd);font-family:DM Mono,monospace;margin-top:1px;">' + c.zip + ' · ' + c.city + ' · ' + c.beds + 'bd / ' + c.baths + 'ba / ' + c.sqft + ' sqft</div>'
+      + '<div style="font-size:11px;color:var(--txm);margin-top:4px;line-height:1.4;font-style:italic;">' + c.note + '</div>'
+      + '</div>'
+
+      // Closed date
+      + '<div style="font-size:11px;color:var(--txm);font-family:DM Mono,monospace;line-height:1.4;">' + c.closed + '</div>'
+
+      // List price
+      + '<div style="font-size:12px;color:var(--txm);font-family:DM Mono,monospace;">$' + (c.list/1000).toFixed(0) + 'K</div>'
+
+      // Sold price
+      + '<div>'
+      + '<div style="font-size:13px;font-weight:500;color:var(--tx);font-family:DM Mono,monospace;">$' + (c.sold/1000).toFixed(0) + 'K</div>'
+      + '<div style="font-size:10px;color:' + overColor + ';margin-top:2px;">' + overLabel + '</div>'
+      + '</div>'
+
+      // DOM
+      + '<div style="font-family:Fraunces,serif;font-size:16px;color:' + domColor + ';">' + c.dom + '<span style="font-size:10px;color:var(--txd);font-family:DM Mono,monospace;">d</span></div>'
+
+      // DNA match
+      + '<div>'
+      + '<div style="font-family:Fraunces,serif;font-size:16px;color:' + dnaColor + ';">' + c.dnaMatch + '%</div>'
+      + '<div style="font-size:10px;color:var(--txd);margin-top:1px;">' + c.dna + '</div>'
+      + '</div>'
+
+      // Vs your search
+      + '<div>'
+      + (c.relevance === 'high'
+          ? '<div style="font-size:11px;color:var(--acc);">↑ Strong signal</div><div style="font-size:10px;color:var(--txm);margin-top:2px;">Similar DNA, ZIP, price</div>'
+          : c.relevance === 'mid'
+          ? '<div style="font-size:11px;color:var(--amb);">~ Useful reference</div><div style="font-size:10px;color:var(--txm);margin-top:2px;">Same area, diff profile</div>'
+          : '<div style="font-size:11px;color:var(--txd);">→ Outlier</div><div style="font-size:10px;color:var(--txd);margin-top:2px;">Different DNA tier</div>')
+      + '</div>'
+
+      + '</div>';
+  }).join('');
+}
+
+// Wire filter buttons
+document.querySelectorAll('.mls-filter').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.mls-filter').forEach(function(b) {
+      b.style.background = 'transparent';
+      b.style.color = 'var(--txm)';
+    });
+    btn.style.background = 'var(--ad)';
+    btn.style.color = 'var(--acc)';
+    activeFilter = btn.getAttribute('data-filter');
+    renderClosings();
+  });
+});
+
+function renderAdvice() {
+  var el = document.getElementById('mp-advice');
+  if (!el) return;
+  el.innerHTML = advice.map(function(a) {
+    return '<div style="display:flex;align-items:flex-start;gap:12px;padding:12px 18px;border-bottom:1px solid var(--bs);cursor:pointer;transition:background .12s;" onmouseover="this.style.background=\'var(--s2)\'" onmouseout="this.style.background=\'\'">'
+      + '<div style="width:30px;height:30px;border-radius:8px;background:var(--s3);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">' + a.icon + '</div>'
+      + '<div style="font-size:12px;color:var(--txm);line-height:1.6;">' + a.text + '</div>'
+      + '</div>';
+  }).join('');
+}
+
+// ── LIVE FEED TICKER ─────────────────────────────────────────────────────────
+var feedPaused = false;
+var feedIdx = 0;
+
+function tickFeed() {
+  if (feedPaused) return;
+  // Prepend a new event every 8s
+  var newEvents = [
+    { type:'hot',  text:'<strong>New showing scheduled</strong> at 2847 Magnolia Drive — Refined Modern buyer', time:'just now' },
+    { type:'warn', text:'<strong>Price watch:</strong> 3 homes in 75022 reduced this week — avg drop $12K', time:'just now' },
+    { type:'info', text:'<strong>New match found</strong> — 4401 Westridge Dr, Flower Mound · 84% · $741K', time:'just now' },
+    { type:'neu',  text:'<strong>Open house today 2–5 PM</strong> — 2847 Magnolia Drive is now live', time:'just now' },
+  ];
+  feedEvents.unshift(newEvents[feedIdx % newEvents.length]);
+  feedIdx++;
+  renderFeed();
+}
+
+// ── AREA CHIP FILTER ─────────────────────────────────────────────────────────
+document.querySelectorAll('.area-chip').forEach(function(chip) {
+  chip.addEventListener('click', function() {
+    document.querySelectorAll('.area-chip').forEach(function(c) { c.classList.remove('active'); });
+    chip.classList.add('active');
+    toast('Loading demand data for ' + chip.textContent + '…', '');
+    setTimeout(function() { toast(chip.textContent + ' demand data updated ✓', 'ok'); }, 900);
+  });
+});
+
+// ── BUTTON HANDLERS ──────────────────────────────────────────────────────────
+document.getElementById('mp-act').addEventListener('click', function() {
+  showActNowModal();
+});
+document.getElementById('mp-alert').addEventListener('click', function() {
+  toast('Price alert set · You\'ll be notified of any changes ✓', 'ok');
+});
+document.getElementById('mp-report').addEventListener('click', function() {
+  toast('Generating your personalized market report…', '');
+  setTimeout(function() { toast('Market report ready · Sending to jordan.lee@gmail.com ✓', 'ok'); }, 1400);
+});
+document.getElementById('mp-pause').addEventListener('click', function() {
+  feedPaused = !feedPaused;
+  this.textContent = feedPaused ? 'Resume' : 'Pause';
+  this.style.color = feedPaused ? 'var(--txm)' : 'var(--acc)';
+});
+document.getElementById('mp-banner').addEventListener('click', function(e) {
+  if (!e.target.closest('#mp-act')) {
+    toast('Viewing high-demand listings in your area…', '');
+  }
+});
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  renderFeed();
+  renderWatched();
+  renderDNA();
+  renderAdvice();
+  setTimeout(function() {
+    renderZipTable();
+    renderVelocity();
+    renderClosings();
+  }, 60);
+  setInterval(tickFeed, 8000);
+});
+</script>
+<script src="chloeiq-nav.js"></script>
+<script>
+// ── ACT NOW MODAL ─────────────────────────────────────────────────────────────
+function showActNowModal() {
+  var existing = document.getElementById('_an');
+  if (existing) existing.remove();
+
+  var overlay = document.createElement('div');
+  overlay.id = '_an';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:9990;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:32px 16px;';
+
+  var html = '';
+  html += '<div style="background:#13160D;border:1px solid rgba(255,90,74,0.25);border-radius:16px;width:580px;max-width:95vw;box-shadow:0 28px 80px rgba(0,0,0,0.7);overflow:hidden;">';
+
+  // ── Header ──
+  html += '<div style="background:linear-gradient(135deg,rgba(255,90,74,0.1),rgba(255,90,74,0.03));padding:22px 26px;border-bottom:1px solid rgba(255,90,74,0.15);display:flex;align-items:flex-start;justify-content:space-between;">';
+  html += '<div>';
+  html += '<div style="font-size:10px;font-family:DM Mono,monospace;letter-spacing:0.1em;text-transform:uppercase;color:#FF5A4A;margin-bottom:6px;">⚠ High Competition · Act Within 48 Hours</div>';
+  html += '<div style="font-family:Fraunces,serif;font-size:22px;color:#EEF0E5;line-height:1.1;">Your Next Move on <em style=\'color:#B8E030;font-style:italic;\'>Magnolia Drive</em></div>';
+  html += '<div style="font-size:12px;color:#8A8F7A;margin-top:4px;">2847 Magnolia Drive · Flower Mound, TX · $724,000 · 87% Match</div>';
+  html += '</div>';
+  html += '<button id="_an-x" style="background:none;border:none;color:#8A8F7A;font-size:18px;cursor:pointer;padding:2px 6px;">✕</button>';
+  html += '</div>';
+
+  // ── Urgency stats row ──
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;border-bottom:1px solid rgba(238,240,229,0.06);">';
+  [
+    { val:'14',   label:'Buyers have saved this', color:'#F5A623' },
+    { val:'3',    label:'Showings today',          color:'#F5A623' },
+    { val:'11d',  label:'Listed · avg DOM 11d',   color:'#FF5A4A' },
+    { val:'87%',  label:'Your match score',        color:'#B8E030' },
+  ].forEach(function(s, i) {
+    html += '<div style="padding:14px 0;text-align:center;' + (i < 3 ? 'border-right:1px solid rgba(238,240,229,0.06);' : '') + '">';
+    html += '<div style="font-family:Fraunces,serif;font-size:22px;color:' + s.color + ';">' + s.val + '</div>';
+    html += '<div style="font-size:10px;color:#8A8F7A;text-transform:uppercase;letter-spacing:0.06em;font-family:DM Mono,monospace;margin-top:3px;">' + s.label + '</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+
+  // ── Action cards ──
+  html += '<div style="padding:20px 24px;">';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:14px;">Choose Your Next Step</div>';
+  html += '<div style="display:flex;flex-direction:column;gap:10px;" id="_an-actions">';
+
+  var actions = [
+    {
+      id:'an-tour', icon:'🏠', label:'Schedule a Showing',
+      sub:'Get in before the weekend — Marcus Rivera has availability today and tomorrow',
+      cta:'Book Showing', accent:true,
+    },
+    {
+      id:'an-offer', icon:'📝', label:'Share Your Terms with Your Agent',
+      sub:'Tell Chloe what you\'re thinking — price, timeline, terms — and she\'ll send a full intent summary to your agent to act on.',
+      cta:'Express Interest', accent:false,
+    },
+    {
+      id:'an-agent', icon:'📞', label:'Call Marcus Rivera Now',
+      sub:'Your agent is available · (214) 555-0192 · Avg response time: 4 min',
+      cta:'Call Agent', accent:false,
+    },
+    {
+      id:'an-watch', icon:'🔔', label:'Set a Priority Alert',
+      sub:'Get notified the moment anything changes — price drop, offer accepted, status update',
+      cta:'Set Alert', accent:false,
+    },
+  ];
+
+  actions.forEach(function(a) {
+    html += '<div style="display:flex;align-items:center;gap:14px;background:#0E1108;border:1px solid rgba(238,240,229,0.07);border-radius:11px;padding:14px 16px;transition:border-color 0.13s;cursor:pointer;" class="_an-card" id="' + a.id + '" onmouseover="this.style.borderColor=\'rgba(184,224,48,0.25)\'" onmouseout="this.style.borderColor=\'rgba(238,240,229,0.07)\'">';
+    html += '<div style="font-size:22px;flex-shrink:0;">' + a.icon + '</div>';
+    html += '<div style="flex:1;">';
+    html += '<div style="font-size:13px;font-weight:600;color:#EEF0E5;margin-bottom:3px;">' + a.label + '</div>';
+    html += '<div style="font-size:11px;color:#8A8F7A;line-height:1.5;">' + a.sub + '</div>';
+    html += '</div>';
+    var btnStyle = a.accent
+      ? 'padding:9px 18px;border-radius:8px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;white-space:nowrap;'
+      : 'padding:9px 18px;border-radius:8px;border:1px solid rgba(184,224,48,0.2);background:rgba(184,224,48,0.06);color:#B8E030;font-family:DM Sans,sans-serif;font-size:12px;font-weight:500;cursor:pointer;flex-shrink:0;white-space:nowrap;';
+    html += '<button style="' + btnStyle + '">' + a.cta + '</button>';
+    html += '</div>';
+  });
+
+  html += '</div>';
+
+  // ── Chloe insight ──
+  html += '<div style="margin-top:16px;background:#0A0B07;border:1px solid rgba(184,224,48,0.12);border-radius:10px;padding:14px 16px;display:flex;align-items:flex-start;gap:10px;">';
+  html += '<svg width="10" height="10" viewBox="0 0 24 24" fill="#B8E030" style="margin-top:3px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/></svg>';
+  html += '<div style="font-size:12px;color:#8A8F7A;line-height:1.6;"><strong style="color:#EEF0E5;">Chloe says:</strong> Based on your visit today and your 87% match score, Magnolia Drive is your strongest opportunity in the current market. The home is at the average days-on-market threshold for 75022. 14 buyers have it saved and 3 showings are booked today. A showing request now puts you in a strong position.</div>';
+  html += '</div>';
+
+  html += '</div>'; // end padding
+
+  // ── Footer ──
+  html += '<div style="padding:14px 24px;border-top:1px solid rgba(238,240,229,0.06);display:flex;align-items:center;justify-content:space-between;">';
+  html += '<div style="font-size:11px;color:#4A5040;">Marcus Rivera · REAL Broker, LLC · (214) 555-0192</div>';
+  html += '<button id="_an-close" style="padding:8px 18px;border-radius:8px;border:1px solid rgba(238,240,229,0.1);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Dismiss</button>';
+  html += '</div>';
+
+  html += '</div>'; // end card
+  overlay.innerHTML = html;
+  document.body.appendChild(overlay);
+
+  // ── Wire buttons ──
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+  document.getElementById('_an-x').addEventListener('click', function() { overlay.remove(); });
+  document.getElementById('_an-close').addEventListener('click', function() { overlay.remove(); });
+
+  document.getElementById('an-tour').addEventListener('click', function() {
+    overlay.remove();
+    showScheduleFromPulse();
+  });
+
+  document.getElementById('an-offer').addEventListener('click', function() {
+    overlay.remove();
+    showIntentModal();
+  });
+
+  document.getElementById('an-agent').addEventListener('click', function() {
+    overlay.remove();
+    toast('Connecting you to Marcus Rivera…', '');
+    setTimeout(function() { toast('Marcus Rivera · (214) 555-0192 · Calling now ✓', 'ok'); }, 1000);
+  });
+
+  document.getElementById('an-watch').addEventListener('click', function() {
+    overlay.remove();
+    toast('Priority alert set for 2847 Magnolia Drive ✓', 'ok');
+    setTimeout(function() { toast('You\'ll be notified of any status changes immediately ✓', 'ok'); }, 1200);
+  });
+}
+
+// ── SCHEDULE SHOWING (from Market Pulse) ──────────────────────────────────────
+function showScheduleFromPulse() {
+  var existing = document.getElementById('_sp');
+  if (existing) existing.remove();
+
+  var overlay = document.createElement('div');
+  overlay.id = '_sp';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:9991;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:32px 16px;';
+
+  var html = '';
+  html += '<div style="background:#13160D;border:1px solid rgba(184,224,48,0.18);border-radius:16px;width:500px;max-width:95vw;box-shadow:0 24px 72px rgba(0,0,0,0.7);">';
+  html += '<div style="padding:24px 26px 0;">';
+  html += '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;">';
+  html += '<div><div style="font-family:Fraunces,serif;font-size:20px;color:#EEF0E5;">Schedule a <em style=\'color:#B8E030;\'>Showing</em></div>';
+  html += '<div style="font-size:12px;color:#8A8F7A;margin-top:4px;">2847 Magnolia Drive · with Marcus Rivera</div></div>';
+  html += '<button id="_sp-x" style="background:none;border:none;color:#8A8F7A;font-size:18px;cursor:pointer;padding:2px 6px;">✕</button>';
+  html += '</div>';
+  html += '<div style="height:1px;background:rgba(184,224,48,0.1);margin:16px 0 18px;"></div>';
+
+  // Quick slots
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:12px;">Available Today &amp; Tomorrow</div>';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;">';
+  var slots = ['Today · 3:00 PM','Today · 5:00 PM','Tomorrow · 10:00 AM','Tomorrow · 2:00 PM'];
+  slots.forEach(function(slot, i) {
+    var active = i === 0 ? 'border-color:rgba(184,224,48,0.5);background:rgba(184,224,48,0.08);color:#B8E030;' : 'border-color:rgba(238,240,229,0.08);background:#0E1108;color:#8A8F7A;';
+    html += '<div class="_sp-slot" data-slot="' + slot + '" style="' + active + 'border:1px solid;border-radius:9px;padding:11px 14px;cursor:pointer;font-size:13px;text-align:center;transition:all 0.12s;">' + slot + '</div>';
+  });
+  html += '</div>';
+
+  // Custom date
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:10px;">Or Pick a Custom Time</div>';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">';
+  html += '<div><label style="display:block;font-size:11px;color:#8A8F7A;margin-bottom:6px;">Date</label><input id="_sp-date" type="date" style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;color-scheme:dark;" /></div>';
+  html += '<div><label style="display:block;font-size:11px;color:#8A8F7A;margin-bottom:6px;">Time</label><input id="_sp-time" type="time" style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;color-scheme:dark;" /></div>';
+  html += '</div>';
+
+  // Tour type
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:10px;">Tour Type</div>';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:4px;">';
+  [['🏠','In-Person','Walk the property'],['📹','Video Tour','Live call walkthrough'],['🔑','Self-Led','Unaccompanied']].forEach(function(t, i) {
+    var act = i === 0 ? 'border-color:rgba(184,224,48,0.4);background:rgba(184,224,48,0.06);' : 'border-color:rgba(238,240,229,0.08);background:#0E1108;';
+    html += '<div class="_sp-type" style="' + act + 'border:1px solid;border-radius:9px;padding:12px;cursor:pointer;text-align:center;transition:all 0.12s;">';
+    html += '<div style="font-size:18px;margin-bottom:5px;">' + t[0] + '</div>';
+    html += '<div style="font-size:12px;color:#EEF0E5;font-weight:500;">' + t[1] + '</div>';
+    html += '<div style="font-size:10px;color:#8A8F7A;margin-top:2px;">' + t[2] + '</div>';
+    html += '</div>';
+  });
+  html += '</div></div>';
+
+  html += '<div style="padding:14px 26px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(184,224,48,0.08);">';
+  html += '<div style="font-size:11px;color:#4A5040;">Marcus Rivera confirms within 2 hours.</div>';
+  html += '<div style="display:flex;gap:10px;">';
+  html += '<button id="_sp-cancel" style="padding:9px 18px;border-radius:8px;border:1px solid rgba(238,240,229,0.1);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Cancel</button>';
+  html += '<button id="_sp-confirm" style="padding:9px 22px;border-radius:8px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Request Showing →</button>';
+  html += '</div></div>';
+  html += '</div>';
+
+  overlay.innerHTML = html;
+  document.body.appendChild(overlay);
+
+  // Slot toggle
+  overlay.querySelectorAll('._sp-slot').forEach(function(s) {
+    s.addEventListener('click', function() {
+      overlay.querySelectorAll('._sp-slot').forEach(function(x) {
+        x.style.borderColor = 'rgba(238,240,229,0.08)';
+        x.style.background = '#0E1108';
+        x.style.color = '#8A8F7A';
+      });
+      s.style.borderColor = 'rgba(184,224,48,0.5)';
+      s.style.background = 'rgba(184,224,48,0.08)';
+      s.style.color = '#B8E030';
+    });
+  });
+
+  // Tour type toggle
+  overlay.querySelectorAll('._sp-type').forEach(function(t) {
+    t.addEventListener('click', function() {
+      overlay.querySelectorAll('._sp-type').forEach(function(x) {
+        x.style.borderColor = 'rgba(238,240,229,0.08)';
+        x.style.background = '#0E1108';
+      });
+      t.style.borderColor = 'rgba(184,224,48,0.4)';
+      t.style.background = 'rgba(184,224,48,0.06)';
+    });
+  });
+
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+  document.getElementById('_sp-x').addEventListener('click', function() { overlay.remove(); });
+  document.getElementById('_sp-cancel').addEventListener('click', function() { overlay.remove(); });
+  document.getElementById('_sp-confirm').addEventListener('click', function() {
+    var activeSlot = overlay.querySelector('._sp-slot[style*="rgba(184,224,48,0.5)"]');
+    var slotText = activeSlot ? activeSlot.getAttribute('data-slot') : (document.getElementById('_sp-date').value || 'your selected time');
+    overlay.remove();
+    toast('Showing requested · Marcus Rivera will confirm shortly ✓', 'ok');
+    setTimeout(function() { toast('2847 Magnolia Drive · ' + slotText + ' ✓', 'ok'); }, 1400);
+  });
+}
+
+// ── OFFER MODAL ──────────────────────────────────────────────────────────────
+function showIntentModal() {
+  // Representation status — in a real app this comes from onboarding data.
+  // Jordan answered "No — I'm looking independently" during onboarding.
+  var isRepresented = false; // toggle to true to see the represented flow
+
+  var existing = document.getElementById('_of');
+  if (existing) existing.remove();
+
+  var overlay = document.createElement('div');
+  overlay.id = '_of';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:9991;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:32px 16px;';
+
+  if (isRepresented) {
+    renderRepresentedFlow(overlay);
+  } else {
+    renderUnrepresentedFlow(overlay);
+  }
+
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+}
+
+// ── REPRESENTED: Share terms → send to buyer's own agent ──────────────────
+function renderRepresentedFlow(overlay) {
+  var html = '';
+  html += '<div style="background:#13160D;border:1px solid rgba(184,224,48,0.18);border-radius:16px;width:520px;max-width:95vw;box-shadow:0 24px 72px rgba(0,0,0,0.7);">';
+  html += '<div style="padding:24px 26px 0;">';
+
+  // Header
+  html += '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;">';
+  html += '<div>';
+  html += '<div style="font-family:Fraunces,serif;font-size:20px;color:#EEF0E5;">Share Your <em style=\'color:#B8E030;\'>Intent</em> with Your Agent</div>';
+  html += '<div style="font-size:12px;color:#8A8F7A;margin-top:4px;">2847 Magnolia Drive · List price: $724,000 · 87% match</div>';
+  html += '</div>';
+  html += '<button id="_of-x" style="background:none;border:none;color:#8A8F7A;font-size:18px;cursor:pointer;padding:2px 6px;">✕</button>';
+  html += '</div>';
+  html += '<div style="height:1px;background:rgba(184,224,48,0.1);margin:16px 0 18px;"></div>';
+
+  // Chloe coaching note
+  html += '<div style="background:#0A0B07;border:1px solid rgba(184,224,48,0.15);border-radius:10px;padding:13px 15px;margin-bottom:18px;display:flex;gap:10px;">';
+  html += '<svg width="10" height="10" viewBox="0 0 24 24" fill="#B8E030" style="margin-top:3px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/></svg>';
+  html += '<div style="font-size:12px;color:#8A8F7A;line-height:1.6;"><strong style="color:#EEF0E5;">Chloe\'s read:</strong> Homes in your match closing at 101.3% of list price — and this home is now at the average days-on-market threshold for its tier. Your agent is best placed to advise on timing and pricing strategy. Share your thinking below and let them guide the process.</div>';
+  html += '</div>';
+
+  // Price thinking
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:10px;">What Price Are You Thinking?</div>';
+  html += '<div style="background:linear-gradient(135deg,rgba(184,224,48,0.08),rgba(184,224,48,0.02));border:1px solid rgba(184,224,48,0.15);border-radius:12px;padding:20px;text-align:center;margin-bottom:14px;">';
+  html += '<div style="font-family:Fraunces,serif;font-size:40px;color:#B8E030;line-height:1;" id="_of-amt">$735,000</div>';
+  html += '<div style="font-size:10px;color:#8A8F7A;font-family:DM Mono,monospace;margin-top:4px;" id="_of-pct">101.5% of list · <span style="color:#B8E030;">Competitive — your agent will advise</span></div>';
+  html += '</div>';
+  html += '<input type="range" id="_of-slider" min="700" max="800" value="735" style="width:100%;-webkit-appearance:none;height:4px;border-radius:2px;background:linear-gradient(to right,#B8E030 35%,#1A1E12 35%);outline:none;cursor:pointer;margin-bottom:6px;">';
+  html += '<div style="display:flex;justify-content:space-between;font-size:10px;color:#4A5040;font-family:DM Mono,monospace;margin-bottom:18px;"><span>$700K</span><span>$724K list</span><span>$750K</span><span>$800K</span></div>';
+
+  // Preferences
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">';
+  html += '<div><label style="display:block;font-size:11px;color:#8A8F7A;margin-bottom:6px;">Ideal Close Timeline</label><select style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;outline:none;"><option>21 days</option><option selected>30 days</option><option>45 days</option><option>60 days</option></select></div>';
+  html += '<div><label style="display:block;font-size:11px;color:#8A8F7A;margin-bottom:6px;">Inspection Preference</label><select style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;outline:none;"><option selected>Standard (10 days)</option><option>Waived</option><option>As-Is</option></select></div>';
+  html += '</div>';
+
+  // Note to agent
+  html += '<div style="margin-bottom:4px;"><label style="display:block;font-size:11px;color:#8A8F7A;margin-bottom:6px;">Anything else your agent should know?</label>';
+  html += '<textarea rows="2" placeholder="e.g. We\'re flexible on close date, but inspection is a must. Already pre-approved." style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;resize:none;outline:none;box-sizing:border-box;"></textarea>';
+  html += '</div>';
+  html += '</div>'; // end padding
+
+  // Footer
+  html += '<div style="padding:14px 26px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(184,224,48,0.08);">';
+  html += '<div style="font-size:11px;color:#4A5040;">Your agent will handle all negotiations and paperwork.</div>';
+  html += '<div style="display:flex;gap:10px;">';
+  html += '<button id="_of-cancel" style="padding:9px 18px;border-radius:8px;border:1px solid rgba(238,240,229,0.1);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Cancel</button>';
+  html += '<button id="_of-submit" style="padding:9px 22px;border-radius:8px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Send to My Agent →</button>';
+  html += '</div></div>';
+  html += '</div>'; // end card
+
+  overlay.innerHTML = html;
+  wireIntentModal(overlay, 'Your agent has your intent summary. They\'ll reach out to discuss strategy ✓');
+}
+
+// ── UNREPRESENTED: Connect with Marcus ────────────────────────────────────────
+function renderUnrepresentedFlow(overlay) {
+  var html = '';
+  html += '<div style="background:#13160D;border:1px solid rgba(184,224,48,0.18);border-radius:16px;width:520px;max-width:95vw;box-shadow:0 24px 72px rgba(0,0,0,0.7);">';
+  html += '<div style="padding:24px 26px 0;">';
+
+  // Header
+  html += '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;">';
+  html += '<div>';
+  html += '<div style="font-family:Fraunces,serif;font-size:20px;color:#EEF0E5;">Ready to <em style=\'color:#B8E030;\'>Move Forward?</em></div>';
+  html += '<div style="font-size:12px;color:#8A8F7A;margin-top:4px;">2847 Magnolia Drive · List price: $724,000 · 87% match</div>';
+  html += '</div>';
+  html += '<button id="_of-x" style="background:none;border:none;color:#8A8F7A;font-size:18px;cursor:pointer;padding:2px 6px;">✕</button>';
+  html += '</div>';
+  html += '<div style="height:1px;background:rgba(184,224,48,0.1);margin:16px 0 18px;"></div>';
+
+  // Chloe explanation
+  html += '<div style="background:#0A0B07;border:1px solid rgba(184,224,48,0.15);border-radius:10px;padding:13px 15px;margin-bottom:20px;display:flex;gap:10px;">';
+  html += '<svg width="10" height="10" viewBox="0 0 24 24" fill="#B8E030" style="margin-top:3px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/></svg>';
+  html += '<div style="font-size:12px;color:#8A8F7A;line-height:1.6;"><strong style="color:#EEF0E5;">You\'re not currently represented.</strong> To move on this home, you\'ll need a buyer\'s agent. Chloe can connect you with Marcus Rivera right now — he can refer you to a buyer\'s agent or discuss your representation options. Your 87% match score and visit data go with you.</div>';
+  html += '</div>';
+
+  // Agent card
+  html += '<div style="background:#1A1E12;border:1px solid rgba(184,224,48,0.15);border-radius:12px;padding:18px 20px;margin-bottom:18px;">';
+  html += '<div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;">';
+  html += '<div style="width:48px;height:48px;border-radius:50%;background:#B8E030;display:flex;align-items:center;justify-content:center;font-family:Fraunces,serif;font-size:18px;font-weight:600;color:#0A0B07;flex-shrink:0;">MR</div>';
+  html += '<div style="flex:1;">';
+  html += '<div style="font-size:14px;font-weight:600;color:#EEF0E5;">Marcus Rivera</div>';
+  html += '<div style="font-size:12px;color:#8A8F7A;">REALTOR® · REAL Broker, LLC · DFW Metroplex</div>';
+  html += '<div style="font-size:11px;color:#B8E030;margin-top:2px;">● Available now · Avg response: 4 min</div>';
+  html += '</div>';
+  html += '<div style="text-align:right;flex-shrink:0;">';
+  html += '<div style="font-size:10px;font-family:DM Mono,monospace;color:#8A8F7A;">Listing Agent</div>';
+  html += '<div style="font-size:12px;color:#EEF0E5;margin-top:2px;">(214) 555-0192</div>';
+  html += '</div></div>';
+
+  // What Chloe will send
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:10px;">What Chloe Sends With Your Connection Request</div>';
+  html += '<div style="display:flex;flex-direction:column;gap:7px;">';
+  [
+    { icon:'🎯', text:'87% match score on 2847 Magnolia Drive' },
+    { icon:'🧬', text:'Refined Modern buyer DNA profile' },
+    { icon:'📍', text:'Visit data — rooms toured, time spent, interest signals' },
+    { icon:'💰', text:'Budget range: $650K–$800K · Pre-approved' },
+    { icon:'📋', text:'Must-haves: Open concept, natural light, home office, smart home' },
+  ].forEach(function(item) {
+    html += '<div style="display:flex;align-items:center;gap:10px;font-size:12px;color:#8A8F7A;">';
+    html += '<span style="flex-shrink:0;">' + item.icon + '</span>';
+    html += '<span>' + item.text + '</span>';
+    html += '</div>';
+  });
+  html += '</div></div>';
+
+  // How to connect
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:10px;">How Would You Like to Connect?</div>';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:4px;">';
+  [
+    { id:'con-call', icon:'📞', label:'Call Now',    sub:'(214) 555-0192' },
+    { id:'con-text', icon:'💬', label:'Send a Text', sub:'Quick intro message' },
+    { id:'con-req',  icon:'📋', label:'Request Intro', sub:'Chloe sends your full profile' },
+  ].forEach(function(c, i) {
+    var act = i === 2 ? 'border-color:rgba(184,224,48,0.4);background:rgba(184,224,48,0.06);' : 'border-color:rgba(238,240,229,0.08);background:#0E1108;';
+    html += '<div class="_of-con" id="' + c.id + '" style="' + act + 'border:1px solid;border-radius:10px;padding:14px;cursor:pointer;text-align:center;transition:all 0.12s;">';
+    html += '<div style="font-size:20px;margin-bottom:6px;">' + c.icon + '</div>';
+    html += '<div style="font-size:12px;color:#EEF0E5;font-weight:500;">' + c.label + '</div>';
+    html += '<div style="font-size:10px;color:#8A8F7A;margin-top:2px;">' + c.sub + '</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+  html += '</div>'; // end padding
+
+  // Footer
+  html += '<div style="padding:14px 26px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(184,224,48,0.08);">';
+  html += '<div style="font-size:11px;color:#4A5040;line-height:1.5;">Your profile is shared only with agents<br>you choose to connect with.</div>';
+  html += '<div style="display:flex;gap:10px;">';
+  html += '<button id="_of-cancel" style="padding:9px 18px;border-radius:8px;border:1px solid rgba(238,240,229,0.1);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Cancel</button>';
+  html += '<button id="_of-submit" style="padding:9px 22px;border-radius:8px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Connect with Marcus →</button>';
+  html += '</div></div>';
+  html += '</div>'; // end card
+
+  overlay.innerHTML = html;
+
+  // Connection type toggle
+  overlay.querySelectorAll('._of-con').forEach(function(card) {
+    card.addEventListener('click', function() {
+      overlay.querySelectorAll('._of-con').forEach(function(c) {
+        c.style.borderColor = 'rgba(238,240,229,0.08)';
+        c.style.background = '#0E1108';
+      });
+      card.style.borderColor = 'rgba(184,224,48,0.4)';
+      card.style.background = 'rgba(184,224,48,0.06)';
+    });
+  });
+
+  overlay.querySelector('#_of-x').addEventListener('click', function() { overlay.remove(); });
+  overlay.querySelector('#_of-cancel').addEventListener('click', function() { overlay.remove(); });
+  overlay.querySelector('#_of-submit').addEventListener('click', function() {
+    var activeType = overlay.querySelector('._of-con[style*="rgba(184,224,48,0.4)"]');
+    var typeLabel = activeType ? activeType.querySelector('div:nth-child(2)').textContent : 'Request Intro';
+    overlay.remove();
+    if (typeLabel === 'Call Now') {
+      toast('Connecting you to Marcus Rivera · (214) 555-0192 ✓', 'ok');
+    } else if (typeLabel === 'Send a Text') {
+      toast('Text intro sent to Marcus Rivera ✓', 'ok');
+      setTimeout(function() { toast('Your Chloe profile has been shared with Marcus ✓', 'ok'); }, 1400);
+    } else {
+      toast('Connection request sent · Marcus Rivera will reach out shortly ✓', 'ok');
+      setTimeout(function() { toast('Your full buyer profile — 87% match, DNA, visit data — delivered to Marcus ✓', 'ok'); }, 1600);
+    }
+  });
+}
+
+// ── SHARED WIRE (represented flow) ────────────────────────────────────────────
+function wireIntentModal(overlay, successMsg) {
+  var slider = overlay.querySelector('#_of-slider');
+  if (slider) {
+    slider.addEventListener('input', function() {
+      var val = parseInt(this.value);
+      var pct = ((val * 1000) / 724000 * 100).toFixed(1);
+      var label = pct >= 102
+        ? '<span style="color:#FF5A4A;">Aggressive — your agent will advise</span>'
+        : pct >= 101 ? '<span style="color:#B8E030;">Competitive — your agent will advise</span>'
+        : pct >= 100 ? '<span style="color:#F5A623;">At list — your agent will advise</span>'
+        : '<span style="color:#8A8F7A;">Below list — your agent will advise</span>';
+      var amtEl = overlay.querySelector('#_of-amt');
+      var pctEl = overlay.querySelector('#_of-pct');
+      if (amtEl) amtEl.textContent = '$' + (val * 1000).toLocaleString();
+      if (pctEl) pctEl.innerHTML = pct + '% of list · ' + label;
+      var fillPct = ((val - 700) / 100) * 100;
+      this.style.background = 'linear-gradient(to right,#B8E030 ' + fillPct + '%,#1A1E12 ' + fillPct + '%)';
+    });
+  }
+  overlay.querySelector('#_of-x').addEventListener('click', function() { overlay.remove(); });
+  overlay.querySelector('#_of-cancel').addEventListener('click', function() { overlay.remove(); });
+  overlay.querySelector('#_of-submit').addEventListener('click', function() {
+    var amt = overlay.querySelector('#_of-amt') ? overlay.querySelector('#_of-amt').textContent : '$735,000';
+    overlay.remove();
+    toast(successMsg, 'ok');
+    setTimeout(function() { toast('Intent summary · ' + amt + ' · 30-day close · delivered to your agent ✓', 'ok'); }, 1500);
+  });
+}
+
+</script>
+</body>
+</html>
