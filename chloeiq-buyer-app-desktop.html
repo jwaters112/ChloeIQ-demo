@@ -34,12 +34,15 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,s
 ::-webkit-scrollbar{width:3px;}</style>
 </head>
 <body>
-<header class="topbar">
+<!-- ══ ONBOARDING OVERLAY ══ -->
+<div id="ob-overlay" style="position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;overflow-y:auto;padding:32px 16px;"></div>
+
+<header class="topbar" id="app-header" style="display:none;">
   <div class="lm">C</div><div class="lt">Chloe<b>IQ</b></div>
   <div class="sep"></div>
   <div class="pt">Buyer <em>App</em></div><div style="font-size:12px;color:var(--txm);background:var(--s2);border:1px solid var(--bs);border-radius:20px;padding:4px 12px;">Jordan Lee · 87% Match</div><div class="tr"><button class="btn bs2" id="ba-share">Share Profile</button><button class="btn bp" id="ba-contact">Contact Agent</button></div>
 </header>
-<div class="main">
+<div class="main" id="app-main" style="display:none;">
 
 <div class="g4">
   <div class="kpi ka"><div class="kl">Match Score</div><div class="kv">87<span style="font-size:13px;color:var(--txm);">%</span></div><div class="kd up">↑ Top 8% of buyers</div></div>
@@ -64,6 +67,446 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,s
 
 </div>
 <script>
+// ══ ONBOARDING GATE ══════════════════════════════════════════════════════════
+(function() {
+
+  var ob = {
+    step: 0,
+    quizAnswers: {},
+    property: '2847 Magnolia Drive',
+    agent: { name: 'Marcus Rivera', title: 'REALTOR® · DFW Metroplex', initials: 'MR' },
+    userData: { first: 'Jordan', last: 'Lee', email: 'jordan.lee@gmail.com', phone: '(214) 555-0189' },
+    budget: 5,
+    dnaChoice: 'Refined Modern',
+    prefs: ['Open Floor Plan','Natural Light','Home Office','Smart Home','Spa Primary Suite'],
+  };
+
+  var budgetRanges = [
+    '$250K – $350K','$350K – $450K','$450K – $550K','$550K – $650K',
+    '$600K – $700K','$650K – $800K','$750K – $900K',
+    '$850K – $1.1M','$1M – $1.3M','$1.2M – $1.6M','$1.5M+'
+  ];
+
+  var dnaOptions = [
+    { icon:'✦', name:'Refined Modern',     trait:'Clean, curated, intentional' },
+    { icon:'🌿', name:'Warm Organic',       trait:'Natural, textured, earthy' },
+    { icon:'🌊', name:'Coastal Luxe',       trait:'Light, airy, elevated' },
+    { icon:'🎨', name:'Bold Eclectic',      trait:'Statement, layered, vibrant' },
+    { icon:'🏛️', name:'Classic Traditional', trait:'Timeless, symmetrical, rich' },
+    { icon:'🔩', name:'Urban Industrial',   trait:'Raw, exposed, utilitarian' },
+  ];
+
+  var prefOptions = [
+    { icon:'🏛️', label:'Open Floor Plan', sel:true },
+    { icon:'☀️', label:'Natural Light',   sel:true },
+    { icon:'💼', label:'Home Office',     sel:true },
+    { icon:'🏊', label:'Pool',            sel:false },
+    { icon:'🏡', label:'Large Backyard',  sel:false },
+    { icon:'🤖', label:'Smart Home',      sel:true },
+    { icon:'🚗', label:'3+ Car Garage',   sel:false },
+    { icon:'🛁', label:'Spa Primary Suite',sel:true },
+    { icon:'🔥', label:'Outdoor Kitchen', sel:false },
+    { icon:'🍷', label:'Wine Cellar / Bar',sel:false },
+    { icon:'🌳', label:'Mature Trees',    sel:false },
+    { icon:'🎓', label:'Top-Rated Schools',sel:false },
+  ];
+
+  var quizQuestions = [
+    { q:'When you walk into a home, what catches your eye first?',
+      opts:['Clean lines and open space','Warm textures and natural materials','Bold statement pieces','Classic details and symmetry'] },
+    { q:'Your ideal living room feels…',
+      opts:['Minimal and uncluttered','Cozy and layered','Dramatic and unique','Timeless and refined'] },
+    { q:'How important is natural light to you?',
+      opts:['Non-negotiable — the more the better','Important but not everything','I love moody, warm lighting too','Not a major factor'] },
+    { q:'Pick a kitchen that speaks to you:',
+      opts:['Waterfall island, integrated appliances','Open shelving, farmhouse sink','Color cabinets, statement range','Classic shaker, marble counters'] },
+    { q:'When it comes to smart home tech:',
+      opts:['All in — automate everything','Some basics like thermostat and lights','Only if it comes with the home','Prefer to keep it simple'] },
+    { q:'Your outdoor space priority is:',
+      opts:['Pool and entertaining area','Low maintenance and private','Garden and green space','Location over yard size'] },
+  ];
+
+  // ── CSS injection ──────────────────────────────────────────────────────────
+  var style = document.createElement('style');
+  style.textContent = [
+    '@keyframes ob-fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}',
+    '.ob-animate{animation:ob-fadeUp 0.32s ease}',
+    '.ob-inp{width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:10px;padding:12px 14px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:14px;outline:none;box-sizing:border-box;transition:border-color 0.2s;}',
+    '.ob-inp:focus{border-color:rgba(184,224,48,0.4);}',
+    '.ob-inp::placeholder{color:#4A5040;}',
+    '.ob-sel{width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:10px;padding:12px 14px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:14px;outline:none;box-sizing:border-box;cursor:pointer;}',
+    '.ob-sel option{background:#13160D;}',
+    '.ob-btn-pri{width:100%;padding:14px;border-radius:10px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:0.02em;transition:background 0.15s;}',
+    '.ob-btn-pri:hover{background:#c8f040;}',
+    '.ob-btn-sec{padding:11px 22px;border-radius:10px;border:1px solid rgba(238,240,229,0.1);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;}',
+    '.ob-dna-card{background:#0E1108;border:1.5px solid rgba(238,240,229,0.08);border-radius:13px;padding:18px 14px;cursor:pointer;text-align:center;transition:all 0.18s;}',
+    '.ob-dna-card:hover{border-color:rgba(184,224,48,0.3);transform:translateY(-2px);}',
+    '.ob-dna-card.sel{border-color:rgba(184,224,48,0.6);background:rgba(184,224,48,0.06);}',
+    '.ob-pref{display:flex;align-items:center;gap:11px;padding:13px 15px;background:#0E1108;border:1.5px solid rgba(238,240,229,0.08);border-radius:11px;cursor:pointer;transition:all 0.15s;}',
+    '.ob-pref:hover{border-color:rgba(184,224,48,0.25);}',
+    '.ob-pref.sel{border-color:rgba(184,224,48,0.5);background:rgba(184,224,48,0.05);}',
+    '.ob-chk{width:18px;height:18px;border-radius:4px;border:2px solid rgba(238,240,229,0.15);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;transition:all 0.15s;}',
+    '.ob-pref.sel .ob-chk{background:#B8E030;border-color:#B8E030;color:#0A0B07;}',
+    '.ob-opt{background:#13160D;border:1px solid rgba(238,240,229,0.08);border-radius:12px;padding:16px 18px;cursor:pointer;font-size:13px;color:#8A8F7A;line-height:1.5;transition:all 0.13s;}',
+    '.ob-opt:hover{border-color:rgba(184,224,48,0.3);color:#EEF0E5;}',
+    '.ob-opt.sel{border-color:rgba(184,224,48,0.5);background:rgba(184,224,48,0.07);color:#B8E030;}',
+    '.ob-slider{width:100%;-webkit-appearance:none;height:4px;border-radius:2px;outline:none;cursor:pointer;}',
+    '.ob-slider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#B8E030;cursor:pointer;border:3px solid #0A0B07;box-shadow:0 2px 8px rgba(184,224,48,0.3);}',
+  ].join('\n');
+  document.head.appendChild(style);
+
+  // ── RENDER HELPERS ─────────────────────────────────────────────────────────
+  function render(html) {
+    var el = document.getElementById('ob-overlay');
+    if (el) { el.innerHTML = html; }
+  }
+
+  function card(content) {
+    return '<div class="ob-animate" style="max-width:560px;width:100%;">' + content + '</div>';
+  }
+
+  function hdr(step, total, icon, tag, title, desc) {
+    return '<div style="text-align:center;margin-bottom:32px;">'
+      + (icon ? '<div style="font-size:44px;margin-bottom:14px;">' + icon + '</div>' : '')
+      + '<div style="display:inline-block;font-family:DM Mono,monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#B8E030;background:rgba(184,224,48,0.08);border:1px solid rgba(184,224,48,0.2);padding:4px 14px;border-radius:4px;margin-bottom:14px;">' + tag + '</div>'
+      + '<div style="font-family:Fraunces,serif;font-size:28px;color:#EEF0E5;line-height:1.2;margin-bottom:8px;">' + title + '</div>'
+      + '<div style="font-size:13px;color:#8A8F7A;line-height:1.7;max-width:420px;margin:0 auto;">' + desc + '</div>'
+      + '</div>';
+  }
+
+  function progressBar(step, total) {
+    var pct = ((step - 1) / total) * 100;
+    var html = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:28px;">';
+    html += '<div style="flex:1;height:3px;background:#1A1E12;border-radius:2px;overflow:hidden;">';
+    html += '<div style="height:3px;background:#B8E030;width:' + pct + '%;transition:width 0.4s ease;border-radius:2px;"></div>';
+    html += '</div>';
+    html += '<div style="font-size:11px;font-family:DM Mono,monospace;color:#8A8F7A;flex-shrink:0;">' + step + ' / ' + total + '</div>';
+    html += '</div>';
+    return html;
+  }
+
+  function footer(backFn, nextLabel, nextFn, showBack) {
+    var html = '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:28px;padding-top:20px;border-top:1px solid rgba(184,224,48,0.08);">';
+    html += '<div style="font-size:11px;color:#4A5040;">Presented by Marcus Rivera · REAL Broker, LLC</div>';
+    html += '<div style="display:flex;gap:10px;">';
+    if (showBack) html += '<button class="ob-btn-sec" id="ob-back">' + '← Back' + '</button>';
+    html += '<button style="padding:11px 24px;border-radius:10px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;" id="ob-next">' + nextLabel + '</button>';
+    html += '</div></div>';
+    return html;
+  }
+
+  function lbl(text) {
+    return '<div style="font-size:11px;font-weight:600;color:#8A8F7A;letter-spacing:0.06em;text-transform:uppercase;font-family:DM Mono,monospace;margin-bottom:7px;">' + text + '</div>';
+  }
+
+  // ── STEPS ──────────────────────────────────────────────────────────────────
+
+  // WELCOME
+  function showWelcome() {
+    ob.step = 0;
+    var html = card(
+      '<div style="text-align:center;">'
+      + '<div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:36px;">'
+      + '<div style="width:36px;height:36px;background:#B8E030;border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:Fraunces,serif;font-size:18px;font-weight:600;color:#0A0B07;">C</div>'
+      + '<div style="font-family:Fraunces,serif;font-size:22px;color:#EEF0E5;">Chloe<span style=\'color:#B8E030;\'>IQ</span></div>'
+      + '</div>'
+
+      + '<div style="background:#13160D;border:1px solid rgba(184,224,48,0.2);border-radius:16px;padding:26px 28px;margin-bottom:22px;text-align:left;">'
+      + '<div style="font-size:10px;font-family:DM Mono,monospace;color:#B8E030;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">● LIVE OPEN HOUSE</div>'
+      + '<div style="font-family:Fraunces,serif;font-size:24px;color:#EEF0E5;line-height:1.1;margin-bottom:4px;">' + ob.property + '</div>'
+      + '<div style="font-size:12px;color:#8A8F7A;margin-bottom:18px;">Flower Mound, TX 75022 &nbsp;·&nbsp; $724,000 &nbsp;·&nbsp; 4 bed / 3.5 bath</div>'
+      + '<div style="display:flex;align-items:center;gap:12px;padding:13px 15px;background:#1A1E12;border-radius:10px;border:1px solid rgba(238,240,229,0.06);">'
+      + '<div style="width:38px;height:38px;border-radius:50%;background:#B8E030;display:flex;align-items:center;justify-content:center;font-family:Fraunces,serif;font-size:14px;font-weight:600;color:#0A0B07;flex-shrink:0;">' + ob.agent.initials + '</div>'
+      + '<div style="flex:1;"><div style="font-size:13px;font-weight:600;color:#EEF0E5;">' + ob.agent.name + '</div><div style="font-size:11px;color:#8A8F7A;">' + ob.agent.title + '</div></div>'
+      + '<div style="font-size:10px;font-family:DM Mono,monospace;color:#B8E030;background:rgba(184,224,48,0.1);border:1px solid rgba(184,224,48,0.2);padding:3px 10px;border-radius:20px;">Host</div>'
+      + '</div></div>'
+
+      + '<div style="font-size:13px;color:#8A8F7A;line-height:1.75;margin-bottom:26px;">Take a 90-second setup and Chloe will tell you exactly how well this home matches your style — and find you others like it.</div>'
+      + '<button class="ob-btn-pri" id="ob-start">Get My Match Score →</button>'
+      + '<div style="font-size:11px;color:#4A5040;margin-top:10px;">No account needed · 5 quick steps</div>'
+      + '</div>'
+    );
+    render(html);
+    document.getElementById('ob-start').addEventListener('click', function() { showStep1(); });
+  }
+
+  // STEP 1 — Name & Contact
+  function showStep1() {
+    ob.step = 1;
+    var html = card(
+      progressBar(1, 8)
+      + hdr(1,8,'👋','Step 1 of 8 · Welcome',
+          'Hi! I\'m <em style=\'color:#B8E030;font-style:italic;\'>Chloe.</em><br>Let\'s start with your name.',
+          'I\'ll create your buyer profile and find your match score for this home.')
+
+      + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">'
+      + '<div>' + lbl('First Name') + '<input class="ob-inp" id="ob-fn" type="text" value="' + ob.userData.first + '" placeholder="Jordan" /></div>'
+      + '<div>' + lbl('Last Name') + '<input class="ob-inp" id="ob-ln" type="text" value="' + ob.userData.last + '" placeholder="Lee" /></div>'
+      + '</div>'
+      + '<div style="margin-bottom:14px;">' + lbl('Email Address') + '<input class="ob-inp" id="ob-em" type="email" value="' + ob.userData.email + '" placeholder="you@example.com" /></div>'
+      + '<div style="margin-bottom:14px;">' + lbl('Phone <span style=\'font-weight:400;text-transform:none;letter-spacing:0;\'>(optional)</span>') + '<input class="ob-inp" id="ob-ph" type="tel" value="' + ob.userData.phone + '" placeholder="(214) 555-0000" /></div>'
+      + '<div style="margin-bottom:4px;">' + lbl('Working with a buyer\'s agent?')
+      + '<select class="ob-sel" id="ob-agent-q"><option>No — I\'m looking independently</option><option>Yes — I have an agent already</option><option>Not sure yet</option></select></div>'
+
+      + footer(null, 'Continue →', null, false)
+    );
+    render(html);
+    document.getElementById('ob-next').addEventListener('click', function() {
+      ob.userData.first = document.getElementById('ob-fn').value.trim() || 'Jordan';
+      ob.userData.last  = document.getElementById('ob-ln').value.trim() || 'Lee';
+      ob.userData.email = document.getElementById('ob-em').value.trim();
+      ob.userData.phone = document.getElementById('ob-ph').value.trim();
+      showStep2();
+    });
+  }
+
+  // STEP 2 — Budget
+  function showStep2() {
+    ob.step = 2;
+    var sliderPct = (ob.budget / 10) * 100;
+    var html = card(
+      progressBar(2, 8)
+      + hdr(2,8,'💰','Step 2 of 8 · Budget',
+          'What\'s your <em style=\'color:#B8E030;font-style:italic;\'>budget range?</em>',
+          'Chloe uses your budget to weight your match score — a perfect-style home that\'s out of range scores lower.')
+
+      + '<div style="background:linear-gradient(135deg,rgba(184,224,48,0.08),rgba(184,224,48,0.02));border:1px solid rgba(184,224,48,0.15);border-radius:14px;padding:26px;text-align:center;margin-bottom:20px;">'
+      + '<div style="font-family:Fraunces,serif;font-size:40px;color:#B8E030;line-height:1;margin-bottom:4px;" id="ob-budget-display">' + budgetRanges[ob.budget] + '</div>'
+      + '<div style="font-size:11px;color:#8A8F7A;font-family:DM Mono,monospace;letter-spacing:0.08em;">TARGET PURCHASE RANGE</div>'
+      + '</div>'
+      + '<input type="range" class="ob-slider" id="ob-slider" min="0" max="10" value="' + ob.budget + '" style="background:linear-gradient(to right,#B8E030 ' + sliderPct + '%,#1A1E12 ' + sliderPct + '%)">'
+      + '<div style="display:flex;justify-content:space-between;font-size:10px;color:#4A5040;font-family:DM Mono,monospace;margin-bottom:22px;"><span>$300K</span><span>$500K</span><span>$750K</span><span>$1M</span><span>$1.5M+</span></div>'
+
+      + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:4px;">'
+      + '<div>' + lbl('Pre-Approval Status') + '<select class="ob-sel"><option>Pre-approved and ready</option><option>Pre-qualified</option><option>Not yet started</option><option>Cash buyer</option></select></div>'
+      + '<div>' + lbl('Purchase Timeline') + '<select class="ob-sel"><option>Within 30 days</option><option selected>1–3 months</option><option>3–6 months</option><option>6–12 months</option><option>Just exploring</option></select></div>'
+      + '</div>'
+
+      + footer(showStep1, 'Continue →', null, true)
+    );
+    render(html);
+    document.getElementById('ob-slider').addEventListener('input', function() {
+      ob.budget = parseInt(this.value);
+      var pct = (ob.budget / 10) * 100;
+      this.style.background = 'linear-gradient(to right,#B8E030 ' + pct + '%,#1A1E12 ' + pct + '%)';
+      document.getElementById('ob-budget-display').textContent = budgetRanges[ob.budget];
+    });
+    document.getElementById('ob-back').addEventListener('click', function() { showStep1(); });
+    document.getElementById('ob-next').addEventListener('click', function() { showStep3(); });
+  }
+
+  // STEP 3 — StyleDNA choice
+  function showStep3() {
+    ob.step = 3;
+    var html = card(
+      progressBar(3, 8)
+      + hdr(3,8,'🧬','Step 3 of 8 · StyleDNA',
+          'Which style feels most <em style=\'color:#B8E030;font-style:italic;\'>like you?</em>',
+          'Pick the one that resonates. Your StyleDNA shapes how Chloe scores every home for you.')
+
+      + '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;">'
+      + dnaOptions.map(function(d) {
+          var sel = d.name === ob.dnaChoice ? ' sel' : '';
+          return '<div class="ob-dna-card' + sel + '" data-dna="' + d.name + '">'
+            + '<div style="font-size:26px;margin-bottom:8px;">' + d.icon + '</div>'
+            + '<div style="font-family:Fraunces,serif;font-size:14px;color:#EEF0E5;margin-bottom:3px;">' + d.name + '</div>'
+            + '<div style="font-size:11px;color:#8A8F7A;">' + d.trait + '</div>'
+            + '</div>';
+        }).join('')
+      + '</div>'
+
+      + footer(showStep2, 'Continue →', null, true)
+    );
+    render(html);
+    document.querySelectorAll('.ob-dna-card').forEach(function(c) {
+      c.addEventListener('click', function() {
+        document.querySelectorAll('.ob-dna-card').forEach(function(x) { x.classList.remove('sel'); });
+        c.classList.add('sel');
+        ob.dnaChoice = c.getAttribute('data-dna');
+      });
+    });
+    document.getElementById('ob-back').addEventListener('click', function() { showStep2(); });
+    document.getElementById('ob-next').addEventListener('click', function() { showStep4(); });
+  }
+
+  // STEP 4 — Must-haves
+  function showStep4() {
+    ob.step = 4;
+    var html = card(
+      progressBar(4, 8)
+      + hdr(4,8,'🏠','Step 4 of 8 · Must-Haves',
+          'What are your <em style=\'color:#B8E030;font-style:italic;\'>must-haves?</em>',
+          'Select everything that matters. Chloe weights these heavily in your match score.')
+
+      + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px;">'
+      + prefOptions.map(function(p) {
+          var sel = p.sel ? ' sel' : '';
+          return '<div class="ob-pref' + sel + '" data-pref="' + p.label + '">'
+            + '<div class="ob-chk">' + (p.sel ? '✓' : '') + '</div>'
+            + '<span style="font-size:17px;">' + p.icon + '</span>'
+            + '<span style="font-size:13px;font-weight:500;color:#EEF0E5;">' + p.label + '</span>'
+            + '</div>';
+        }).join('')
+      + '</div>'
+
+      + footer(showStep3, 'Continue →', null, true)
+    );
+    render(html);
+    document.querySelectorAll('.ob-pref').forEach(function(p) {
+      p.addEventListener('click', function() {
+        p.classList.toggle('sel');
+        var chk = p.querySelector('.ob-chk');
+        chk.textContent = p.classList.contains('sel') ? '✓' : '';
+        var lbl = p.getAttribute('data-pref');
+        if (p.classList.contains('sel')) {
+          if (ob.prefs.indexOf(lbl) < 0) ob.prefs.push(lbl);
+        } else {
+          ob.prefs = ob.prefs.filter(function(x) { return x !== lbl; });
+        }
+      });
+    });
+    document.getElementById('ob-back').addEventListener('click', function() { showStep3(); });
+    document.getElementById('ob-next').addEventListener('click', function() { showStep5(); });
+  }
+
+  // STEP 5 — Beds / Baths / Location
+  function showStep5() {
+    ob.step = 5;
+    var html = card(
+      progressBar(5, 8)
+      + hdr(5,8,'📍','Step 5 of 8 · Property Details',
+          'A few more <em style=\'color:#B8E030;font-style:italic;\'>specifics.</em>',
+          'This helps Chloe narrow down matching listings in your target area.')
+
+      + '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;">'
+      + '<div>' + lbl('Min Bedrooms') + '<select class="ob-sel"><option>2+</option><option>3+</option><option selected>4+</option><option>5+</option></select></div>'
+      + '<div>' + lbl('Min Bathrooms') + '<select class="ob-sel"><option>2+</option><option selected>3+</option><option>4+</option></select></div>'
+      + '<div>' + lbl('Min Sq Ft') + '<select class="ob-sel"><option>1,500+</option><option>2,000+</option><option selected>2,500+</option><option>3,500+</option><option>4,500+</option></select></div>'
+      + '</div>'
+      + '<div style="margin-bottom:14px;">' + lbl('Preferred Areas / Cities')
+      + '<input class="ob-inp" type="text" value="Flower Mound, Southlake, Colleyville" placeholder="e.g. Flower Mound, Southlake" /></div>'
+      + '<div style="margin-bottom:4px;">' + lbl('New Build or Resale?')
+      + '<select class="ob-sel"><option>No preference</option><option>New build preferred</option><option selected>Resale preferred</option><option>New build only</option></select></div>'
+
+      + footer(showStep4, 'Continue →', null, true)
+    );
+    render(html);
+    document.getElementById('ob-back').addEventListener('click', function() { showStep4(); });
+    document.getElementById('ob-next').addEventListener('click', function() { showQuiz(0); });
+  }
+
+  // STEPS 6-7 — StyleDNA Quiz (2 questions shown as part of flow)
+  function showQuiz(idx) {
+    ob.step = 6 + Math.floor(idx / 3);
+    var q = quizQuestions[idx];
+    var stepNum = 6 + Math.floor(idx / 3);
+    var progress = (5 + idx) / 8;
+
+    var html = card(
+      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:28px;">'
+      + '<div style="flex:1;height:3px;background:#1A1E12;border-radius:2px;overflow:hidden;">'
+      + '<div style="height:3px;background:#B8E030;width:' + (progress*100) + '%;transition:width 0.4s ease;border-radius:2px;"></div>'
+      + '</div>'
+      + '<div style="font-size:11px;font-family:DM Mono,monospace;color:#8A8F7A;flex-shrink:0;">' + (idx+1) + ' / ' + quizQuestions.length + '</div>'
+      + '</div>'
+
+      + '<div style="text-align:center;margin-bottom:6px;font-size:10px;font-family:DM Mono,monospace;color:#B8E030;letter-spacing:0.1em;text-transform:uppercase;">StyleDNA Quiz</div>'
+      + '<div style="font-family:Fraunces,serif;font-size:22px;color:#EEF0E5;line-height:1.3;margin-bottom:22px;text-align:center;">' + q.q + '</div>'
+
+      + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">'
+      + q.opts.map(function(opt, i) {
+          var sel = ob.quizAnswers[idx] === i ? ' sel' : '';
+          return '<div class="ob-opt' + sel + '" data-qi="' + idx + '" data-oi="' + i + '">' + opt + '</div>';
+        }).join('')
+      + '</div>'
+
+      + (idx > 0 ? '<div style="text-align:center;"><button class="ob-btn-sec" id="ob-back">← Back</button></div>' : '')
+    );
+    render(html);
+
+    document.querySelectorAll('.ob-opt').forEach(function(opt) {
+      opt.addEventListener('click', function() {
+        document.querySelectorAll('.ob-opt').forEach(function(o) { o.classList.remove('sel'); });
+        opt.classList.add('sel');
+        ob.quizAnswers[idx] = parseInt(opt.getAttribute('data-oi'));
+        setTimeout(function() {
+          if (idx + 1 < quizQuestions.length) {
+            showQuiz(idx + 1);
+          } else {
+            showReveal();
+          }
+        }, 360);
+      });
+    });
+
+    var backBtn = document.getElementById('ob-back');
+    if (backBtn) backBtn.addEventListener('click', function() {
+      if (idx > 0) showQuiz(idx - 1); else showStep5();
+    });
+  }
+
+  // STEP 8 — Match Reveal
+  function showReveal() {
+    ob.step = 8;
+    var name = ob.userData.first;
+    var html = card(
+      '<div style="text-align:center;">'
+      + progressBar(8, 8)
+
+      + '<div style="width:72px;height:72px;border-radius:50%;background:rgba(184,224,48,0.1);border:2px solid rgba(184,224,48,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;">'
+      + '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#B8E030" stroke-width="1.5"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>'
+      + '</div>'
+
+      + '<div style="font-size:10px;font-family:DM Mono,monospace;color:#B8E030;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:8px;">Your Buyer DNA · Refined Modern</div>'
+      + '<div style="font-family:Fraunces,serif;font-size:30px;color:#EEF0E5;margin-bottom:8px;">' + name + ', here\'s your <em style=\'color:#B8E030;font-style:italic;\'>match score</em></div>'
+      + '<div style="font-size:13px;color:#8A8F7A;margin-bottom:24px;">Based on your Refined Modern DNA, budget, and must-haves.</div>'
+
+      + '<div style="background:linear-gradient(135deg,rgba(184,224,48,0.1),rgba(184,224,48,0.02));border:1px solid rgba(184,224,48,0.2);border-radius:18px;padding:32px;margin-bottom:20px;position:relative;overflow:hidden;text-align:center;">'
+      + '<div style="font-family:Fraunces,serif;font-size:84px;font-weight:600;color:#B8E030;line-height:1;margin-bottom:4px;">87%</div>'
+      + '<div style="font-size:11px;font-family:DM Mono,monospace;color:#8A8F7A;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:18px;">Match Score · Top 8% of all visitors</div>'
+      + '<div style="display:inline-flex;align-items:center;gap:8px;background:rgba(184,224,48,0.1);border:1px solid rgba(184,224,48,0.2);border-radius:100px;padding:7px 18px;font-size:13px;font-weight:600;color:#EEF0E5;margin-bottom:20px;">✦ Refined Modern DNA</div>'
+      + '<div style="background:#0E1108;border:1px solid rgba(238,240,229,0.06);border-radius:12px;padding:18px;text-align:left;">'
+      + '<div style="font-family:Fraunces,serif;font-size:17px;color:#EEF0E5;margin-bottom:3px;">2847 Magnolia Drive</div>'
+      + '<div style="font-size:12px;color:#8A8F7A;margin-bottom:12px;">Flower Mound, TX 75022 · $724,000 · 4BD / 3.5BA / 3,240 sqft</div>'
+      + '<div style="display:flex;flex-wrap:wrap;gap:7px;">'
+      + ['Open Floor Plan ✓','Natural Light ✓','Home Office ✓','Smart Home ✓','Spa Suite ✓'].map(function(t) {
+          return '<span style="font-size:10px;background:rgba(184,224,48,0.08);color:#B8E030;border:1px solid rgba(184,224,48,0.2);border-radius:4px;padding:3px 9px;font-family:DM Mono,monospace;">' + t + '</span>';
+        }).join('')
+      + '</div></div>'
+      + '</div>'
+
+      + '<button class="ob-btn-pri" id="ob-enter">Open My Buyer Dashboard →</button>'
+      + '<div style="font-size:11px;color:#4A5040;margin-top:10px;">Chloe found 3 more homes that match your DNA</div>'
+      + '</div>'
+    );
+    render(html);
+    document.getElementById('ob-enter').addEventListener('click', function() { enterApp(); });
+  }
+
+  // ── UNLOCK APP ─────────────────────────────────────────────────────────────
+  function enterApp() {
+    var overlay = document.getElementById('ob-overlay');
+    if (!overlay) return;
+    overlay.style.transition = 'opacity 0.4s ease';
+    overlay.style.opacity = '0';
+    setTimeout(function() {
+      overlay.style.display = 'none';
+      var header = document.getElementById('app-header');
+      var main   = document.getElementById('app-main');
+      if (header) header.style.display = 'flex';
+      if (main)   main.style.display   = 'flex';
+      // Init dashboard data now that the DOM is visible
+      if (typeof initDashboard === 'function') initDashboard();
+    }, 400);
+  }
+
+  // Start on load
+  document.addEventListener('DOMContentLoaded', function() {
+    showWelcome();
+  });
+
+})();
+
 function toast(msg,type){var o=document.getElementById('_t');if(o)o.remove();var t=document.createElement('div');t.id='_t';t.textContent=msg;var bg=type==='ok'?'#B8E030':'#1A1E12';var c=type==='ok'?'#0A0B07':'#EEF0E5';t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:'+bg+';color:'+c+';padding:10px 20px;border-radius:8px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all .2s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.4);border:1px solid rgba(184,224,48,.15);';document.body.appendChild(t);requestAnimationFrame(function(){t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';});clearTimeout(t._x);t._x=setTimeout(function(){t.style.opacity='0';},2600);}
 function modal(title,body,label,cb){var o=document.getElementById('_m');if(o)o.remove();var el=document.createElement('div');el.id='_m';el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9990;display:flex;align-items:center;justify-content:center;';el.innerHTML='<div style="background:#13160D;border:1px solid rgba(184,224,48,.15);border-radius:13px;padding:26px 28px;min-width:380px;max-width:460px;box-shadow:0 20px 60px rgba(0,0,0,.6);"><div style="font-family:Fraunces,serif;font-size:19px;margin-bottom:9px;">'+title+'</div><div style="font-size:13px;color:#8A8F7A;line-height:1.6;margin-bottom:20px;">'+body+'</div><div style="display:flex;gap:9px;justify-content:flex-end;"><button id="_mc" style="padding:7px 16px;border-radius:7px;border:1px solid rgba(238,240,229,.08);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:12px;cursor:pointer;">Cancel</button><button id="_mo" style="padding:7px 16px;border-radius:7px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:12px;font-weight:600;cursor:pointer;">'+(label||'OK')+'</button></div></div>';document.body.appendChild(el);el.querySelector('#_mc').onclick=function(){el.remove();};el.querySelector('#_mo').onclick=function(){el.remove();if(cb)cb();};el.onclick=function(e){if(e.target===el)el.remove();};}
 
@@ -86,31 +529,40 @@ var recs=[
   {addr:'1445 Clearwater Ct',area:'Colleyville',match:82,price:'$891K',why:'Smart home integration + clean architecture'},
   {addr:'3820 Summit Ridge',area:'Southlake',match:78,price:'$1.05M',why:'Floor-to-ceiling windows, light-filled open plan'},
 ];
-document.addEventListener('DOMContentLoaded',function(){
+function initDashboard(){
   var dt=document.getElementById('dna-traits');
-  traits.forEach(function(t){
-    dt.innerHTML+='<div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--txm);">'+t.label+'</span><span style="font-family:DM Mono,monospace;font-size:11px;color:var(--acc);">'+t.strength+'%</span></div><div style="height:4px;background:var(--s3);border-radius:2px;overflow:hidden;"><div style="height:4px;background:var(--acc);border-radius:2px;width:'+t.strength+'%;"></div></div></div>';
-  });
+  if(dt && dt.innerHTML==='') {
+    traits.forEach(function(t){
+      dt.innerHTML+='<div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--txm);">'+t.label+'</span><span style="font-family:DM Mono,monospace;font-size:11px;color:var(--acc);">'+t.strength+'%</span></div><div style="height:4px;background:var(--s3);border-radius:2px;overflow:hidden;"><div style="height:4px;background:var(--acc);border-radius:2px;width:'+t.strength+'%;"></div></div></div>';
+    });
+  }
   var hv=document.getElementById('homes-visited');
-  homes.forEach(function(h){
-    hv.innerHTML+='<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 18px;border-bottom:1px solid var(--bs);cursor:pointer;transition:background .11s;" class="hrow"><div><div style="font-size:13px;font-weight:500;">'+h.addr+'</div><div style="font-size:11px;color:var(--txm);">'+h.area+' · '+h.date+'</div></div><div style="display:flex;align-items:center;gap:10px;"><span style="font-family:DM Mono,monospace;font-size:14px;color:var(--acc);">'+h.match+'%</span><button class="btn bp" style="font-size:10px;padding:3px 9px;" data-hv="'+h.addr+'">View Report</button></div></div>';
-  });
+  if(hv && hv.innerHTML==='') {
+    homes.forEach(function(h){
+      hv.innerHTML+='<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 18px;border-bottom:1px solid var(--bs);cursor:pointer;transition:background .11s;" class="hrow"><div><div style="font-size:13px;font-weight:500;">'+h.addr+'</div><div style="font-size:11px;color:var(--txm);">'+h.area+' · '+h.date+'</div></div><div style="display:flex;align-items:center;gap:10px;"><span style="font-family:DM Mono,monospace;font-size:14px;color:var(--acc);">'+h.match+'%</span><button class="btn bp" style="font-size:10px;padding:3px 9px;" data-hv="'+h.addr+'">View Report</button></div></div>';
+    });
+  }
   document.querySelectorAll('[data-hv]').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();showVisitReport(b.dataset.hv);});});
   document.querySelectorAll('.hrow').forEach(function(r){r.addEventListener('click',function(e){if(!e.target.closest('[data-hv]')){var btn=r.querySelector('[data-hv]');if(btn)showVisitReport(btn.dataset.hv);}});});
   var rg=document.getElementById('recs-grid');
-  recs.forEach(function(r){
-    rg.innerHTML+='<div style="background:var(--s2);border:1px solid var(--bs);border-radius:9px;padding:16px;cursor:pointer;transition:border-color .12s;" class="rec-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;"><div><div style="font-size:13px;font-weight:500;">'+r.addr+'</div><div style="font-size:11px;color:var(--txm);">'+r.area+' · '+r.price+'</div></div><div style="font-family:Fraunces,serif;font-size:22px;color:var(--acc);">'+r.match+'%</div></div><div style="font-size:12px;color:var(--txm);line-height:1.5;">'+r.why+'</div><button class="btn bp" style="width:100%;justify-content:center;font-size:11px;margin-top:12px;" data-rec="'+r.addr+'">View This Home</button></div>';
-  });
+  if(rg && rg.innerHTML==='') {
+    recs.forEach(function(r){
+      rg.innerHTML+='<div style="background:var(--s2);border:1px solid var(--bs);border-radius:9px;padding:16px;cursor:pointer;transition:border-color .12s;" class="rec-card"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;"><div><div style="font-size:13px;font-weight:500;">'+r.addr+'</div><div style="font-size:11px;color:var(--txm);">'+r.area+' · '+r.price+'</div></div><div style="font-family:Fraunces,serif;font-size:22px;color:var(--acc);">'+r.match+'%</div></div><div style="font-size:12px;color:var(--txm);line-height:1.5;">'+r.why+'</div><button class="btn bp" style="width:100%;justify-content:center;font-size:11px;margin-top:12px;" data-rec="'+r.addr+'">View This Home</button></div>';
+    });
+  }
   document.querySelectorAll('[data-rec]').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();showHomeDetail(b.dataset.rec);});});
   document.querySelectorAll('.rec-card').forEach(function(c){
     c.addEventListener('mouseover',function(){c.style.borderColor='var(--br)';});
     c.addEventListener('mouseout',function(){c.style.borderColor='var(--bs)';});
     c.addEventListener('click',function(e){if(!e.target.closest('[data-rec]')){var addr=c.querySelector('[data-rec]');if(addr)showHomeDetail(addr.dataset.rec);}});
   });
-  document.getElementById('ba-contact').addEventListener('click',function(){modal('Contact Marcus Rivera','Send a message to your agent to schedule a showing or ask questions about any property.','Send Message',function(){toast('Message sent to Marcus Rivera ✓','ok');});});
-  document.getElementById('ba-share').addEventListener('click',function(){toast('Buyer profile link copied ✓','ok');});
-  document.getElementById('ba-more').addEventListener('click',function(){toast('Loading more recommendations...','');});
-});
+  var contact=document.getElementById('ba-contact');
+  if(contact) contact.addEventListener('click',function(){modal('Contact Marcus Rivera','Send a message to your agent to schedule a showing or ask questions about any property.','Send Message',function(){toast('Message sent to Marcus Rivera ✓','ok');});});
+  var share=document.getElementById('ba-share');
+  if(share) share.addEventListener('click',function(){toast('Buyer profile link copied ✓','ok');});
+  var more=document.getElementById('ba-more');
+  if(more) more.addEventListener('click',function(){toast('Loading more recommendations...','');});
+}
 
 
 // ── HOME DETAIL MODAL ────────────────────────────────────────────────────────
