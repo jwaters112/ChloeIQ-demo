@@ -20,6 +20,8 @@
   --radius:11px;
 }
 html,body{min-height:100%;background:var(--bg);color:var(--tx);font-family:var(--font-body);font-size:14px;}
+*{transition:background-color 0.2s ease, border-color 0.2s ease, color 0.15s ease;}
+button,a,.app-card,.swatch{transition:all 0.15s ease !important;}
 
 /* ── LOGIN ── */
 .login-screen{position:fixed;inset:0;background:var(--bg);z-index:1000;display:flex;align-items:center;justify-content:center;}
@@ -73,7 +75,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--tx);font-family:var(-
 .app-grid.g4{grid-template-columns:repeat(4,1fr);}
 .app-grid.g6{grid-template-columns:repeat(6,1fr);}
 .app-card{background:var(--s1);border:1px solid var(--bs);border-radius:var(--radius);padding:18px 20px;cursor:pointer;transition:all .15s;text-decoration:none;color:var(--tx);display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden;}
-.app-card:hover{border-color:var(--br);background:var(--s2);transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.3);}
+.app-card:hover{border-color:var(--br);background:var(--s2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.08);}
 .app-card.featured{border-color:var(--br);}
 .app-card.featured::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--acc);}
 .ac-icon{font-size:26px;line-height:1;}
@@ -91,7 +93,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--tx);font-family:var(-
 /* ── THEME PANEL ── */
 .theme-panel-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;display:none;align-items:center;justify-content:center;}
 .theme-panel-overlay.open{display:flex;}
-.theme-panel{background:var(--s1);border:1px solid var(--bs);border-radius:16px;width:780px;max-height:88vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.6);}
+.theme-panel{background:var(--s1);border:1px solid var(--bs);border-radius:16px;width:780px;max-height:88vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.15);}
 .tp-header{display:flex;align-items:center;justify-content:space-between;padding:20px 26px;border-bottom:1px solid var(--bs);position:sticky;top:0;background:var(--s1);z-index:2;}
 .tp-title{font-family:var(--font-display);font-size:20px;}
 .tp-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--bs);background:var(--s2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--txm);font-size:16px;transition:all .13s;}
@@ -101,19 +103,20 @@ html,body{min-height:100%;background:var(--bg);color:var(--tx);font-family:var(-
 .tp-label{font-family:var(--font-mono);font-size:10px;color:var(--txd);letter-spacing:.8px;text-transform:uppercase;}
 
 /* Color swatches */
-.swatch-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;}
-.swatch{border-radius:10px;aspect-ratio:1;cursor:pointer;border:2px solid transparent;transition:all .15s;position:relative;overflow:hidden;}
-.swatch:hover{transform:scale(1.06);}
-.swatch.active{border-color:white;box-shadow:0 0 0 3px rgba(255,255,255,.15);}
+.swatch-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.swatch{border-radius:12px;aspect-ratio:1;cursor:pointer;border:2px solid transparent;transition:all .15s;position:relative;overflow:hidden;}
+.swatch:hover{transform:scale(1.04);box-shadow:0 4px 16px rgba(0,0,0,.2);}
+.swatch.active{border-color:var(--acc);box-shadow:0 0 0 3px var(--ad);}
 .swatch-inner{position:absolute;inset:0;display:flex;flex-direction:column;}
-.swatch-top{flex:1;}
-.swatch-bot{height:30%;}
-.swatch-name{font-size:10px;color:var(--txm);text-align:center;margin-top:5px;}
+.swatch-top{flex:1;display:flex;align-items:center;justify-content:center;}
+.swatch-bot{height:28%;}
+.swatch-name{font-size:10px;color:var(--txm);text-align:center;font-family:var(--font-mono);}
 
 /* Mode toggle */
 .mode-toggle{display:flex;background:var(--s2);border:1px solid var(--bs);border-radius:9px;overflow:hidden;width:fit-content;}
 .mode-btn{padding:8px 20px;font-size:13px;font-weight:500;cursor:pointer;color:var(--txm);transition:all .13s;display:flex;align-items:center;gap:6px;}
 .mode-btn:hover{color:var(--tx);}
+.mode-btn.active{background:var(--s1);color:var(--tx);font-weight:600;}
 .mode-btn.active{background:var(--acc);color:var(--bg);}
 
 /* Font grid */
@@ -328,18 +331,21 @@ html,body{min-height:100%;background:var(--bg);color:var(--tx);font-family:var(-
 
 // ── THEME DATA ──
 var COLOR_SCHEMES = [
+  // ── LIGHT THEMES ──────────────────────────────────────────────────────────
+  { id:'apple',      name:'Apple Light',    bg:'#F5F5F7', s1:'#FFFFFF', s2:'#F0F0F2', acc:'#1D6F42', tx:'#1D1D1F', txm:'#6E6E73', light:true },
+  { id:'paper',      name:'Paper White',    bg:'#FAFAF8', s1:'#FFFFFF', s2:'#F2F2EF', acc:'#B8E030', tx:'#1A1A18', txm:'#70706A', light:true },
+  { id:'warm-light', name:'Warm Sand',      bg:'#F7F3ED', s1:'#FFFDFB', s2:'#EFE9E1', acc:'#7A5C2E', tx:'#241E17', txm:'#7A7060', light:true },
+  { id:'sky',        name:'Sky Blue',       bg:'#F0F6FF', s1:'#FFFFFF', s2:'#E8F0FC', acc:'#1A56DB', tx:'#111827', txm:'#4B5563', light:true },
+
+  // ── DARK THEMES ───────────────────────────────────────────────────────────
   { id:'default',    name:'Dark Olive',     bg:'#0A0B07', s1:'#13160D', s2:'#1A1E12', acc:'#B8E030', tx:'#EEF0E5', txm:'#8A8F7A' },
-  { id:'midnight',   name:'Midnight',       bg:'#080810', s1:'#0F0F1A', s2:'#161625', acc:'#7C6FFF', tx:'#E8E8F4', txm:'#7070A0' },
-  { id:'navy',       name:'Deep Navy',      bg:'#04090F', s1:'#071525', s2:'#0D2035', acc:'#38BDF8', tx:'#E0F0FF', txm:'#5A80A0' },
-  { id:'forest',     name:'Forest Dark',    bg:'#060D08', s1:'#0D1A0F', s2:'#132415', acc:'#4ADE80', tx:'#E4F0E6', txm:'#608060' },
-  { id:'charcoal',   name:'Charcoal Slate', bg:'#0C0C0E', s1:'#151518', s2:'#1E1E22', acc:'#F472B6', tx:'#F0EEF4', txm:'#707080' },
-  { id:'espresso',   name:'Warm Espresso',  bg:'#0E0906', s1:'#1A120A', s2:'#251A10', acc:'#F59E0B', tx:'#F4EDE4', txm:'#8A7060' },
-  { id:'light',      name:'Clean Light',    bg:'#F8F9FA', s1:'#FFFFFF', s2:'#F1F3F5', acc:'#1B7A2E', tx:'#1A1F1C', txm:'#6B7770' },
-  { id:'softlight',  name:'Soft Ivory',     bg:'#F5F0E8', s1:'#FFFEF8', s2:'#F0EBE0', acc:'#7A5C2E', tx:'#2A2018', txm:'#8A7A60' },
-  { id:'sepia',      name:'Sepia Warm',     bg:'#1A1408', s1:'#231B0C', s2:'#2C2210', acc:'#D97706', tx:'#F5EDD0', txm:'#8A7040' },
-  { id:'emerald',    name:'Emerald Dark',   bg:'#041209', s1:'#071C10', s2:'#0C2618', acc:'#10B981', tx:'#E0F5EC', txm:'#4A8060' },
-  { id:'royal',      name:'Royal Purple',   bg:'#08060E', s1:'#100D18', s2:'#181522', acc:'#C084FC', tx:'#EDE8F8', txm:'#706090' },
-  { id:'crimson',    name:'Crimson Dark',   bg:'#0E0608', s1:'#1A0C0E', s2:'#241216', acc:'#F43F5E', tx:'#F8E8EC', txm:'#806070' },
+  { id:'midnight',   name:'Midnight',       bg:'#08091A', s1:'#0F1124', s2:'#161830', acc:'#818CF8', tx:'#E8E9F8', txm:'#6870A0' },
+  { id:'obsidian',   name:'Obsidian',       bg:'#0C0C0C', s1:'#161616', s2:'#1F1F1F', acc:'#F5F5F5', tx:'#F0F0F0', txm:'#888888' },
+  { id:'navy',       name:'Deep Navy',      bg:'#04080F', s1:'#071220', s2:'#0C1E30', acc:'#38BDF8', tx:'#DFF0FF', txm:'#5A7A9A' },
+  { id:'espresso',   name:'Warm Espresso',  bg:'#0E0A06', s1:'#1A1208', s2:'#261A0E', acc:'#F59E0B', tx:'#F5EDE0', txm:'#8A7258' },
+  { id:'forest',     name:'Forest',         bg:'#060D08', s1:'#0D1A0F', s2:'#132416', acc:'#4ADE80', tx:'#E4F0E6', txm:'#5A7A5C' },
+  { id:'royal',      name:'Royal Purple',   bg:'#08060F', s1:'#100D1A', s2:'#181424', acc:'#C084FC', tx:'#EDE8F8', txm:'#706098' },
+  { id:'crimson',    name:'Crimson',        bg:'#0E0608', s1:'#1A0C0E', s2:'#241216', acc:'#FB7185', tx:'#F8E8EC', txm:'#806070' },
 ];
 
 var FONTS = [
@@ -359,8 +365,8 @@ var FONTS = [
 
 // ── STATE ──
 var currentTheme = {
-  scheme: 'default',
-  mode: 'dark',
+  scheme: 'apple',
+  mode: 'system',
   font: 'dm-sans',
   radius: '11px'
 };
@@ -392,16 +398,7 @@ function applyTheme(scheme, fontObj, radius, mode) {
   var s = scheme;
   var r = document.documentElement;
 
-  // If light mode override
-  var isLight = mode === 'light' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: light)').matches);
-
-  // For light schemes that are already light, honor them
-  // For dark schemes with light mode, invert
   var bg = s.bg, s1 = s.s1, s2 = s.s2, tx = s.tx, txm = s.txm;
-  if (isLight && s.id !== 'light' && s.id !== 'softlight' && s.id !== 'sepia') {
-    // Swap bg and tx for light mode on dark schemes
-    bg = '#F8F9FA'; s1 = '#FFFFFF'; s2 = '#F1F3F5'; tx = '#1A1F1C'; txm = '#6B7770';
-  }
 
   r.style.setProperty('--bg', bg);
   r.style.setProperty('--s1', s1);
@@ -533,11 +530,37 @@ function buildFlowSteps() {
 // ── THEME PANEL ──
 function buildSwatches() {
   var el = document.getElementById('swatch-grid'); if(!el) return;
-  COLOR_SCHEMES.forEach(function(s) {
+  // Build swatches grouped by light/dark
+  function addSwatchSection(label) {
+    var lbl = document.createElement('div');
+    lbl.style.cssText = 'grid-column:1/-1;font-family:var(--font-mono);font-size:10px;color:var(--txd);letter-spacing:.8px;text-transform:uppercase;padding:4px 0 2px;';
+    lbl.textContent = label;
+    el.appendChild(lbl);
+  }
+
+  var lightSchemes = COLOR_SCHEMES.filter(function(s){return s.light;});
+  var darkSchemes  = COLOR_SCHEMES.filter(function(s){return !s.light;});
+
+  addSwatchSection('Light Themes');
+  lightSchemes.forEach(addSwatch);
+  addSwatchSection('Dark Themes');
+  darkSchemes.forEach(addSwatch);
+
+  function addSwatch(s) {
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'display:flex;flex-direction:column;gap:5px;cursor:pointer;';
+
     var div = document.createElement('div');
     div.className = 'swatch' + (s.id === currentTheme.scheme ? ' active' : '');
     div.dataset.scheme = s.id;
-    div.innerHTML = '<div class="swatch-inner"><div class="swatch-top" style="background:'+s.bg+';"></div><div class="swatch-bot" style="background:'+s.acc+';"></div></div>';
+    // Aa preview text + accent strip
+    div.innerHTML = '<div class="swatch-inner">'
+      + '<div class="swatch-top" style="background:'+s.bg+';display:flex;align-items:center;justify-content:center;gap:6px;">'
+      + '<span style="font-family:Fraunces,serif;font-size:15px;color:'+s.tx+';opacity:0.9;line-height:1;">Aa</span>'
+      + '<span style="width:12px;height:12px;border-radius:50%;background:'+s.acc+';display:inline-block;flex-shrink:0;"></span>'
+      + '</div>'
+      + '<div class="swatch-bot" style="background:'+s.acc+';opacity:0.85;"></div>'
+      + '</div>';
     div.title = s.name;
     div.addEventListener('click', function() {
       currentTheme.scheme = s.id;
@@ -545,9 +568,16 @@ function buildSwatches() {
       div.classList.add('active');
       applyTheme(getScheme(), getFont(), currentTheme.radius, currentTheme.mode);
     });
-    el.appendChild(div);
-    el.innerHTML += '<div class="swatch-name">'+s.name+'</div>';
-  });
+
+    var name = document.createElement('div');
+    name.className = 'swatch-name';
+    name.textContent = s.name;
+
+    wrap.appendChild(div);
+    wrap.appendChild(name);
+    wrap.addEventListener('click', function() { div.click(); });
+    el.appendChild(wrap);
+  }
   // Rebuild since innerHTML resets
   el.innerHTML = '';
   COLOR_SCHEMES.forEach(function(s) {
