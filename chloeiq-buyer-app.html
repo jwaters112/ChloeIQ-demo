@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ChloeIQ — Buyer Experience</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#0A0B07;--s1:#13160D;--s2:#1A1E12;--s3:#222818;
+  --acc:#B8E030;--ad:rgba(184,224,48,.10);--am:rgba(184,224,48,.22);
+  --tx:#EEF0E5;--txm:#8A8F7A;--txd:#4A5040;
+  --br:rgba(184,224,48,.14);--bs:rgba(238,240,229,.07);
+  --grn:#4ADE80;--red:#FF5A4A;--amb:#F5A623;--blu:#60A5FA;
+  --radius:16px;
+}
+html,body{height:100%;background:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;padding:20px 16px;gap:14px;}
+.device-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(184,224,48,0.5);}
+
+/* ── PHONE SHELL ── */
+.phone{
+  width:390px;max-width:100%;
+  height:820px;max-height:90vh;
+  background:var(--bg);
+  border-radius:50px;
+  overflow:hidden;
+  position:relative;
+  display:flex;flex-direction:column;
+  box-shadow:0 0 0 1px rgba(255,255,255,0.08),0 0 0 3px rgba(0,0,0,0.6),0 40px 80px rgba(0,0,0,0.8);
+}
+.notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:126px;height:34px;background:#080808;border-radius:0 0 22px 22px;z-index:30;}
+.status-bar{display:flex;justify-content:space-between;align-items:center;padding:14px 28px 0;font-family:'DM Mono',monospace;font-size:11px;color:rgba(238,240,229,0.5);flex-shrink:0;z-index:10;position:relative;}
+
+/* ── SCREENS ── */
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;opacity:0;pointer-events:none;transition:opacity 0.3s ease, transform 0.3s ease;transform:translateX(30px);}
+.screen.active{opacity:1;pointer-events:all;transform:translateX(0);}
+.screen.exit{opacity:0;transform:translateX(-30px);}
+
+/* Scrollable body */
+.s-body{flex:1;overflow-y:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;}
+.s-body::-webkit-scrollbar{display:none;}
+
+/* ── SHARED PROGRESS BAR ── */
+.prog-bar{height:3px;background:var(--s3);flex-shrink:0;}
+.prog-fill{height:3px;background:var(--acc);transition:width 0.4s cubic-bezier(0.4,0,0.2,1);}
+
+/* ── SHARED FOOTER ── */
+.s-footer{padding:14px 20px 28px;display:flex;gap:10px;flex-shrink:0;background:var(--bg);}
+.btn-back{width:48px;height:50px;border-radius:14px;border:1px solid var(--bs);background:transparent;color:var(--txm);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.btn-pri{flex:1;height:50px;border-radius:14px;border:none;background:var(--acc);color:var(--bg);font-family:'Fraunces',serif;font-size:17px;font-weight:600;cursor:pointer;transition:opacity 0.15s;}
+.btn-pri:active{opacity:0.85;}
+.btn-full{width:100%;height:52px;border-radius:14px;border:none;background:var(--acc);color:var(--bg);font-family:'Fraunces',serif;font-size:17px;font-weight:600;cursor:pointer;transition:opacity 0.15s;}
+.btn-full:active{opacity:0.85;}
+.btn-ghost{width:100%;height:46px;border-radius:14px;border:1px solid var(--bs);background:transparent;color:var(--txm);font-size:14px;cursor:pointer;}
+
+/* ── FORM ELEMENTS ── */
+.mob-inp{width:100%;background:var(--s2);border:1px solid var(--bs);border-radius:12px;padding:14px 16px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;transition:border-color 0.2s;}
+.mob-inp:focus{border-color:var(--br);}
+.mob-inp::placeholder{color:var(--txd);}
+.mob-sel{width:100%;background:var(--s2);border:1px solid var(--bs);border-radius:12px;padding:14px 16px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;cursor:pointer;}
+.mob-sel option{background:#13160D;}
+.inp-lbl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txm);margin-bottom:8px;display:block;}
+
+/* ── CHIPS ── */
+.chip-row{display:flex;flex-wrap:wrap;gap:8px;}
+.mob-chip{padding:9px 16px;border-radius:100px;background:var(--s2);border:1px solid var(--bs);font-size:13px;color:var(--txm);cursor:pointer;transition:all 0.15s;}
+.mob-chip.sel{background:var(--ad);border-color:var(--br);color:var(--acc);}
+
+/* ── OPTION CARDS ── */
+.opt-card{background:var(--s2);border:1.5px solid var(--bs);border-radius:14px;padding:15px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all 0.15s;}
+.opt-card.sel{border-color:rgba(184,224,48,0.45);background:var(--ad);}
+.opt-radio{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--bs);display:flex;align-items:center;justify-content:center;font-size:11px;color:transparent;flex-shrink:0;transition:all 0.15s;}
+.opt-card.sel .opt-radio{background:var(--acc);border-color:var(--acc);color:var(--bg);}
+
+/* ── PRIORITY GRID ── */
+.pri-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.pri-card{background:var(--s2);border:1.5px solid var(--bs);border-radius:14px;padding:18px 12px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;text-align:center;position:relative;transition:all 0.15s;}
+.pri-card.sel{border-color:rgba(184,224,48,0.45);background:var(--ad);}
+.pri-chk{position:absolute;top:8px;right:8px;width:18px;height:18px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--bg);opacity:0;transition:opacity 0.15s;}
+.pri-card.sel .pri-chk{opacity:1;}
+
+/* ── QUIZ OPTION ── */
+.quiz-opt{background:var(--s2);border:1px solid var(--bs);border-radius:14px;padding:16px 18px;font-size:14px;color:var(--txm);cursor:pointer;transition:all 0.15s;line-height:1.5;}
+.quiz-opt:hover{border-color:rgba(184,224,48,0.25);color:var(--tx);}
+.quiz-opt.sel{border-color:rgba(184,224,48,0.5);background:var(--ad);color:var(--acc);}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes popIn{from{transform:scale(0.7);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes pulseAcc{0%,100%{box-shadow:0 0 0 0 rgba(184,224,48,0)}50%{box-shadow:0 0 20px rgba(184,224,48,0.15)}}
+.fade-up{animation:fadeUp 0.3s ease both;}
+</style>
+</head>
+<body>
+
+<div class="device-label">ChloeIQ · Buyer Experience · Mobile</div>
+
+<div class="phone">
+  <div class="notch"></div>
+  <div class="status-bar"><span>9:41</span><span>●●● 5G 🔋</span></div>
+
+  <!-- ══════════════════════════════════════
+       SCREEN 0: WELCOME — Scanned Chloe Code
+  ══════════════════════════════════════ -->
+  <div class="screen active" id="sc-welcome" style="background:var(--bg);justify-content:space-between;padding:24px 24px 32px;overflow-y:auto;">
+
+    <!-- Radial glow -->
+    <div style="position:absolute;width:300px;height:300px;background:radial-gradient(circle,rgba(184,224,48,0.07) 0%,transparent 65%);top:5%;left:50%;transform:translateX(-50%);pointer-events:none;"></div>
+    <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(184,224,48,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(184,224,48,0.025) 1px,transparent 1px);background-size:36px 36px;mask-image:radial-gradient(ellipse 80% 60% at 50% 20%,black,transparent);pointer-events:none;"></div>
+
+    <!-- Top section -->
+    <div style="display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1;">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--acc);margin-bottom:20px;opacity:0.7;">ChloeIQ</div>
+
+      <!-- QR scan indicator -->
+      <div style="width:80px;height:80px;border-radius:24px;background:var(--ad);border:1px solid var(--br);display:flex;align-items:center;justify-content:center;font-size:38px;margin-bottom:20px;animation:pulseAcc 3s ease-in-out infinite;">🏠</div>
+
+      <div style="font-family:'Fraunces',serif;font-size:28px;font-weight:600;color:var(--tx);line-height:1.15;margin-bottom:10px;">You're at<br><em style="color:var(--acc);font-style:italic;">Magnolia Drive</em></div>
+      <div style="font-size:13px;color:var(--txm);line-height:1.6;max-width:280px;">2847 Magnolia Drive · Flower Mound, TX<br>$724,000 · 4 bed / 3.5 bath · 3,240 sqft</div>
+    </div>
+
+    <!-- Agent card -->
+    <div style="background:var(--s1);border:1px solid var(--bs);border-radius:16px;padding:16px;display:flex;align-items:center;gap:14px;position:relative;z-index:1;">
+      <div style="width:44px;height:44px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--bg);flex-shrink:0;">MR</div>
+      <div style="flex:1;">
+        <div style="font-size:14px;font-weight:600;color:var(--tx);">Marcus Rivera</div>
+        <div style="font-size:11px;color:var(--txm);margin-top:1px;">REALTOR® · REAL Broker, LLC</div>
+      </div>
+      <div style="font-size:10px;font-family:'DM Mono',monospace;color:var(--acc);background:var(--ad);border:1px solid var(--br);padding:3px 10px;border-radius:20px;flex-shrink:0;">HOST</div>
+    </div>
+
+    <!-- What Chloe does -->
+    <div style="display:flex;flex-direction:column;gap:9px;position:relative;z-index:1;">
+      <div style="font-size:11px;color:var(--txm);text-align:center;margin-bottom:2px;">Takes about 90 seconds</div>
+      <div class="btn-full" id="w-start" onclick="goTo('sc-step1')">Get My Match Score →</div>
+      <div style="font-size:11px;color:var(--txd);text-align:center;">No account needed · Your data stays private</div>
+    </div>
+
+  </div><!-- /welcome -->
+
+
+  <!-- ══════════════════════════════════════
+       SCREEN 1: NAME & CONTACT
+  ══════════════════════════════════════ -->
+  <div class="screen" id="sc-step1" style="background:var(--bg);">
+    <div class="prog-bar"><div class="prog-fill" style="width:12.5%;"></div></div>
+    <div style="padding:20px 22px 16px;flex-shrink:0;border-bottom:1px solid var(--bs);">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--acc);margin-bottom:6px;">Step 1 of 8 · About You</div>
+      <div style="font-family:'Fraunces',serif;font-size:22px;color:var(--tx);line-height:1.2;">Hi! I'm <em style="color:var(--acc);font-style:italic;">Chloe.</em><br>What's your name?</div>
+    </div>
+    <div class="s-body" style="padding:20px 22px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+        <div><label class="inp-lbl">First Name</label><input class="mob-inp" id="s1-fn" type="text" value="Jordan" placeholder="Jordan"></div>
+        <div><label class="inp-lbl">Last Name</label><input class="mob-inp" id="s1-ln" type="text" value="Lee" placeholder="Lee"></div>
+      </div>
+      <div style="margin-bottom:14px;"><label class="inp-lbl">Email</label><input class="mob-inp" id="s1-em" type="email" value="jordan.lee@gmail.com" placeholder="you@example.com"></div>
+      <div style="margin-bottom:14px;"><label class="inp-lbl">Phone <span style="font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;">(optional)</span></label><input class="mob-inp" id="s1-ph" type="tel" value="(214) 555-0189" placeholder="(214) 555-0000"></div>
+      <div><label class="inp-lbl">Working with a buyer's agent?</label>
+        <select class="mob-sel" id="s1-agent">
+          <option>No — I'm looking independently</option>
+          <option>Yes — I have an agent already</option>
+          <option>Not sure yet</option>
+        </select>
+      </div>
+    </div>
+    <div class="s-footer">
+      <button class="btn-back" onclick="goTo('sc-welcome')">←</button>
+      <button class="btn-pri" onclick="goTo('sc-step2')">Continue →</button>
+    </div>
+  </div><!-- /step1 -->
+
+
+  <!-- ══════════════════════════════════════
+       SCREEN 2: BUDGET
+  ══════════════════════════════════════ -->
+  <div class="screen" id="sc-step2" style="background:var(--bg);">
+    <div class="prog-bar"><div class="prog-fill" style="width:25%;"></div></div>
+    <div style="padding:20px 22px 16px;flex-shrink:0;border-bottom:1px solid var(--bs);">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--acc);margin-bottom:6px;">Step 2 of 8 · Budget</div>
+      <div style="font-family:'Fraunces',serif;font-size:22px;color:var(--tx);line-height:1.2;">What's your<br><em style="color:var(--acc);font-style:italic;">price range?</em></div>
+      <div style="font-size:12px;color:var(--txm);margin-top:6px;">Used to calibrate match scores — not shared without permission.</div>
+    </div>
+    <div class="s-body" style="padding:16px 22px;">
+      <div id="s2-opts" style="display:flex;flex-direction:column;gap:9px;margin-bottom:16px;">
+        <div class="opt-card" onclick="selOpt(this,'s2-opts')"><div class="opt-radio"></div><span style="font-family:'Fraunces',serif;font-size:17px;color:var(--tx);">Under $500K</span></div>
+        <div class="opt-card" onclick="selOpt(this,'s2-opts')"><div class="opt-radio"></div><span style="font-family:'Fraunces',serif;font-size:17px;color:var(--tx);">$500K – $700K</span></div>
+        <div class="opt-card sel" onclick="selOpt(this,'s2-opts')"><div class="opt-radio">✓</div><span style="font-family:'Fraunces',serif;font-size:17px;color:var(--tx);">$650K – $800K</span></div>
+        <div class="opt-card" onclick="selOpt(this,'s2-opts')"><div class="opt-radio"></div><span style="font-family:'Fraunces',serif;font-size:17px;color:var(--tx);">$800K – $1.2M</span></div>
+        <div class="opt-card" onclick="selOpt(this,'s2-opts')"><div class="opt-radio"></div><span style="font-family:'Fraunces',serif;font-size:17px;color:var(--tx);">$1.2M+</span></div>
+      </div>
+      <div style="margin-bottom:12px;"><label class="inp-lbl">Pre-approval status</label>
+        <select class="mob-sel"><option>Pre-approved and ready</option><option>Pre-qualified</option><option>Not started yet</option><option>Cash buyer</option></select>
+      </div>
+      <div><label class="inp-lbl">Purchase timeline</label>
+        <select class="mob-sel"><option>Within 30 days</option><option selected>1–3 months</option><option>3–6 months</option><option>Just exploring</option></select>
+      </div>
+    </div>
+    <div class="s-footer">
+      <button class="btn-back" onclick="goTo('sc-step1')">←</button>
+      <button class="btn-pri" onclick="goTo('sc-step3')">Continue →</button>
+    </div>
+  </div><!-- /step2 -->
+
+
+  <!-- ══════════════════════════════════════
+       SCREEN 3: STYLE DNA CHOICE
+  ══════════════════════════════════════ -->
+  <div class="screen" id="sc-step3" style="background:var(--bg);">
+    <div class="prog-bar"><div class="prog-fill" style="width:37.5%;"></div></div>
+    <div style="padding:20px 22px 16px;flex-shrink:0;border-bottom:1px solid var(--bs);">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--acc);margin-bottom:6px;">Step 3 of 8 · StyleDNA</div>
+      <div style="font-family:'Fraunces',serif;font-size:22px;color:var(--tx);line-height:1.2;">Which style feels<br>most <em style="color:var(--acc);font-style:italic;">like you?</em></div>
+    </div>
+    <div class="s-body" style="padding:16px 22px;">
+      <div id="s3-dna" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px;">
+        <div class="pri-card sel" onclick="selDNA(this)" data-dna="Refined Modern">
+          <div class="pri-chk">✓</div>
+          <div style="font-size:26px;">✦</div>
+          <div style="font-family:'Fraunces',serif;font-size:14px;color:var(--tx);">Refined Modern</div>
+          <div style="font-size:11px;color:var(--txm);">Clean, curated, intentional</div>
+        </div>
+        <div class="pri-card" onclick="selDNA(this)" data-dna="Warm Organic">
+          <div class="pri-chk">✓</div>
+          <div style="font-size:26px;">🌿</div>
+          <div style="font-family:'Fraunces',serif;font-size:14px;color:var(--tx);">Warm Organic</div>
+          <div style="font-size:11px;color:var(--txm);">Natural, textured, earthy</div>
+        </div>
+        <div class="pri-card" onclick="selDNA(this)" data-dna="Coastal Luxe">
+          <div class="pri-chk">✓</div>
+          <div style="font-size:26px;">🌊</div>
+          <div style="font-family:'Fraunces',serif;font-size:14px;color:var(--tx);">Coastal Luxe</div>
+          <div style="font-size:11px;color:var(--txm);">Light, airy, elevated</div>
+        </div>
+        <div class="pri-card" onclick="selDNA(this)" data-dna="Bold Eclectic">
+          <div class="pri-chk">✓</div>
+          <div style="font-size:26px;">🎨</div>
+          <div style="font-family:'Fraunces',serif;font-size:14px;color:var(--tx);">Bold Eclectic</div>
+          <div style="font-size:11px;color:var(--txm);">Statement, layered, vibrant</div>
+        </div>
+        <div class="pri-card" onclick="selDNA(this)" data-dna="Classic Traditional">
+          <div class="pri-chk">✓</div>
+          <div style="font-size:26px;">🏛️</div>
+          <div style="font-family:'Fraunces',serif;font-size:14px;color:var(--tx);">Classic Traditional</div>
+          <div style="font-size:11px;color:var(--txm);">Timeless, symmetrical</div>
+        </div>
+        <div class="pri-card" onclick="selDNA(this)" data-dna="Urban Industrial">
+          <div class="pri-chk">✓</div>
+          <div style="font-size:26px;">🔩</div>
+          <div style="font-family:'Fraunces',serif;font-size:14px;color:var(--tx);">Urban Industrial</div>
+          <div style="font-size:11px;color:var(--txm);">Raw, exposed, utilitarian</div>
+        </div>
+      </div>
+    </div>
+    <div class="s-footer">
+      <button class="btn-back" onclick="goTo('sc-step2')">←</button>
+      <button class="btn-pri" onclick="goTo('sc-step4')">Continue →</button>
+    </div>
+  </div><!-- /step3 -->
+
+
+  <!-- ══════════════════════════════════════
+       SCREEN 4: MUST-HAVES
+  ══════════════════════════════════════ -->
+  <div class="screen" id="sc-step4" style="background:var(--bg);">
+    <div class="prog-bar"><div class="prog-fill" style="width:50%;"></div></div>
+    <div style="padding:20px 22px 14px;flex-shrink:0;border-bottom:1px solid var(--bs);">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--acc);margin-bottom:6px;">Step 4 of 8 · Must-Haves</div>
+      <div style="font-family:'Fraunces',serif;font-size:22px;color:var(--tx);line-height:1.2;">What are your<br><em style="color:var(--acc);font-style:italic;">must-haves?</em></div>
+      <div style="font-size:12px;color:var(--txm);margin-top:5px;">Select all that apply — Chloe weights these heavily.</div>
+    </div>
+    <div class="s-body" style="padding:14px 22px;">
+      <div class="pri-grid" id="s4-prefs">
+        <div class="pri-card sel" onclick="togPref(this)"><div class="pri-chk">✓</div><div style="font-size:22px;">🏛️</div><div style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--tx);">Open Floor Plan</div></div>
+        <div class="pri-card sel" onclick="togPref(this)"><div class="pri-chk">✓</div><div style="font-size:22px;">☀️</div><div style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--tx);">Natural Light</div></div>
+        <div class="pri-card sel" onclick="togPref(this)"><div class="pri-chk">✓</div><div style="font-size:22px;">💼</div><div style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--tx);">Home Office</div></div>
+        <div class="pri-card" onclick="togPref(this)"><div class="pri-chk">✓</div><div style="font-size:22px;">🏊</div><div style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--tx);">Pool</div></div>
+        <div class="pri-card" onclick="togPref(this)"><div class="pri-chk">✓</div><div style="font-size:22px;">🏡</div><div style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--tx);">Large Backyard</div></div>
+        <div class="pri-card sel" onclick="togPref(this)"><div class="pri-chk">✓</div><div style="font-size:22px;">🤖</div><div style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--tx);">Smart Home</div></div>
+        <div class="pri-card" onclick="togPref(this)"><div class="pri-chk">✓</div><div style="font-size:22px;">🚗</div><div style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--tx);">3+ Car Garage</div></div>
+        <div class="pri-card sel" onclick="togPref(this)"><div class="pri-chk">✓</div><div style="font-size:22px;">🛁</div><div style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--tx);">Spa Primary Suite</div></div>
+        <div class="pri-card" onclick="togPref(this)"><div class="pri-chk">✓</div><div style="font-size:22px;">🔥</div><div style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--tx);">Outdoor Kitchen</div></div>
+        <div class="pri-card" onclick="togPref(this)"><div class="pri-chk">✓</div><div style="font-size:22px;">🎓</div><div style="font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--tx);">Top Schools</div></div>
+      </div>
+    </div>
+    <div class="s-footer">
+      <button class="btn-back" onclick="goTo('sc-step3')">←</button>
+      <button class="btn-pri" onclick="goTo('sc-step5')">Continue →</button>
+    </div>
+  </div><!-- /step4 -->
+
+
+  <!-- ══════════════════════════════════════
+       SCREEN 5: PROPERTY DETAILS
+  ══════════════════════════════════════ -->
+  <div class="screen" id="sc-step5" style="background:var(--bg);">
+    <div class="prog-bar"><div class="prog-fill" style="width:62.5%;"></div></div>
+    <div style="padding:20px 22px 14px;flex-shrink:0;border-bottom:1px solid var(--bs);">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--acc);margin-bottom:6px;">Step 5 of 8 · Property Details</div>
+      <div style="font-family:'Fraunces',serif;font-size:22px;color:var(--tx);line-height:1.2;">A few more<br><em style="color:var(--acc);font-style:italic;">specifics.</em></div>
+    </div>
+    <div class="s-body" style="padding:16px 22px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;">
+        <div><label class="inp-lbl">Min Beds</label><select class="mob-sel"><option>2+</option><option>3+</option><option selected>4+</option><option>5+</option></select></div>
+        <div><label class="inp-lbl">Min Baths</label><select class="mob-sel"><option>2+</option><option selected>3+</option><option>4+</option></select></div>
+        <div><label class="inp-lbl">Min Sq Ft</label><select class="mob-sel"><option>1,500+</option><option>2,000+</option><option selected>2,500+</option><option>3,500+</option></select></div>
+      </div>
+      <div style="margin-bottom:14px;"><label class="inp-lbl">Preferred Areas</label><input class="mob-inp" type="text" value="Flower Mound, Southlake, Colleyville" placeholder="e.g. Flower Mound, Southlake"></div>
+      <div><label class="inp-lbl">New Build or Resale?</label>
+        <select class="mob-sel"><option>No preference</option><option>New build preferred</option><option selected>Resale preferred</option><option>New build only</option></select>
+      </div>
+    </div>
+    <div class="s-footer">
+      <button class="btn-back" onclick="goTo('sc-step4')">←</button>
+      <button class="btn-pri" onclick="startQuiz()">Start StyleDNA Quiz →</button>
+    </div>
+  </div><!-- /step5 -->
+
+
+  <!-- ══════════════════════════════════════
+       SCREENS 6–7: STYLEDNA QUIZ
+       (rendered dynamically)
+  ══════════════════════════════════════ -->
+  <div class="screen" id="sc-quiz" style="background:var(--bg);">
+    <div class="prog-bar"><div class="prog-fill" id="quiz-prog" style="width:62.5%;"></div></div>
+    <div style="padding:20px 22px 14px;flex-shrink:0;border-bottom:1px solid var(--bs);">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--acc);margin-bottom:6px;" id="quiz-label">StyleDNA Quiz · 1 of 6</div>
+      <div style="font-family:'Fraunces',serif;font-size:20px;color:var(--tx);line-height:1.3;" id="quiz-q">Loading…</div>
+    </div>
+    <div class="s-body" style="padding:16px 22px;">
+      <div id="quiz-opts" style="display:flex;flex-direction:column;gap:10px;"></div>
+    </div>
+    <div class="s-footer">
+      <button class="btn-back" id="quiz-back" onclick="quizBack()">←</button>
+      <div style="flex:1;display:flex;align-items:center;justify-content:center;">
+        <div style="font-size:12px;color:var(--txd);font-family:'DM Mono',monospace;" id="quiz-count">Tap an answer to continue</div>
+      </div>
+    </div>
+  </div><!-- /quiz -->
+
+
+  <!-- ══════════════════════════════════════
+       SCREEN 8: MATCH REVEAL
+  ══════════════════════════════════════ -->
+  <div class="screen" id="sc-reveal" style="background:var(--bg);justify-content:space-between;padding:28px 24px 32px;overflow-y:auto;">
+
+    <div style="position:absolute;width:280px;height:280px;background:radial-gradient(circle,rgba(184,224,48,0.1) 0%,transparent 70%);top:10%;left:50%;transform:translateX(-50%);pointer-events:none;"></div>
+
+    <!-- Top: DNA reveal -->
+    <div style="display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1;" class="fade-up">
+      <div style="width:72px;height:72px;border-radius:50%;background:var(--ad);border:2px solid var(--br);display:flex;align-items:center;justify-content:center;margin-bottom:16px;animation:popIn 0.5s cubic-bezier(0.34,1.56,0.64,1);">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#B8E030" stroke-width="1.5"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+      </div>
+      <div style="font-size:10px;font-family:'DM Mono',monospace;color:var(--acc);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:8px;">Your Buyer DNA</div>
+      <div style="font-family:'Fraunces',serif;font-size:30px;color:var(--tx);line-height:1.1;margin-bottom:8px;" id="rev-dna">Refined Modern</div>
+      <div style="font-size:13px;color:var(--txm);line-height:1.6;max-width:290px;" id="rev-desc">You value clean lines, integrated tech, and intentional design. Every detail matters.</div>
+    </div>
+
+    <!-- Match card -->
+    <div style="background:linear-gradient(135deg,rgba(184,224,48,0.1),rgba(184,224,48,0.02));border:1px solid rgba(184,224,48,0.2);border-radius:20px;padding:22px;position:relative;z-index:1;" class="fade-up">
+      <div style="font-size:11px;color:var(--txm);margin-bottom:3px;">Your match with this home</div>
+      <div style="font-family:'Fraunces',serif;font-size:16px;color:var(--tx);font-weight:500;margin-bottom:14px;">📍 2847 Magnolia Drive</div>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+        <div style="font-family:'Fraunces',serif;font-size:64px;color:var(--acc);line-height:1;" id="rev-score">87%</div>
+        <div>
+          <div style="font-size:13px;color:var(--tx);font-weight:500;margin-bottom:3px;">Strong Match</div>
+          <div style="font-size:11px;color:var(--txm);line-height:1.5;">Primary suite + open kitchen<br>align with your top traits</div>
+        </div>
+      </div>
+      <!-- Trait bars -->
+      <div style="display:flex;flex-direction:column;gap:8px;" id="rev-traits">
+        <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;"><span style="color:var(--txm);">Open-concept living</span><span style="color:var(--acc);font-family:'DM Mono',monospace;">94%</span></div><div style="height:3px;background:var(--s3);border-radius:2px;overflow:hidden;"><div style="height:3px;background:var(--acc);width:94%;"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;"><span style="color:var(--txm);">Natural light priority</span><span style="color:var(--acc);font-family:'DM Mono',monospace;">91%</span></div><div style="height:3px;background:var(--s3);border-radius:2px;overflow:hidden;"><div style="height:3px;background:var(--acc);width:91%;"></div></div></div>
+        <div><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px;"><span style="color:var(--txm);">Smart home integration</span><span style="color:var(--acc);font-family:'DM Mono',monospace;">84%</span></div><div style="height:3px;background:var(--s3);border-radius:2px;overflow:hidden;"><div style="height:3px;background:var(--acc);width:84%;"></div></div></div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div style="display:flex;flex-direction:column;gap:10px;position:relative;z-index:1;" class="fade-up">
+      <button class="btn-full" id="rev-enter">View My Full Profile & Matches →</button>
+      <div style="font-size:11px;color:var(--txd);text-align:center;">Chloe found 3 more homes that match your DNA</div>
+    </div>
+
+  </div><!-- /reveal -->
+
+
+  <!-- ══════════════════════════════════════
+       SCREEN 9: DASHBOARD (mobile)
+  ══════════════════════════════════════ -->
+  <div class="screen" id="sc-dash" style="background:var(--bg);">
+
+    <!-- Topbar -->
+    <div style="padding:10px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bs);flex-shrink:0;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="width:26px;height:26px;background:var(--acc);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:13px;font-weight:600;color:var(--bg);">C</div>
+        <span style="font-family:'Fraunces',serif;font-size:15px;color:var(--tx);">Chloe<b style="color:var(--acc);font-weight:400;">IQ</b></span>
+      </div>
+      <div style="font-size:11px;color:var(--txm);background:var(--s2);border:1px solid var(--bs);border-radius:20px;padding:3px 10px;" id="dash-badge">Jordan Lee · 87%</div>
+    </div>
+
+    <div class="s-body" style="padding:16px 18px 80px;">
+
+      <!-- KPI strip -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+        <div style="background:var(--s1);border:1px solid var(--bs);border-radius:12px;padding:13px 15px;border-left:3px solid var(--acc);">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px;">Match Score</div>
+          <div style="font-family:'Fraunces',serif;font-size:28px;color:var(--acc);line-height:1;">87<span style="font-size:13px;color:var(--txm);">%</span></div>
+          <div style="font-size:11px;color:var(--grn);margin-top:3px;">↑ Top 8% of buyers</div>
+        </div>
+        <div style="background:var(--s1);border:1px solid var(--bs);border-radius:12px;padding:13px 15px;">
+          <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--txd);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px;">DNA Type</div>
+          <div style="font-family:'Fraunces',serif;font-size:16px;color:var(--tx);line-height:1.2;margin-bottom:3px;">Refined Modern</div>
+          <div style="font-size:11px;color:var(--txm);">Defined · Curated</div>
+        </div>
+      </div>
+
+      <!-- This home match -->
+      <div style="background:var(--s1);border:1px solid rgba(184,224,48,0.2);border-radius:14px;padding:14px 16px;margin-bottom:16px;">
+        <div style="font-size:10px;font-family:'DM Mono',monospace;color:var(--acc);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px;">● You're Here Now</div>
+        <div style="font-family:'Fraunces',serif;font-size:17px;color:var(--tx);margin-bottom:2px;">2847 Magnolia Drive</div>
+        <div style="font-size:12px;color:var(--txm);margin-bottom:12px;">Flower Mound · $724,000 · 4bd / 3.5ba</div>
+        <div style="display:flex;gap:8px;">
+          <button style="flex:1;padding:10px;border-radius:10px;border:none;background:var(--acc);color:var(--bg);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;" onclick="toast('Opening home report...','')">View Report</button>
+          <button style="flex:1;padding:10px;border-radius:10px;border:1px solid var(--bs);background:transparent;color:var(--txm);font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;" onclick="toast('Scheduling a showing...','')">Schedule Tour</button>
+        </div>
+      </div>
+
+      <!-- DNA Traits -->
+      <div style="background:var(--s1);border:1px solid var(--bs);border-radius:14px;overflow:hidden;margin-bottom:16px;">
+        <div style="padding:12px 16px;border-bottom:1px solid var(--bs);display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:13px;font-weight:600;color:var(--tx);">Your StyleDNA Profile</span>
+          <span style="font-size:10px;font-family:'DM Mono',monospace;color:var(--acc);background:var(--ad);border:1px solid var(--br);padding:2px 8px;border-radius:20px;">Refined Modern</span>
+        </div>
+        <div style="padding:14px 16px;display:flex;flex-direction:column;gap:10px;">
+          <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--txm);">Clean lines over ornate detail</span><span style="color:var(--acc);font-family:'DM Mono',monospace;">92%</span></div><div style="height:4px;background:var(--s3);border-radius:2px;overflow:hidden;"><div style="height:4px;background:var(--acc);width:92%;border-radius:2px;"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--txm);">Open-concept living spaces</span><span style="color:var(--acc);font-family:'DM Mono',monospace;">88%</span></div><div style="height:4px;background:var(--s3);border-radius:2px;overflow:hidden;"><div style="height:4px;background:var(--acc);width:88%;border-radius:2px;"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--txm);">Natural light as a priority</span><span style="color:var(--acc);font-family:'DM Mono',monospace;">85%</span></div><div style="height:4px;background:var(--s3);border-radius:2px;overflow:hidden;"><div style="height:4px;background:var(--acc);width:85%;border-radius:2px;"></div></div></div>
+          <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--txm);">Integrated smart home tech</span><span style="color:var(--acc);font-family:'DM Mono',monospace;">79%</span></div><div style="height:4px;background:var(--s3);border-radius:2px;overflow:hidden;"><div style="height:4px;background:var(--acc);width:79%;border-radius:2px;"></div></div></div>
+        </div>
+      </div>
+
+      <!-- Recommendations -->
+      <div style="background:var(--s1);border:1px solid var(--bs);border-radius:14px;overflow:hidden;margin-bottom:16px;">
+        <div style="padding:12px 16px;border-bottom:1px solid var(--bs);display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:13px;font-weight:600;color:var(--tx);">Chloe AI Recommendations</span>
+          <span style="font-size:12px;color:var(--acc);cursor:pointer;">See More →</span>
+        </div>
+        <div style="padding:12px 16px;display:flex;flex-direction:column;gap:12px;">
+          <div style="background:var(--s2);border:1px solid var(--bs);border-radius:12px;padding:14px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+              <div><div style="font-size:13px;font-weight:500;color:var(--tx);">2847 Magnolia Drive</div><div style="font-size:11px;color:var(--txm);">Flower Mound · $724K</div></div>
+              <div style="font-family:'Fraunces',serif;font-size:22px;color:var(--acc);">87%</div>
+            </div>
+            <div style="font-size:12px;color:var(--txm);margin-bottom:10px;">Primary suite + open kitchen matches your top traits</div>
+            <button style="width:100%;padding:9px;border-radius:9px;border:none;background:var(--acc);color:var(--bg);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;cursor:pointer;" onclick="toast('Opening home details...','')">View This Home</button>
+          </div>
+          <div style="background:var(--s2);border:1px solid var(--bs);border-radius:12px;padding:14px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+              <div><div style="font-size:13px;font-weight:500;color:var(--tx);">1445 Clearwater Ct</div><div style="font-size:11px;color:var(--txm);">Colleyville · $891K</div></div>
+              <div style="font-family:'Fraunces',serif;font-size:22px;color:var(--acc);">82%</div>
+            </div>
+            <div style="font-size:12px;color:var(--txm);margin-bottom:10px;">Smart home integration + clean architecture</div>
+            <button style="width:100%;padding:9px;border-radius:9px;border:none;background:var(--acc);color:var(--bg);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;cursor:pointer;" onclick="toast('Opening home details...','')">View This Home</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Agent CTA -->
+      <div style="background:var(--s1);border:1px solid rgba(184,224,48,0.15);border-radius:14px;padding:16px;display:flex;align-items:center;gap:12px;">
+        <div style="width:42px;height:42px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:15px;font-weight:600;color:var(--bg);flex-shrink:0;">MR</div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:600;color:var(--tx);">Marcus Rivera</div>
+          <div style="font-size:11px;color:var(--txm);">Available · Ready to discuss your matches</div>
+        </div>
+        <button style="padding:9px 14px;border-radius:9px;border:none;background:var(--acc);color:var(--bg);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;" onclick="toast('Connecting to Marcus Rivera...','')">Contact</button>
+      </div>
+
+    </div><!-- /s-body -->
+  </div><!-- /dash -->
+
+</div><!-- /phone -->
+
+<script>
+// ── NAVIGATION ────────────────────────────────────────────────────────────────
+var currentScreen = 'sc-welcome';
+
+function goTo(id) {
+  var cur = document.getElementById(currentScreen);
+  var next = document.getElementById(id);
+  if (!next || !cur) return;
+  cur.classList.add('exit');
+  setTimeout(function() { cur.classList.remove('active','exit'); }, 300);
+  next.classList.add('active');
+  currentScreen = id;
+}
+
+// ── DNA SINGLE SELECT ─────────────────────────────────────────────────────────
+function selDNA(el) {
+  document.querySelectorAll('#s3-dna .pri-card').forEach(function(c) { c.classList.remove('sel'); });
+  el.classList.add('sel');
+}
+
+// ── OPTION CARD SINGLE SELECT ─────────────────────────────────────────────────
+function selOpt(el, groupId) {
+  document.querySelectorAll('#' + groupId + ' .opt-card').forEach(function(c) {
+    c.classList.remove('sel');
+    var r = c.querySelector('.opt-radio');
+    if (r) { r.textContent = ''; r.style.color = 'transparent'; }
+  });
+  el.classList.add('sel');
+  var radio = el.querySelector('.opt-radio');
+  if (radio) { radio.textContent = '✓'; radio.style.color = ''; }
+}
+
+// ── PREFERENCE TOGGLE ─────────────────────────────────────────────────────────
+function togPref(el) { el.classList.toggle('sel'); }
+
+// ── QUIZ ──────────────────────────────────────────────────────────────────────
+var quizQ = [
+  { q:'When you walk into a home, what catches your eye first?',
+    opts:['Clean lines and open space','Warm textures and natural materials','Bold statement pieces','Classic details and symmetry'] },
+  { q:'Your ideal living room feels…',
+    opts:['Minimal and uncluttered','Cozy and layered','Dramatic and unique','Timeless and refined'] },
+  { q:'How important is natural light to you?',
+    opts:['Non-negotiable — more is more','Important but not everything','I love moody warm lighting too','Not a major factor'] },
+  { q:'Pick the kitchen that speaks to you:',
+    opts:['Waterfall island, integrated appliances','Open shelving, farmhouse sink','Color cabinets, statement range','Classic shaker, marble counters'] },
+  { q:'When it comes to smart home tech:',
+    opts:['All in — automate everything','Some basics like thermostat + lights','Only if it comes with the home','Prefer to keep it simple'] },
+  { q:'Your outdoor space priority is:',
+    opts:['Pool and entertaining area','Low maintenance and private','Garden and green space','Location over yard size'] },
+];
+var quizIdx = 0;
+var quizAnswers = {};
+
+function startQuiz() {
+  quizIdx = 0;
+  renderQuiz();
+  goTo('sc-quiz');
+}
+
+function renderQuiz() {
+  var q = quizQ[quizIdx];
+  var pct = 62.5 + (quizIdx / quizQ.length) * 25; // 62.5% to 87.5%
+  document.getElementById('quiz-prog').style.width = pct + '%';
+  document.getElementById('quiz-label').textContent = 'StyleDNA Quiz · ' + (quizIdx+1) + ' of ' + quizQ.length;
+  document.getElementById('quiz-q').textContent = q.q;
+  document.getElementById('quiz-count').textContent = 'Tap an answer to continue';
+
+  var container = document.getElementById('quiz-opts');
+  container.innerHTML = '';
+  q.opts.forEach(function(opt, i) {
+    var div = document.createElement('div');
+    div.className = 'quiz-opt' + (quizAnswers[quizIdx] === i ? ' sel' : '');
+    div.textContent = opt;
+    div.addEventListener('click', function() {
+      container.querySelectorAll('.quiz-opt').forEach(function(o) { o.classList.remove('sel'); });
+      div.classList.add('sel');
+      quizAnswers[quizIdx] = i;
+      setTimeout(function() {
+        if (quizIdx + 1 < quizQ.length) {
+          quizIdx++;
+          renderQuiz();
+        } else {
+          goTo('sc-reveal');
+        }
+      }, 360);
+    });
+    container.appendChild(div);
+  });
+
+  // Back button visibility
+  document.getElementById('quiz-back').style.opacity = quizIdx > 0 ? '1' : '0.3';
+  document.getElementById('quiz-back').disabled = quizIdx === 0;
+}
+
+function quizBack() {
+  if (quizIdx > 0) { quizIdx--; renderQuiz(); }
+  else goTo('sc-step5');
+}
+
+// ── REVEAL → DASHBOARD ────────────────────────────────────────────────────────
+document.getElementById('rev-enter').addEventListener('click', function() {
+  goTo('sc-dash');
+});
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+function toast(msg, type) {
+  var old = document.getElementById('_mob-toast');
+  if (old) old.remove();
+  var t = document.createElement('div');
+  t.id = '_mob-toast';
+  var bg = type === 'ok' ? '#B8E030' : '#1A1E12';
+  var c  = type === 'ok' ? '#0A0B07' : '#EEF0E5';
+  t.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:' + bg + ';color:' + c + ';padding:10px 20px;border-radius:10px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all 0.2s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,0.5);white-space:nowrap;max-width:320px;text-align:center;';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  requestAnimationFrame(function() { t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)'; });
+  setTimeout(function() { t.style.opacity = '0'; }, 2400);
+}
+</script>
+<script src="chloeiq-nav.js"></script>
+</body>
+</html>
