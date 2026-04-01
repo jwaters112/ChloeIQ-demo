@@ -443,20 +443,20 @@ function blendColor(hex1, hex2, t) {
 // ── APP DATA ──
 var apps = {
   agent: [
-    { name:'Agent Dashboard',   desc:'Leads, open houses, Host Score, Chloe Codes',    icon:'🏠', file:'chloeiq-agent-dashboard-desktop.html',   tag:'agent',   featured:true },
-    { name:'Follow-Up Queue',   desc:'AI-drafted follow-ups with tone selector',        icon:'✉️',  file:'chloeiq-followup-desktop.html',            tag:'agent' },
-    { name:'Listing Dashboard', desc:'Buyer DNA breakdown + room engagement data',      icon:'📋', file:'chloeiq-listing-dashboard-desktop.html',  tag:'agent' },
-    { name:'Agent Scorecard',   desc:'Host Score, badges, DFW leaderboard',            icon:'🏆', file:'chloeiq-agent-scorecard-desktop.html',    tag:'agent' },
-    { name:'ROI Calculator',    desc:'Live sliders, 12-month projection, plan picker', icon:'📈', file:'chloeiq-roi-calculator-desktop.html',     tag:'agent' },
-    { name:'Agent Setup',       desc:'6-step onboarding wizard for new agents',        icon:'⚙️',  file:'chloeiq-agent-setup-desktop.html',         tag:'agent' },
+    { name:'Agent Dashboard',   desc:'Leads, open houses, Host Score, Chloe Codes',              icon:'🏠', file:'chloeiq-agent-dashboard-desktop.html',   tag:'agent',   featured:true },
+    { name:'Follow-Up Queue',   desc:'AI-drafted follow-ups with tone selector',                  icon:'✉️',  file:'chloeiq-followup-desktop.html',            tag:'agent' },
+    { name:'Listing Dashboard', desc:'Buyer DNA breakdown + room engagement data',                icon:'📋', file:'chloeiq-listing-dashboard-desktop.html',  tag:'agent' },
+    { name:'Agent Scorecard',   desc:'Host Score, badges, DFW leaderboard',                      icon:'🏆', file:'chloeiq-agent-scorecard-desktop.html',    tag:'agent' },
+    { name:'ROI Calculator',    desc:'Live sliders, 12-month projection, plan picker',            icon:'📈', file:'chloeiq-roi-calculator-desktop.html',     tag:'agent' },
+    { name:'Agent Setup',       desc:'6-step onboarding wizard for new agents',                   icon:'⚙️',  file:'chloeiq-agent-setup-desktop.html',         tag:'agent' },
+    { name:'Live Tour',         desc:'Real-time visitor feed + room heatmap during open houses',  icon:'🔴', file:'chloeiq-tour-desktop.html',                tag:'agent' },
+    { name:'Demand Heatmap',    desc:'ZIP-level buyer demand, DNA concentration, velocity trends',icon:'🗺', file:'chloeiq-buyer-heatmap-desktop.html',       tag:'agent' },
   ],
   buyer: [
-    { name:'Buyer App',         desc:'Match score, DNA traits, home recommendations', icon:'👤', file:'chloeiq-buyer-app-desktop.html',           tag:'buyer',   featured:true },
-    { name:'StyleDNA Quiz',     desc:'8-question quiz → DNA type + result screen',    icon:'🧬', file:'chloeiq-styledna-quiz-desktop.html',       tag:'buyer' },
-    { name:'Home Report',       desc:'87% match breakdown + trait alignment',         icon:'📄', file:'chloeiq-home-report-desktop.html',         tag:'buyer' },
-    { name:'Buyer Onboarding',  desc:'5-step buyer setup flow with agent connect',    icon:'🎯', file:'chloeiq-onboarding-desktop.html',          tag:'buyer' },
-    { name:'Live Tour',         desc:'Real-time visitor feed + room activity tracker',icon:'🔴', file:'chloeiq-tour-desktop.html',                tag:'buyer' },
-    { name:'Buyer Heatmap',     desc:'ZIP demand map, DNA concentration by zone',     icon:'🗺', file:'chloeiq-buyer-heatmap-desktop.html',       tag:'buyer' },
+    { name:'Buyer App',         desc:'Scan Chloe Code → 5-step onboarding → StyleDNA quiz → 87% match reveal → dashboard', icon:'👤', file:'chloeiq-buyer-app-desktop.html', tag:'buyer', featured:true },
+    { name:'StyleDNA Quiz',     desc:'8-question quiz → DNA type + result screen',                icon:'🧬', file:'chloeiq-styledna-quiz-desktop.html',       tag:'buyer' },
+    { name:'Home Report',       desc:'87% match breakdown + trait alignment',                     icon:'📄', file:'chloeiq-home-report-desktop.html',         tag:'buyer' },
+    { name:'Market Pulse',      desc:'Live buyer demand, competition intel + urgency signals for your search area', icon:'⚡', file:'chloeiq-market-pulse-desktop.html', tag:'buyer' },
   ],
   mktplace: [
     { name:'Opportunity Board', desc:'Map + list view, demand pins, scorecards',      icon:'📍', file:'chloeiq-opportunity-board-desktop.html',  tag:'mktplace', featured:true },
@@ -478,7 +478,7 @@ var apps = {
 
 var quickLinks = [
   { label:'Start Agent Demo',    file:'chloeiq-agent-dashboard-desktop.html',   icon:'🏠' },
-  { label:'Start Buyer Journey', file:'chloeiq-buyer-app-desktop.html',         icon:'👤' },
+  { label:'Start Buyer Journey', file:'chloeiq-buyer-app-desktop.html',         icon:'🧬' },
   { label:'Open Seed Deck',      file:'chloeiq-seed-deck-desktop.html',         icon:'💼' },
   { label:'Show Brokerage View', file:'chloeiq-brokerage-dashboard-desktop.html',icon:'🏢' },
 ];
