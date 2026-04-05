@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>2847 Magnolia Drive · ChloeIQ</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --bg:#0A0B07;--s1:#13160D;--s2:#1A1E12;--s3:#222818;
+  --acc:#B8E030;--ad:rgba(184,224,48,.10);--am:rgba(184,224,48,.22);
+  --tx:#EEF0E5;--txm:#8A8F7A;--txd:#4A5040;
+  --br:rgba(184,224,48,.14);--bs:rgba(238,240,229,.07);
+  --grn:#4ADE80;--red:#FF5A4A;--amb:#F5A623;--blu:#60A5FA;
+}
+html,body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:14px;min-height:100%;}
+
+/* ── HEADER ── */
+.ext-header{
+  position:sticky;top:0;z-index:30;
+  background:rgba(10,11,7,0.95);
+  border-bottom:1px solid var(--bs);
+  backdrop-filter:blur(12px);
+  padding:12px 20px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.ext-logo{display:flex;align-items:center;gap:8px;}
+.ext-logo-mark{width:28px;height:28px;background:var(--acc);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:var(--bg);}
+.ext-logo-name{font-family:'Fraunces',serif;font-size:16px;color:var(--tx);}
+.ext-logo-name b{color:var(--acc);font-weight:400;}
+.ext-badge{font-size:10px;font-family:'DM Mono',monospace;color:var(--acc);background:var(--ad);border:1px solid var(--br);padding:3px 10px;border-radius:20px;letter-spacing:0.06em;}
+
+/* ── HERO ── */
+.hero{
+  position:relative;overflow:hidden;
+  background:linear-gradient(180deg,#0F1508 0%,var(--bg) 100%);
+  padding:28px 20px 24px;
+  border-bottom:1px solid var(--bs);
+}
+.hero-glow{position:absolute;width:400px;height:300px;background:radial-gradient(circle,rgba(184,224,48,0.06) 0%,transparent 65%);top:-60px;left:50%;transform:translateX(-50%);pointer-events:none;}
+.hero-tag{font-size:10px;font-family:'DM Mono',monospace;color:var(--acc);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--acc);animation:livePulse 2s ease-in-out infinite;}
+@keyframes livePulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.hero-addr{font-family:'Fraunces',serif;font-size:30px;font-weight:600;color:var(--tx);line-height:1.1;margin-bottom:4px;}
+.hero-area{font-size:13px;color:var(--txm);margin-bottom:18px;}
+
+/* Price + stats strip */
+.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;border:1px solid var(--bs);border-radius:14px;overflow:hidden;margin-bottom:18px;}
+.hero-stat{padding:12px 0;text-align:center;background:var(--s1);}
+.hero-stat:not(:last-child){border-right:1px solid var(--bs);}
+.hs-val{font-family:'Fraunces',serif;font-size:18px;color:var(--tx);line-height:1;}
+.hs-lbl{font-size:9px;color:var(--txd);text-transform:uppercase;letter-spacing:0.07em;font-family:'DM Mono',monospace;margin-top:3px;}
+
+/* Tags */
+.hero-tags{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px;}
+.htag{font-size:11px;padding:4px 10px;border-radius:20px;background:var(--s2);border:1px solid var(--bs);color:var(--txm);font-family:'DM Mono',monospace;}
+.htag.hot{background:var(--ad);border-color:var(--br);color:var(--acc);}
+
+/* Primary CTA */
+.btn-pri{width:100%;height:52px;border-radius:14px;border:none;background:var(--acc);color:var(--bg);font-family:'Fraunces',serif;font-size:17px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity 0.15s;}
+.btn-pri:active{opacity:0.85;}
+.btn-sec{width:100%;height:48px;border-radius:14px;border:1px solid var(--bs);background:transparent;color:var(--txm);font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.15s;}
+.btn-sec:hover{border-color:var(--br);color:var(--tx);}
+.btn-acc{width:100%;height:48px;border-radius:14px;border:1px solid var(--br);background:var(--ad);color:var(--acc);font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all 0.15s;}
+
+/* ── MAIN CONTENT ── */
+.main{padding:0 0 100px;}
+
+/* ── SECTION ── */
+.section{padding:20px 20px 0;}
+.sec-hdr{font-size:10px;font-family:'DM Mono',monospace;color:var(--acc);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:12px;}
+.panel{background:var(--s1);border:1px solid var(--bs);border-radius:14px;overflow:hidden;}
+.panel-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--bs);font-size:13px;}
+.panel-row:last-child{border-bottom:none;}
+.pr-lbl{color:var(--txm);}
+.pr-val{color:var(--tx);font-weight:500;text-align:right;}
+.pr-val.acc{color:var(--acc);}
+.pr-val.grn{color:var(--grn);}
+.pr-val.red{color:var(--red);}
+
+/* ── ROOM HIGHLIGHTS ── */
+.room-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.room-card{background:var(--s2);border:1px solid var(--bs);border-radius:12px;padding:14px 12px;text-align:center;cursor:pointer;transition:all 0.15s;}
+.room-card:hover{border-color:var(--br);}
+.room-icon{font-size:24px;margin-bottom:7px;}
+.room-name{font-size:12px;font-weight:500;color:var(--tx);margin-bottom:2px;}
+.room-desc{font-size:11px;color:var(--txm);line-height:1.4;}
+
+/* ── NOTIFY FORM ── */
+.notify-card{background:linear-gradient(135deg,rgba(184,224,48,0.08),rgba(184,224,48,0.02));border:1px solid rgba(184,224,48,0.2);border-radius:16px;padding:20px;}
+.notify-title{font-family:'Fraunces',serif;font-size:20px;color:var(--tx);margin-bottom:6px;}
+.notify-title em{color:var(--acc);font-style:italic;}
+.notify-sub{font-size:13px;color:var(--txm);line-height:1.6;margin-bottom:16px;}
+.mob-inp{width:100%;background:var(--s2);border:1px solid var(--bs);border-radius:11px;padding:13px 15px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;transition:border-color 0.2s;margin-bottom:10px;}
+.mob-inp:focus{border-color:var(--br);}
+.mob-inp::placeholder{color:var(--txd);}
+.notify-checks{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.ncheck{display:flex;align-items:center;gap:10px;padding:10px 13px;background:var(--s2);border:1px solid var(--bs);border-radius:10px;cursor:pointer;transition:all 0.13s;}
+.ncheck.sel{border-color:rgba(184,224,48,0.35);background:var(--ad);}
+.ncheck-box{width:18px;height:18px;border-radius:4px;border:1.5px solid var(--bs);display:flex;align-items:center;justify-content:center;font-size:10px;color:transparent;flex-shrink:0;transition:all 0.13s;}
+.ncheck.sel .ncheck-box{background:var(--acc);border-color:var(--acc);color:var(--bg);}
+.ncheck-lbl{font-size:13px;color:var(--txm);}
+.ncheck.sel .ncheck-lbl{color:var(--tx);}
+
+/* ── MORTGAGE CALC ── */
+.calc-display{background:linear-gradient(135deg,rgba(184,224,48,0.08),rgba(184,224,48,0.02));border:1px solid rgba(184,224,48,0.15);border-radius:14px;padding:20px;text-align:center;margin-bottom:16px;}
+.calc-amount{font-family:'Fraunces',serif;font-size:44px;color:var(--acc);line-height:1;}
+.calc-label{font-size:11px;color:var(--txm);font-family:'DM Mono',monospace;letter-spacing:0.08em;text-transform:uppercase;margin-top:4px;}
+.calc-breakdown{font-size:12px;color:var(--txd);margin-top:6px;}
+.range-row{margin-bottom:14px;}
+.range-lbl{display:flex;justify-content:space-between;font-size:12px;color:var(--txm);margin-bottom:6px;}
+.range-lbl span:last-child{color:var(--acc);font-family:'DM Mono',monospace;}
+.mob-range{width:100%;-webkit-appearance:none;height:4px;border-radius:2px;outline:none;cursor:pointer;background:linear-gradient(to right,#B8E030 20%,#1A1E12 20%);}
+.mob-range::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--acc);cursor:pointer;border:3px solid var(--bg);box-shadow:0 2px 8px rgba(184,224,48,0.3);}
+
+/* ── AGENT CARD ── */
+.agent-card{background:var(--s1);border:1px solid var(--bs);border-radius:16px;overflow:hidden;}
+.agent-hero{background:linear-gradient(135deg,#1A1E12,#0E1108);padding:20px;}
+.agent-avatar{width:60px;height:60px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:var(--bg);margin-bottom:12px;}
+.agent-name{font-family:'Fraunces',serif;font-size:20px;color:var(--tx);margin-bottom:2px;}
+.agent-title{font-size:12px;color:var(--txm);}
+.agent-badges{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap;}
+.agent-badge{font-size:10px;font-family:'DM Mono',monospace;color:var(--acc);background:var(--ad);border:1px solid var(--br);padding:3px 9px;border-radius:20px;}
+.agent-stats{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid var(--bs);}
+.agent-stat{padding:14px 0;text-align:center;}
+.agent-stat:not(:last-child){border-right:1px solid var(--bs);}
+.as-val{font-family:'Fraunces',serif;font-size:20px;color:var(--acc);}
+.as-lbl{font-size:10px;color:var(--txd);text-transform:uppercase;letter-spacing:0.06em;font-family:'DM Mono',monospace;margin-top:2px;}
+.agent-actions{padding:14px;display:flex;flex-direction:column;gap:8px;}
+
+/* ── COMPS ── */
+.comp-card{background:var(--s1);border:1px solid var(--bs);border-radius:12px;padding:14px;margin-bottom:10px;}
+.comp-addr{font-size:13px;font-weight:500;color:var(--tx);margin-bottom:2px;}
+.comp-sub{font-size:11px;color:var(--txm);margin-bottom:8px;}
+.comp-stats{display:flex;gap:14px;}
+.comp-stat{font-size:11px;color:var(--txm);}
+.comp-stat b{color:var(--tx);}
+.comp-stat.over b{color:var(--red);}
+
+/* ── OPEN HOUSE SCHEDULE ── */
+.oh-card{background:var(--s2);border:1px solid var(--bs);border-radius:12px;padding:14px;display:flex;align-items:center;gap:14px;margin-bottom:10px;}
+.oh-date-box{width:44px;height:44px;border-radius:10px;background:var(--acc);display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;}
+.oh-date-mo{font-size:9px;font-family:'DM Mono',monospace;color:var(--bg);text-transform:uppercase;letter-spacing:0.05em;}
+.oh-date-day{font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:var(--bg);line-height:1;}
+.oh-info{flex:1;}
+.oh-time{font-size:13px;font-weight:500;color:var(--tx);}
+.oh-detail{font-size:11px;color:var(--txm);margin-top:2px;}
+.oh-btn{font-size:11px;padding:6px 12px;border-radius:8px;border:1px solid var(--br);background:var(--ad);color:var(--acc);font-family:'DM Mono',monospace;cursor:pointer;white-space:nowrap;}
+
+/* ── CHLOE INTRO (for non-users) ── */
+.chloe-intro{background:linear-gradient(135deg,rgba(184,224,48,0.06),rgba(184,224,48,0.01));border:1px solid rgba(184,224,48,0.15);border-radius:16px;padding:20px;}
+.ci-logo-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.ci-mark{width:36px;height:36px;background:var(--acc);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:17px;font-weight:600;color:var(--bg);}
+.ci-name{font-family:'Fraunces',serif;font-size:18px;color:var(--tx);}
+.ci-name b{color:var(--acc);font-weight:400;}
+.ci-features{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+.ci-feat{display:flex;align-items:flex-start;gap:10px;font-size:12px;color:var(--txm);line-height:1.5;}
+.ci-feat-icon{font-size:16px;flex-shrink:0;margin-top:1px;}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:9990;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:24px 12px;}
+.modal-card{background:#13160D;border:1px solid rgba(184,224,48,0.18);border-radius:16px;width:100%;max-width:480px;box-shadow:0 24px 72px rgba(0,0,0,0.7);overflow:hidden;}
+.modal-header{background:linear-gradient(135deg,#1A1E12,#0E1108);padding:20px 22px;border-bottom:1px solid rgba(184,224,48,0.1);display:flex;align-items:flex-start;justify-content:space-between;}
+.modal-title{font-family:'Fraunces',serif;font-size:20px;color:var(--tx);line-height:1.2;}
+.modal-title em{color:var(--acc);font-style:italic;}
+.modal-sub{font-size:12px;color:var(--txm);margin-top:4px;}
+.modal-x{background:none;border:none;color:var(--txm);font-size:18px;cursor:pointer;padding:2px 6px;flex-shrink:0;}
+.modal-body{padding:20px 22px;}
+.modal-footer{padding:14px 22px;border-top:1px solid rgba(184,224,48,0.08);display:flex;gap:10px;justify-content:flex-end;}
+.inp-lbl{display:block;font-size:10px;font-family:'DM Mono',monospace;color:var(--txm);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:7px;}
+.sec-label{font-size:10px;font-weight:700;letter-spacing:0.09em;color:var(--acc);text-transform:uppercase;font-family:'DM Mono',monospace;margin-bottom:10px;display:block;}
+.mob-sel{width:100%;background:var(--s2);border:1px solid var(--bs);border-radius:11px;padding:13px 15px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;cursor:pointer;}
+.mob-sel option{background:#13160D;}
+.btn-cancel{padding:10px 18px;border-radius:9px;border:1px solid rgba(238,240,229,0.1);background:transparent;color:var(--txm);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;}
+.btn-confirm{padding:10px 22px;border-radius:9px;border:none;background:var(--acc);color:var(--bg);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;}
+
+/* ── TOAST ── */
+@keyframes fadeUp{from{opacity:0;transform:translateX(-50%) translateY(16px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+/* ── ANIMATIONS ── */
+@keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.animate-in{animation:slideUp 0.4s ease both;}
+.delay-1{animation-delay:0.1s;}
+.delay-2{animation-delay:0.2s;}
+.delay-3{animation-delay:0.3s;}
+.delay-4{animation-delay:0.4s;}
+
+/* ── SUCCESS STATE ── */
+.success-overlay{position:fixed;inset:0;background:var(--bg);z-index:9999;display:none;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;text-align:center;}
+.success-overlay.show{display:flex;animation:slideUp 0.4s ease;}
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<header class="ext-header">
+  <div class="ext-logo">
+    <div class="ext-logo-mark">C</div>
+    <div class="ext-logo-name">Chloe<b>IQ</b></div>
+  </div>
+  <div class="ext-badge">⬡ Exterior Chloe Code</div>
+</header>
+
+<!-- ══ HERO ══ -->
+<div class="hero animate-in">
+  <div class="hero-glow"></div>
+  <div class="hero-tag">
+    <div class="live-dot"></div>
+    Active Listing · Flower Mound, TX
+  </div>
+  <div class="hero-addr">2847 Magnolia Drive</div>
+  <div class="hero-area">Flower Mound, TX 75022 · MLS #20512847</div>
+
+  <div class="hero-stats animate-in delay-1">
+    <div class="hero-stat">
+      <div class="hs-val">$724K</div>
+      <div class="hs-lbl">Price</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hs-val">4 / 3.5</div>
+      <div class="hs-lbl">Bed / Bath</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hs-val">3,240</div>
+      <div class="hs-lbl">Sq Ft</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hs-val">2019</div>
+      <div class="hs-lbl">Year Built</div>
+    </div>
+  </div>
+
+  <div class="hero-tags animate-in delay-2">
+    <span class="htag hot">● Open House Sat 1–4 PM</span>
+    <span class="htag">Open Concept</span>
+    <span class="htag">Smart Home</span>
+    <span class="htag">Primary Down</span>
+    <span class="htag">Pool Ready</span>
+    <span class="htag">3-Car Garage</span>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:10px;" class="animate-in delay-3">
+    <button class="btn-pri" onclick="showShowingModal()">
+      📅 Request a Private Showing
+    </button>
+    <button class="btn-acc" onclick="scrollToNotify()">
+      🔔 Get Notified About This Home
+    </button>
+  </div>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+
+  <!-- ── PROPERTY DETAILS ── -->
+  <div class="section animate-in delay-2">
+    <div class="sec-hdr">Property Details</div>
+    <div class="panel">
+      <div class="panel-row"><span class="pr-lbl">List Price</span><span class="pr-val acc">$724,000</span></div>
+      <div class="panel-row"><span class="pr-lbl">Price Per Sq Ft</span><span class="pr-val">$223 / sqft</span></div>
+      <div class="panel-row"><span class="pr-lbl">Lot Size</span><span class="pr-val">0.28 acres</span></div>
+      <div class="panel-row"><span class="pr-lbl">Garage</span><span class="pr-val">3-car attached</span></div>
+      <div class="panel-row"><span class="pr-lbl">HOA</span><span class="pr-val">$185 / mo</span></div>
+      <div class="panel-row"><span class="pr-lbl">Property Tax</span><span class="pr-val">~$10,200 / yr</span></div>
+      <div class="panel-row"><span class="pr-lbl">School District</span><span class="pr-val">Lewisville ISD</span></div>
+      <div class="panel-row"><span class="pr-lbl">Days on Market</span><span class="pr-val red">11 days</span></div>
+    </div>
+  </div>
+
+  <!-- ── ROOM HIGHLIGHTS ── -->
+  <div class="section" style="margin-top:20px;">
+    <div class="sec-hdr">Room Highlights</div>
+    <div class="room-grid">
+      <div class="room-card" onclick="showRoomDetail('Primary Suite')">
+        <div class="room-icon">🛁</div>
+        <div class="room-name">Primary Suite</div>
+        <div class="room-desc">Spa bath · soaking tub · walk-in closet · private access</div>
+      </div>
+      <div class="room-card" onclick="showRoomDetail('Chef Kitchen')">
+        <div class="room-icon">🍳</div>
+        <div class="room-name">Chef Kitchen</div>
+        <div class="room-desc">Waterfall island · quartz counters · integrated appliances</div>
+      </div>
+      <div class="room-card" onclick="showRoomDetail('Great Room')">
+        <div class="room-icon">🪟</div>
+        <div class="room-name">Great Room</div>
+        <div class="room-desc">Soaring ceilings · floor-to-ceiling windows · open flow</div>
+      </div>
+      <div class="room-card" onclick="showRoomDetail('Home Office')">
+        <div class="room-icon">💼</div>
+        <div class="room-name">Home Office</div>
+        <div class="room-desc">Dedicated study · built-ins · fiber ready · private entry</div>
+      </div>
+      <div class="room-card" onclick="showRoomDetail('Backyard')">
+        <div class="room-icon">🌿</div>
+        <div class="room-name">Backyard</div>
+        <div class="room-desc">0.28 ac · covered patio · pool-ready lot · mature trees</div>
+      </div>
+      <div class="room-card" onclick="showRoomDetail('Smart Home')">
+        <div class="room-icon">🤖</div>
+        <div class="room-name">Smart Home</div>
+        <div class="room-desc">Integrated automation · climate · security · lighting</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── OPEN HOUSE SCHEDULE ── -->
+  <div class="section" style="margin-top:20px;">
+    <div class="sec-hdr">Upcoming Open Houses</div>
+    <div class="oh-card">
+      <div class="oh-date-box">
+        <div class="oh-date-mo">APR</div>
+        <div class="oh-date-day">12</div>
+      </div>
+      <div class="oh-info">
+        <div class="oh-time">Saturday · 1:00 – 4:00 PM</div>
+        <div class="oh-detail">Hosted by Marcus Rivera · Chloe Code inside</div>
+      </div>
+      <button class="oh-btn" onclick="addToCalendar('Apr 12')">+ Add</button>
+    </div>
+    <div class="oh-card">
+      <div class="oh-date-box" style="background:var(--s3);">
+        <div class="oh-date-mo" style="color:var(--txm);">APR</div>
+        <div class="oh-date-day" style="color:var(--txm);">19</div>
+      </div>
+      <div class="oh-info">
+        <div class="oh-time">Saturday · 2:00 – 5:00 PM</div>
+        <div class="oh-detail">Hosted by Marcus Rivera · Chloe Code inside</div>
+      </div>
+      <button class="oh-btn" onclick="addToCalendar('Apr 19')">+ Add</button>
+    </div>
+    <div style="background:var(--ad);border:1px solid var(--br);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;">
+      <span style="font-size:20px;">📍</span>
+      <div>
+        <div style="font-size:13px;color:var(--tx);font-weight:500;">Scan the Chloe Code inside</div>
+        <div style="font-size:11px;color:var(--txm);margin-top:2px;">Get your personal match score + full home intelligence when you're inside</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── GET NOTIFIED ── -->
+  <div class="section" style="margin-top:20px;" id="notify-section">
+    <div class="sec-hdr">Stay in the Loop</div>
+    <div class="notify-card">
+      <div class="notify-title">Get notified about<br><em>this home.</em></div>
+      <div class="notify-sub">Price changes, open house dates, and market signals — delivered by text. No account needed.</div>
+
+      <input class="mob-inp" id="notify-name" type="text" placeholder="Your first name" />
+      <input class="mob-inp" id="notify-phone" type="tel" placeholder="Mobile number for text alerts" />
+
+      <div class="notify-checks" id="notify-types">
+        <div class="ncheck sel" onclick="togCheck(this)">
+          <div class="ncheck-box">✓</div>
+          <span class="ncheck-lbl">💰 Price change alerts</span>
+        </div>
+        <div class="ncheck sel" onclick="togCheck(this)">
+          <div class="ncheck-box">✓</div>
+          <span class="ncheck-lbl">📅 Open house reminders</span>
+        </div>
+        <div class="ncheck sel" onclick="togCheck(this)">
+          <div class="ncheck-box">✓</div>
+          <span class="ncheck-lbl">📊 "A similar home just sold" updates</span>
+        </div>
+        <div class="ncheck" onclick="togCheck(this)">
+          <div class="ncheck-box"></div>
+          <span class="ncheck-lbl">🔑 Status changes (under contract, etc.)</span>
+        </div>
+        <div class="ncheck" onclick="togCheck(this)">
+          <div class="ncheck-box"></div>
+          <span class="ncheck-lbl">🏠 Similar homes that match this one</span>
+        </div>
+      </div>
+
+      <button class="btn-pri" style="margin-bottom:10px;" onclick="submitNotify()">
+        Get Notified →
+      </button>
+      <div style="font-size:11px;color:var(--txd);text-align:center;">Text only · No spam · Unsubscribe anytime</div>
+    </div>
+  </div>
+
+  <!-- ── MORTGAGE CALCULATOR ── -->
+  <div class="section" style="margin-top:20px;">
+    <div class="sec-hdr">Mortgage Estimator</div>
+    <div class="calc-display">
+      <div class="calc-amount" id="calc-payment">$3,847</div>
+      <div class="calc-label">Estimated Monthly Payment</div>
+      <div class="calc-breakdown" id="calc-breakdown">Principal + Interest · 30-yr fixed · 7.25%</div>
+    </div>
+
+    <div class="range-row">
+      <div class="range-lbl"><span>Down Payment</span><span id="dp-label">10% · $72,400</span></div>
+      <input type="range" class="mob-range" id="dp-slider" min="5" max="30" value="10" oninput="updateCalc()">
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--txd);margin-top:4px;"><span>5%</span><span>20%</span><span>30%</span></div>
+    </div>
+
+    <div class="range-row" style="margin-top:14px;">
+      <div class="range-lbl"><span>Interest Rate</span><span id="rate-label">7.25%</span></div>
+      <input type="range" class="mob-range" id="rate-slider" min="550" max="900" value="725" oninput="updateCalc()">
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--txd);margin-top:4px;"><span>5.5%</span><span>7.0%</span><span>9.0%</span></div>
+    </div>
+
+    <div style="background:var(--s1);border:1px solid var(--bs);border-radius:12px;padding:14px;margin-top:14px;">
+      <div style="font-size:10px;font-family:'DM Mono',monospace;color:var(--acc);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px;">Monthly Breakdown</div>
+      <div class="panel-row" style="padding:7px 0;border-bottom:1px solid var(--bs);"><span class="pr-lbl">Principal + Interest</span><span class="pr-val" id="pi-amt">$3,847</span></div>
+      <div class="panel-row" style="padding:7px 0;border-bottom:1px solid var(--bs);"><span class="pr-lbl">Property Tax (est.)</span><span class="pr-val">$850</span></div>
+      <div class="panel-row" style="padding:7px 0;border-bottom:1px solid var(--bs);"><span class="pr-lbl">HOA</span><span class="pr-val">$185</span></div>
+      <div class="panel-row" style="padding:7px 0;border-bottom:1px solid var(--bs);"><span class="pr-lbl">Insurance (est.)</span><span class="pr-val">$120</span></div>
+      <div class="panel-row" style="padding:7px 0;"><span style="font-weight:600;color:var(--tx);">Total Est. Monthly</span><span class="pr-val acc" style="font-weight:600;" id="total-amt">$5,002</span></div>
+    </div>
+
+    <div style="margin-top:12px;background:var(--ad);border:1px solid var(--br);border-radius:12px;padding:14px;display:flex;align-items:center;gap:12px;">
+      <div style="flex:1;">
+        <div style="font-size:13px;font-weight:500;color:var(--tx);margin-bottom:2px;">Get pre-approved in 3 minutes</div>
+        <div style="font-size:11px;color:var(--txm);">Josh Waters · Branch Manager · New American Funding</div>
+      </div>
+      <button onclick="showPrequalModal()" style="padding:9px 14px;border-radius:9px;border:none;background:var(--acc);color:var(--bg);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;">Apply Now</button>
+    </div>
+  </div>
+
+  <!-- ── RECENT COMPS ── -->
+  <div class="section" style="margin-top:20px;">
+    <div class="sec-hdr">Recent Closed Sales · 75022</div>
+    <div class="comp-card">
+      <div class="comp-addr">2901 Ridgeview Ln</div>
+      <div class="comp-sub">Flower Mound · 4bd / 3ba · 3,180 sqft · Closed Apr 18</div>
+      <div class="comp-stats">
+        <div class="comp-stat">List <b>$719K</b></div>
+        <div class="comp-stat over">Sold <b>$738K</b></div>
+        <div class="comp-stat">DOM <b>8 days</b></div>
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-addr">1204 Ashford Ridge Rd</div>
+      <div class="comp-sub">Flower Mound · 4bd / 3.5ba · 2,980 sqft · Closed Apr 12</div>
+      <div class="comp-stats">
+        <div class="comp-stat">List <b>$695K</b></div>
+        <div class="comp-stat over">Sold <b>$708K</b></div>
+        <div class="comp-stat">DOM <b>11 days</b></div>
+      </div>
+    </div>
+    <div class="comp-card">
+      <div class="comp-addr">422 Heatherton Way</div>
+      <div class="comp-sub">Flower Mound · 4bd / 3ba · 3,060 sqft · Closed Mar 22</div>
+      <div class="comp-stats">
+        <div class="comp-stat">List <b>$724K</b></div>
+        <div class="comp-stat over">Sold <b>$731K</b></div>
+        <div class="comp-stat">DOM <b>9 days</b></div>
+      </div>
+    </div>
+    <div style="background:var(--s1);border:1px solid var(--bs);border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;">
+      <div style="font-size:12px;color:var(--txm);">Avg sale price · last 90 days</div>
+      <div style="font-family:'Fraunces',serif;font-size:18px;color:var(--red);">101.3% of list</div>
+    </div>
+  </div>
+
+  <!-- ── NEIGHBORHOOD ── -->
+  <div class="section" style="margin-top:20px;">
+    <div class="sec-hdr">Neighborhood</div>
+    <div class="panel">
+      <div class="panel-row"><span class="pr-lbl">School District</span><span class="pr-val">Lewisville ISD</span></div>
+      <div class="panel-row"><span class="pr-lbl">Elementary</span><span class="pr-val grn">Flower Mound Elem ★ 9/10</span></div>
+      <div class="panel-row"><span class="pr-lbl">Middle School</span><span class="pr-val grn">Forestwood MS ★ 8/10</span></div>
+      <div class="panel-row"><span class="pr-lbl">High School</span><span class="pr-val grn">Flower Mound HS ★ 9/10</span></div>
+      <div class="panel-row"><span class="pr-lbl">Walk Score</span><span class="pr-val">42 · Car-dependent</span></div>
+      <div class="panel-row"><span class="pr-lbl">To DFW Airport</span><span class="pr-val">~22 min</span></div>
+      <div class="panel-row"><span class="pr-lbl">To Dallas CBD</span><span class="pr-val">~35 min</span></div>
+      <div class="panel-row"><span class="pr-lbl">Nearby</span><span class="pr-val">Costco · HEB · Flower Mound Rd</span></div>
+    </div>
+  </div>
+
+  <!-- ── LISTING AGENT ── -->
+  <div class="section" style="margin-top:20px;">
+    <div class="sec-hdr">Listing Agent</div>
+    <div class="agent-card">
+      <div class="agent-hero">
+        <div class="agent-avatar">MR</div>
+        <div class="agent-name">Marcus Rivera</div>
+        <div class="agent-title">REALTOR® · REAL Broker, LLC · DFW Metroplex</div>
+        <div class="agent-badges">
+          <span class="agent-badge">Dallas Collective Group</span>
+          <span class="agent-badge">ChloeIQ Host</span>
+          <span class="agent-badge">Gold Tier</span>
+        </div>
+      </div>
+      <div class="agent-stats">
+        <div class="agent-stat"><div class="as-val">47</div><div class="as-lbl">Listings</div></div>
+        <div class="agent-stat"><div class="as-val">$2.1M</div><div class="as-lbl">Avg Sale</div></div>
+        <div class="agent-stat"><div class="as-val">98%</div><div class="as-lbl">Satisfaction</div></div>
+      </div>
+      <div class="agent-actions">
+        <button class="btn-pri" onclick="showShowingModal()">📅 Request a Showing</button>
+        <button class="btn-acc" onclick="callAgent()">📞 Call Marcus · (214) 555-0192</button>
+        <button class="btn-sec" onclick="textAgent()">💬 Send a Text Message</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STYLEDNA TEASER ── -->
+  <div class="section" style="margin-top:20px;">
+    <div class="sec-hdr">Does This Home Match Your Style?</div>
+    <div style="background:linear-gradient(135deg,rgba(184,224,48,0.08),rgba(184,224,48,0.02));border:1px solid rgba(184,224,48,0.2);border-radius:16px;padding:20px;text-align:center;">
+      <div style="font-size:32px;margin-bottom:10px;">🧬</div>
+      <div style="font-family:'Fraunces',serif;font-size:20px;color:var(--tx);margin-bottom:8px;">Find Your <em style="color:var(--acc);">Buyer DNA</em></div>
+      <div style="font-size:13px;color:var(--txm);line-height:1.7;margin-bottom:16px;">Take a 60-second quiz and Chloe will tell you exactly how well this home matches your style — and find others like it.</div>
+      <button class="btn-pri" onclick="goToQuiz()">Take the StyleDNA Quiz →</button>
+      <div style="font-size:11px;color:var(--txd);margin-top:10px;">60 seconds · No account needed · Walk in ready</div>
+    </div>
+  </div>
+
+  <!-- ── WHAT IS CHLOEIQ ── -->
+  <div class="section" style="margin-top:20px;margin-bottom:20px;">
+    <div class="sec-hdr">Powered by ChloeIQ</div>
+    <div class="chloe-intro">
+      <div class="ci-logo-row">
+        <div class="ci-mark">C</div>
+        <div class="ci-name">Chloe<b>IQ</b></div>
+      </div>
+      <div style="font-size:13px;color:var(--txm);line-height:1.7;margin-bottom:14px;">ChloeIQ is the open house intelligence platform Marcus Rivera uses to create a smarter experience for every buyer who walks through his doors.</div>
+      <div class="ci-features">
+        <div class="ci-feat"><span class="ci-feat-icon">🧬</span><span><strong style="color:var(--tx);">StyleDNA Profiles</strong> — Chloe learns your style from a 60-second quiz and scores every home against it</span></div>
+        <div class="ci-feat"><span class="ci-feat-icon">📍</span><span><strong style="color:var(--tx);">Room Intelligence</strong> — real-time engagement tracking as you tour, so Marcus always knows what resonated</span></div>
+        <div class="ci-feat"><span class="ci-feat-icon">⚡</span><span><strong style="color:var(--tx);">Market Pulse</strong> — live demand signals, competitor activity, and urgency data for your search area</span></div>
+        <div class="ci-feat"><span class="ci-feat-icon">🤝</span><span><strong style="color:var(--tx);">Agent Intelligence</strong> — your agent gets a full visit report automatically, so you never have to recap a showing</span></div>
+      </div>
+      <button class="btn-sec" onclick="showChloeIntro()" style="width:100%;">Learn More About ChloeIQ →</button>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- ══ SUCCESS OVERLAY ══ -->
+<div class="success-overlay" id="success-screen">
+  <div style="width:72px;height:72px;border-radius:50%;background:var(--ad);border:2px solid var(--br);display:flex;align-items:center;justify-content:center;margin-bottom:20px;animation:livePulse 2s ease-in-out infinite;">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#B8E030" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+  </div>
+  <div style="font-family:'Fraunces',serif;font-size:28px;color:var(--tx);margin-bottom:10px;" id="success-title">You're on the list!</div>
+  <div style="font-size:14px;color:var(--txm);line-height:1.7;max-width:300px;margin:0 auto 28px;" id="success-body">We'll text you the moment anything changes on 2847 Magnolia Drive.</div>
+  <button class="btn-pri" style="max-width:320px;width:100%;" onclick="closeSuccess()">Done →</button>
+  <div style="font-size:11px;color:var(--txd);margin-top:12px;">Reply STOP to unsubscribe at any time</div>
+</div>
+
+<script>
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+function toast(msg, type) {
+  var o = document.getElementById('_t');
+  if (o) o.remove();
+  var t = document.createElement('div');
+  t.id = '_t';
+  t.textContent = msg;
+  var bg = type === 'ok' ? '#B8E030' : '#1A1E12';
+  var c  = type === 'ok' ? '#0A0B07' : '#EEF0E5';
+  t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:' + bg + ';color:' + c + ';padding:10px 20px;border-radius:10px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all 0.2s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,0.5);white-space:nowrap;max-width:90vw;text-align:center;';
+  document.body.appendChild(t);
+  requestAnimationFrame(function() { t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)'; });
+  setTimeout(function() { t.style.opacity = '0'; }, 2600);
+}
+
+// ── MODAL HELPER ──────────────────────────────────────────────────────────────
+function openModal(html) {
+  var old = document.getElementById('_modal');
+  if (old) old.remove();
+  var overlay = document.createElement('div');
+  overlay.id = '_modal';
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = html;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) closeModal(); });
+  return overlay;
+}
+function closeModal() {
+  var m = document.getElementById('_modal');
+  if (m) m.remove();
+}
+
+// ── NOTIFY ────────────────────────────────────────────────────────────────────
+function togCheck(el) {
+  el.classList.toggle('sel');
+  var box = el.querySelector('.ncheck-box');
+  box.textContent = el.classList.contains('sel') ? '✓' : '';
+}
+
+function scrollToNotify() {
+  document.getElementById('notify-section').scrollIntoView({ behavior:'smooth', block:'start' });
+  setTimeout(function() { document.getElementById('notify-name').focus(); }, 600);
+}
+
+function submitNotify() {
+  var name  = (document.getElementById('notify-name').value || '').trim();
+  var phone = (document.getElementById('notify-phone').value || '').trim();
+  if (!name) { toast('Please enter your first name', ''); return; }
+  if (!phone) { toast('Please enter your mobile number', ''); return; }
+
+  var checks = document.querySelectorAll('#notify-types .ncheck.sel .ncheck-lbl');
+  var selected = Array.from(checks).map(function(c) { return c.textContent.trim(); });
+
+  // Show success overlay
+  document.getElementById('success-title').textContent = 'You\'re set, ' + name + '!';
+  document.getElementById('success-body').textContent = 'We\'ll text ' + phone + ' with updates on 2847 Magnolia Drive. ' + (selected.length > 0 ? 'Tracking: ' + selected.slice(0,2).join(', ').replace(/[^a-zA-Z ,]/g,'') + (selected.length > 2 ? ' + more' : '') + '.' : '');
+  document.getElementById('success-screen').classList.add('show');
+}
+
+function closeSuccess() {
+  document.getElementById('success-screen').classList.remove('show');
+  toast('You\'ll hear from us on 2847 Magnolia Drive ✓', 'ok');
+}
+
+// ── SHOWING REQUEST MODAL ─────────────────────────────────────────────────────
+function showShowingModal() {
+  var html = '<div class="modal-card">';
+  html += '<div class="modal-header"><div><div class="modal-title">Request a <em>Showing</em></div><div class="modal-sub">2847 Magnolia Drive · Marcus Rivera</div></div><button class="modal-x" onclick="closeModal()">✕</button></div>';
+  html += '<div class="modal-body">';
+
+  // Quick slots
+  html += '<span class="sec-label">Available Times</span>';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;" id="slot-grid">';
+  var slots = ['Sat Apr 12 · 1–2 PM','Sat Apr 12 · 2–3 PM','Sat Apr 12 · 3–4 PM','Sun Apr 13 · 11 AM','Mon Apr 14 · 5 PM','Tue Apr 15 · 6 PM'];
+  slots.forEach(function(s, i) {
+    var active = i === 0 ? 'border-color:rgba(184,224,48,0.5);background:var(--ad);color:var(--acc);' : '';
+    html += '<div class="_slot" onclick="selSlot(this)" style="background:var(--s2);border:1px solid var(--bs);' + active + 'border-radius:10px;padding:11px 12px;cursor:pointer;font-size:12px;color:var(--txm);text-align:center;transition:all 0.13s;">' + s + '</div>';
+  });
+  html += '</div>';
+
+  // Contact info
+  html += '<span class="sec-label" style="margin-top:4px;">Your Contact Info</span>';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">';
+  html += '<div><label class="inp-lbl">First Name</label><input class="mob-inp" id="sh-fn" type="text" placeholder="Jordan" style="margin-bottom:0;"></div>';
+  html += '<div><label class="inp-lbl">Last Name</label><input class="mob-inp" id="sh-ln" type="text" placeholder="Lee" style="margin-bottom:0;"></div>';
+  html += '</div>';
+  html += '<div style="margin-bottom:10px;"><label class="inp-lbl">Phone</label><input class="mob-inp" id="sh-ph" type="tel" placeholder="(214) 555-0000" style="margin-bottom:0;"></div>';
+
+  // Represented?
+  html += '<div style="margin-bottom:10px;"><label class="inp-lbl">Are you working with a buyer\'s agent?</label>';
+  html += '<select class="mob-sel" id="sh-rep" onchange="toggleAgentInfo(this.value)">';
+  html += '<option value="no">No — I\'m looking independently</option>';
+  html += '<option value="yes">Yes — I have an agent</option>';
+  html += '<option value="unsure">Not sure yet</option>';
+  html += '</select></div>';
+
+  // Agent info (hidden by default)
+  html += '<div id="sh-agent-info" style="display:none;">';
+  html += '<div style="background:var(--ad);border:1px solid var(--br);border-radius:10px;padding:12px 14px;margin-bottom:10px;">';
+  html += '<div style="font-size:12px;color:var(--acc);font-weight:500;margin-bottom:3px;">Great — we\'ll notify your agent after your tour</div>';
+  html += '<div style="font-size:11px;color:var(--txm);line-height:1.5;">Your agent will receive a full visit report — rooms you explored, your match score, and your preferences — so they\'re fully briefed without you having to explain everything.</div>';
+  html += '</div>';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">';
+  html += '<div><label class="inp-lbl">Agent First Name</label><input class="mob-inp" id="sh-afn" type="text" placeholder="Sarah" style="margin-bottom:0;"></div>';
+  html += '<div><label class="inp-lbl">Agent Last Name</label><input class="mob-inp" id="sh-aln" type="text" placeholder="Johnson" style="margin-bottom:0;"></div>';
+  html += '</div>';
+  html += '<div style="margin-bottom:10px;"><label class="inp-lbl">Agent Email</label><input class="mob-inp" id="sh-aem" type="email" placeholder="agent@brokerage.com" style="margin-bottom:0;"></div>';
+  html += '<div><label class="inp-lbl">Agent Phone <span style="font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></label><input class="mob-inp" id="sh-aph" type="tel" placeholder="(214) 555-0000" style="margin-bottom:0;"></div>';
+  html += '</div>';
+
+  // Notes
+  html += '<div style="margin-top:10px;"><label class="inp-lbl">Anything else for Marcus?</label>';
+  html += '<textarea class="mob-inp" id="sh-note" rows="2" placeholder="e.g. Flexible on time, very interested in the backyard…" style="resize:none;height:auto;"></textarea></div>';
+  html += '</div>'; // end body
+
+  html += '<div class="modal-footer">';
+  html += '<button class="btn-cancel" onclick="closeModal()">Cancel</button>';
+  html += '<button class="btn-confirm" onclick="submitShowing()">Request Showing →</button>';
+  html += '</div>';
+  html += '</div>'; // end card
+
+  openModal(html);
+}
+
+function selSlot(el) {
+  document.querySelectorAll('._slot').forEach(function(s) {
+    s.style.borderColor = 'var(--bs)';
+    s.style.background  = 'var(--s2)';
+    s.style.color       = 'var(--txm)';
+  });
+  el.style.borderColor = 'rgba(184,224,48,0.5)';
+  el.style.background  = 'var(--ad)';
+  el.style.color       = 'var(--acc)';
+}
+
+function toggleAgentInfo(val) {
+  var info = document.getElementById('sh-agent-info');
+  if (info) info.style.display = val === 'yes' ? 'block' : 'none';
+}
+
+function submitShowing() {
+  var fn   = (document.getElementById('sh-fn') ? document.getElementById('sh-fn').value.trim() : '');
+  var ph   = (document.getElementById('sh-ph') ? document.getElementById('sh-ph').value.trim() : '');
+  var rep  = document.getElementById('sh-rep') ? document.getElementById('sh-rep').value : 'no';
+  if (!fn || !ph) { toast('Please fill in your name and phone number', ''); return; }
+
+  // Get selected slot
+  var activeSlot = document.querySelector('._slot[style*="rgba(184,224,48"]');
+  var slotText   = activeSlot ? activeSlot.textContent : 'your selected time';
+
+  var agentName = '';
+  if (rep === 'yes') {
+    var afn = document.getElementById('sh-afn') ? document.getElementById('sh-afn').value.trim() : '';
+    var aln = document.getElementById('sh-aln') ? document.getElementById('sh-aln').value.trim() : '';
+    agentName = (afn + ' ' + aln).trim();
+  }
+
+  closeModal();
+
+  if (agentName) {
+    // Go to agent notification confirmation
+    window.location.href = 'chloeiq-notify-confirm.html?buyer=' + encodeURIComponent(fn) + '&agent=' + encodeURIComponent(agentName) + '&slot=' + encodeURIComponent(slotText) + '&addr=' + encodeURIComponent('2847 Magnolia Drive');
+  } else {
+    document.getElementById('success-title').textContent = 'Showing Requested, ' + fn + '!';
+    document.getElementById('success-body').textContent = 'Marcus Rivera will confirm your ' + slotText + ' showing at 2847 Magnolia Drive within 2 hours.';
+    document.getElementById('success-screen').classList.add('show');
+  }
+}
+
+// ── ROOM DETAIL MODAL ─────────────────────────────────────────────────────────
+var roomDetails = {
+  'Primary Suite': { icon:'🛁', desc:'A true retreat — spa-style bath with soaking tub, frameless walk-in shower, dual vanities, and a massive walk-in closet with custom built-ins. Private access to the rear patio.', highlights:['Soaking tub + frameless shower','Dual vanity sinks','Walk-in closet with built-ins','Private patio access','Natural light from east-facing windows'] },
+  'Chef Kitchen': { icon:'🍳', desc:'The heart of the home. 2023 renovation with quartz waterfall island, professional-grade integrated appliances, custom cabinetry, and a walk-in pantry that connects to the mudroom.', highlights:['Waterfall quartz island','Integrated Thermador appliances','Custom soft-close cabinetry','Walk-in pantry','Open to great room'] },
+  'Great Room': { icon:'🪟', desc:'Soaring 14-foot coffered ceilings, a wall of windows facing the private backyard, and an open flow to the kitchen and dining. Fireplace with built-in flanking shelves.', highlights:['14-ft coffered ceilings','Floor-to-ceiling windows','Gas fireplace with built-ins','Open to kitchen + dining','Views to private backyard'] },
+  'Home Office': { icon:'💼', desc:'Dedicated study with French doors, custom built-in desk and shelving, fiber internet readiness, and a private entrance from the front of the home — ideal for client meetings.', highlights:['French door entry','Custom built-in desk + shelves','Fiber internet ready','Private front entrance','Separate from main living'] },
+  'Backyard': { icon:'🌿', desc:'A blank canvas on 0.28 acres. Expansive covered patio pre-plumbed for outdoor kitchen, mature oak trees for natural shade, and a lot design that is pool-ready with full permit potential.', highlights:['0.28-acre private lot','Covered patio (pre-plumbed)','Pool-ready design','Mature oak trees','8-ft board-on-board privacy fence'] },
+  'Smart Home': { icon:'🤖', desc:'Fully integrated smart home with automated climate, lighting scenes, security cameras, and door locks — all controllable from a single app or voice command.', highlights:['Nest climate automation','Lutron lighting scenes','Ring security + cameras','Smart lock entry system','Pre-wired for expansion'] },
+};
+
+function showRoomDetail(room) {
+  var r = roomDetails[room];
+  if (!r) return;
+  var html = '<div class="modal-card">';
+  html += '<div class="modal-header"><div><div class="modal-title">' + r.icon + ' ' + room + '</div><div class="modal-sub">2847 Magnolia Drive · Flower Mound</div></div><button class="modal-x" onclick="closeModal()">✕</button></div>';
+  html += '<div class="modal-body">';
+  html += '<div style="font-size:13px;color:var(--txm);line-height:1.7;margin-bottom:16px;">' + r.desc + '</div>';
+  html += '<span class="sec-label">Highlights</span>';
+  html += '<div style="display:flex;flex-direction:column;gap:7px;margin-bottom:16px;">';
+  r.highlights.forEach(function(h) {
+    html += '<div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--txm);"><span style="color:var(--acc);">✓</span>' + h + '</div>';
+  });
+  html += '</div>';
+  html += '</div>';
+  html += '<div class="modal-footer"><button class="btn-cancel" onclick="closeModal()">Close</button><button class="btn-confirm" onclick="closeModal();showShowingModal()">Request Showing →</button></div>';
+  html += '</div>';
+  openModal(html);
+}
+
+// ── MORTGAGE CALCULATOR ───────────────────────────────────────────────────────
+function updateCalc() {
+  var price   = 724000;
+  var dpPct   = parseInt(document.getElementById('dp-slider').value) / 100;
+  var ratePct = parseInt(document.getElementById('rate-slider').value) / 10000;
+
+  var dp      = Math.round(price * dpPct);
+  var loan    = price - dp;
+  var monthly = ratePct / 12;
+  var n       = 360;
+  var pi      = Math.round(loan * (monthly * Math.pow(1+monthly,n)) / (Math.pow(1+monthly,n)-1));
+  var total   = pi + 850 + 185 + 120;
+
+  document.getElementById('calc-payment').textContent = '$' + pi.toLocaleString();
+  document.getElementById('pi-amt').textContent       = '$' + pi.toLocaleString();
+  document.getElementById('total-amt').textContent    = '$' + total.toLocaleString();
+  document.getElementById('dp-label').textContent     = Math.round(dpPct*100) + '% · $' + dp.toLocaleString();
+  document.getElementById('rate-label').textContent   = (ratePct*100).toFixed(2) + '%';
+  document.getElementById('calc-breakdown').textContent = 'Principal + Interest · 30-yr fixed · ' + (ratePct*100).toFixed(2) + '%';
+
+  // Update slider fill
+  var dpSlider   = document.getElementById('dp-slider');
+  var rateSlider = document.getElementById('rate-slider');
+  var dpFill     = ((dpSlider.value - dpSlider.min) / (dpSlider.max - dpSlider.min)) * 100;
+  var rateFill   = ((rateSlider.value - rateSlider.min) / (rateSlider.max - rateSlider.min)) * 100;
+  dpSlider.style.background   = 'linear-gradient(to right,#B8E030 ' + dpFill + '%,#1A1E12 ' + dpFill + '%)';
+  rateSlider.style.background = 'linear-gradient(to right,#B8E030 ' + rateFill + '%,#1A1E12 ' + rateFill + '%)';
+}
+
+// ── PRE-QUAL MODAL ────────────────────────────────────────────────────────────
+function showPrequalModal() {
+  var html = '<div class="modal-card">';
+  html += '<div class="modal-header"><div><div class="modal-title">Get <em>Pre-Approved</em></div><div class="modal-sub">Josh Waters · Branch Manager · New American Funding</div></div><button class="modal-x" onclick="closeModal()">✕</button></div>';
+  html += '<div class="modal-body">';
+  html += '<div style="background:var(--ad);border:1px solid var(--br);border-radius:10px;padding:12px 14px;margin-bottom:16px;display:flex;gap:10px;">';
+  html += '<svg width="10" height="10" viewBox="0 0 24 24" fill="var(--acc)" style="margin-top:3px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/></svg>';
+  html += '<div style="font-size:12px;color:var(--txm);line-height:1.6;"><strong style="color:var(--tx);">Fast-track pre-approval.</strong> Most buyers get a decision in under 3 minutes. Your pre-approval letter can be ready before your showing.</div>';
+  html += '</div>';
+  html += '<span class="sec-label">Your Information</span>';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">';
+  html += '<div><label class="inp-lbl">First Name</label><input class="mob-inp" type="text" placeholder="Jordan" style="margin-bottom:0;"></div>';
+  html += '<div><label class="inp-lbl">Last Name</label><input class="mob-inp" type="text" placeholder="Lee" style="margin-bottom:0;"></div>';
+  html += '</div>';
+  html += '<div style="margin-bottom:10px;"><label class="inp-lbl">Email</label><input class="mob-inp" type="email" placeholder="you@example.com" style="margin-bottom:0;"></div>';
+  html += '<div style="margin-bottom:10px;"><label class="inp-lbl">Phone</label><input class="mob-inp" type="tel" placeholder="(214) 555-0000" style="margin-bottom:0;"></div>';
+  html += '<span class="sec-label" style="margin-top:4px;">Loan Details</span>';
+  html += '<div style="margin-bottom:10px;"><label class="inp-lbl">Purchase Price</label><input class="mob-inp" type="text" value="$724,000" style="margin-bottom:0;"></div>';
+  html += '<div style="margin-bottom:10px;"><label class="inp-lbl">Down Payment</label><select class="mob-sel"><option>3.5% FHA</option><option>5%</option><option>10%</option><option selected>20%</option><option>Other</option></select></div>';
+  html += '<div><label class="inp-lbl">Loan Type</label><select class="mob-sel"><option selected>Conventional</option><option>VA</option><option>FHA</option><option>Jumbo</option></select></div>';
+  html += '</div>';
+  html += '<div class="modal-footer"><button class="btn-cancel" onclick="closeModal()">Cancel</button><button class="btn-confirm" onclick="submitPrequal()">Start My Application →</button></div>';
+  html += '</div>';
+  openModal(html);
+}
+
+function submitPrequal() {
+  closeModal();
+  document.getElementById('success-title').textContent = 'Application Started!';
+  document.getElementById('success-body').textContent = 'Josh Waters will reach out within the hour to complete your pre-approval. Most decisions take under 3 minutes once your info is verified.';
+  document.getElementById('success-screen').classList.add('show');
+}
+
+// ── CALENDAR ─────────────────────────────────────────────────────────────────
+function addToCalendar(date) {
+  toast('Open house ' + date + ' added to calendar ✓', 'ok');
+}
+
+// ── AGENT CONTACT ─────────────────────────────────────────────────────────────
+function callAgent() {
+  toast('Calling Marcus Rivera · (214) 555-0192 ✓', 'ok');
+}
+function textAgent() {
+  var html = '<div class="modal-card">';
+  html += '<div class="modal-header"><div><div class="modal-title">Text <em>Marcus</em></div><div class="modal-sub">Marcus Rivera · (214) 555-0192</div></div><button class="modal-x" onclick="closeModal()">✕</button></div>';
+  html += '<div class="modal-body">';
+  html += '<div style="margin-bottom:10px;"><label class="inp-lbl">Your Phone Number</label><input class="mob-inp" type="tel" placeholder="(214) 555-0000" style="margin-bottom:0;"></div>';
+  html += '<div><label class="inp-lbl">Message</label><textarea class="mob-inp" rows="4" style="resize:none;">' + 'Hi Marcus — I\'m interested in 2847 Magnolia Drive. Can you share more details or schedule a showing?' + '</textarea></div>';
+  html += '</div>';
+  html += '<div class="modal-footer"><button class="btn-cancel" onclick="closeModal()">Cancel</button><button class="btn-confirm" onclick="closeModal();toast(\'Message sent to Marcus Rivera ✓\',\'ok\')">Send Message →</button></div>';
+  html += '</div>';
+  openModal(html);
+}
+
+// ── CHLOE INTRO MODAL ─────────────────────────────────────────────────────────
+function showChloeIntro() {
+  window.location.href = 'chloeiq-landing-desktop.html';
+}
+
+// ── STYLEDNA QUIZ ─────────────────────────────────────────────────────────────
+function goToQuiz() {
+  window.location.href = 'chloeiq-buyer-app.html';
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  updateCalc();
+});
+</script>
+<script src="chloeiq-nav.js"></script>
+</body>
+</html>

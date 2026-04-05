@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Showing Confirmed · ChloeIQ</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{--bg:#0A0B07;--s1:#13160D;--s2:#1A1E12;--s3:#222818;--acc:#B8E030;--ad:rgba(184,224,48,.10);--tx:#EEF0E5;--txm:#8A8F7A;--txd:#4A5040;--br:rgba(184,224,48,.14);--bs:rgba(238,240,229,.07);--grn:#4ADE80;--red:#FF5A4A;--amb:#F5A623;--blu:#60A5FA;}
+html,body{min-height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:14px;}
+.topbar{height:54px;display:flex;align-items:center;padding:0 20px;border-bottom:1px solid var(--bs);background:rgba(10,11,7,0.95);position:sticky;top:0;z-index:20;gap:10px;}
+.lm{width:28px;height:28px;background:var(--acc);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:var(--bg);}
+.lt{font-family:'Fraunces',serif;font-size:16px;color:var(--tx);}
+.lt b{color:var(--acc);font-weight:400;}
+.main{padding:0 20px 80px;max-width:520px;margin:0 auto;}
+.step-card{background:var(--s1);border:1px solid var(--bs);border-radius:16px;overflow:hidden;margin-top:16px;}
+.step-header{padding:16px 18px;border-bottom:1px solid var(--bs);display:flex;align-items:center;gap:12px;}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--bg);flex-shrink:0;}
+.step-num.done{background:var(--grn);}
+.step-num.pending{background:var(--s3);color:var(--txm);}
+.step-title{font-size:14px;font-weight:600;color:var(--tx);}
+.step-sub{font-size:11px;color:var(--txm);margin-top:1px;}
+.step-body{padding:14px 18px;}
+
+.timeline-item{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--bs);}
+.timeline-item:last-child{border-bottom:none;}
+.tl-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0;}
+.tl-dot.done{background:var(--grn);}
+.tl-dot.active{background:var(--acc);animation:pulse 2s ease-in-out infinite;}
+.tl-dot.pending{background:var(--s3);}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.tl-label{font-size:13px;color:var(--tx);}
+.tl-sub{font-size:11px;color:var(--txm);margin-top:2px;line-height:1.5;}
+.tl-time{font-size:10px;font-family:'DM Mono',monospace;color:var(--txd);margin-top:3px;}
+
+.btn-pri{width:100%;height:50px;border-radius:13px;border:none;background:var(--acc);color:var(--bg);font-family:'Fraunces',serif;font-size:16px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-sec{width:100%;height:46px;border-radius:13px;border:1px solid var(--bs);background:transparent;color:var(--txm);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;}
+.btn-acc{width:100%;height:46px;border-radius:13px;border:1px solid var(--br);background:var(--ad);color:var(--acc);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;}
+
+.info-card{background:var(--s2);border:1px solid var(--bs);border-radius:12px;padding:14px;}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--bs);font-size:12px;}
+.info-row:last-child{border-bottom:none;}
+.ir-lbl{color:var(--txm);}
+.ir-val{color:var(--tx);font-weight:500;text-align:right;}
+.ir-val.acc{color:var(--acc);}
+
+.chloe-box{background:linear-gradient(135deg,rgba(184,224,48,0.08),rgba(184,224,48,0.02));border:1px solid rgba(184,224,48,0.15);border-radius:14px;padding:16px;}
+
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.animate{animation:slideUp 0.4s ease both;}
+.d1{animation-delay:0.05s;}.d2{animation-delay:0.12s;}.d3{animation-delay:0.2s;}.d4{animation-delay:0.28s;}.d5{animation-delay:0.36s;}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="lm">C</div>
+  <div class="lt">Chloe<b>IQ</b></div>
+  <div style="margin-left:auto;font-size:11px;color:var(--txm);font-family:'DM Mono',monospace;" id="hdr-status">● Processing</div>
+</header>
+
+<div class="main">
+
+  <!-- ── CONFIRMATION HERO ── -->
+  <div style="text-align:center;padding:28px 0 20px;" class="animate">
+    <div style="width:72px;height:72px;border-radius:50%;background:var(--ad);border:2px solid var(--br);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#B8E030" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div style="font-family:'Fraunces',serif;font-size:26px;color:var(--tx);margin-bottom:6px;" id="confirm-title">You're all set, Jordan!</div>
+    <div style="font-size:13px;color:var(--txm);line-height:1.7;max-width:320px;margin:0 auto;" id="confirm-sub">Your showing request has been sent to Marcus Rivera. We'll also notify your agent after your tour.</div>
+  </div>
+
+  <!-- ── SHOWING SUMMARY ── -->
+  <div class="step-card animate d1">
+    <div class="step-header">
+      <div class="step-num done">✓</div>
+      <div>
+        <div class="step-title">Showing Requested</div>
+        <div class="step-sub">Marcus Rivera will confirm within 2 hours</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="info-card">
+        <div class="info-row"><span class="ir-lbl">Property</span><span class="ir-val" id="sum-addr">2847 Magnolia Drive</span></div>
+        <div class="info-row"><span class="ir-lbl">Requested Time</span><span class="ir-val acc" id="sum-slot">Sat Apr 12 · 1–2 PM</span></div>
+        <div class="info-row"><span class="ir-lbl">Listing Agent</span><span class="ir-val">Marcus Rivera</span></div>
+        <div class="info-row"><span class="ir-lbl">Confirmation</span><span class="ir-val">Within 2 hours</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── WHAT HAPPENS NEXT TIMELINE ── -->
+  <div class="step-card animate d2">
+    <div class="step-header">
+      <div class="step-num active" style="background:var(--acc);">→</div>
+      <div>
+        <div class="step-title">What Happens Next</div>
+        <div class="step-sub">Chloe is working in the background</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="timeline-item">
+        <div class="tl-dot done"></div>
+        <div>
+          <div class="tl-label">Showing request sent to Marcus</div>
+          <div class="tl-sub">Marcus has your name, phone, and preferred time. He'll confirm or suggest an alternative.</div>
+          <div class="tl-time">Just now</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-dot active"></div>
+        <div>
+          <div class="tl-label">You attend the open house or showing</div>
+          <div class="tl-sub">Scan the Chloe Code inside to activate room-by-room tracking and get your full match score.</div>
+          <div class="tl-time" id="showing-time">Upcoming</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-dot pending"></div>
+        <div>
+          <div class="tl-label">Chloe captures your visit data</div>
+          <div class="tl-sub">Rooms you explored, time in each space, interest signals — all tracked in real time so your agent is fully briefed.</div>
+          <div class="tl-time">30 min after first activity</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-dot pending"></div>
+        <div>
+          <div class="tl-label" id="agent-timeline-label">Your agent gets a full visit report</div>
+          <div class="tl-sub" id="agent-timeline-sub">A detailed summary — your match score, rooms visited, preferences flagged — is automatically sent to your agent. No recap call needed.</div>
+          <div class="tl-time">Automatically · ~30 min post-visit</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="tl-dot pending"></div>
+        <div>
+          <div class="tl-label">Marcus reaches out to your agent</div>
+          <div class="tl-sub">The listing agent and your agent connect with full context — your data creates the bridge between both sides of the transaction.</div>
+          <div class="tl-time">Within 24 hours of your visit</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── AGENT NOTIFICATION CARD ── -->
+  <div class="step-card animate d3" id="agent-card">
+    <div class="step-header">
+      <div class="step-num pending" id="agent-step-num">3</div>
+      <div>
+        <div class="step-title" id="agent-card-title">Your Agent Will Be Notified</div>
+        <div class="step-sub" id="agent-card-sub">After your tour · Automatically · No action needed from you</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <div class="chloe-box" style="margin-bottom:14px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="var(--acc)"><circle cx="12" cy="12" r="10"/></svg>
+          <span style="font-size:10px;font-family:'DM Mono',monospace;color:var(--acc);letter-spacing:0.08em;text-transform:uppercase;">What Chloe Sends Your Agent</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:7px;">
+          <div style="display:flex;gap:9px;font-size:12px;color:var(--txm);"><span>🎯</span><span>Your match score against this property</span></div>
+          <div style="display:flex;gap:9px;font-size:12px;color:var(--txm);"><span>🧬</span><span>Your StyleDNA buyer profile</span></div>
+          <div style="display:flex;gap:9px;font-size:12px;color:var(--txm);"><span>📍</span><span>Rooms visited and interest signals</span></div>
+          <div style="display:flex;gap:9px;font-size:12px;color:var(--txm);"><span>💡</span><span>Chloe's read on why this home resonated</span></div>
+          <div style="display:flex;gap:9px;font-size:12px;color:var(--txm);"><span>📞</span><span>Marcus Rivera's contact info for agent-to-agent follow-up</span></div>
+        </div>
+      </div>
+
+      <div class="info-card" id="agent-info-display">
+        <div class="info-row"><span class="ir-lbl">Agent Name</span><span class="ir-val acc" id="disp-agent-name">—</span></div>
+        <div class="info-row"><span class="ir-lbl">Notification</span><span class="ir-val">~30 min after your tour</span></div>
+        <div class="info-row"><span class="ir-lbl">Format</span><span class="ir-val">Email + SMS summary</span></div>
+        <div class="info-row"><span class="ir-lbl">Action needed from you</span><span class="ir-val" style="color:var(--grn);">None — it's automatic</span></div>
+      </div>
+
+      <!-- Non-Chloe agent intro -->
+      <div id="non-chloe-block" style="display:none;margin-top:14px;">
+        <div style="font-size:10px;font-family:'DM Mono',monospace;color:var(--amb);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px;">If Your Agent Isn't on ChloeIQ Yet</div>
+        <div style="background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.2);border-radius:12px;padding:14px;margin-bottom:10px;">
+          <div style="font-size:13px;color:var(--tx);font-weight:500;margin-bottom:4px;">They'll receive a ChloeIQ introduction alongside your report</div>
+          <div style="font-size:12px;color:var(--txm);line-height:1.6;">Your agent will see exactly what ChloeIQ captures and how it works — through the lens of their own client's visit. That's the most compelling introduction we can make.</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;gap:10px;padding:11px 13px;background:var(--s2);border:1px solid var(--bs);border-radius:10px;align-items:flex-start;">
+            <span style="font-size:18px;flex-shrink:0;">📧</span>
+            <div>
+              <div style="font-size:13px;font-weight:500;color:var(--tx);">Personalized intro email</div>
+              <div style="font-size:11px;color:var(--txm);margin-top:2px;">Subject: "[Your name] just toured 2847 Magnolia Drive — here's what Chloe captured." Your visit data is the headline — the ChloeIQ intro is the context.</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;padding:11px 13px;background:var(--s2);border:1px solid var(--bs);border-radius:10px;align-items:flex-start;">
+            <span style="font-size:18px;flex-shrink:0;">🎥</span>
+            <div>
+              <div style="font-size:13px;font-weight:500;color:var(--tx);">90-second platform overview</div>
+              <div style="font-size:11px;color:var(--txm);margin-top:2px;">A short video explaining what ChloeIQ does and how it helps agents work smarter — linked in the email footer.</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;padding:11px 13px;background:var(--s2);border:1px solid var(--bs);border-radius:10px;align-items:flex-start;">
+            <span style="font-size:18px;flex-shrink:0;">📅</span>
+            <div>
+              <div style="font-size:13px;font-weight:500;color:var(--tx);">Demo request link</div>
+              <div style="font-size:11px;color:var(--txm);margin-top:2px;">One tap to request a demo from the ChloeIQ team — no pressure, just context for their next listing.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── INTERIOR CODE PROMPT ── -->
+  <div class="animate d4" style="background:linear-gradient(135deg,rgba(184,224,48,0.1),rgba(184,224,48,0.02));border:1px solid rgba(184,224,48,0.25);border-radius:16px;padding:20px;margin-top:16px;text-align:center;">
+    <div style="font-size:28px;margin-bottom:10px;">📱</div>
+    <div style="font-family:'Fraunces',serif;font-size:18px;color:var(--tx);margin-bottom:6px;">One more thing</div>
+    <div style="font-size:13px;color:var(--txm);line-height:1.7;margin-bottom:16px;">When you arrive at the open house, scan the <strong style="color:var(--acc);">Chloe Code inside</strong> to activate full room tracking, get your match score, and unlock your buyer profile. That's what triggers your agent's report.</div>
+    <button class="btn-pri" onclick="goToBuyerApp()">See What the Interior Experience Looks Like →</button>
+  </div>
+
+  <!-- ── QUICK ACTIONS ── -->
+  <div class="animate d5" style="margin-top:16px;display:flex;flex-direction:column;gap:10px;">
+    <button class="btn-acc" onclick="window.location.href='chloeiq-exterior-code.html'">← Back to Property Details</button>
+    <button class="btn-sec" onclick="window.location.href='chloeiq-market-pulse-desktop.html'">⚡ See Market Pulse for This Area</button>
+  </div>
+
+</div>
+
+<script>
+// ── READ URL PARAMS ────────────────────────────────────────────────────────────
+(function() {
+  var params = new URLSearchParams(window.location.search);
+  var buyer   = params.get('buyer') || 'Jordan';
+  var agent   = params.get('agent') || '';
+  var slot    = params.get('slot')  || 'your selected time';
+  var addr    = params.get('addr')  || '2847 Magnolia Drive';
+
+  // Update header
+  document.getElementById('hdr-status').textContent = '✓ Confirmed';
+
+  // Update confirmation text
+  document.getElementById('confirm-title').textContent = 'You\'re all set, ' + buyer + '!';
+
+  if (agent) {
+    document.getElementById('confirm-sub').textContent = 'Your showing is requested for ' + slot + '. After your tour, ' + agent + ' will automatically receive a full visit report from Chloe.';
+  } else {
+    document.getElementById('confirm-sub').textContent = 'Your showing is requested for ' + slot + ' at ' + addr + '. Marcus Rivera will confirm within 2 hours.';
+  }
+
+  // Update showing summary
+  document.getElementById('sum-addr').textContent = addr;
+  document.getElementById('sum-slot').textContent = slot;
+  document.getElementById('showing-time').textContent = slot;
+
+  // Update agent display
+  if (agent) {
+    document.getElementById('disp-agent-name').textContent = agent;
+    document.getElementById('agent-timeline-label').textContent = agent + ' gets a full visit report';
+    document.getElementById('agent-timeline-sub').textContent = 'A detailed summary — your match score, rooms visited, preferences flagged — is automatically sent to ' + agent + ' approximately 30 minutes after your first room scan.';
+    document.getElementById('non-chloe-block').style.display = 'block';
+  } else {
+    document.getElementById('agent-card').style.display = 'none';
+  }
+})();
+
+function goToBuyerApp() {
+  window.location.href = 'chloeiq-buyer-app.html';
+}
+
+function toast(msg, type) {
+  var o = document.getElementById('_t');
+  if (o) o.remove();
+  var t = document.createElement('div');
+  t.id = '_t';
+  t.textContent = msg;
+  var bg = type === 'ok' ? '#B8E030' : '#1A1E12';
+  var c  = type === 'ok' ? '#0A0B07' : '#EEF0E5';
+  t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:' + bg + ';color:' + c + ';padding:10px 20px;border-radius:10px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all 0.2s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,0.5);';
+  document.body.appendChild(t);
+  requestAnimationFrame(function() { t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)'; });
+  setTimeout(function() { t.style.opacity = '0'; }, 2600);
+}
+</script>
+<script src="chloeiq-nav.js"></script>
+</body>
+</html>
