@@ -125,6 +125,8 @@
     { id: 'roi-calculator',    label: 'ROI Calculator',       file: 'chloeiq-roi-calculator-desktop.html',        icon: '📈', color: '#B8E030', group: 'agent' },
     { id: 'agent-setup',       label: 'Agent Setup',          file: 'chloeiq-agent-setup-desktop.html',           icon: '⚙️',  color: '#B8E030', group: 'agent' },
     // ── Buyer Journey ──
+    { id: 'early-adopter-deck',  label: 'Early Partner Deck',   file: 'chloeiq-early-adopter-deck.html',            icon: '🤝', color: '#F5A623', group: 'platform' },
+    { id: 'consumer-landing',   label: 'Buyer Landing',        file: 'chloeiq-consumer-landing.html',              icon: '🌟', color: '#B8E030', group: 'buyer' },
     { id: 'exterior-code',     label: 'Exterior Chloe Code',  file: 'chloeiq-exterior-code.html',                 icon: '🪧', color: '#B8E030', group: 'buyer' },
     { id: 'notify-confirm',    label: 'Notify Confirm',       file: 'chloeiq-notify-confirm.html',                icon: '✅', color: '#4ADE80', group: 'buyer' },
     { id: 'buyer-app',         label: 'Buyer App',            file: 'chloeiq-buyer-app-desktop.html',             icon: '👤', color: '#60A5FA', group: 'buyer' },

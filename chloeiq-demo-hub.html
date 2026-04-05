@@ -191,7 +191,7 @@ button,a,.app-card,.swatch{transition:all 0.15s ease !important;}
   <div class="hero animate-in">
     <div class="hero-left">
       <div class="hero-eyebrow">CHLOEIQ DEMO HUB · DFW PROPTECH</div>
-      <div class="hero-title">24 interactive demos,<br>one <em>unified platform</em></div>
+      <div class="hero-title">26 interactive demos,<br>one <em>unified platform</em></div>
       <div class="hero-sub">Every screen in the ChloeIQ platform — agent flow, buyer journey, brokerage intelligence, and investor deck — ready to present live.</div>
       <div class="hero-stats">
         <div class="hs"><div class="hs-v">22</div><div class="hs-l">Demo screens</div></div>
@@ -450,7 +450,8 @@ var apps = {
     { name:'Demand Heatmap',    desc:'ZIP-level buyer demand, DNA concentration, velocity trends',icon:'🗺', file:'chloeiq-buyer-heatmap-desktop.html',       tag:'agent' },
   ],
   buyer: [
-    { name:'Exterior Chloe Code', desc:'Yard sign QR → property showcase, notifications, showing request, mortgage calc, agent intro', icon:'🪧', file:'chloeiq-exterior-code.html',     tag:'buyer', featured:true },
+    { name:'Buyer Landing Page',   desc:'Consumer-facing — find your style, get your match score. No agent language.',                         icon:'🌟', file:'chloeiq-consumer-landing.html', tag:'buyer', featured:true },
+    { name:'Exterior Chloe Code', desc:'Yard sign QR → property showcase, notifications, showing request, mortgage calc, agent intro', icon:'🪧', file:'chloeiq-exterior-code.html',     tag:'buyer' },
     { name:'Showing Confirmed',   desc:'Post-showing confirmation + agent notification flow + ChloeIQ intro for non-users',           icon:'✅', file:'chloeiq-notify-confirm.html',   tag:'buyer' },
     { name:'Buyer App (Mobile)',  desc:'Scan Chloe Code → onboarding → StyleDNA quiz → match reveal → dashboard · Phone view',       icon:'📱', file:'chloeiq-buyer-app.html',         tag:'buyer' },
     { name:'Buyer App (Desktop)', desc:'Full buyer dashboard — leads, home reports, visit history, recommendations',                  icon:'👤', file:'chloeiq-buyer-app-desktop.html', tag:'buyer' },
@@ -470,7 +471,8 @@ var apps = {
   ],
   investor: [
     { name:'Seed Deck',         desc:'Full 10-slide investor presentation',            icon:'💼', file:'chloeiq-seed-deck-desktop.html',           tag:'investor', featured:true },
-    { name:'Feature Mastermind',desc:'Roadmap with live voting, feature requests',     icon:'🗺', file:'chloeiq-feature-mastermind-desktop.html',  tag:'investor' },
+
+    { name:'Early Partner Deck',  desc:'7-slide preview for team leads and early adopters — no ask, no traction claims, vision-led', icon:'🤝', file:'chloeiq-early-adopter-deck.html', tag:'platform', featured:true },    { name:'Feature Mastermind',desc:'Roadmap with live voting, feature requests',     icon:'🗺', file:'chloeiq-feature-mastermind-desktop.html',  tag:'investor' },
     { name:'Outreach Kit',      desc:'Email templates, pitch assets, one-liner lib',   icon:'📦', file:'chloeiq-outreach-kit-desktop.html',        tag:'investor' },
     { name:'Landing Page',      desc:'Platform hero + feature overview + CTA flow',    icon:'🌐', file:'chloeiq-landing-desktop.html',             tag:'investor' },
   ]
@@ -478,6 +480,7 @@ var apps = {
 
 var quickLinks = [
   { label:'Start Agent Demo',    file:'chloeiq-agent-dashboard-desktop.html',    icon:'🏠' },
+  { label:'Buyer Landing',       file:'chloeiq-consumer-landing.html',           icon:'🌟' },
   { label:'Exterior Chloe Code', file:'chloeiq-exterior-code.html',              icon:'🪧' },
   { label:'Start Buyer Journey', file:'chloeiq-buyer-app.html',                  icon:'🧬' },
   { label:'Open Seed Deck',      file:'chloeiq-seed-deck-desktop.html',          icon:'💼' },
@@ -485,6 +488,7 @@ var quickLinks = [
 ];
 
 var demoFlow = [
+  { icon:'🌟', label:'Buyer Landing', file:'chloeiq-consumer-landing.html' },
   { icon:'🪧', label:'Ext. Code', file:'chloeiq-exterior-code.html' },
   { icon:'🌐', label:'Landing', file:'chloeiq-landing-desktop.html' },
   { icon:'🧬', label:'StyleDNA', file:'chloeiq-styledna-quiz-desktop.html' },

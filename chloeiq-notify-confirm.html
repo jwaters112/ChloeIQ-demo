@@ -143,64 +143,38 @@ html,body{min-height:100%;background:var(--bg);color:var(--tx);font-family:'DM S
     </div>
   </div>
 
-  <!-- ── AGENT NOTIFICATION CARD ── -->
-  <div class="step-card animate d3" id="agent-card">
+  <!-- ── AGENT NOTIFICATION CARD ── -    <div class="step-card animate d3" id="agent-card">
     <div class="step-header">
       <div class="step-num pending" id="agent-step-num">3</div>
       <div>
-        <div class="step-title" id="agent-card-title">Your Agent Will Be Notified</div>
-        <div class="step-sub" id="agent-card-sub">After your tour · Automatically · No action needed from you</div>
+        <div class="step-title" id="agent-card-title">Your Agent Is Taken Care Of</div>
+        <div class="step-sub" id="agent-card-sub">Chloe handles the briefing — automatically, after your tour</div>
       </div>
     </div>
     <div class="step-body">
       <div class="chloe-box" style="margin-bottom:14px;">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="var(--acc)"><circle cx="12" cy="12" r="10"/></svg>
-          <span style="font-size:10px;font-family:'DM Mono',monospace;color:var(--acc);letter-spacing:0.08em;text-transform:uppercase;">What Chloe Sends Your Agent</span>
+          <span style="font-size:10px;font-family:'DM Mono',monospace;color:var(--acc);letter-spacing:0.08em;text-transform:uppercase;">Chloe's Concierge Promise</span>
         </div>
-        <div style="display:flex;flex-direction:column;gap:7px;">
-          <div style="display:flex;gap:9px;font-size:12px;color:var(--txm);"><span>🎯</span><span>Your match score against this property</span></div>
-          <div style="display:flex;gap:9px;font-size:12px;color:var(--txm);"><span>🧬</span><span>Your StyleDNA buyer profile</span></div>
-          <div style="display:flex;gap:9px;font-size:12px;color:var(--txm);"><span>📍</span><span>Rooms visited and interest signals</span></div>
-          <div style="display:flex;gap:9px;font-size:12px;color:var(--txm);"><span>💡</span><span>Chloe's read on why this home resonated</span></div>
-          <div style="display:flex;gap:9px;font-size:12px;color:var(--txm);"><span>📞</span><span>Marcus Rivera's contact info for agent-to-agent follow-up</span></div>
+        <div style="font-size:13px;color:var(--txm);line-height:1.7;">
+          After your tour, <strong style="color:var(--tx);" id="agent-name-inline">your agent</strong> will automatically receive a full briefing on your visit — so you never have to recap the showing yourself. They'll know exactly what resonated and be ready to help you take the next step.
         </div>
       </div>
 
-      <div class="info-card" id="agent-info-display">
-        <div class="info-row"><span class="ir-lbl">Agent Name</span><span class="ir-val acc" id="disp-agent-name">—</span></div>
-        <div class="info-row"><span class="ir-lbl">Notification</span><span class="ir-val">~30 min after your tour</span></div>
-        <div class="info-row"><span class="ir-lbl">Format</span><span class="ir-val">Email + SMS summary</span></div>
-        <div class="info-row"><span class="ir-lbl">Action needed from you</span><span class="ir-val" style="color:var(--grn);">None — it's automatic</span></div>
+      <div class="info-card">
+        <div class="info-row"><span class="ir-lbl">Notified Agent</span><span class="ir-val acc" id="disp-agent-name">—</span></div>
+        <div class="info-row"><span class="ir-lbl">When it happens</span><span class="ir-val">Automatically, after your tour</span></div>
+        <div class="info-row"><span class="ir-lbl">What you need to do</span><span class="ir-val" style="color:var(--grn);">Nothing — Chloe handles it</span></div>
       </div>
 
-      <!-- Non-Chloe agent intro -->
       <div id="non-chloe-block" style="display:none;margin-top:14px;">
-        <div style="font-size:10px;font-family:'DM Mono',monospace;color:var(--amb);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px;">If Your Agent Isn't on ChloeIQ Yet</div>
-        <div style="background:rgba(245,166,35,0.08);border:1px solid rgba(245,166,35,0.2);border-radius:12px;padding:14px;margin-bottom:10px;">
-          <div style="font-size:13px;color:var(--tx);font-weight:500;margin-bottom:4px;">They'll receive a ChloeIQ introduction alongside your report</div>
-          <div style="font-size:12px;color:var(--txm);line-height:1.6;">Your agent will see exactly what ChloeIQ captures and how it works — through the lens of their own client's visit. That's the most compelling introduction we can make.</div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <div style="display:flex;gap:10px;padding:11px 13px;background:var(--s2);border:1px solid var(--bs);border-radius:10px;align-items:flex-start;">
-            <span style="font-size:18px;flex-shrink:0;">📧</span>
+        <div style="background:rgba(245,166,35,0.06);border:1px solid rgba(245,166,35,0.15);border-radius:12px;padding:14px;">
+          <div style="display:flex;gap:10px;align-items:flex-start;">
+            <span style="font-size:18px;flex-shrink:0;">✉️</span>
             <div>
-              <div style="font-size:13px;font-weight:500;color:var(--tx);">Personalized intro email</div>
-              <div style="font-size:11px;color:var(--txm);margin-top:2px;">Subject: "[Your name] just toured 2847 Magnolia Drive — here's what Chloe captured." Your visit data is the headline — the ChloeIQ intro is the context.</div>
-            </div>
-          </div>
-          <div style="display:flex;gap:10px;padding:11px 13px;background:var(--s2);border:1px solid var(--bs);border-radius:10px;align-items:flex-start;">
-            <span style="font-size:18px;flex-shrink:0;">🎥</span>
-            <div>
-              <div style="font-size:13px;font-weight:500;color:var(--tx);">90-second platform overview</div>
-              <div style="font-size:11px;color:var(--txm);margin-top:2px;">A short video explaining what ChloeIQ does and how it helps agents work smarter — linked in the email footer.</div>
-            </div>
-          </div>
-          <div style="display:flex;gap:10px;padding:11px 13px;background:var(--s2);border:1px solid var(--bs);border-radius:10px;align-items:flex-start;">
-            <span style="font-size:18px;flex-shrink:0;">📅</span>
-            <div>
-              <div style="font-size:13px;font-weight:500;color:var(--tx);">Demo request link</div>
-              <div style="font-size:11px;color:var(--txm);margin-top:2px;">One tap to request a demo from the ChloeIQ team — no pressure, just context for their next listing.</div>
+              <div style="font-size:13px;color:var(--tx);font-weight:500;margin-bottom:4px;">Your agent will receive a personalized summary</div>
+              <div style="font-size:12px;color:var(--txm);line-height:1.6;">Chloe will send <span id="non-chloe-agent-name">your agent</span> a summary of your tour — everything they need to follow up intelligently. If they're not familiar with ChloeIQ yet, they'll get a quick introduction too.</div>
             </div>
           </div>
         </div>
@@ -208,7 +182,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--tx);font-family:'DM S
     </div>
   </div>
 
-  <!-- ── INTERIOR CODE PROMPT ── -->
+    <!-- ── INTERIOR CODE PROMPT ── -->
   <div class="animate d4" style="background:linear-gradient(135deg,rgba(184,224,48,0.1),rgba(184,224,48,0.02));border:1px solid rgba(184,224,48,0.25);border-radius:16px;padding:20px;margin-top:16px;text-align:center;">
     <div style="font-size:28px;margin-bottom:10px;">📱</div>
     <div style="font-family:'Fraunces',serif;font-size:18px;color:var(--tx);margin-bottom:6px;">One more thing</div>
@@ -253,8 +227,11 @@ html,body{min-height:100%;background:var(--bg);color:var(--tx);font-family:'DM S
   // Update agent display
   if (agent) {
     document.getElementById('disp-agent-name').textContent = agent;
-    document.getElementById('agent-timeline-label').textContent = agent + ' gets a full visit report';
-    document.getElementById('agent-timeline-sub').textContent = 'A detailed summary — your match score, rooms visited, preferences flagged — is automatically sent to ' + agent + ' approximately 30 minutes after your first room scan.';
+    document.getElementById('agent-name-inline').textContent = agent;
+    document.getElementById('agent-timeline-label').textContent = agent + ' gets a full visit briefing';
+    document.getElementById('agent-timeline-sub').textContent = 'Chloe will send ' + agent + ' a complete summary of your tour — so they can follow up with full context. No recap call needed from you.';
+    var nonChloe = document.getElementById('non-chloe-agent-name');
+    if (nonChloe) nonChloe.textContent = agent;
     document.getElementById('non-chloe-block').style.display = 'block';
   } else {
     document.getElementById('agent-card').style.display = 'none';
