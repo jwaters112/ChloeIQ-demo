@@ -19,18 +19,25 @@
     var GOOGLE_FONTS_BASE = 'https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=DM+Mono:wght@400;500&family=';
 
     var SCHEMES = {
+      // ── Light themes ──
+      apple:      { bg:'#F5F5F7', s1:'#FFFFFF', s2:'#F0F0F2', acc:'#1D6F42', tx:'#1D1D1F', txm:'#6E6E73', light:true },
+      paper:      { bg:'#FAFAF8', s1:'#FFFFFF', s2:'#F2F2EF', acc:'#B8E030', tx:'#1A1A18', txm:'#70706A', light:true },
+      'warm-light':{ bg:'#F7F3ED', s1:'#FFFDFB', s2:'#EFE9E1', acc:'#7A5C2E', tx:'#241E17', txm:'#7A7060', light:true },
+      sky:        { bg:'#F0F6FF', s1:'#FFFFFF', s2:'#E8F0FC', acc:'#1A56DB', tx:'#111827', txm:'#4B5563', light:true },
+      // ── Dark themes ──
       default:    { bg:'#0A0B07', s1:'#13160D', s2:'#1A1E12', acc:'#B8E030', tx:'#EEF0E5', txm:'#8A8F7A' },
-      midnight:   { bg:'#080810', s1:'#0F0F1A', s2:'#161625', acc:'#7C6FFF', tx:'#E8E8F4', txm:'#7070A0' },
-      navy:       { bg:'#04090F', s1:'#071525', s2:'#0D2035', acc:'#38BDF8', tx:'#E0F0FF', txm:'#5A80A0' },
-      forest:     { bg:'#060D08', s1:'#0D1A0F', s2:'#132415', acc:'#4ADE80', tx:'#E4F0E6', txm:'#608060' },
+      midnight:   { bg:'#08091A', s1:'#0F1124', s2:'#161830', acc:'#818CF8', tx:'#E8E9F8', txm:'#6870A0' },
+      obsidian:   { bg:'#0C0C0C', s1:'#161616', s2:'#1F1F1F', acc:'#F5F5F5', tx:'#F0F0F0', txm:'#888888' },
+      navy:       { bg:'#04080F', s1:'#071220', s2:'#0C1E30', acc:'#38BDF8', tx:'#DFF0FF', txm:'#5A7A9A' },
+      espresso:   { bg:'#0E0A06', s1:'#1A1208', s2:'#261A0E', acc:'#F59E0B', tx:'#F5EDE0', txm:'#8A7258' },
+      forest:     { bg:'#060D08', s1:'#0D1A0F', s2:'#132416', acc:'#4ADE80', tx:'#E4F0E6', txm:'#5A7A5C' },
+      royal:      { bg:'#08060F', s1:'#100D1A', s2:'#181424', acc:'#C084FC', tx:'#EDE8F8', txm:'#706098' },
+      crimson:    { bg:'#0E0608', s1:'#1A0C0E', s2:'#241216', acc:'#FB7185', tx:'#F8E8EC', txm:'#806070' },
+      // ── Legacy aliases (backward compat) ──
       charcoal:   { bg:'#0C0C0E', s1:'#151518', s2:'#1E1E22', acc:'#F472B6', tx:'#F0EEF4', txm:'#707080' },
-      espresso:   { bg:'#0E0906', s1:'#1A120A', s2:'#251A10', acc:'#F59E0B', tx:'#F4EDE4', txm:'#8A7060' },
-      light:      { bg:'#F8F9FA', s1:'#FFFFFF', s2:'#F1F3F5', acc:'#1B7A2E', tx:'#1A1F1C', txm:'#6B7770' },
-      softlight:  { bg:'#F5F0E8', s1:'#FFFEF8', s2:'#F0EBE0', acc:'#7A5C2E', tx:'#2A2018', txm:'#8A7A60' },
+      light:      { bg:'#F5F5F7', s1:'#FFFFFF', s2:'#F0F0F2', acc:'#1D6F42', tx:'#1D1D1F', txm:'#6E6E73', light:true },
+      softlight:  { bg:'#F7F3ED', s1:'#FFFDFB', s2:'#EFE9E1', acc:'#7A5C2E', tx:'#241E17', txm:'#7A7060', light:true },
       sepia:      { bg:'#1A1408', s1:'#231B0C', s2:'#2C2210', acc:'#D97706', tx:'#F5EDD0', txm:'#8A7040' },
-      emerald:    { bg:'#041209', s1:'#071C10', s2:'#0C2618', acc:'#10B981', tx:'#E0F5EC', txm:'#4A8060' },
-      royal:      { bg:'#08060E', s1:'#100D18', s2:'#181522', acc:'#C084FC', tx:'#EDE8F8', txm:'#706090' },
-      crimson:    { bg:'#0E0608', s1:'#1A0C0E', s2:'#241216', acc:'#F43F5E', tx:'#F8E8EC', txm:'#806070' },
     };
 
     var FONT_MAP = {
@@ -69,12 +76,9 @@
       var radius = theme.radius || '11px';
 
       var isLight = mode === 'light' || (mode === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches);
-      var lightIds = { light:1, softlight:1, sepia:1 };
-
+      // Use scheme's light flag instead of hardcoded list
       var bg = s.bg, s1 = s.s1, s2 = s.s2, tx = s.tx, txm = s.txm;
-      if (isLight && !lightIds[theme.scheme]) {
-        bg='#F8F9FA'; s1='#FFFFFF'; s2='#F1F3F5'; tx='#1A1F1C'; txm='#6B7770';
-      }
+      // light flag is already baked into the scheme colors above — no override needed
 
       var r = document.documentElement;
       r.style.setProperty('--bg', bg);

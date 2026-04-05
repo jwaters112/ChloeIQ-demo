@@ -845,7 +845,8 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('btn-share').addEventListener('click', function(){
     toast('Secure share link copied to clipboard ✓', 'success');
   });
-  document.getElementById('btn-contact-cta').addEventListener('click', function(){
+  var btnCta = document.getElementById('btn-contact-cta');
+  if (btnCta) btnCta.addEventListener('click', function(){
     toast('Opening data room request form...', '');
     setTimeout(function(){ toast('Request sent to josh@chloeiq.com ✓', 'success'); }, 1000);
   });
