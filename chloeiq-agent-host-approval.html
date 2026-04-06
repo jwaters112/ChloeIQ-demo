@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ChloeIQ — Host Agent Approval</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0A0B07;--s1:#13160D;--s2:#1A1E12;--s3:#222818;
+  --acc:#B8E030;--ad:rgba(184,224,48,.10);
+  --tx:#EEF0E5;--txm:#8A8F7A;--txd:#4A5040;
+  --br:rgba(184,224,48,.15);--bs:rgba(238,240,229,.07);
+  --grn:#4ADE80;--red:#FF5A4A;--amb:#F5A623;--blu:#60A5FA;--pur:#A78BFA;
+  --font-body:'DM Sans',sans-serif;--font-display:'Fraunces',serif;--font-mono:'DM Mono',monospace;
+}
+html,body{min-height:100%;background:var(--bg);color:var(--tx);font-family:var(--font-body);font-size:14px;}
+.topbar{height:56px;display:flex;align-items:center;padding:0 28px;border-bottom:1px solid var(--bs);background:var(--bg);position:sticky;top:0;z-index:20;gap:14px;}
+.lm{width:30px;height:30px;background:var(--acc);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--bg);}
+.lt{font-family:var(--font-display);font-size:18px;}.lt b{color:var(--acc);font-weight:400;}
+.ptag{font-family:var(--font-mono);font-size:10px;color:var(--txm);background:var(--s2);border:1px solid var(--bs);padding:3px 10px;border-radius:20px;}
+.badge-count{background:var(--red);color:#fff;font-family:var(--font-mono);font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;}
+.tr{margin-left:auto;display:flex;gap:9px;align-items:center;}
+.tbtn{padding:6px 13px;border-radius:8px;font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--bs);background:var(--s1);color:var(--txm);text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .13s;}
+.tbtn:hover{border-color:var(--br);color:var(--tx);}
+.page{max-width:1000px;margin:0 auto;padding:36px 28px;}
+.listing-banner{background:var(--s1);border:1px solid var(--bs);border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:16px;margin-bottom:28px;}
+.lb-addr{font-family:var(--font-display);font-size:18px;color:var(--tx);}.lb-addr em{color:var(--acc);font-style:italic;}
+.lb-meta{font-size:12px;color:var(--txm);margin-top:2px;}
+.lb-right{margin-left:auto;display:flex;gap:8px;}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-family:var(--font-mono);}
+.pill:before{content:'';width:5px;height:5px;border-radius:50%;}
+.pg{background:rgba(74,222,128,.1);color:var(--grn);}.pg:before{background:var(--grn);}
+.pa{background:rgba(245,166,35,.1);color:var(--amb);}.pa:before{background:var(--amb);}
+.pr{background:rgba(255,90,74,.1);color:var(--red);}.pr:before{background:var(--red);}
+.pp{background:rgba(167,139,250,.1);color:var(--pur);}.pp:before{background:var(--pur);}
+.panel{background:var(--s1);border:1px solid var(--bs);border-radius:12px;overflow:hidden;margin-bottom:18px;}
+.ph{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--bs);}
+.pht{font-size:13px;font-weight:600;color:var(--tx);}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:7px;font-family:var(--font-body);font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--bs);background:var(--s2);color:var(--txm);transition:all .13s;}
+.btn:hover{border-color:var(--br);color:var(--tx);}
+.btn.bp{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:600;}
+.btn.br2{background:rgba(255,90,74,.1);border-color:rgba(255,90,74,.2);color:var(--red);}
+.applicant-card{padding:18px 20px;border-bottom:1px solid var(--bs);transition:background .12s;}
+.applicant-card:last-child{border-bottom:none;}
+.applicant-card:hover{background:rgba(255,255,255,.02);}
+.ac-top{display:flex;align-items:center;gap:14px;margin-bottom:12px;}
+.av{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:16px;font-weight:600;color:var(--bg);flex-shrink:0;}
+.ac-name{font-size:14px;font-weight:600;color:var(--tx);}
+.ac-meta{font-size:11px;color:var(--txm);margin-top:2px;}
+.ac-score-row{display:flex;align-items:center;gap:6px;margin-top:5px;}
+.score-pill{font-family:var(--font-mono);font-size:12px;color:var(--acc);background:var(--ad);border:1px solid var(--br);padding:2px 9px;border-radius:20px;}
+.ac-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;background:var(--s2);border:1px solid var(--bs);border-radius:9px;overflow:hidden;margin-bottom:12px;}
+.ac-stat{padding:10px 12px;border-right:1px solid var(--bs);text-align:center;}
+.ac-stat:last-child{border-right:none;}
+.sv{font-family:var(--font-display);font-size:18px;color:var(--acc);line-height:1;}
+.sl2{font-size:9px;color:var(--txd);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.6px;margin-top:3px;}
+.ac-note{font-size:12px;color:var(--txm);line-height:1.65;margin-bottom:12px;font-style:italic;padding:10px 13px;background:var(--s2);border-radius:8px;border-left:2px solid var(--bs);}
+.ac-actions{display:flex;gap:7px;flex-wrap:wrap;}
+.approved-card{padding:16px 20px;border-bottom:1px solid var(--bs);display:flex;align-items:center;gap:14px;}
+.approved-card:last-child{border-bottom:none;}
+.tl-row{display:flex;gap:12px;padding:11px 18px;border-bottom:1px solid var(--bs);font-size:12px;align-items:flex-start;}
+.tl-row:last-child{border-bottom:none;}
+.tl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:3px;}
+.mov{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9990;display:flex;align-items:center;justify-content:center;padding:20px;}
+.mc{background:var(--s1);border:1px solid rgba(184,224,48,.12);border-radius:15px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.7);}
+.mh{padding:17px 22px;border-bottom:1px solid var(--bs);display:flex;align-items:flex-start;justify-content:space-between;}
+.mt{font-family:var(--font-display);font-size:19px;}.mt em{color:var(--acc);font-style:italic;}
+.mx{background:none;border:none;color:var(--txm);font-size:18px;cursor:pointer;}
+.mb2{padding:18px 22px;}
+.mf{padding:12px 22px;border-top:1px solid var(--bs);display:flex;gap:9px;justify-content:flex-end;}
+.bc{padding:8px 16px;border-radius:8px;border:1px solid var(--bs);background:transparent;color:var(--txm);font-family:var(--font-body);font-size:13px;cursor:pointer;}
+.bco{padding:8px 18px;border-radius:8px;border:none;background:var(--acc);color:var(--bg);font-family:var(--font-body);font-size:13px;font-weight:700;cursor:pointer;}
+.fi{width:100%;background:var(--s2);border:1px solid var(--bs);border-radius:8px;padding:9px 12px;color:var(--tx);font-family:var(--font-body);font-size:13px;outline:none;transition:border-color .15s;}
+.fi:focus{border-color:var(--br);}
+.fl{font-family:var(--font-mono);font-size:10px;color:var(--txm);text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="lm">C</div>
+  <div class="lt">Chloe<b>IQ</b></div>
+  <div class="ptag">Host Approval</div>
+  <span class="badge-count">3 Pending</span>
+  <div class="tr">
+    <a href="chloeiq-new-open-house.html" class="tbtn">&larr; Open House Setup</a>
+    <a href="chloeiq-listing-dashboard-desktop.html" class="tbtn">Listing Dashboard</a>
+  </div>
+</header>
+
+<div class="page">
+  <!-- Listing banner -->
+  <div class="listing-banner">
+    <div style="width:42px;height:42px;background:var(--ad);border:1px solid var(--br);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">&#x1F3E0;</div>
+    <div>
+      <div class="lb-addr">2847 <em>Magnolia</em> Drive &mdash; Flower Mound TX</div>
+      <div class="lb-meta">$724,000 &middot; 4 bd / 3.5 ba &middot; Open House: Sat Apr 12 &middot; 1:00&ndash;4:00 PM</div>
+    </div>
+    <div class="lb-right">
+      <span class="pill pa">Awaiting Host</span>
+      <button class="tbtn" onclick="toast('Invite link copied \u2713','ok')">&#x2B21; Copy Invite Link</button>
+    </div>
+  </div>
+
+  <!-- Applicants -->
+  <div class="panel">
+    <div class="ph">
+      <span class="pht">Host Agent Applications <span style="font-size:11px;color:var(--txm);font-weight:400;margin-left:6px;">3 pending review</span></span>
+      <button class="btn" onclick="toast('Reminder sent to all pending applicants \u2713','ok')">Send Reminder</button>
+    </div>
+
+    <!-- Sarah Chen - featured -->
+    <div class="applicant-card" id="card-sarah">
+      <div class="ac-top">
+        <div class="av" style="background:#60A5FA;">SC</div>
+        <div style="flex:1;">
+          <div class="ac-name">Sarah Chen</div>
+          <div class="ac-meta">REAL Broker, LLC &middot; DFW Metroplex &middot; Applied 2 hrs ago</div>
+          <div class="ac-score-row">
+            <span class="score-pill">Host Score 94</span>
+            <span style="font-size:11px;color:var(--txm);">&#x2605;&#x2605;&#x2605;&#x2605;&#x2605; 48 events &middot; 4.9 rating</span>
+          </div>
+        </div>
+        <span class="pill pp">New Applicant</span>
+      </div>
+      <div class="ac-stats">
+        <div class="ac-stat"><div class="sv">48</div><div class="sl2">Events Hosted</div></div>
+        <div class="ac-stat"><div class="sv" style="color:var(--grn);">94%</div><div class="sl2">Onboard Rate</div></div>
+        <div class="ac-stat"><div class="sv">4.9</div><div class="sl2">Avg Rating</div></div>
+        <div class="ac-stat"><div class="sv" style="color:var(--amb);">$724K</div><div class="sl2">Avg Listing</div></div>
+      </div>
+      <div class="ac-note">"I specialize in Flower Mound luxury and know this neighborhood well. I hosted 3 events on Magnolia Drive last quarter. Happy to discuss how I approach the modern-buyer DNA profile that your listing attracts."</div>
+      <div class="ac-actions">
+        <button class="btn bp" onclick="approveAgent('sarah','Sarah Chen')">&#x2713; Approve</button>
+        <button class="btn" onclick="showProfile('sarah','Sarah Chen',94,48,'Flower Mound luxury specialist. Consistently top-ranked in Collin and Denton counties.')">View Full Profile</button>
+        <button class="btn" onclick="showMessage('sarah','Sarah Chen')">&#x1F4AC; Message</button>
+        <button class="btn br2" onclick="declineAgent('sarah')">Decline</button>
+      </div>
+    </div>
+
+    <!-- David Park -->
+    <div class="applicant-card" id="card-david">
+      <div class="ac-top">
+        <div class="av" style="background:#A78BFA;">DP</div>
+        <div style="flex:1;">
+          <div class="ac-name">David Park</div>
+          <div class="ac-meta">REAL Broker, LLC &middot; DFW Metroplex &middot; Applied 4 hrs ago</div>
+          <div class="ac-score-row">
+            <span class="score-pill">Host Score 88</span>
+            <span style="font-size:11px;color:var(--txm);">&#x2605;&#x2605;&#x2605;&#x2605;&#x2605; 31 events &middot; 4.8 rating</span>
+          </div>
+        </div>
+        <span class="pill pp">New Applicant</span>
+      </div>
+      <div class="ac-stats">
+        <div class="ac-stat"><div class="sv">31</div><div class="sl2">Events Hosted</div></div>
+        <div class="ac-stat"><div class="sv" style="color:var(--grn);">91%</div><div class="sl2">Onboard Rate</div></div>
+        <div class="ac-stat"><div class="sv">4.8</div><div class="sl2">Avg Rating</div></div>
+        <div class="ac-stat"><div class="sv" style="color:var(--amb);">$698K</div><div class="sl2">Avg Listing</div></div>
+      </div>
+      <div class="ac-note">"Great at working with Refined Modern buyers. My last 3 open houses generated 2+ qualified buyer referrals each. Available to arrive 45 min early for setup."</div>
+      <div class="ac-actions">
+        <button class="btn bp" onclick="approveAgent('david','David Park')">&#x2713; Approve</button>
+        <button class="btn" onclick="showProfile('david','David Park',88,31,'Refined Modern buyer specialist. Strong onboard rates and fast follow-up cadence.')">View Full Profile</button>
+        <button class="btn" onclick="showMessage('david','David Park')">&#x1F4AC; Message</button>
+        <button class="btn br2" onclick="declineAgent('david')">Decline</button>
+      </div>
+    </div>
+
+    <!-- Morgan Kim -->
+    <div class="applicant-card" id="card-morgan">
+      <div class="ac-top">
+        <div class="av" style="background:#F5A623;">MK</div>
+        <div style="flex:1;">
+          <div class="ac-name">Morgan Kim</div>
+          <div class="ac-meta">REAL Broker, LLC &middot; DFW Metroplex &middot; Applied 6 hrs ago</div>
+          <div class="ac-score-row">
+            <span class="score-pill">Host Score 81</span>
+            <span style="font-size:11px;color:var(--txm);">&#x2605;&#x2605;&#x2605;&#x2605;&#x2606; 22 events &middot; 4.6 rating</span>
+          </div>
+        </div>
+        <span class="pill pp">New Applicant</span>
+      </div>
+      <div class="ac-stats">
+        <div class="ac-stat"><div class="sv">22</div><div class="sl2">Events Hosted</div></div>
+        <div class="ac-stat"><div class="sv" style="color:var(--grn);">87%</div><div class="sl2">Onboard Rate</div></div>
+        <div class="ac-stat"><div class="sv">4.6</div><div class="sl2">Avg Rating</div></div>
+        <div class="ac-stat"><div class="sv" style="color:var(--amb);">$641K</div><div class="sl2">Avg Listing</div></div>
+      </div>
+      <div class="ac-note">"I'm building my open house experience and would love to host a property at this price point. Happy to follow all listing agent requirements and reporting protocols."</div>
+      <div class="ac-actions">
+        <button class="btn bp" onclick="approveAgent('morgan','Morgan Kim')">&#x2713; Approve</button>
+        <button class="btn" onclick="showProfile('morgan','Morgan Kim',81,22,'Up-and-coming agent focused on Flower Mound and Highland Village. Strong with first-time luxury buyers.')">View Full Profile</button>
+        <button class="btn" onclick="showMessage('morgan','Morgan Kim')">&#x1F4AC; Message</button>
+        <button class="btn br2" onclick="declineAgent('morgan')">Decline</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Approved agents (empty initially) -->
+  <div class="panel" id="approved-panel" style="display:none;">
+    <div class="ph"><span class="pht">&#x2713; Approved Host Agent</span></div>
+    <div id="approved-list"></div>
+  </div>
+
+  <!-- Activity timeline -->
+  <div class="panel">
+    <div class="ph"><span class="pht">Activity Log</span></div>
+    <div class="tl-row"><div class="tl-dot" style="background:var(--pur);"></div><div style="color:var(--txm);"><strong style="color:var(--tx);">Morgan Kim</strong> applied to host &middot; 6 hrs ago</div></div>
+    <div class="tl-row"><div class="tl-dot" style="background:var(--pur);"></div><div style="color:var(--txm);"><strong style="color:var(--tx);">David Park</strong> applied to host &middot; 4 hrs ago</div></div>
+    <div class="tl-row"><div class="tl-dot" style="background:var(--pur);"></div><div style="color:var(--txm);"><strong style="color:var(--tx);">Sarah Chen</strong> applied to host &middot; 2 hrs ago</div></div>
+    <div class="tl-row"><div class="tl-dot" style="background:var(--acc);"></div><div style="color:var(--txm);">Open house created by <strong style="color:var(--tx);">Marcus Rivera</strong> (you) &middot; 8 hrs ago</div></div>
+  </div>
+</div>
+
+<!-- Modal container -->
+<div id="_modal" style="display:none;"></div>
+
+<script>
+function toast(msg,type){
+  var o=document.getElementById('_t');if(o)o.remove();
+  var t=document.createElement('div');t.id='_t';t.textContent=msg;
+  var bg=type==='ok'?'#B8E030':'#1A1E12',c=type==='ok'?'#0A0B07':'#EEF0E5';
+  t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:'+bg+';color:'+c+';padding:10px 22px;border-radius:8px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all .2s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.5);';
+  document.body.appendChild(t);
+  requestAnimationFrame(function(){t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';});
+  clearTimeout(t._x);t._x=setTimeout(function(){t.style.opacity='0';},2600);
+}
+
+function openModal(html){
+  var m=document.getElementById('_modal');
+  m.innerHTML='<div class="mov" onclick="if(event.target===this)closeModal()">'+html+'</div>';
+  m.style.display='';
+}
+function closeModal(){
+  var m=document.getElementById('_modal');m.style.display='none';m.innerHTML='';
+}
+
+function approveAgent(id,name){
+  var card=document.getElementById('card-'+id);
+  if(!card)return;
+  // Fade out
+  card.style.opacity='0.4';
+  card.style.pointerEvents='none';
+  // Show approved panel
+  var ap=document.getElementById('approved-panel');
+  ap.style.display='';
+  var al=document.getElementById('approved-list');
+  var initials=name.split(' ').map(function(w){return w[0];}).join('');
+  var colors={'sarah':'#60A5FA','david':'#A78BFA','morgan':'#F5A623'};
+  al.innerHTML='<div class="approved-card">'
+    +'<div class="av" style="background:'+colors[id]+';">'+initials+'</div>'
+    +'<div style="flex:1;"><div style="font-size:14px;font-weight:600;color:var(--tx);">'+name+'</div>'
+    +'<div style="font-size:11px;color:var(--txm);">REAL Broker, LLC &middot; DFW &middot; Confirmed host for Apr 12</div></div>'
+    +'<span class="pill pg">Approved</span>'
+    +'<button class="btn" style="margin-left:8px;" onclick="toast(\'Notification sent to '+name+' \u2713\',\'ok\')">&#x1F4E8; Notify</button>'
+    +'</div>';
+  // Update badge
+  var badges=document.querySelectorAll('.badge-count');
+  badges.forEach(function(b){
+    var n=parseInt(b.textContent)-1;
+    b.textContent=n+' Pending';
+    if(n===0)b.style.display='none';
+  });
+  toast(name+' approved as host agent \u2713 Notification sent','ok');
+  // Add timeline entry
+  var tl=document.querySelector('.panel:last-child');
+  var row=document.createElement('div');
+  row.className='tl-row';
+  row.innerHTML='<div class="tl-dot" style="background:var(--grn);"></div><div style="color:var(--txm);"><strong style="color:var(--tx);">You</strong> approved <strong style="color:var(--tx);">'+name+'</strong> as host agent &middot; Just now</div>';
+  tl.insertBefore(row,tl.children[1]);
+}
+
+function declineAgent(id){
+  var card=document.getElementById('card-'+id);
+  if(card){card.style.opacity='0.3';card.style.pointerEvents='none';}
+  var n=document.querySelector('.badge-count');
+  if(n){var c=parseInt(n.textContent)-1;n.textContent=c+' Pending';if(c===0)n.style.display='none';}
+  toast('Agent declined \u00b7 Notification sent','');
+}
+
+function showProfile(id,name,score,events,bio){
+  var colors={'sarah':'#60A5FA','david':'#A78BFA','morgan':'#F5A623'};
+  var initials=name.split(' ').map(function(w){return w[0];}).join('');
+  openModal('<div class="mc"><div class="mh"><div><div class="mt">Agent <em>Profile</em></div><div style="font-size:12px;color:var(--txm);margin-top:2px;">'+name+'</div></div><button class="mx" onclick="closeModal()">\u2715</button></div>'
+    +'<div class="mb2">'
+    +'<div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">'
+    +'<div style="width:54px;height:54px;border-radius:50%;background:'+colors[id]+';display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:20px;font-weight:600;color:#0A0B07;flex-shrink:0;">'+initials+'</div>'
+    +'<div><div style="font-size:16px;font-weight:600;color:var(--tx);">'+name+'</div>'
+    +'<div style="font-size:11px;color:var(--txm);">REAL Broker, LLC &middot; DFW Metroplex</div>'
+    +'<div style="margin-top:5px;"><span style="font-family:var(--font-mono);font-size:12px;color:var(--acc);background:var(--ad);border:1px solid var(--br);padding:2px 9px;border-radius:20px;">Host Score '+score+'</span></div>'
+    +'</div></div>'
+    +'<div style="background:var(--s2);border-radius:8px;padding:12px 14px;font-size:12px;color:var(--txm);line-height:1.7;margin-bottom:14px;font-style:italic;">'+bio+'</div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:14px;">'
+    +'<div style="background:var(--s2);border:1px solid var(--bs);border-radius:9px;padding:11px;text-align:center;"><div style="font-family:var(--font-display);font-size:22px;color:var(--acc);">'+events+'</div><div style="font-size:9px;color:var(--txd);font-family:var(--font-mono);">EVENTS HOSTED</div></div>'
+    +'<div style="background:var(--s2);border:1px solid var(--bs);border-radius:9px;padding:11px;text-align:center;"><div style="font-family:var(--font-display);font-size:22px;color:var(--grn);">'+(Math.round(score*0.97))+'%</div><div style="font-size:9px;color:var(--txd);font-family:var(--font-mono);">ONBOARD RATE</div></div>'
+    +'<div style="background:var(--s2);border:1px solid var(--bs);border-radius:9px;padding:11px;text-align:center;"><div style="font-family:var(--font-display);font-size:22px;color:var(--tx);">4.'+(Math.round(score/10-4))+'</div><div style="font-size:9px;color:var(--txd);font-family:var(--font-mono);">AVG RATING</div></div>'
+    +'</div>'
+    +'</div>'
+    +'<div class="mf"><button class="bc" onclick="closeModal()">Close</button><button class="bco" onclick="closeModal();approveAgent(\''+id+'\',\''+name+'\')">Approve as Host \u2192</button></div></div>');
+}
+
+function showMessage(id,name){
+  openModal('<div class="mc"><div class="mh"><div><div class="mt">Message <em>'+name+'</em></div></div><button class="mx" onclick="closeModal()">\u2715</button></div>'
+    +'<div class="mb2"><div class="fl" style="margin-bottom:5px;">Message</div>'
+    +'<textarea class="fi" rows="4" style="resize:none;" placeholder="Hi '+name+', thanks for applying to host 2847 Magnolia Drive..."></textarea>'
+    +'<div style="font-size:11px;color:var(--txd);margin-top:7px;">Sent via ChloeIQ &middot; Delivered by email + push notification</div>'
+    +'</div>'
+    +'<div class="mf"><button class="bc" onclick="closeModal()">Cancel</button><button class="bco" onclick="closeModal();toast(\'Message sent to '+name+' \u2713\',\'ok\')">Send Message</button></div></div>');
+}
+</script>
+<script src="chloeiq-nav.js"></script>
+</body>
+</html>

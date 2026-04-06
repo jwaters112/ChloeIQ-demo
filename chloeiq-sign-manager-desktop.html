@@ -3,153 +3,1157 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>ChloeIQ — Sign Manager</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-:root{--bg:#0A0B07;--s1:#13160D;--s2:#1A1E12;--s3:#222818;--s4:#2A3020;--acc:#B8E030;--ad:rgba(184,224,48,.10);--am:rgba(184,224,48,.22);--tx:#EEF0E5;--txm:#8A8F7A;--txd:#4A5040;--br:rgba(184,224,48,.12);--bs:rgba(238,240,229,.06);--grn:#4ADE80;--red:#FF5A4A;--amb:#F5A623;--blu:#60A5FA;--pur:#A78BFA;}
-html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,sans-serif;font-size:14px;overflow-x:hidden;}
-.topbar{height:56px;display:flex;align-items:center;padding:0 28px;border-bottom:1px solid var(--bs);background:var(--bg);gap:12px;position:sticky;top:0;z-index:20;}
-.lm{width:28px;height:28px;background:var(--acc);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:Fraunces,serif;font-size:14px;font-weight:600;color:var(--bg);}
-.lt{font-family:Fraunces,serif;font-size:17px;}.lt b{color:var(--acc);font-weight:400;}
-.pt{font-family:Fraunces,serif;font-size:18px;font-weight:400;}.pt em{color:var(--acc);font-style:italic;}
-.sep{width:1px;height:20px;background:var(--bs);}
-.tr{margin-left:auto;display:flex;gap:8px;align-items:center;}
-.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 15px;border-radius:8px;font-family:DM Sans,sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;border:none;transition:all .13s;}
-.bp{background:var(--acc);color:var(--bg);}.bp:hover{background:#c8f040;}
-.bs2{background:transparent;color:var(--txm);border:1px solid var(--bs);}.bs2:hover{border-color:var(--br);color:var(--tx);background:var(--s1);}
-.main{padding:28px 32px;display:flex;flex-direction:column;gap:22px;max-height:calc(100vh - 56px);overflow-y:auto;padding-bottom:80px;}
-.tab{padding:10px 20px;font-size:13px;font-weight:500;color:var(--txm);cursor:pointer;border-bottom:2px solid transparent;transition:all .13s;white-space:nowrap;}
-.tab:hover{color:var(--tx);}.tab.active{color:var(--acc);border-bottom-color:var(--acc);}
-.view{display:none;flex-direction:column;gap:20px;}.view.active{display:flex;animation:fu .18s ease;}
-@keyframes fu{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
-.panel{background:var(--s1);border:1px solid var(--bs);border-radius:11px;overflow:hidden;}
-.ph{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--bs);}
-.pht{font-size:13px;font-weight:600;}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
-.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
-.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
-.kpi{background:var(--s1);border:1px solid var(--bs);border-radius:10px;padding:15px 17px;transition:border-color .13s;}
-.kpi:hover{border-color:var(--br);}.ka{border-left:2px solid var(--acc);}.ka .kv{color:var(--acc);}
-.kl{font-family:DM Mono,monospace;font-size:9px;color:var(--txd);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;}
-.kv{font-family:Fraunces,serif;font-size:26px;line-height:1;}.kd{font-size:11px;margin-top:4px;}
-.up{color:var(--grn);}.dn{color:var(--red);}.ne{color:var(--txm);}
-.trow{display:grid;align-items:center;padding:10px 18px;border-bottom:1px solid var(--bs);cursor:pointer;transition:background .11s;gap:12px;}
-.trow:last-child{border-bottom:none;}.trow:hover{background:var(--s2);}
-.thead{font-family:DM Mono,monospace;font-size:9px;color:var(--txd);letter-spacing:.5px;text-transform:uppercase;cursor:default!important;}
-.thead:hover{background:transparent!important;}
-.cn{display:flex;flex-direction:column;gap:1px;}.n{font-size:13px;font-weight:500;}.s{font-size:11px;color:var(--txm);}
-.pill{display:inline-flex;font-family:DM Mono,monospace;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;}
-.pg{background:rgba(74,222,128,.10);color:var(--grn);}.pa{background:rgba(245,166,35,.10);color:var(--amb);}
-.pr{background:rgba(255,90,74,.10);color:var(--red);}.pb{background:rgba(96,165,250,.10);color:var(--blu);}
-.pac{background:var(--ad);color:var(--acc);}.pm{background:var(--s3);color:var(--txd);}
-.bb{height:5px;background:var(--s3);border-radius:3px;overflow:hidden;}
-.bf{height:5px;border-radius:3px;background:var(--acc);}
-.chip{padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--bs);background:var(--s2);color:var(--txm);transition:all .12s;}
-.chip:hover{border-color:var(--br);color:var(--tx);}.chip.active{background:var(--ad);border-color:var(--br);color:var(--acc);}
-input,select,textarea{background:var(--s2);border:1px solid var(--bs);border-radius:7px;padding:9px 12px;color:var(--tx);font-family:DM Sans,sans-serif;font-size:13px;outline:none;width:100%;transition:border-color .13s;}
-input:focus,select:focus,textarea:focus{border-color:var(--br);}
-label{font-family:DM Mono,monospace;font-size:10px;color:var(--txm);letter-spacing:.5px;display:block;margin-bottom:5px;}
-::-webkit-scrollbar{width:3px;height:3px;}
-.sign-pin{position:absolute;transform:translate(-50%,-100%);cursor:pointer;z-index:5;}
-.sign-pin:hover{z-index:10;}
+<title>ChloeIQ &mdash; Sign Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0A0B07;--s1:#13160D;--s2:#1A1E12;--s3:#222818;--s4:#2A3020;
+  --acc:#B8E030;--ad:rgba(184,224,48,.10);--am:rgba(184,224,48,.22);
+  --tx:#EEF0E5;--txm:#8A8F7A;--txd:#4A5040;
+  --br:rgba(184,224,48,.15);--bs:rgba(238,240,229,.07);
+  --grn:#4ADE80;--red:#FF5A4A;--amb:#F5A623;--blu:#60A5FA;--pur:#A78BFA;
+  --font-body:'DM Sans',sans-serif;--font-display:'Fraunces',serif;--font-mono:'DM Mono',monospace;
+  --radius:11px;
+}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--font-body);font-size:14px;overflow:hidden;}
+.topbar{height:56px;display:flex;align-items:center;padding:0 24px;border-bottom:1px solid var(--bs);background:var(--bg);gap:14px;flex-shrink:0;}
+.lm{width:30px;height:30px;background:var(--acc);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--bg);}
+.lt{font-family:var(--font-display);font-size:18px;}.lt b{color:var(--acc);font-weight:400;}
+.ptag{font-family:var(--font-mono);font-size:10px;color:var(--txm);background:var(--s2);border:1px solid var(--bs);padding:3px 10px;border-radius:20px;letter-spacing:.5px;}
+.tr{margin-left:auto;display:flex;gap:9px;align-items:center;}
+.tbtn{display:inline-flex;align-items:center;gap:6px;padding:6px 13px;border-radius:8px;font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--bs);background:var(--s1);color:var(--txm);transition:all .13s;}
+.tbtn:hover{border-color:var(--br);color:var(--tx);}
+.tbtn.pri{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:600;}
+.shell{height:100vh;display:flex;flex-direction:column;}
+.main{flex:1;display:grid;grid-template-columns:230px 1fr;overflow:hidden;}
+.leftnav{background:var(--s1);border-right:1px solid var(--bs);display:flex;flex-direction:column;overflow-y:auto;}
+.ln-sec{padding:14px 14px 7px;font-family:var(--font-mono);font-size:9px;color:var(--txd);letter-spacing:.8px;text-transform:uppercase;}
+.ln-item{display:flex;align-items:center;gap:9px;padding:9px 14px;cursor:pointer;transition:all .12s;color:var(--txm);font-size:13px;border-left:3px solid transparent;}
+.ln-item:hover{background:var(--s2);color:var(--tx);}
+.ln-item.active{background:var(--ad);border-left-color:var(--acc);color:var(--acc);}
+.lnb{margin-left:auto;font-family:var(--font-mono);font-size:10px;background:var(--acc);color:var(--bg);padding:1px 6px;border-radius:10px;font-weight:600;}
+.lnb.w{background:var(--amb);}.lnb.r{background:var(--red);}.lnb.b{background:var(--blu);}
+.content{overflow-y:auto;}
+.view{display:none;padding:22px;gap:18px;flex-direction:column;}
+.view.active{display:flex;}
+.panel{background:var(--s1);border:1px solid var(--bs);border-radius:var(--radius);}
+.ph{display:flex;align-items:center;justify-content:space-between;padding:13px 17px;border-bottom:1px solid var(--bs);}
+.pht{font-size:13px;font-weight:600;color:var(--tx);}
+.pb{padding:16px;}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:11px;}
+.kpi{background:var(--s1);border:1px solid var(--bs);border-radius:var(--radius);padding:13px 15px;}
+.kv{font-family:var(--font-display);font-size:26px;color:var(--tx);line-height:1;}
+.kl{font-family:var(--font-mono);font-size:9px;color:var(--txd);text-transform:uppercase;letter-spacing:.7px;margin-top:4px;}
+.kd{font-size:11px;margin-top:4px;}
+/* compliance legend */
+.comp-legend{display:flex;gap:16px;align-items:center;font-size:11px;color:var(--txm);}
+.cl-dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:4px;}
+/* map */
+.map-wrap{position:relative;background:var(--s2);border-radius:10px;overflow:hidden;height:320px;}
+.map-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(184,224,48,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(184,224,48,.04) 1px,transparent 1px);background-size:40px 40px;}
+.map-road{position:absolute;background:rgba(184,224,48,.07);border-radius:2px;}
+.sign-pin{position:absolute;transform:translate(-50%,-100%);cursor:pointer;z-index:5;transition:transform .1s;}
+.sign-pin:hover{transform:translate(-50%,-100%) scale(1.12);}
 .sp-body{display:flex;flex-direction:column;align-items:center;}
-.sp-flag{padding:4px 9px;border-radius:6px;font-family:DM Mono,monospace;font-size:10px;font-weight:600;border:1.5px solid rgba(255,255,255,.15);}
-.sp-tail{width:2px;height:6px;}.sp-dot{width:5px;height:5px;border-radius:50%;}
-.sp-active .sp-flag{background:var(--acc);color:var(--bg);}
-.sp-active .sp-tail,.sp-active .sp-dot{background:var(--acc);}
-.sp-pending .sp-flag{background:var(--amb);color:var(--bg);}
-.sp-pending .sp-tail,.sp-pending .sp-dot{background:var(--amb);}
-.sp-down .sp-flag{background:var(--red);color:#fff;}
-.sp-down .sp-tail,.sp-down .sp-dot{background:var(--red);}
+.sp-flag{color:var(--bg);font-family:var(--font-mono);font-size:10px;font-weight:700;padding:3px 7px;border-radius:6px;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.4);}
+.sp-tail{width:2px;height:6px;margin:0 auto;}
+.sp-dot{width:6px;height:6px;border-radius:50%;}
+.map-zone{position:absolute;border-radius:6px;font-family:var(--font-mono);font-size:8px;padding:3px 7px;letter-spacing:.4px;opacity:.7;}
+/* table */
+.dt{width:100%;border-collapse:collapse;}
+.dt th{font-family:var(--font-mono);font-size:10px;color:var(--txd);text-transform:uppercase;letter-spacing:.6px;padding:8px 13px;text-align:left;border-bottom:1px solid var(--bs);}
+.dt td{padding:10px 13px;border-bottom:1px solid var(--bs);font-size:13px;vertical-align:middle;}
+.dt tr:last-child td{border-bottom:none;}
+.dt tr:hover td{background:var(--s2);}
+/* pills */
+.pill{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:11px;font-family:var(--font-mono);}
+.pill:before{content:'';width:5px;height:5px;border-radius:50%;}
+.pg{background:rgba(74,222,128,.1);color:var(--grn);}.pg:before{background:var(--grn);}
+.pa{background:rgba(245,166,35,.1);color:var(--amb);}.pa:before{background:var(--amb);}
+.pr{background:rgba(255,90,74,.1);color:var(--red);}.pr:before{background:var(--red);}
+.pb2{background:rgba(96,165,250,.1);color:var(--blu);}.pb2:before{background:var(--blu);}
+/* compliance pill */
+.cp-g{background:rgba(74,222,128,.12);color:var(--grn);border:1px solid rgba(74,222,128,.2);padding:3px 9px;border-radius:20px;font-size:11px;font-family:var(--font-mono);}
+.cp-a{background:rgba(245,166,35,.12);color:var(--amb);border:1px solid rgba(245,166,35,.2);padding:3px 9px;border-radius:20px;font-size:11px;font-family:var(--font-mono);}
+.cp-r{background:rgba(255,90,74,.12);color:var(--red);border:1px solid rgba(255,90,74,.2);padding:3px 9px;border-radius:20px;font-size:11px;font-family:var(--font-mono);}
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border-radius:7px;font-family:var(--font-body);font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--bs);background:var(--s2);color:var(--txm);transition:all .13s;}
+.btn:hover{border-color:var(--br);color:var(--tx);}
+.btn.bp{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:600;}
+.btn.bp:hover{opacity:.88;}
+.btn.br2{background:rgba(255,90,74,.1);border-color:rgba(255,90,74,.2);color:var(--red);}
+.btn-r{display:flex;gap:6px;flex-wrap:wrap;}
+/* form */
+.fg{display:flex;flex-direction:column;gap:6px;}
+.fl{font-family:var(--font-mono);font-size:10px;color:var(--txm);text-transform:uppercase;letter-spacing:.7px;}
+.fi{background:var(--s2);border:1px solid var(--bs);border-radius:8px;padding:9px 12px;color:var(--tx);font-family:var(--font-body);font-size:13px;outline:none;transition:border-color .15s;}
+.fi:focus{border-color:var(--br);}
+.fi::placeholder{color:var(--txd);}
+.fs{background:var(--s2);border:1px solid var(--bs);border-radius:8px;padding:9px 12px;color:var(--tx);font-family:var(--font-body);font-size:13px;outline:none;cursor:pointer;}
+.fs option{background:var(--s1);}
+/* sign type cards */
+.stg{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.st{background:var(--s2);border:2px solid var(--bs);border-radius:11px;padding:14px 10px;text-align:center;cursor:pointer;transition:all .15s;}
+.st:hover{border-color:rgba(184,224,48,.3);}
+.st.sel{border-color:var(--acc);background:var(--ad);}
+/* qr */
+.qr-card{background:var(--s2);border:1px solid var(--bs);border-radius:11px;padding:14px;display:flex;align-items:center;gap:14px;}
+.qr-box{width:68px;height:68px;background:var(--tx);border-radius:7px;display:grid;grid-template-columns:repeat(7,1fr);grid-template-rows:repeat(7,1fr);gap:1px;padding:5px;flex-shrink:0;}
+.qc{background:var(--bg);border-radius:1px;}
+.qc.f{background:var(--tx);}
+/* compliance breakdown */
+.comp-card{border-radius:10px;padding:14px 16px;margin-bottom:10px;}
+.comp-card.green{background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.18);}
+.comp-card.amber{background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.18);}
+.comp-card.red{background:rgba(255,90,74,.07);border:1px solid rgba(255,90,74,.18);}
+/* modal */
+.mov{position:fixed;inset:0;background:rgba(0,0,0,.84);z-index:9990;display:flex;align-items:center;justify-content:center;padding:20px;}
+.mc{background:var(--s1);border:1px solid rgba(184,224,48,.12);border-radius:15px;width:100%;max-width:580px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.7);}
+.mc.wide{max-width:720px;}
+.mh{padding:18px 22px;border-bottom:1px solid var(--bs);display:flex;align-items:flex-start;justify-content:space-between;position:sticky;top:0;background:var(--s1);z-index:2;}
+.mt{font-family:var(--font-display);font-size:19px;color:var(--tx);}
+.mt em{color:var(--acc);font-style:italic;}
+.mx{background:none;border:none;color:var(--txm);font-size:18px;cursor:pointer;padding:2px 6px;}
+.mb2{padding:20px 22px;}
+.mf{padding:13px 22px;border-top:1px solid var(--bs);display:flex;gap:9px;justify-content:flex-end;}
+.sl{font-family:var(--font-mono);font-size:10px;color:var(--acc);letter-spacing:.8px;text-transform:uppercase;margin-bottom:9px;display:block;}
+.bc{padding:8px 16px;border-radius:8px;border:1px solid var(--bs);background:transparent;color:var(--txm);font-family:var(--font-body);font-size:13px;cursor:pointer;}
+.bco{padding:8px 20px;border-radius:8px;border:none;background:var(--acc);color:var(--bg);font-family:var(--font-body);font-size:13px;font-weight:700;cursor:pointer;}
+/* vendor cards */
+.vendor-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.vendor-card{background:var(--s2);border:2px solid var(--bs);border-radius:12px;padding:16px;cursor:pointer;transition:all .15s;}
+.vendor-card:hover{border-color:rgba(184,224,48,.3);}
+.vendor-card.sel{border-color:var(--acc);background:var(--ad);}
+/* timeline */
+.tl-item{display:flex;gap:13px;padding:11px 0;border-bottom:1px solid var(--bs);}
+.tl-item:last-child{border-bottom:none;}
+.tl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:3px;}
+.tl-dot.done{background:var(--grn);}
+.tl-dot.active{background:var(--acc);}
+.tl-dot.pend{background:var(--s3);border:1px solid var(--bs);}
+/* stat row */
+.stat-row{display:flex;gap:0;border:1px solid var(--bs);border-radius:10px;overflow:hidden;}
+.stat-block{flex:1;padding:12px 14px;text-align:center;border-right:1px solid var(--bs);}
+.stat-block:last-child{border-right:none;}
+.sv{font-family:var(--font-display);font-size:22px;color:var(--acc);}
+.slb{font-size:10px;color:var(--txd);font-family:var(--font-mono);text-transform:uppercase;margin-top:3px;}
 </style>
 </head>
 <body>
+<div class="shell">
 <header class="topbar">
-  <div class="lm">C</div><div class="lt">Chloe<b>IQ</b></div>
-  <div class="sep"></div>
-  <div class="pt">Sign <em>Manager</em></div><div class="tr"><button class="btn bs2" id="sm-route">Optimize Route</button><button class="btn bp" id="sm-add">+ Add Sign</button></div>
+  <div class="lm">C</div>
+  <div class="lt">Chloe<b>IQ</b></div>
+  <div class="ptag">Sign Manager</div>
+  <div class="tr">
+    <button class="tbtn" onclick="goView('placement')">&#x1F4CD; Day-of Placement</button>
+    <button class="tbtn" onclick="goView('orders')">+ Order Signs</button>
+    <button class="tbtn" onclick="goView('codes')">&#x2B21; Chloe Codes</button>
+    <button class="tbtn pri" onclick="window.location.href='chloeiq-sign-placement.html'">&#x1F4F1; Open Mobile App</button>
+  </div>
 </header>
 <div class="main">
+<nav class="leftnav">
+  <div class="ln-sec">Operations</div>
+  <div class="ln-item active" onclick="goView('overview',this)">&#x1F5FA; Overview</div>
+  <div class="ln-item" onclick="goView('inventory',this)">&#x1F4CB; Sign Inventory <span class="lnb">16</span></div>
+  <div class="ln-item" onclick="goView('orders',this)">&#x1F4E6; Order Signs</div>
+  <div class="ln-item" onclick="goView('schedule',this)">&#x1F4C5; Install Schedule <span class="lnb w">3</span></div>
+  <div class="ln-sec">Day-of Placement</div>
+  <div class="ln-item" onclick="goView('placement',this)">&#x1F4CD; Placement Planner <span class="lnb" style="background:var(--pur)">NEW</span></div>
+  <div class="ln-item" onclick="goView('compliance',this)">&#x2705; Compliance Engine</div>
+  <div class="ln-item" onclick="goView('heatmap',this)">&#x1F525; Placement Heat Map</div>
+  <div class="ln-sec">Chloe Codes</div>
+  <div class="ln-item" onclick="goView('codes',this)">&#x2B21; Code Manager <span class="lnb b">12</span></div>
+  <div class="ln-item" onclick="goView('performance',this)">&#x1F4C8; Scan Performance</div>
+  <div class="ln-sec">Reports</div>
+  <div class="ln-item" onclick="goView('vendors',this)">&#x1F91D; Vendor Partners</div>
+  <div class="ln-item" onclick="goView('history',this)">&#x1F550; Order History</div>
+  <div class="ln-item" onclick="goView('issues',this)">&#x26A0;&#xFE0F; Sign Issues <span class="lnb r">2</span></div>
+</nav>
+<div class="content">
 
-<div class="g4">
-  <div class="kpi ka"><div class="kl">Active Signs</div><div class="kv">12</div><div class="kd up">↑ 3 this week</div></div>
-  <div class="kpi"><div class="kl">Pending Placement</div><div class="kv">4</div><div class="kd ne">Route pending</div></div>
-  <div class="kpi"><div class="kl">Avg Scan Rate</div><div class="kv">18<span style="font-size:13px;color:var(--txm);">/day</span></div><div class="kd up">↑ 24% this week</div></div>
-  <div class="kpi"><div class="kl">Top Performing</div><div class="kv" style="font-size:16px;">Magnolia Dr</div><div class="kd up">↑ 42 scans today</div></div>
-</div>
-<div class="g2">
-  <div class="panel" style="overflow:hidden;">
-    <div class="ph"><div class="pht">Sign Locations — Flower Mound</div><span style="font-size:12px;color:var(--acc);cursor:pointer;" id="sm-fullmap">Full Map →</span></div>
-    <div style="background:var(--s2);height:320px;position:relative;" id="sign-map">
-      <svg width="100%" height="100%" viewBox="0 0 500 320" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-        <rect width="500" height="320" fill="#1A1E12"/>
-        <g stroke="#222818" stroke-width="1.5">
-          <line x1="0" y1="80" x2="500" y2="80"/><line x1="0" y1="160" x2="500" y2="160"/><line x1="0" y1="240" x2="500" y2="240"/>
-          <line x1="100" y1="0" x2="100" y2="320"/><line x1="200" y1="0" x2="200" y2="320"/><line x1="300" y1="0" x2="300" y2="320"/><line x1="400" y1="0" x2="400" y2="320"/>
-        </g>
-        <path d="M 0 120 Q 120 130 250 110 Q 380 90 500 120" fill="none" stroke="#2A3020" stroke-width="3"/>
-        <path d="M 0 200 Q 150 195 300 210 Q 400 220 500 200" fill="none" stroke="#2A3020" stroke-width="3"/>
-        <text x="30" y="260" fill="#2A3020" font-family="DM Mono" font-size="10" letter-spacing="1">FLOWER MOUND</text>
-        <text x="320" y="60" fill="#2A3020" font-family="DM Mono" font-size="10" letter-spacing="1">HIGHLAND VLG</text>
-      </svg>
-      <div id="sign-pins"></div>
+<!-- OVERVIEW -->
+<div class="view active" id="view-overview">
+  <div class="kpis">
+    <div class="kpi" style="border-left:3px solid var(--acc);">
+      <div class="kv">12</div><div class="kl">Active Signs</div>
+      <div class="kd" style="color:var(--grn);">&#x2191; 3 this week</div>
+    </div>
+    <div class="kpi">
+      <div class="kv">4</div><div class="kl">Pending Install</div>
+      <div class="kd" style="color:var(--amb);">Route pending</div>
+    </div>
+    <div class="kpi">
+      <div class="kv">247</div><div class="kl">Total Scans 30D</div>
+      <div class="kd" style="color:var(--grn);">&#x2191; 18% vs last mo.</div>
+    </div>
+    <div class="kpi">
+      <div class="kv">68%</div><div class="kl">Avg Onboard Rate</div>
+      <div class="kd" style="color:var(--grn);">&#x2191; 4pts this month</div>
+    </div>
+    <div class="kpi" style="border-left:3px solid var(--red);">
+      <div class="kv">2</div><div class="kl">Compliance Flags</div>
+      <div class="kd" style="color:var(--red);">Review required</div>
     </div>
   </div>
-  <div class="panel">
-    <div class="ph"><div class="pht">Sign Inventory</div><span style="font-family:DM Mono,monospace;font-size:10px;color:var(--txm);background:var(--s3);padding:2px 7px;border-radius:7px;">16 total</span></div>
-    <div class="trow thead" style="grid-template-columns:1fr 80px 70px 80px;"><span>Location</span><span>Status</span><span>Scans</span><span>Action</span></div>
-    <div id="sign-rows"></div>
+  <!-- HB 3611 alert banner -->
+  <div style="background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.25);border-radius:10px;padding:13px 16px;display:flex;align-items:flex-start;gap:12px;">
+    <span style="font-size:18px;flex-shrink:0;">&#x26A0;&#xFE0F;</span>
+    <div>
+      <div style="font-size:13px;font-weight:600;color:var(--amb);margin-bottom:3px;">TX HB 3611 Active &mdash; Effective Sept 1, 2025</div>
+      <div style="font-size:12px;color:var(--txm);line-height:1.6;">Fines up to $5,000 per sign for ROW placement. Liability now extends to you, your broker, and anyone who benefits from the sign. All day-of placements must be on private property with owner permission. <span style="color:var(--acc);cursor:pointer;" onclick="goView('compliance')">View full compliance rules &rarr;</span></div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 300px;gap:16px;">
+    <div class="panel">
+      <div class="ph">
+        <span class="pht">Permanent Sign Locations &mdash; Flower Mound Metro</span>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div class="comp-legend">
+            <span><span class="cl-dot" style="background:var(--grn)"></span>Compliant</span>
+            <span><span class="cl-dot" style="background:var(--amb)"></span>Check HOA</span>
+            <span><span class="cl-dot" style="background:var(--red)"></span>Flag</span>
+          </div>
+          <button class="btn" onclick="goView('heatmap')">Heat Map &rarr;</button>
+        </div>
+      </div>
+      <div style="padding:12px;">
+        <div class="map-wrap" id="sign-map">
+          <div class="map-grid"></div>
+          <div style="position:absolute;top:10px;left:12px;font-family:var(--font-mono);font-size:9px;color:var(--txd);">FLOWER MOUND &middot; HIGHLAND VLG &middot; LEWISVILLE &middot; SOUTHLAKE</div>
+          <div class="map-road" style="left:0;top:54%;width:100%;height:3px;"></div>
+          <div class="map-road" style="left:40%;top:0;width:3px;height:100%;"></div>
+          <div class="map-road" style="left:0;top:28%;width:65%;height:2px;opacity:.5;"></div>
+          <div class="map-road" style="left:20%;top:70%;width:45%;height:2px;opacity:.4;"></div>
+          <div class="map-road" style="left:65%;top:28%;width:2px;height:72%;opacity:.5;"></div>
+          <!-- Municipality zones -->
+          <div class="map-zone" style="left:5%;top:10%;background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.15);color:var(--grn);">FLOWER MOUND<br>24hr window &middot; &lt;6sqft</div>
+          <div class="map-zone" style="left:65%;top:8%;background:rgba(245,166,35,.06);border:1px solid rgba(245,166,35,.15);color:var(--amb);">SOUTHLAKE<br>Contractor reg. required</div>
+          <div id="sign-pins"></div>
+          <div style="position:absolute;bottom:10px;right:12px;display:flex;flex-direction:column;gap:4px;">
+            <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--txm);"><div style="width:8px;height:8px;border-radius:50%;background:var(--grn)"></div>Compliant</div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--txm);"><div style="width:8px;height:8px;border-radius:50%;background:var(--amb)"></div>Check HOA</div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--txm);"><div style="width:8px;height:8px;border-radius:50%;background:var(--red)"></div>Flagged</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="panel">
+        <div class="ph"><span class="pht">Top Performing</span></div>
+        <div id="top-signs"></div>
+      </div>
+      <div class="panel">
+        <div class="ph"><span class="pht">Recent Activity</span></div>
+        <div id="recent-act"></div>
+      </div>
+    </div>
   </div>
 </div>
 
+<!-- INVENTORY -->
+<div class="view" id="view-inventory">
+  <div class="panel">
+    <div class="ph">
+      <span class="pht">Sign Inventory <span style="font-size:11px;font-family:var(--font-mono);color:var(--txm);font-weight:400;margin-left:6px;">16 total &mdash; permanent + day-of</span></span>
+      <div style="display:flex;gap:8px;">
+        <select class="fs" style="padding:5px 10px;font-size:12px;" onchange="filterInv(this.value)">
+          <option value="all">All Types</option>
+          <option value="Permanent">Permanent Listing</option>
+          <option value="Day-of">Day-of Directional</option>
+        </select>
+        <select class="fs" style="padding:5px 10px;font-size:12px;" onchange="filterInvStatus(this.value)">
+          <option value="all">All Status</option>
+          <option value="Active">Active</option>
+          <option value="Pending">Pending</option>
+          <option value="Down">Down</option>
+        </select>
+        <button class="btn bp" onclick="goView('orders')">+ Order Signs</button>
+      </div>
+    </div>
+    <table class="dt"><thead><tr>
+      <th>Sign ID</th><th>Category</th><th>Location / Property</th><th>Type</th><th>Status</th><th>MLS #</th><th>Compliance</th><th>Scans</th><th>Chloe Code</th><th>Actions</th>
+    </tr></thead><tbody id="inv-rows"></tbody></table>
+  </div>
 </div>
-<script>
-function toast(msg,type){var o=document.getElementById('_t');if(o)o.remove();var t=document.createElement('div');t.id='_t';t.textContent=msg;var bg=type==='ok'?'#B8E030':'#1A1E12';var c=type==='ok'?'#0A0B07':'#EEF0E5';t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:'+bg+';color:'+c+';padding:10px 20px;border-radius:8px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all .2s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.4);border:1px solid rgba(184,224,48,.15);';document.body.appendChild(t);requestAnimationFrame(function(){t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';});clearTimeout(t._x);t._x=setTimeout(function(){t.style.opacity='0';},2600);}
-function modal(title,body,label,cb){var o=document.getElementById('_m');if(o)o.remove();var el=document.createElement('div');el.id='_m';el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9990;display:flex;align-items:center;justify-content:center;';el.innerHTML='<div style="background:#13160D;border:1px solid rgba(184,224,48,.15);border-radius:13px;padding:26px 28px;min-width:380px;max-width:460px;box-shadow:0 20px 60px rgba(0,0,0,.6);"><div style="font-family:Fraunces,serif;font-size:19px;margin-bottom:9px;">'+title+'</div><div style="font-size:13px;color:#8A8F7A;line-height:1.6;margin-bottom:20px;">'+body+'</div><div style="display:flex;gap:9px;justify-content:flex-end;"><button id="_mc" style="padding:7px 16px;border-radius:7px;border:1px solid rgba(238,240,229,.08);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:12px;cursor:pointer;">Cancel</button><button id="_mo" style="padding:7px 16px;border-radius:7px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:12px;font-weight:600;cursor:pointer;">'+(label||'OK')+'</button></div></div>';document.body.appendChild(el);el.querySelector('#_mc').onclick=function(){el.remove();};el.querySelector('#_mo').onclick=function(){el.remove();if(cb)cb();};el.onclick=function(e){if(e.target===el)el.remove();};}
-function tabs(containerSel,viewSel){document.querySelectorAll(containerSel).forEach(function(t){t.addEventListener('click',function(){document.querySelectorAll(containerSel).forEach(function(x){x.classList.remove('active');});document.querySelectorAll(viewSel).forEach(function(v){v.classList.remove('active');});t.classList.add('active');var v=document.getElementById('view-'+t.dataset.tab);if(v)v.classList.add('active');});});}
 
+<!-- ORDERS -->
+<div class="view" id="view-orders">
+  <div style="display:grid;grid-template-columns:1fr 380px;gap:16px;align-items:start;">
+    <div class="panel">
+      <div class="ph"><span class="pht">New Sign Order</span></div>
+      <div style="padding:18px;">
+        <span class="sl">Sign Category</span>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
+          <div class="st sel" id="cat-perm" onclick="selCat('perm',this)" style="border-radius:11px;padding:14px;">
+            <div style="font-size:22px;margin-bottom:6px;">&#x1FA7;</div>
+            <div style="font-size:13px;font-weight:600;color:var(--tx);margin-bottom:3px;">Permanent Listing Signs</div>
+            <div style="font-size:11px;color:var(--txm);">Yard sign + Chloe Code rider &middot; Full lifecycle tracked</div>
+          </div>
+          <div class="st" id="cat-dayof" onclick="selCat('dayof',this)" style="border-radius:11px;padding:14px;">
+            <div style="font-size:22px;margin-bottom:6px;">&#x27A1;&#xFE0F;</div>
+            <div style="font-size:13px;font-weight:600;color:var(--tx);margin-bottom:3px;">Day-of Directional Bundle</div>
+            <div style="font-size:11px;color:var(--txm);">6 or 12 signs &middot; Delivered by 7 AM &middot; One Chloe Code</div>
+          </div>
+        </div>
+        <span class="sl">Sign Type</span>
+        <div class="stg" style="margin-bottom:20px;">
+          <div class="st sel" onclick="selType(this)"><div style="font-size:22px;">&#x1FA7;</div><div style="font-size:12px;font-weight:500;color:var(--tx);margin:5px 0 2px;">Yard + Rider</div><div style="font-size:10px;color:var(--txm);">18x24 + QR rider</div></div>
+          <div class="st" onclick="selType(this)"><div style="font-size:22px;">&#x27A1;&#xFE0F;</div><div style="font-size:12px;font-weight:500;color:var(--tx);margin:5px 0 2px;">Directional</div><div style="font-size:10px;color:var(--txm);">Arrow, 24x6</div></div>
+          <div class="st" onclick="selType(this)"><div style="font-size:22px;">&#x1F3E0;</div><div style="font-size:12px;font-weight:500;color:var(--tx);margin:5px 0 2px;">Open House</div><div style="font-size:10px;color:var(--txm);">Event sign + date</div></div>
+          <div class="st" onclick="selType(this)"><div style="font-size:22px;">&#x2B21;</div><div style="font-size:12px;font-weight:500;color:var(--tx);margin:5px 0 2px;">Chloe Rider Only</div><div style="font-size:10px;color:var(--txm);">QR add-on for existing</div></div>
+        </div>
+        <span class="sl">Order Details</span>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="fg"><div class="fl">Quantity</div><input class="fi" type="number" id="ord-qty" value="2" min="1"></div>
+          <div class="fg"><div class="fl">Agent / Hosting Agent</div>
+            <select class="fs"><option>Marcus Rivera (Listing Agent)</option><option>Sarah Chen (Host Agent)</option><option>David Park (Host Agent)</option><option>Unassigned</option></select>
+          </div>
+          <div class="fg" style="grid-column:1/-1;"><div class="fl">Listing Property</div>
+            <select class="fs" id="ord-prop"><option>2847 Magnolia Dr &mdash; Marcus Rivera (Active)</option><option>1105 Ridgecrest Ln &mdash; Marcus Rivera (Active)</option><option>504 Lakeview Ct &mdash; Sarah Chen (Active)</option><option>New / Unassigned listing</option></select>
+          </div>
+          <div class="fg" style="grid-column:1/-1;"><div class="fl">MLS Number (for permanent signs)</div><input class="fi" id="ord-mls" placeholder="e.g. 20891234"></div>
+          <div class="fg" style="grid-column:1/-1;"><div class="fl">Delivery Address</div><input class="fi" id="ord-addr" placeholder="Agent office or property address"></div>
+          <div class="fg"><div class="fl">Install / Delivery Date</div><input class="fi" type="date" id="ord-date"></div>
+          <div class="fg"><div class="fl">Time Window</div>
+            <select class="fs"><option>7 AM delivery (day-of)</option><option>8 AM &ndash; 10 AM</option><option>10 AM &ndash; 12 PM</option><option>Flexible</option></select>
+          </div>
+          <div class="fg" style="grid-column:1/-1;"><div class="fl">Chloe Code Assignment</div>
+            <select class="fs"><option>Auto-assign new code</option><option>CQ-2847-MAG (existing &mdash; 2847 Magnolia)</option><option>CQ-AVAIL-13 (available)</option><option>Unassigned</option></select>
+          </div>
+          <div class="fg" style="grid-column:1/-1;"><div class="fl">Vendor / Supplier</div>
+            <select class="fs" id="ord-vendor"><option>&#x2B50; SignPro DFW (Preferred Partner &mdash; Co-sponsor)</option><option>Signs Now Lewisville</option><option>Agent supplies own signs</option></select>
+          </div>
+          <div class="fg" style="grid-column:1/-1;"><div class="fl">Special Instructions</div><textarea class="fi" rows="2" placeholder="e.g. Place at corner of Magnolia & FM2499, facing southbound"></textarea></div>
+        </div>
+        <div style="display:flex;gap:9px;margin-top:16px;justify-content:flex-end;">
+          <button class="btn" onclick="toast('Draft saved','ok')">Save Draft</button>
+          <button class="btn bp" onclick="submitOrder()">Submit Order &rarr;</button>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="panel">
+        <div class="ph"><span class="pht">Order Summary</span></div>
+        <div style="padding:15px;">
+          <div style="border:1px solid var(--bs);border-radius:9px;overflow:hidden;">
+            <div style="display:flex;justify-content:space-between;padding:9px 13px;border-bottom:1px solid var(--bs);font-size:13px;"><span style="color:var(--txm);">Category</span><span>Permanent Listing</span></div>
+            <div style="display:flex;justify-content:space-between;padding:9px 13px;border-bottom:1px solid var(--bs);font-size:13px;"><span style="color:var(--txm);">Type</span><span>Yard + Chloe Rider</span></div>
+            <div style="display:flex;justify-content:space-between;padding:9px 13px;border-bottom:1px solid var(--bs);font-size:13px;"><span style="color:var(--txm);">Quantity</span><span>2 signs</span></div>
+            <div style="display:flex;justify-content:space-between;padding:9px 13px;border-bottom:1px solid var(--bs);font-size:13px;"><span style="color:var(--txm);">Vendor</span><span style="color:var(--acc);">SignPro DFW</span></div>
+            <div style="display:flex;justify-content:space-between;padding:9px 13px;border-bottom:1px solid var(--bs);font-size:13px;"><span style="color:var(--txm);">Chloe Code</span><span style="color:var(--acc);">Auto-assigned</span></div>
+            <div style="display:flex;justify-content:space-between;padding:9px 13px;border-bottom:1px solid var(--bs);font-size:13px;"><span style="color:var(--txm);">Est. Delivery</span><span>2&ndash;3 business days</span></div>
+            <div style="display:flex;justify-content:space-between;padding:9px 13px;font-size:13px;font-weight:600;"><span style="color:var(--txm);">Cost</span><span style="color:var(--grn);">&#x2713; Included in plan</span></div>
+          </div>
+        </div>
+      </div>
+      <!-- Vendor co-sponsor -->
+      <div class="panel">
+        <div class="ph"><span class="pht">&#x2B50; Preferred Vendor</span></div>
+        <div style="padding:14px;">
+          <div style="background:var(--s2);border:1px solid rgba(184,224,48,.2);border-radius:10px;padding:13px;margin-bottom:10px;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+              <div style="width:36px;height:36px;background:var(--acc);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">&#x1FA7;</div>
+              <div>
+                <div style="font-size:13px;font-weight:600;color:var(--tx);">SignPro DFW</div>
+                <div style="font-size:11px;color:var(--acc);">ChloeIQ Co-Sponsor Partner</div>
+              </div>
+            </div>
+            <div style="font-size:12px;color:var(--txm);line-height:1.6;margin-bottom:10px;">Next-day delivery across DFW Metroplex. 7 AM day-of delivery for open house bundles. Signs include Chloe Code rider mounting hardware.</div>
+            <div style="display:flex;gap:7px;">
+              <span style="font-size:11px;background:rgba(74,222,128,.1);color:var(--grn);padding:2px 8px;border-radius:10px;font-family:var(--font-mono);">Same-day available</span>
+              <span style="font-size:11px;background:rgba(96,165,250,.1);color:var(--blu);padding:2px 8px;border-radius:10px;font-family:var(--font-mono);">HOA-compliant sizes</span>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--txd);line-height:1.6;">ChloeIQ earns a referral credit on each SignPro order. Your signs ship with Chloe branding on the rider. <a href="#" style="color:var(--acc);" onclick="toast('Opening vendor partnership info...','')">Learn about co-sponsorship &rarr;</a></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="ph"><span class="pht">Recent Orders</span></div>
+        <div id="ord-hist"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCHEDULE -->
+<div class="view" id="view-schedule">
+  <div class="panel">
+    <div class="ph"><span class="pht">Install &amp; Removal Schedule</span><button class="btn bp" onclick="goView('orders')">+ Schedule Install</button></div>
+    <div style="padding:16px;" id="sched-list"></div>
+  </div>
+</div>
+
+<!-- DAY-OF PLACEMENT PLANNER -->
+<div class="view" id="view-placement">
+  <!-- HB 3611 warning -->
+  <div style="background:rgba(255,90,74,.07);border:1px solid rgba(255,90,74,.2);border-radius:10px;padding:14px 17px;">
+    <div style="font-size:13px;font-weight:600;color:var(--red);margin-bottom:5px;">&#x1F6AB; TX HB 3611 &mdash; All Day-of Signs Must Be on Private Property</div>
+    <div style="font-size:12px;color:var(--txm);line-height:1.7;">
+      ROW placement (medians, sidewalks, utility strips) carries fines up to <strong style="color:var(--tx);">$5,000 per sign</strong> and liability extends to you, your broker, and anyone who benefits from the sign.
+      Flower Mound allows directionals on private property within 24hr of event &middot; under 6 sq ft &middot; no permit needed (Sec. 86-233(4)).
+      Southlake requires sign contractor registration. Always verify HOA restrictions before placing.
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 340px;gap:16px;align-items:start;">
+    <!-- Planned route map -->
+    <div class="panel">
+      <div class="ph">
+        <span class="pht">Planned Sign Route &mdash; Apr 12 Open House</span>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <select class="fs" style="padding:5px 10px;font-size:12px;">
+            <option>2847 Magnolia Dr &mdash; Sat Apr 12 1-4PM</option>
+            <option>1105 Ridgecrest &mdash; Sat Apr 12 12-3PM</option>
+          </select>
+          <button class="btn bp" onclick="window.location.href='chloeiq-sign-placement.html'">&#x1F4F1; Open Mobile App</button>
+        </div>
+      </div>
+      <div style="padding:12px;">
+        <div class="map-wrap" id="placement-map" style="height:300px;">
+          <div class="map-grid"></div>
+          <div style="position:absolute;top:10px;left:12px;font-family:var(--font-mono);font-size:9px;color:var(--txd);">OPEN HOUSE ROUTE &mdash; 2847 MAGNOLIA DR</div>
+          <div class="map-road" style="left:0;top:54%;width:100%;height:3px;"></div>
+          <div class="map-road" style="left:40%;top:0;width:3px;height:100%;"></div>
+          <div class="map-road" style="left:0;top:28%;width:65%;height:2px;opacity:.5;"></div>
+          <div class="map-road" style="left:20%;top:70%;width:45%;height:2px;opacity:.4;"></div>
+          <!-- Route line -->
+          <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;" xmlns="http://www.w3.org/2000/svg">
+            <polyline id="route-line" fill="none" stroke="rgba(184,224,48,.4)" stroke-width="2" stroke-dasharray="6,4"/>
+          </svg>
+          <div id="placement-pins"></div>
+          <!-- Property star -->
+          <div style="position:absolute;left:50%;top:54%;transform:translate(-50%,-50%);background:var(--acc);color:var(--bg);font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;white-space:nowrap;box-shadow:0 2px 12px rgba(184,224,48,.4);">&#x1F3E0; 2847 Magnolia</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sign placement list -->
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="panel">
+        <div class="ph"><span class="pht">Planned Locations <span style="font-size:11px;color:var(--txm);font-weight:400;margin-left:5px;">6 of 8 compliant</span></span>
+          <button class="btn" onclick="toast('Optimizing route order...','');setTimeout(function(){toast('Route optimized \u2713 23.4mi \u00b7 Est. 48 min','ok');},1200)">Optimize</button>
+        </div>
+        <div id="planned-stops"></div>
+      </div>
+      <div class="panel">
+        <div class="ph"><span class="pht">Route Summary</span></div>
+        <div style="padding:14px;">
+          <div class="stat-row" style="margin-bottom:12px;">
+            <div class="stat-block"><div class="sv">8</div><div class="slb">Signs Planned</div></div>
+            <div class="stat-block"><div class="sv" style="color:var(--grn);">6</div><div class="slb">Compliant</div></div>
+            <div class="stat-block"><div class="sv" style="color:var(--amb);">1</div><div class="slb">HOA Check</div></div>
+            <div class="stat-block"><div class="sv" style="color:var(--red);">1</div><div class="slb">Flagged</div></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:7px;">
+            <div style="display:flex;justify-content:space-between;font-size:12px;">
+              <span style="color:var(--txm);">Total route distance</span><span>23.4 miles</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;">
+              <span style="color:var(--txm);">Est. placement time</span><span>48 minutes</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;">
+              <span style="color:var(--txm);">Retrieval deadline</span><span style="color:var(--amb);">5:00 PM (24hr rule)</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;">
+              <span style="color:var(--txm);">Coverage radius</span><span>~1.8 mile approach</span>
+            </div>
+          </div>
+          <div style="margin-top:12px;">
+            <button class="btn bp" style="width:100%;justify-content:center;" onclick="window.location.href='chloeiq-sign-placement.html'">&#x1F4F1; Start Day-of Mobile App &rarr;</button>
+          </div>
+        </div>
+      </div>
+      <!-- Homeowner outreach -->
+      <div class="panel">
+        <div class="ph"><span class="pht">&#x1F4AC; Homeowner Outreach</span></div>
+        <div style="padding:14px;">
+          <div style="font-size:12px;color:var(--txm);line-height:1.6;margin-bottom:10px;">3 locations need private property permission. Chloe generated outreach messages for each homeowner.</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="background:var(--s2);border:1px solid var(--bs);border-radius:9px;padding:11px 13px;">
+              <div style="font-size:12px;color:var(--tx);font-weight:500;margin-bottom:3px;">412 Heritage Oak Dr</div>
+              <div style="font-size:11px;color:var(--txm);margin-bottom:8px;">Best corner coverage. Owner: J. Martinez</div>
+              <div style="display:flex;gap:6px;">
+                <button class="btn" style="font-size:11px;" onclick="showOutreach('412 Heritage Oak Dr','J. Martinez')">View Message</button>
+                <button class="btn bp" style="font-size:11px;" onclick="toast('Text sent to J. Martinez \u2713','ok')">Send Text</button>
+              </div>
+            </div>
+            <div style="background:var(--s2);border:1px solid var(--bs);border-radius:9px;padding:11px 13px;">
+              <div style="font-size:12px;color:var(--tx);font-weight:500;margin-bottom:3px;">2201 Ridgecrest Ln</div>
+              <div style="font-size:11px;color:var(--txm);margin-bottom:8px;">High traffic corner. Owner: R. Thompson</div>
+              <div style="display:flex;gap:6px;">
+                <button class="btn" style="font-size:11px;" onclick="showOutreach('2201 Ridgecrest Ln','R. Thompson')">View Message</button>
+                <button class="btn bp" style="font-size:11px;" onclick="toast('Text sent to R. Thompson \u2713','ok')">Send Text</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- COMPLIANCE ENGINE -->
+<div class="view" id="view-compliance">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="panel">
+        <div class="ph"><span class="pht">&#x2705; Compliance Engine &mdash; TX HB 3611</span></div>
+        <div style="padding:16px;">
+          <div class="comp-card green">
+            <div style="font-size:13px;font-weight:600;color:var(--grn);margin-bottom:6px;">&#x2705; Flower Mound (Your Market)</div>
+            <div style="font-size:12px;color:var(--txm);line-height:1.7;">
+              <strong style="color:var(--tx);">Allowed:</strong> Directionals on private property, 24hr window (Sec. 86-233(4))<br>
+              <strong style="color:var(--tx);">Size:</strong> Under 6 square feet per sign<br>
+              <strong style="color:var(--tx);">Permit:</strong> Not required<br>
+              <strong style="color:var(--tx);">Prohibited:</strong> A-frame, bandit, banners, feather flags &mdash; even on private property<br>
+              <strong style="color:var(--tx);">ROW:</strong> Strictly prohibited &mdash; HB 3611 fines apply<br>
+              <strong style="color:var(--tx);">HOA:</strong> Must verify individually &mdash; many restrict all signs
+            </div>
+          </div>
+          <div class="comp-card amber">
+            <div style="font-size:13px;font-weight:600;color:var(--amb);margin-bottom:6px;">&#x26A0;&#xFE0F; Southlake</div>
+            <div style="font-size:12px;color:var(--txm);line-height:1.7;">
+              <strong style="color:var(--tx);">Sign contractor registration required</strong> with City of Southlake before placing<br>
+              <strong style="color:var(--tx);">Special sign regulations</strong> apply to major commercial districts<br>
+              <strong style="color:var(--tx);">ROW:</strong> Prohibited &mdash; HB 3611 applies statewide<br>
+              Contact Planning &amp; Development Services: 817-748-8215
+            </div>
+          </div>
+          <div class="comp-card amber">
+            <div style="font-size:13px;font-weight:600;color:var(--amb);margin-bottom:6px;">&#x26A0;&#xFE0F; Colleyville &middot; Grapevine &middot; Lewisville</div>
+            <div style="font-size:12px;color:var(--txm);line-height:1.7;">
+              <strong style="color:var(--tx);">Private property only</strong> with owner permission<br>
+              <strong style="color:var(--tx);">Check municipal code</strong> for specific size &amp; time restrictions<br>
+              <strong style="color:var(--tx);">HOA communities common</strong> &mdash; always verify
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="ph"><span class="pht">Texas Statewide &mdash; HB 3611 Summary</span></div>
+        <div style="padding:16px;">
+          <div style="display:flex;flex-direction:column;gap:0;border:1px solid var(--bs);border-radius:10px;overflow:hidden;">
+            <div style="padding:10px 14px;border-bottom:1px solid var(--bs);">
+              <div style="font-size:11px;color:var(--txm);font-family:var(--font-mono);margin-bottom:2px;">EFFECTIVE</div>
+              <div style="font-size:13px;color:var(--tx);">September 1, 2025 &mdash; Amends TX Transportation Code &sect;393.007</div>
+            </div>
+            <div style="padding:10px 14px;border-bottom:1px solid var(--bs);">
+              <div style="font-size:11px;color:var(--txm);font-family:var(--font-mono);margin-bottom:2px;">WHAT CHANGED</div>
+              <div style="font-size:13px;color:var(--tx);">Penalty structure &amp; expanded liability &mdash; not the sign rules themselves</div>
+            </div>
+            <div style="padding:10px 14px;border-bottom:1px solid var(--bs);">
+              <div style="font-size:11px;color:var(--amb);font-family:var(--font-mono);margin-bottom:2px;">FINE STRUCTURE</div>
+              <div style="font-size:13px;color:var(--tx);">1st offense: written notice + removal window &rarr; up to $1,000<br>2nd offense: up to $2,500 &middot; 3rd+: up to $5,000 per sign</div>
+            </div>
+            <div style="padding:10px 14px;border-bottom:1px solid var(--bs);">
+              <div style="font-size:11px;color:var(--red);font-family:var(--font-mono);margin-bottom:2px;">EXPANDED LIABILITY</div>
+              <div style="font-size:13px;color:var(--tx);">Anyone who places, commissions, OR BENEFITS from the sign &mdash; agent, broker, and team lead all exposed</div>
+            </div>
+            <div style="padding:10px 14px;">
+              <div style="font-size:11px;color:var(--txm);font-family:var(--font-mono);margin-bottom:2px;">SOURCE</div>
+              <div style="font-size:12px;color:var(--txm);">TX Legislature 89th Session (2025) &middot; TX REALTORS&reg; Guidance &middot; Texas Transportation Code Ch. 393</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="panel">
+        <div class="ph"><span class="pht">Other States &mdash; Key Rules</span></div>
+        <div style="padding:16px;">
+          <div class="comp-card amber">
+            <div style="font-size:13px;font-weight:600;color:var(--amb);margin-bottom:6px;">&#x1F3D9; California &mdash; Municipality by Municipality</div>
+            <div style="font-size:12px;color:var(--txm);line-height:1.7;">
+              <strong style="color:var(--tx);">Most cities:</strong> No city property placement without permit<br>
+              <strong style="color:var(--tx);">Grass strip</strong> between sidewalk and curb = city ROW<br>
+              <strong style="color:var(--tx);">Typical rules:</strong> Max 4 signs &middot; 24"x24" max &middot; not within 5ft of intersections, driveways, or signals<br>
+              <strong style="color:var(--tx);">Timing:</strong> Saturday/Sunday only &middot; 12PM to dusk in many cities<br>
+              <strong style="color:var(--tx);">Permits:</strong> Required with indemnification + proof of insurance in some cities
+            </div>
+          </div>
+          <div class="comp-card green">
+            <div style="font-size:13px;font-weight:600;color:var(--grn);margin-bottom:6px;">&#x1F334; Florida &mdash; Property-Friendly Baseline</div>
+            <div style="font-size:12px;color:var(--txm);line-height:1.7;">
+              <strong style="color:var(--tx);">FL Statute &sect;479.16(3):</strong> Signs on owner&rsquo;s property for sale/rent don&rsquo;t require state permits<br>
+              <strong style="color:var(--tx);">Municipal overlay:</strong> Each city has own rules &mdash; Orlando allows 1 sign per street frontage<br>
+              <strong style="color:var(--tx);">HOA/COA:</strong> May restrict all signs even on private property<br>
+              <strong style="color:var(--tx);">Utility alert:</strong> Call 811 before digging to place yard sign frames
+            </div>
+          </div>
+          <div class="comp-card amber">
+            <div style="font-size:13px;font-weight:600;color:var(--amb);margin-bottom:6px;">&#x1F5FD; National &mdash; NAR Settlement (Aug 2024)</div>
+            <div style="font-size:12px;color:var(--txm);line-height:1.7;">
+              <strong style="color:var(--tx);">Open house sign-in required</strong> before touring with an agent<br>
+              <strong style="color:var(--tx);">Written buyer agreements</strong> must be signed before showing<br>
+              <strong style="color:var(--tx);">ChloeIQ directly addresses this:</strong> The Chloe Code sign-in creates the compliant digital record at the door<br>
+              Visitors without an agent can sign a non-agency disclosure through the onboarding flow
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="ph"><span class="pht">HOA Layer &mdash; How to Check</span></div>
+        <div style="padding:16px;">
+          <div style="font-size:12px;color:var(--txm);line-height:1.7;margin-bottom:12px;">HOA rules are not in a public database and override municipal allowances. ChloeIQ flags known HOA communities and prompts verification before sign placement.</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="background:var(--s2);border:1px solid var(--bs);border-radius:8px;padding:11px 13px;display:flex;align-items:center;justify-content:space-between;">
+              <div>
+                <div style="font-size:12px;color:var(--tx);font-weight:500;">Canyon Falls &mdash; Flower Mound</div>
+                <div style="font-size:11px;color:var(--red);">No signs permitted on any property &mdash; HOA rule</div>
+              </div>
+              <span class="cp-r">BLOCKED</span>
+            </div>
+            <div style="background:var(--s2);border:1px solid var(--bs);border-radius:8px;padding:11px 13px;display:flex;align-items:center;justify-content:space-between;">
+              <div>
+                <div style="font-size:12px;color:var(--tx);font-weight:500;">Wellington of Flower Mound</div>
+                <div style="font-size:11px;color:var(--amb);">1 sign max &middot; must verify with HOA management</div>
+              </div>
+              <span class="cp-a">VERIFY</span>
+            </div>
+            <div style="background:var(--s2);border:1px solid var(--bs);border-radius:8px;padding:11px 13px;display:flex;align-items:center;justify-content:space-between;">
+              <div>
+                <div style="font-size:12px;color:var(--tx);font-weight:500;">Lakeside DFW</div>
+                <div style="font-size:11px;color:var(--grn);">Signs permitted on private property per HOA rules</div>
+              </div>
+              <span class="cp-g">PERMITTED</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HEAT MAP -->
+<div class="view" id="view-heatmap">
+  <div style="display:grid;grid-template-columns:1fr 300px;gap:16px;">
+    <div class="panel">
+      <div class="ph">
+        <span class="pht">Sign Placement Heat Map &mdash; Scan Performance by Location</span>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <select class="fs" style="padding:5px 10px;font-size:12px;">
+            <option>All Open Houses</option>
+            <option>2847 Magnolia Dr</option>
+            <option>1105 Ridgecrest Ln</option>
+          </select>
+          <select class="fs" style="padding:5px 10px;font-size:12px;">
+            <option>Last 90 days</option>
+            <option>Last 30 days</option>
+            <option>All time</option>
+          </select>
+        </div>
+      </div>
+      <div style="padding:12px;">
+        <div class="map-wrap" id="heat-map" style="height:360px;">
+          <div class="map-grid"></div>
+          <div style="position:absolute;top:10px;left:12px;font-family:var(--font-mono);font-size:9px;color:var(--txd);">SCAN PERFORMANCE HEAT MAP &mdash; FLOWER MOUND</div>
+          <div class="map-road" style="left:0;top:54%;width:100%;height:3px;"></div>
+          <div class="map-road" style="left:40%;top:0;width:3px;height:100%;"></div>
+          <div class="map-road" style="left:0;top:28%;width:65%;height:2px;opacity:.5;"></div>
+          <div class="map-road" style="left:20%;top:70%;width:45%;height:2px;opacity:.4;"></div>
+          <div id="heat-pins"></div>
+          <!-- Heat blobs -->
+          <div style="position:absolute;left:16%;top:48%;width:80px;height:80px;background:radial-gradient(circle,rgba(184,224,48,.35) 0%,transparent 70%);border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;"></div>
+          <div style="position:absolute;left:55%;top:24%;width:60px;height:60px;background:radial-gradient(circle,rgba(184,224,48,.25) 0%,transparent 70%);border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;"></div>
+          <div style="position:absolute;left:36%;top:64%;width:50px;height:50px;background:radial-gradient(circle,rgba(184,224,48,.2) 0%,transparent 70%);border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;"></div>
+          <div style="position:absolute;left:85%;top:30%;width:70px;height:70px;background:radial-gradient(circle,rgba(74,222,128,.3) 0%,transparent 70%);border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;"></div>
+          <div style="position:absolute;left:50%;top:75%;width:40px;height:40px;background:radial-gradient(circle,rgba(245,166,35,.2) 0%,transparent 70%);border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;"></div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="panel">
+        <div class="ph"><span class="pht">Top Locations by Scans</span></div>
+        <div id="heat-ranking"></div>
+      </div>
+      <div class="panel">
+        <div class="ph"><span class="pht">Placement Intelligence</span></div>
+        <div style="padding:14px;">
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.15);border-radius:8px;padding:10px 12px;">
+              <div style="font-size:11px;color:var(--grn);font-family:var(--font-mono);margin-bottom:3px;">HIGH PERFORMER</div>
+              <div style="font-size:12px;color:var(--tx);">Magnolia Dr &amp; FM2499</div>
+              <div style="font-size:11px;color:var(--txm);">42 avg scans &middot; 3.2x area benchmark &middot; Southbound AM traffic</div>
+            </div>
+            <div style="background:rgba(255,90,74,.07);border:1px solid rgba(255,90,74,.15);border-radius:8px;padding:10px 12px;">
+              <div style="font-size:11px;color:var(--red);font-family:var(--font-mono);margin-bottom:3px;">UNDERPERFORMER</div>
+              <div style="font-size:12px;color:var(--tx);">Elmhurst &amp; Belt Line</div>
+              <div style="font-size:11px;color:var(--txm);">4 avg scans &middot; Low visibility &middot; Try Cross Timbers instead</div>
+            </div>
+            <div style="background:rgba(96,165,250,.07);border:1px solid rgba(96,165,250,.15);border-radius:8px;padding:10px 12px;">
+              <div style="font-size:11px;color:var(--blu);font-family:var(--font-mono);margin-bottom:3px;">RECOMMENDATION</div>
+              <div style="font-size:12px;color:var(--tx);">Add FM3040 &amp; Long Prairie</div>
+              <div style="font-size:11px;color:var(--txm);">Similar properties saw 28 avg scans &middot; Not yet in your route</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CODES -->
+<div class="view" id="view-codes">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;">
+    <div class="panel">
+      <div class="ph"><span class="pht">Active Chloe Codes <span style="font-size:11px;font-family:var(--font-mono);color:var(--txm);font-weight:400;margin-left:6px;">12 assigned</span></span>
+        <button class="btn bp" onclick="toast('New code CQ-NEW-001 created \u2713','ok')">+ New Code</button>
+      </div>
+      <div style="padding:14px;display:flex;flex-direction:column;gap:10px;" id="codes-list"></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="panel">
+        <div class="ph"><span class="pht">Code Stats &middot; 30 Days</span></div>
+        <div style="padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="background:var(--s2);border:1px solid var(--bs);border-radius:9px;padding:11px;text-align:center;"><div style="font-family:var(--font-display);font-size:24px;color:var(--acc);">247</div><div style="font-size:9px;color:var(--txd);font-family:var(--font-mono);text-transform:uppercase;margin-top:2px;">Total Scans</div></div>
+          <div style="background:var(--s2);border:1px solid var(--bs);border-radius:9px;padding:11px;text-align:center;"><div style="font-family:var(--font-display);font-size:24px;color:var(--grn);">68%</div><div style="font-size:9px;color:var(--txd);font-family:var(--font-mono);text-transform:uppercase;margin-top:2px;">Onboard Rate</div></div>
+          <div style="background:var(--s2);border:1px solid var(--bs);border-radius:9px;padding:11px;text-align:center;"><div style="font-family:var(--font-display);font-size:24px;color:var(--amb);">42</div><div style="font-size:9px;color:var(--txd);font-family:var(--font-mono);text-transform:uppercase;margin-top:2px;">Exterior Scans</div></div>
+          <div style="background:var(--s2);border:1px solid var(--bs);border-radius:9px;padding:11px;text-align:center;"><div style="font-family:var(--font-display);font-size:24px;color:var(--blu);">205</div><div style="font-size:9px;color:var(--txd);font-family:var(--font-mono);text-transform:uppercase;margin-top:2px;">Interior Scans</div></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="ph"><span class="pht">By Type</span></div>
+        <div style="padding:14px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bs);font-size:13px;"><span style="color:var(--txm);">&#x1F4F1; Interior (Open House)</span><span style="font-family:var(--font-mono);color:var(--acc);">8 active</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bs);font-size:13px;"><span style="color:var(--txm);">&#x1FA7; Exterior (Yard / Rider)</span><span style="font-family:var(--font-mono);color:var(--acc);">4 active</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;font-size:13px;"><span style="color:var(--txm);">&#x1F4C4; Unassigned / Available</span><span style="font-family:var(--font-mono);color:var(--txm);">6 ready</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PERFORMANCE -->
+<div class="view" id="view-performance">
+  <div class="panel">
+    <div class="ph"><span class="pht">Scan Performance by Sign Location</span></div>
+    <table class="dt"><thead><tr><th>Location</th><th>Code</th><th>Type</th><th>Total</th><th>Today</th><th>Onboard</th><th>Top DNA</th><th>Avg Match</th></tr></thead>
+    <tbody id="perf-rows"></tbody></table>
+  </div>
+</div>
+
+<!-- VENDORS -->
+<div class="view" id="view-vendors">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;">
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="panel">
+        <div class="ph"><span class="pht">&#x2B50; Co-Sponsor Partner</span></div>
+        <div style="padding:16px;">
+          <div style="background:rgba(184,224,48,.05);border:2px solid rgba(184,224,48,.2);border-radius:12px;padding:16px;margin-bottom:14px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+              <div style="width:44px;height:44px;background:var(--acc);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">&#x1FA7;</div>
+              <div>
+                <div style="font-size:14px;font-weight:600;color:var(--tx);">SignPro DFW</div>
+                <div style="font-size:11px;color:var(--acc);font-family:var(--font-mono);">CHLOEIQ CO-SPONSOR PARTNER</div>
+              </div>
+            </div>
+            <div style="font-size:12px;color:var(--txm);line-height:1.7;margin-bottom:12px;">DFW&rsquo;s premier real estate sign supplier. Next-day delivery across Collin, Denton, and Tarrant Counties. Specializes in Chloe Code rider integration &mdash; all signs ship with pre-drilled rider mount and QR hardware.</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+              <div style="background:var(--s2);border-radius:8px;padding:10px;text-align:center;"><div style="font-family:var(--font-display);font-size:20px;color:var(--acc);">$0</div><div style="font-size:10px;color:var(--txd);font-family:var(--font-mono);">INCLUDED IN PLAN</div></div>
+              <div style="background:var(--s2);border-radius:8px;padding:10px;text-align:center;"><div style="font-family:var(--font-display);font-size:20px;color:var(--acc);">7AM</div><div style="font-size:10px;color:var(--txd);font-family:var(--font-mono);">DAY-OF DELIVERY</div></div>
+              <div style="background:var(--s2);border-radius:8px;padding:10px;text-align:center;"><div style="font-family:var(--font-display);font-size:20px;color:var(--acc);">24hr</div><div style="font-size:10px;color:var(--txd);font-family:var(--font-mono);">STANDARD DELIVERY</div></div>
+              <div style="background:var(--s2);border-radius:8px;padding:10px;text-align:center;"><div style="font-family:var(--font-display);font-size:20px;color:var(--acc);">HOA</div><div style="font-size:10px;color:var(--txd);font-family:var(--font-mono);">COMPLIANT SIZES</div></div>
+            </div>
+            <div style="font-size:12px;color:var(--txm);background:var(--s2);border-radius:8px;padding:10px 12px;line-height:1.6;">
+              <strong style="color:var(--tx);">Co-sponsor model:</strong> SignPro branding appears on the Chloe Code rider. ChloeIQ earns a referral credit per order. Agent gets seamless ordering, no billing friction, signs that work with the platform.
+            </div>
+          </div>
+          <button class="btn bp" style="width:100%;justify-content:center;margin-bottom:8px;" onclick="goView('orders')">Order from SignPro DFW &rarr;</button>
+          <button class="btn" style="width:100%;justify-content:center;" onclick="toast('Opening SignPro partnership details...','')">View Partnership Terms</button>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="panel">
+        <div class="ph"><span class="pht">Available Bundles</span></div>
+        <div style="padding:14px;display:flex;flex-direction:column;gap:10px;">
+          <div style="background:var(--s2);border:1px solid var(--bs);border-radius:10px;padding:14px;">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;">
+              <div>
+                <div style="font-size:13px;font-weight:600;color:var(--tx);">Listing Sign Kit</div>
+                <div style="font-size:11px;color:var(--txm);margin-top:2px;">Yard frame + panel + Chloe Code rider + hardware</div>
+              </div>
+              <span style="font-family:var(--font-mono);font-size:12px;color:var(--grn);">Included</span>
+            </div>
+            <div style="font-size:11px;color:var(--txm);line-height:1.6;margin-bottom:8px;">Delivered to agent office or property. Includes full Chloe Code rider with QR pre-printed and mounted. Tracks full sign lifecycle from install to retrieval.</div>
+            <button class="btn bp" style="font-size:12px;" onclick="goView('orders');toast('Listing kit pre-selected','ok')">Order Kit &rarr;</button>
+          </div>
+          <div style="background:var(--s2);border:1px solid var(--bs);border-radius:10px;padding:14px;">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;">
+              <div>
+                <div style="font-size:13px;font-weight:600;color:var(--tx);">Open House Bundle &mdash; 6 Signs</div>
+                <div style="font-size:11px;color:var(--txm);margin-top:2px;">6 directionals &middot; 1 shared Chloe Code &middot; 7AM delivery</div>
+              </div>
+              <span style="font-family:var(--font-mono);font-size:12px;color:var(--grn);">Included</span>
+            </div>
+            <div style="font-size:11px;color:var(--txm);line-height:1.6;margin-bottom:8px;">All signs under 6 sq ft (Flower Mound compliant). Delivered by 7 AM day-of. Single QR code routes all exterior scans to the property experience.</div>
+            <button class="btn bp" style="font-size:12px;" onclick="goView('orders');toast('6-sign bundle pre-selected','ok')">Order Bundle &rarr;</button>
+          </div>
+          <div style="background:var(--s2);border:1px solid var(--bs);border-radius:10px;padding:14px;">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;">
+              <div>
+                <div style="font-size:13px;font-weight:600;color:var(--tx);">Open House Bundle &mdash; 12 Signs</div>
+                <div style="font-size:11px;color:var(--txm);margin-top:2px;">12 directionals &middot; max coverage &middot; rush available</div>
+              </div>
+              <span style="font-family:var(--font-mono);font-size:12px;color:var(--grn);">Included</span>
+            </div>
+            <div style="font-size:11px;color:var(--txm);line-height:1.6;margin-bottom:8px;">For high-traffic open houses in competitive markets. Covers all approach routes. Same-day rush available for last-minute events.</div>
+            <button class="btn bp" style="font-size:12px;" onclick="goView('orders');toast('12-sign bundle pre-selected','ok')">Order Bundle &rarr;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div class="view" id="view-history">
+  <div class="panel">
+    <div class="ph"><span class="pht">Order History</span></div>
+    <div style="padding:14px;display:flex;flex-direction:column;gap:10px;" id="hist-list"></div>
+  </div>
+</div>
+
+<!-- ISSUES -->
+<div class="view" id="view-issues">
+  <div class="panel">
+    <div class="ph"><span class="pht">Sign Issues <span style="color:var(--red);font-size:11px;margin-left:6px;">2 open</span></span>
+      <button class="btn" onclick="toast('Dispatching field team \u2713','ok')">Dispatch Team</button>
+    </div>
+    <div style="padding:14px;display:flex;flex-direction:column;gap:12px;" id="issues-list"></div>
+  </div>
+</div>
+
+</div></div></div>
+<script>
+function toast(msg,type){
+  var o=document.getElementById('_t');if(o)o.remove();
+  var t=document.createElement('div');t.id='_t';t.textContent=msg;
+  var bg=type==='ok'?'#B8E030':'#1A1E12',c=type==='ok'?'#0A0B07':'#EEF0E5';
+  t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:'+bg+';color:'+c+';padding:10px 20px;border-radius:8px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all .2s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.5);border:1px solid rgba(184,224,48,.15);';
+  document.body.appendChild(t);
+  requestAnimationFrame(function(){t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';});
+  clearTimeout(t._x);t._x=setTimeout(function(){t.style.opacity='0';},2800);
+}
+function closeModal(){var m=document.getElementById('_modal');if(m)m.remove();}
+function openModal(html){
+  var old=document.getElementById('_modal');if(old)old.remove();
+  var el=document.createElement('div');el.id='_modal';el.className='mov';
+  el.innerHTML=html;document.body.appendChild(el);
+  el.addEventListener('click',function(e){if(e.target===el)closeModal();});
+}
+function goView(id,el){
+  document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active');});
+  document.querySelectorAll('.ln-item').forEach(function(i){i.classList.remove('active');});
+  var v=document.getElementById('view-'+id);if(v)v.classList.add('active');
+  if(el)el.classList.add('active');
+}
 var signs=[
-  {loc:'Magnolia Dr & FM2499',status:'active',scans:42,x:18,y:55},
-  {loc:'Ridgecrest & SH114',status:'active',scans:28,x:58,y:30},
-  {loc:'Lakeview & Main',status:'active',scans:19,x:38,y:70},
-  {loc:'Elmhurst & Belt Line',status:'pending',scans:0,x:72,y:48},
-  {loc:'Heritage & Josey',status:'active',scans:14,x:82,y:65},
-  {loc:'Willowbend & Valley',status:'active',scans:9,x:25,y:38},
-  {loc:'Crestview & Preston',status:'down',scans:0,x:52,y:62},
-  {loc:'Park Forest & MacArthur',status:'pending',scans:0,x:65,y:78},
+  {id:'SGN-001',cat:'Permanent',loc:'Magnolia Dr & FM2499',prop:'2847 Magnolia Dr',type:'Yard+Rider',status:'Active',mls:'20891234',comp:'green',scans:42,code:'CQ-2847-MAG',x:18,y:55},
+  {id:'SGN-002',cat:'Permanent',loc:'Ridgecrest & SH114',prop:'1105 Ridgecrest Ln',type:'Directional',status:'Active',mls:'20874561',comp:'green',scans:28,code:'CQ-1105-RDG',x:58,y:30},
+  {id:'SGN-003',cat:'Permanent',loc:'Lakeview & Main',prop:'3310 Elmhurst Blvd',type:'Yard+Rider',status:'Active',mls:'20865432',comp:'amber',scans:19,code:'CQ-3310-ELM',x:38,y:70},
+  {id:'SGN-004',cat:'Day-of',loc:'Elmhurst & Belt Line',prop:'504 Lakeview Ct OH',type:'Directional',status:'Pending',mls:'--',comp:'red',scans:0,code:'CQ-0504-LAK',x:72,y:48},
+  {id:'SGN-005',cat:'Permanent',loc:'Heritage & Josey',prop:'2901 Ridgeview Ln',type:'Yard+Rider',status:'Active',mls:'20891001',comp:'green',scans:14,code:'CQ-2901-RDG',x:82,y:65},
+  {id:'SGN-006',cat:'Day-of',loc:'Willowbend & Valley',prop:'2847 Magnolia OH',type:'Directional',status:'Active',mls:'--',comp:'green',scans:9,code:'CQ-1204-ASH',x:25,y:38},
+  {id:'SGN-007',cat:'Permanent',loc:'Crestview & Preston',prop:'Unassigned',type:'Chloe Rider',status:'Down',mls:'--',comp:'amber',scans:0,code:'CQ-AVAIL-07',x:52,y:62},
+  {id:'SGN-008',cat:'Day-of',loc:'Park Forest & MacArthur',prop:'Unassigned',type:'Directional',status:'Pending',mls:'--',comp:'amber',scans:0,code:'Unassigned',x:65,y:78},
+  {id:'SGN-009',cat:'Permanent',loc:'Southlake Blvd & Carroll',prop:'811 Clearwater Dr',type:'Yard+Rider',status:'Active',mls:'20856789',comp:'amber',scans:31,code:'CQ-0811-CLR',x:88,y:35},
+  {id:'SGN-010',cat:'Permanent',loc:'Flower Mound Rd & Long',prop:'3140 Briarwood Ct',type:'Directional',status:'Active',mls:'20891456',comp:'green',scans:22,code:'CQ-3140-BRW',x:45,y:22},
 ];
-function buildSignMap(){
-  var el=document.getElementById('sign-pins');if(!el)return;el.innerHTML='';
-  var map=document.getElementById('sign-map');
-  var W=map.offsetWidth||400,H=map.offsetHeight||320;
-  signs.forEach(function(s,i){
-    var pin=document.createElement('div');
-    pin.className='sign-pin sp-'+s.status;
+var compColors={'green':{'acc':'var(--grn)','bg':'rgba(74,222,128,.12)'},'amber':{'acc':'var(--amb)','bg':'rgba(245,166,35,.12)'},'red':{'acc':'var(--red)','bg':'rgba(255,90,74,.12)'}};
+function buildMap(elId,pins){
+  var el=document.getElementById(elId);if(!el)return;
+  var pinsEl=document.getElementById(pins||'sign-pins');if(!pinsEl)return;
+  pinsEl.innerHTML='';
+  var W=el.offsetWidth||500,H=el.offsetHeight||320;
+  signs.slice(0,10).forEach(function(s){
+    var pin=document.createElement('div');pin.className='sign-pin';
     pin.style.left=(s.x/100*W)+'px';pin.style.top=(s.y/100*H)+'px';
-    pin.innerHTML='<div class="sp-body"><div class="sp-flag">'+s.scans+'</div><div class="sp-tail"></div><div class="sp-dot"></div></div>';
-    pin.title=s.loc+' — '+s.status;
-    pin.addEventListener('click',function(){toast(s.loc+' · '+s.status+' · '+s.scans+' scans today','');});
+    var col=s.comp==='green'?'var(--grn)':s.comp==='amber'?'var(--amb)':'var(--red)';
+    var bg=s.comp==='green'?'#4ADE80':s.comp==='amber'?'#F5A623':'#FF5A4A';
+    pin.innerHTML='<div class="sp-body"><div class="sp-flag" style="background:'+bg+';color:'+(s.comp==='amber'?'#0A0B07':'#0A0B07')+'">'+s.scans+'</div><div class="sp-tail" style="background:'+bg+'"></div><div class="sp-dot" style="background:'+col+'"></div></div>';
+    pin.title=s.loc+' \u00b7 '+s.status+' \u00b7 Compliance: '+s.comp;
+    pin.addEventListener('click',function(){showSignDetail(s.id);});
+    pinsEl.appendChild(pin);
+  });
+}
+function buildHeatMap(){
+  var el=document.getElementById('heat-map');if(!el)return;
+  var pins=document.getElementById('heat-pins');if(!pins)return;pins.innerHTML='';
+  var W=el.offsetWidth||500,H=el.offsetHeight||360;
+  var hdata=[
+    {loc:'Magnolia & FM2499',scans:42,x:18,y:55,tier:'high'},
+    {loc:'Southlake & Carroll',scans:31,x:88,y:35,tier:'high'},
+    {loc:'Ridgecrest & SH114',scans:28,x:58,y:30,tier:'med'},
+    {loc:'FM Rd & Long',scans:22,x:45,y:22,tier:'med'},
+    {loc:'Lakeview & Main',scans:19,x:38,y:70,tier:'med'},
+    {loc:'Heritage & Josey',scans:14,x:82,y:65,tier:'low'},
+    {loc:'Willowbend & Valley',scans:9,x:25,y:38,tier:'low'},
+    {loc:'Elmhurst & Belt Line',scans:4,x:72,y:48,tier:'low'},
+  ];
+  hdata.forEach(function(h){
+    var pin=document.createElement('div');pin.className='sign-pin';
+    pin.style.left=(h.x/100*W)+'px';pin.style.top=(h.y/100*H)+'px';
+    var col=h.tier==='high'?'#B8E030':h.tier==='med'?'#F5A623':'#8A8F7A';
+    var sz=h.tier==='high'?14:h.tier==='med'?12:11;
+    pin.innerHTML='<div class="sp-body"><div class="sp-flag" style="background:'+col+';color:#0A0B07;font-size:'+sz+'px;">'+h.scans+'</div><div class="sp-tail" style="background:'+col+'"></div><div class="sp-dot" style="background:'+col+'"></div></div>';
+    pin.title=h.loc+' \u00b7 '+h.scans+' avg scans';
     el.appendChild(pin);
   });
 }
-function buildSignRows(){
-  var el=document.getElementById('sign-rows');if(!el)return;el.innerHTML='';
-  signs.forEach(function(s,i){
-    var pill=s.status==='active'?'<span class="pill pg">Active</span>':s.status==='pending'?'<span class="pill pa">Pending</span>':'<span class="pill pr">Down</span>';
-    var action=s.status==='down'?'<button class="btn bp" style="font-size:10px;padding:3px 9px;" data-fix="'+i+'">Fix</button>':'<button class="btn bs2" style="font-size:10px;padding:3px 9px;" data-mv="'+i+'">Move</button>';
-    el.innerHTML+='<div class="trow" style="grid-template-columns:1fr 80px 70px 80px;"><span class="n" style="font-size:12.5px;">'+s.loc+'</span>'+pill+'<span style="font-family:DM Mono,monospace;font-size:12px;color:var(--acc);">'+s.scans+'</span>'+action+'</div>';
+function buildHeatRanking(){
+  var el=document.getElementById('heat-ranking');if(!el)return;
+  var data=[
+    {loc:'Magnolia & FM2499',scans:42,trend:'up'},
+    {loc:'Southlake & Carroll',scans:31,trend:'up'},
+    {loc:'Ridgecrest & SH114',scans:28,trend:'same'},
+    {loc:'FM Rd & Long Prairie',scans:22,trend:'up'},
+    {loc:'Lakeview & Main',scans:19,trend:'down'},
+    {loc:'Heritage & Josey',scans:14,trend:'same'},
+  ];
+  el.innerHTML=data.map(function(d,i){
+    var pct=Math.round(d.scans/42*100);
+    var tc=d.trend==='up'?'var(--grn)':d.trend==='down'?'var(--red)':'var(--txm)';
+    var ta=d.trend==='up'?'\u2191':d.trend==='down'?'\u2193':'\u2014';
+    return '<div style="padding:10px 14px;border-bottom:1px solid var(--bs);">'
+      +'<div style="display:flex;justify-content:space-between;margin-bottom:5px;">'
+      +'<span style="font-size:12px;color:var(--tx);">#'+(i+1)+' '+d.loc+'</span>'
+      +'<span style="font-family:var(--font-mono);font-size:12px;color:var(--acc);">'+d.scans+' <span style="color:'+tc+'">'+ta+'</span></span>'
+      +'</div><div style="height:3px;background:var(--s3);border-radius:2px;overflow:hidden;">'
+      +'<div style="height:3px;background:var(--acc);width:'+pct+'%;"></div></div></div>';
+  }).join('');
+}
+function buildTopSigns(){
+  var el=document.getElementById('top-signs');if(!el)return;
+  el.innerHTML=signs.filter(function(s){return s.scans>0;}).sort(function(a,b){return b.scans-a.scans;}).slice(0,4).map(function(s){
+    var pct=Math.round(s.scans/42*100);
+    return '<div style="padding:9px 14px;border-bottom:1px solid var(--bs);"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:12px;color:var(--tx);">'+s.loc+'</span><span style="font-family:var(--font-mono);font-size:12px;color:var(--acc);">'+s.scans+'</span></div><div style="height:3px;background:var(--s3);border-radius:2px;overflow:hidden;"><div style="height:3px;background:var(--acc);width:'+pct+'%;"></div></div></div>';
+  }).join('');
+}
+function buildRecentAct(){
+  var el=document.getElementById('recent-act');if(!el)return;
+  var items=[
+    {i:'\u{1F4F1}',t:'Jordan Lee scanned CQ-2847-MAG',d:'4 min ago'},
+    {i:'\u2B21',t:'New code CQ-0811-CLR activated',d:'22 min ago'},
+    {i:'\u{1F4E6}',t:'SignPro Order #ORD-089 confirmed',d:'1 hr ago'},
+    {i:'\u26A0\uFE0F',t:'SGN-007 reported down \u00b7 Crestview',d:'3 hr ago'},
+    {i:'\u{1FA7}',t:'SGN-009 installed \u00b7 Southlake Blvd',d:'Yesterday'},
+  ];
+  el.innerHTML=items.map(function(a){
+    return '<div style="display:flex;gap:9px;padding:8px 13px;border-bottom:1px solid var(--bs);align-items:flex-start;"><span style="font-size:14px;">'+a.i+'</span><div><div style="font-size:12px;color:var(--tx);">'+a.t+'</div><div style="font-size:10px;color:var(--txd);font-family:var(--font-mono);margin-top:2px;">'+a.d+'</div></div></div>';
+  }).join('');
+}
+function buildInventory(){
+  var tb=document.getElementById('inv-rows');if(!tb)return;
+  tb.innerHTML=signs.map(function(s){
+    var pc=s.status==='Active'?'pg':s.status==='Pending'?'pa':'pr';
+    var cc=s.comp==='green'?'cp-g':s.comp==='amber'?'cp-a':'cp-r';
+    var cl=s.comp==='green'?'Compliant':s.comp==='amber'?'Check HOA':'Flagged';
+    return '<tr data-cat="'+s.cat+'" data-status="'+s.status+'">'
+      +'<td style="font-family:var(--font-mono);font-size:11px;color:var(--txm);">'+s.id+'</td>'
+      +'<td><span class="pill '+(s.cat==='Permanent'?'pb2':'pa')+'">'+s.cat+'</span></td>'
+      +'<td><div style="font-size:13px;">'+s.loc+'</div><div style="font-size:11px;color:var(--txm);">'+s.prop+'</div></td>'
+      +'<td style="font-size:11px;font-family:var(--font-mono);color:var(--txm);">'+s.type+'</td>'
+      +'<td><span class="pill '+pc+'">'+s.status+'</span></td>'
+      +'<td style="font-family:var(--font-mono);font-size:12px;color:var(--txm);">'+s.mls+'</td>'
+      +'<td><span class="'+cc+'">'+cl+'</span></td>'
+      +'<td style="font-family:var(--font-mono);color:'+(s.scans>0?'var(--acc)':'var(--txd)')+'">'+s.scans+'</td>'
+      +'<td style="font-family:var(--font-mono);font-size:11px;color:'+(s.code==='Unassigned'?'var(--txd)':'var(--acc)')+'">'+s.code+'</td>'
+      +'<td><div class="btn-r">'
+        +(s.status==='Active'?'<button class="btn" onclick="showSignDetail(\''+s.id+'\')">View</button>':'')
+        +(s.status==='Down'?'<button class="btn br2" onclick="showReport(\''+s.id+'\')">Report</button>':'')
+        +(s.code==='Unassigned'?'<button class="btn bp" onclick="showAssign(\''+s.id+'\')">Assign Code</button>':'')
+        +'<button class="btn" onclick="showMove(\''+s.id+'\')">Move</button>'
+      +'</div></td></tr>';
+  }).join('');
+}
+function filterInv(v){
+  document.querySelectorAll('#inv-rows tr').forEach(function(r){
+    r.style.display=(v==='all'||r.dataset.cat===v)?'':'none';
   });
-  document.querySelectorAll('[data-fix]').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();var i=parseInt(b.dataset.fix);signs[i].status='active';buildSignRows();buildSignMap();toast(signs[i].loc+' — marked as fixed ✓','ok');});});
-  document.querySelectorAll('[data-mv]').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();var i=parseInt(b.dataset.mv);modal('Move Sign','Select a new location for the sign at '+signs[i].loc+'.','Confirm Move',function(){toast('Sign move scheduled ✓','ok');});});});
+}
+function filterInvStatus(v){
+  document.querySelectorAll('#inv-rows tr').forEach(function(r){
+    r.style.display=(v==='all'||r.dataset.status===v)?'':'none';
+  });
+}
+function buildSchedule(){
+  var el=document.getElementById('sched-list');if(!el)return;
+  var items=[
+    {date:'Apr 12',day:'Sat',time:'9AM\u201311AM',action:'Install',signs:'SGN-004 + SGN-008',loc:'Day-of directionals \u00b7 2847 Magnolia OH',status:'confirmed',cat:'Day-of'},
+    {date:'Apr 14',day:'Mon',time:'2PM\u20134PM',action:'Remove',signs:'SGN-003',loc:'3310 Elmhurst Blvd (listing sold)',status:'confirmed',cat:'Permanent'},
+    {date:'Apr 16',day:'Wed',time:'10AM\u201312PM',action:'Install',signs:'SGN-013 (new)',loc:'811 Clearwater Dr \u00b7 Southlake',status:'pending',cat:'Permanent'},
+  ];
+  el.innerHTML=items.map(function(item){
+    return '<div style="display:flex;gap:13px;padding:13px;background:var(--s2);border:1px solid var(--bs);border-radius:10px;margin-bottom:10px;align-items:center;">'
+      +'<div style="text-align:center;background:var(--acc);color:var(--bg);border-radius:8px;padding:7px 10px;flex-shrink:0;min-width:58px;">'
+      +'<div style="font-size:9px;font-family:var(--font-mono);">'+item.date+'</div>'
+      +'<div style="font-family:var(--font-display);font-size:15px;">'+item.day+'</div>'
+      +'</div>'
+      +'<div style="flex:1;">'
+      +'<div style="display:flex;align-items:center;gap:7px;margin-bottom:2px;">'
+      +'<span style="font-size:13px;font-weight:500;color:var(--tx);">'+item.action+' \u00b7 '+item.signs+'</span>'
+      +'<span class="pill '+(item.status==='confirmed'?'pg':'pa')+'">'+item.status+'</span>'
+      +'<span class="pill '+(item.cat==='Day-of'?'pa':'pb2')+'">'+item.cat+'</span>'
+      +'</div>'
+      +'<div style="font-size:12px;color:var(--txm);">'+item.loc+'</div>'
+      +'<div style="font-size:10px;color:var(--txd);font-family:var(--font-mono);margin-top:2px;">'+item.time+'</div>'
+      +'</div>'
+      +'<div class="btn-r">'
+      +'<button class="btn" onclick="toast(\'Rescheduling...\',\'\')">Reschedule</button>'
+      +(item.status==='pending'?'<button class="btn bp" onclick="toast(\'Confirmed \u2713\',\'ok\')">Confirm</button>':'')
+      +'</div></div>';
+  }).join('');
+}
+function buildPlacementStops(){
+  var el=document.getElementById('planned-stops');if(!el)return;
+  var stops=[
+    {n:1,loc:'Magnolia Dr & FM2499',dist:'0.4mi from property',comp:'green',note:'42 avg scans \u00b7 Private prop. \u00b7 Owner: M. Davis',perm:true},
+    {n:2,loc:'Cross Timbers & FM2499',dist:'0.8mi from property',comp:'green',note:'High traffic \u00b7 Private prop. permission confirmed',perm:true},
+    {n:3,loc:'Long Prairie & FM2499',dist:'1.1mi from property',comp:'green',note:'32 avg scans \u00b7 Gas station corner (commercial)',perm:false},
+    {n:4,loc:'Heritage Oak & Quail Run',dist:'0.6mi from property',comp:'amber',note:'HOA community \u00b7 Verify with Canyon Falls HOA',perm:false},
+    {n:5,loc:'Garden Ridge & Morriss',dist:'1.4mi from property',comp:'green',note:'28 avg scans \u00b7 High visibility approach',perm:true},
+    {n:6,loc:'Ridgecrest & SH114',dist:'1.9mi from property',comp:'green',note:'Entry corridor \u00b7 Southbound traffic',perm:true},
+    {n:7,loc:'Elmhurst & Belt Line',dist:'1.2mi from property',comp:'amber',note:'Low performer \u00b7 4 avg scans \u00b7 Consider moving',perm:false},
+    {n:8,loc:'FM3040 & Long Prairie',dist:'0.7mi (median)',comp:'red',note:'\u26D4 MEDIAN \u00b7 ROW placement \u00b7 HB 3611 violation risk \u00b7 $1,000-5,000 fine',perm:false},
+  ];
+  el.innerHTML=stops.map(function(s){
+    var bc=s.comp==='green'?'rgba(74,222,128,.08)':s.comp==='amber'?'rgba(245,166,35,.08)':'rgba(255,90,74,.08)';
+    var brd=s.comp==='green'?'rgba(74,222,128,.2)':s.comp==='amber'?'rgba(245,166,35,.2)':'rgba(255,90,74,.2)';
+    var nc=s.comp==='green'?'var(--grn)':s.comp==='amber'?'var(--amb)':'var(--red)';
+    var icon=s.comp==='green'?'\u2705':s.comp==='amber'?'\u26A0\uFE0F':'\u26D4';
+    return '<div style="display:flex;gap:10px;padding:10px 14px;border-bottom:1px solid var(--bs);align-items:flex-start;">'
+      +'<div style="width:20px;height:20px;border-radius:50%;background:'+bc+';border:1px solid '+brd+';display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:10px;color:'+nc+';flex-shrink:0;margin-top:1px;">'+s.n+'</div>'
+      +'<div style="flex:1;">'
+      +'<div style="display:flex;align-items:center;gap:6px;margin-bottom:2px;">'
+      +'<span style="font-size:12px;font-weight:500;color:var(--tx);">'+s.loc+'</span>'
+      +'<span style="font-size:11px;">'+icon+'</span>'
+      +(s.perm?'<span style="font-size:10px;font-family:var(--font-mono);color:var(--grn);background:rgba(74,222,128,.1);padding:1px 6px;border-radius:9px;">PERM OK</span>':'')
+      +'</div>'
+      +'<div style="font-size:11px;color:var(--txm);">'+s.dist+'</div>'
+      +'<div style="font-size:11px;color:'+nc+';margin-top:2px;">'+s.note+'</div>'
+      +'</div>'
+      +(s.comp==='amber'?'<button class="btn" style="font-size:11px;flex-shrink:0;" onclick="showOutreach(\''+s.loc+'\',\'homeowner\')">Request Perm.</button>':'')
+      +(s.comp==='red'?'<button class="btn br2" style="font-size:11px;flex-shrink:0;" onclick="toast(\'Stop #'+s.n+' flagged and removed from route \u2713\',\'ok\')">Remove</button>':'')
+      +'</div>';
+  }).join('');
+}
+function qrPat(){
+  var p='',fill=[0,1,2,3,4,5,6,7,14,21,28,35,42,8,9,10,11,12,13,15,22,29,36,43,20,27,34,41,48,24,25,30,31];
+  for(var i=0;i<49;i++)p+='<div class="qc'+(fill.indexOf(i)>=0||Math.sin(i*7.3+2.1)>0.35?' f':'')+'"></div>';
+  return p;
+}
+function buildCodes(){
+  var el=document.getElementById('codes-list');if(!el)return;
+  var codes=[
+    {id:'CQ-2847-MAG',prop:'2847 Magnolia Dr',type:'Interior',scans:205},
+    {id:'CQ-2847-EXT',prop:'2847 Magnolia Dr',type:'Exterior',scans:42},
+    {id:'CQ-1105-RDG',prop:'1105 Ridgecrest Ln',type:'Interior',scans:88},
+    {id:'CQ-3310-ELM',prop:'3310 Elmhurst Blvd',type:'Interior',scans:61},
+    {id:'CQ-0811-CLR',prop:'811 Clearwater Dr',type:'Exterior',scans:31},
+  ];
+  el.innerHTML=codes.map(function(c){
+    return '<div class="qr-card"><div class="qr-box">'+qrPat()+'</div><div style="flex:1;"><div style="font-family:var(--font-mono);font-size:12px;color:var(--acc);margin-bottom:2px;">'+c.id+'</div><div style="font-size:13px;font-weight:500;color:var(--tx);margin-bottom:2px;">'+c.prop+'</div><div style="font-size:12px;color:var(--txm);">'+c.type+' \u00b7 <span style="color:var(--acc);">'+c.scans+' scans</span></div></div><div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0;"><button class="btn" onclick="showQRDetail(\''+c.id+'\',\''+c.prop+'\')">View QR</button><button class="btn" onclick="toast(\'Downloading '+c.id+' \u2713\',\'ok\')">\u2B07 Print</button></div></div>';
+  }).join('');
+}
+function buildPerf(){
+  var el=document.getElementById('perf-rows');if(!el)return;
+  var data=[
+    {loc:'Magnolia Dr (Interior)',code:'CQ-2847-MAG',type:'Interior',total:205,today:14,rate:'71%',dna:'Refined Modern',avg:87},
+    {loc:'Magnolia Dr (Exterior)',code:'CQ-2847-EXT',type:'Exterior',total:42,today:6,rate:'38%',dna:'Refined Modern',avg:84},
+    {loc:'Ridgecrest & SH114',code:'CQ-1105-RDG',type:'Interior',total:88,today:9,rate:'65%',dna:'Warm Organic',avg:79},
+    {loc:'Southlake Blvd',code:'CQ-0811-CLR',type:'Exterior',total:31,today:4,rate:'29%',dna:'Coastal Luxe',avg:82},
+    {loc:'Lakeview & Main',code:'CQ-3310-ELM',type:'Interior',total:61,today:7,rate:'68%',dna:'Bold Eclectic',avg:74},
+  ];
+  el.innerHTML=data.map(function(r){
+    return '<tr><td>'+r.loc+'</td><td style="font-family:var(--font-mono);font-size:11px;color:var(--acc);">'+r.code+'</td><td><span class="pill '+(r.type==='Interior'?'pb2':'pa')+'">'+r.type+'</span></td><td style="font-family:var(--font-mono);">'+r.total+'</td><td style="font-family:var(--font-mono);color:var(--acc);">'+r.today+'</td><td style="font-family:var(--font-mono);">'+r.rate+'</td><td style="color:var(--txm);">'+r.dna+'</td><td><span style="font-family:var(--font-display);font-size:18px;color:var(--acc);">'+r.avg+'%</span></td></tr>';
+  }).join('');
+}
+function buildHistory(){
+  var orders=[
+    {id:'ORD-089',date:'Apr 5',type:'Yard+Rider x2',prop:'2847 Magnolia Dr',vendor:'SignPro DFW',status:'Delivered'},
+    {id:'ORD-088',date:'Apr 2',type:'Day-of Bundle x6',prop:'1105 Ridgecrest OH',vendor:'SignPro DFW',status:'Delivered'},
+    {id:'ORD-087',date:'Mar 28',type:'Chloe Rider x4',prop:'Multiple',vendor:'SignPro DFW',status:'Delivered'},
+    {id:'ORD-086',date:'Mar 20',type:'Open House x1',prop:'504 Lakeview Ct',vendor:'Agent supplied',status:'Removed'},
+  ];
+  var oh=document.getElementById('ord-hist');
+  if(oh)oh.innerHTML=orders.map(function(o){
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:9px 13px;border-bottom:1px solid var(--bs);"><div><div style="font-size:12px;font-weight:500;color:var(--tx);">'+o.id+' \u00b7 '+o.type+'</div><div style="font-size:11px;color:var(--txm);">'+o.prop+' \u00b7 '+o.vendor+' \u00b7 '+o.date+'</div></div><span class="pill '+(o.status==='Delivered'?'pg':'pa')+'">'+o.status+'</span></div>';
+  }).join('');
+  var hl=document.getElementById('hist-list');
+  if(hl)hl.innerHTML=orders.map(function(o){
+    return '<div style="background:var(--s2);border:1px solid var(--bs);border-radius:10px;padding:13px;"><div style="display:flex;justify-content:space-between;margin-bottom:7px;"><span style="font-family:var(--font-mono);font-size:11px;color:var(--acc);">'+o.id+'</span><span class="pill '+(o.status==='Delivered'?'pg':'pa')+'">'+o.status+'</span></div><div style="font-size:13px;font-weight:500;color:var(--tx);margin-bottom:2px;">'+o.type+'</div><div style="font-size:12px;color:var(--txm);margin-bottom:9px;">'+o.prop+' \u00b7 '+o.vendor+' \u00b7 '+o.date+'</div><div class="btn-r"><button class="btn" onclick="toast(\'Reordering \u2713\',\'ok\')">Reorder</button><button class="btn" onclick="toast(\'Opening details...\',\'\')">Details</button></div></div>';
+  }).join('');
+}
+function buildIssues(){
+  var el=document.getElementById('issues-list');if(!el)return;
+  el.innerHTML=[
+    {id:'SGN-007',loc:'Crestview & Preston',issue:'Sign knocked over &mdash; reported by field agent',since:'3 hours ago',comp:'Permanent'},
+    {id:'SGN-011',loc:'Cross Timbers & Gerault',issue:'Sign missing &mdash; possibly stolen',since:'Yesterday',comp:'Day-of'},
+  ].map(function(i){
+    return '<div style="background:rgba(255,90,74,.06);border:1px solid rgba(255,90,74,.2);border-radius:12px;padding:15px;"><div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;"><div><div style="font-family:var(--font-mono);font-size:11px;color:var(--red);">'+i.id+' \u00b7 HIGH PRIORITY \u00b7 '+i.comp.toUpperCase()+'</div><div style="font-size:13px;font-weight:500;color:var(--tx);margin-top:3px;">'+i.issue+'</div><div style="font-size:12px;color:var(--txm);margin-top:2px;">'+i.loc+' \u00b7 Reported '+i.since+'</div></div><span class="pill pr">Open</span></div><div class="btn-r"><button class="btn bp" onclick="toast(\'Replacement dispatched \u2713\',\'ok\')">Dispatch</button><button class="btn" onclick="toast(\'Marked resolved \u2713\',\'ok\')">Resolve</button><button class="btn" onclick="toast(\'Filing claim...\',\'\')">File Claim</button></div></div>';
+  }).join('');
+}
+// Modals
+function showSignDetail(id){
+  var s=signs.find(function(x){return x.id===id;});if(!s)return;
+  var cc=s.comp==='green'?'cp-g':s.comp==='amber'?'cp-a':'cp-r';
+  var cl=s.comp==='green'?'Compliant \u2713':s.comp==='amber'?'Check HOA \u26A0':'\u26D4 Flagged';
+  openModal('<div class="mc"><div class="mh"><div><div class="mt">'+s.id+' \u00b7 <em>'+s.loc+'</em></div><div style="font-size:12px;color:var(--txm);margin-top:2px;">'+s.prop+' \u00b7 '+s.cat+' Sign</div></div><button class="mx" onclick="closeModal()">\u2715</button></div>'
+    +'<div class="mb2"><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:15px;">'
+    +'<div style="background:var(--s2);border:1px solid var(--bs);border-radius:9px;padding:11px;text-align:center;"><div style="font-family:var(--font-display);font-size:24px;color:var(--acc);">'+s.scans+'</div><div style="font-size:9px;color:var(--txd);font-family:var(--font-mono);">SCANS TODAY</div></div>'
+    +'<div style="background:var(--s2);border:1px solid var(--bs);border-radius:9px;padding:11px;text-align:center;"><div style="font-family:var(--font-display);font-size:24px;color:var(--grn);">68%</div><div style="font-size:9px;color:var(--txd);font-family:var(--font-mono);">ONBOARD RATE</div></div>'
+    +'<div style="background:var(--s2);border:1px solid var(--bs);border-radius:9px;padding:11px;text-align:center;"><span class="'+cc+'" style="font-size:11px;">'+cl+'</span><div style="font-size:9px;color:var(--txd);font-family:var(--font-mono);margin-top:4px;">COMPLIANCE</div></div>'
+    +'</div>'
+    +'<span class="sl">Sign Details</span>'
+    +'<div style="border:1px solid var(--bs);border-radius:9px;overflow:hidden;">'
+    +'<div style="display:flex;justify-content:space-between;padding:9px 13px;border-bottom:1px solid var(--bs);font-size:13px;"><span style="color:var(--txm);">Category</span><span class="pill '+(s.cat==='Permanent'?'pb2':'pa')+'">'+s.cat+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between;padding:9px 13px;border-bottom:1px solid var(--bs);font-size:13px;"><span style="color:var(--txm);">Type</span><span>'+s.type+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between;padding:9px 13px;border-bottom:1px solid var(--bs);font-size:13px;"><span style="color:var(--txm);">MLS #</span><span style="font-family:var(--font-mono);">'+s.mls+'</span></div>'
+    +'<div style="display:flex;justify-content:space-between;padding:9px 13px;font-size:13px;"><span style="color:var(--txm);">Chloe Code</span><span style="color:var(--acc);font-family:var(--font-mono);">'+s.code+'</span></div>'
+    +'</div>'
+    +'</div>'
+    +'<div class="mf"><button class="bc" onclick="closeModal()">Close</button><button class="bco" onclick="closeModal();showMove(\''+s.id+'\')">Move Sign \u2192</button></div></div>');
+}
+function showMove(id){
+  openModal('<div class="mc"><div class="mh"><div><div class="mt">Move <em>Sign</em></div><div style="font-size:12px;color:var(--txm);margin-top:2px;">'+id+'</div></div><button class="mx" onclick="closeModal()">\u2715</button></div><div class="mb2"><div class="fg" style="margin-bottom:11px;"><div class="fl">New Location</div><input class="fi" placeholder="Street intersection or address"></div><div class="fg" style="margin-bottom:11px;"><div class="fl">Reason</div><select class="fs"><option>Property sold / listing ended</option><option>Better traffic position</option><option>Compliance issue at current location</option><option>Other</option></select></div><div class="fg"><div class="fl">Requested Move Date</div><input class="fi" type="date"></div></div><div class="mf"><button class="bc" onclick="closeModal()">Cancel</button><button class="bco" onclick="closeModal();toast(\'Move request submitted \u2713\',\'ok\')">Submit \u2192</button></div></div>');
+}
+function showAssign(id){
+  openModal('<div class="mc"><div class="mh"><div><div class="mt">Assign <em>Chloe Code</em></div><div style="font-size:12px;color:var(--txm);margin-top:2px;">'+id+'</div></div><button class="mx" onclick="closeModal()">\u2715</button></div><div class="mb2"><div class="fg" style="margin-bottom:11px;"><div class="fl">Select Code</div><select class="fs"><option>CQ-AVAIL-13 (unassigned)</option><option>CQ-AVAIL-14 (unassigned)</option><option>Generate new code</option></select></div><div class="fg" style="margin-bottom:11px;"><div class="fl">Code Type</div><select class="fs"><option>Exterior \u2014 Yard Sign / Rider</option><option>Interior \u2014 Open House</option></select></div><div class="fg"><div class="fl">Property</div><select class="fs"><option>2847 Magnolia Dr</option><option>504 Lakeview Ct</option><option>Unassigned</option></select></div></div><div class="mf"><button class="bc" onclick="closeModal()">Cancel</button><button class="bco" onclick="closeModal();toast(\'Code assigned \u2713\',\'ok\')">Assign \u2192</button></div></div>');
+}
+function showReport(id){
+  openModal('<div class="mc"><div class="mh"><div><div class="mt">Report <em>Issue</em></div><div style="font-size:12px;color:var(--txm);margin-top:2px;">'+id+'</div></div><button class="mx" onclick="closeModal()">\u2715</button></div><div class="mb2"><div class="fg" style="margin-bottom:11px;"><div class="fl">Issue Type</div><select class="fs"><option>Sign knocked over</option><option>Sign stolen / missing</option><option>Sign damaged</option><option>QR code unreadable</option><option>ROW placement concern</option></select></div><div class="fg" style="margin-bottom:11px;"><div class="fl">Notes</div><textarea class="fi" rows="3" placeholder="Describe what you found..."></textarea></div><div class="fg"><div class="fl">Urgency</div><select class="fs"><option>High \u2014 active listing affected</option><option>Medium</option><option>Low</option></select></div></div><div class="mf"><button class="bc" onclick="closeModal()">Cancel</button><button class="bco" onclick="closeModal();toast(\'Issue reported \u2713\',\'ok\')">Submit \u2192</button></div></div>');
+}
+function showQRDetail(code,prop){
+  openModal('<div class="mc"><div class="mh"><div><div class="mt"><em>'+code+'</em></div><div style="font-size:12px;color:var(--txm);margin-top:2px;">'+prop+'</div></div><button class="mx" onclick="closeModal()">\u2715</button></div><div class="mb2" style="text-align:center;"><div style="width:130px;height:130px;background:var(--tx);border-radius:11px;display:grid;grid-template-columns:repeat(7,1fr);grid-template-rows:repeat(7,1fr);gap:2px;padding:11px;margin:0 auto 15px;">'+qrPat()+'</div><div style="font-family:var(--font-mono);font-size:13px;color:var(--acc);margin-bottom:5px;">'+code+'</div><div style="font-size:12px;color:var(--txm);margin-bottom:18px;">'+prop+'</div><div style="display:flex;gap:9px;justify-content:center;"><button class="btn bp" onclick="closeModal();toast(\'Print PDF downloaded \u2713\',\'ok\')">\u2B07 Download Print PDF</button><button class="btn" onclick="closeModal();toast(\'Code regenerated \u2713\',\'ok\')">\u1F504 Regenerate</button></div></div></div>');
+}
+function showOutreach(loc,owner){
+  var msg='Hi '+owner+', I\'m Marcus Rivera, a REALTOR\u00ae hosting an open house at 2847 Magnolia Drive this Saturday from 1\u20134 PM. Would you allow a small directional sign in your yard for just a few hours? I\'ll remove it same day. Feel free to stop by as a neighbor! \u2014 Marcus Rivera, REAL Broker LLC, 972-555-0147';
+  openModal('<div class="mc"><div class="mh"><div><div class="mt">Homeowner <em>Outreach</em></div><div style="font-size:12px;color:var(--txm);margin-top:2px;">'+loc+' \u00b7 '+owner+'</div></div><button class="mx" onclick="closeModal()">\u2715</button></div><div class="mb2"><span class="sl">Chloe-Generated Message</span><div style="background:var(--s2);border:1px solid var(--bs);border-radius:10px;padding:14px;font-size:13px;color:var(--tx);line-height:1.7;margin-bottom:14px;">'+msg+'</div><div style="display:flex;gap:9px;"><button class="btn" onclick="toast(\'Message copied to clipboard \u2713\',\'ok\')">Copy</button><button class="btn bp" onclick="closeModal();toast(\'Text sent to '+owner+' \u2713\',\'ok\')">Send Text &rarr;</button></div></div></div>');
+}
+function selType(el){document.querySelectorAll('.stg .st').forEach(function(c){c.classList.remove('sel');});el.classList.add('sel');}
+function selCat(type,el){document.querySelectorAll('#view-orders .st').forEach(function(c){c.classList.remove('sel');});el.classList.add('sel');}
+function submitOrder(){
+  var qty=document.getElementById('ord-qty').value||'2';
+  toast('Processing order for '+qty+' signs via SignPro DFW...','');
+  setTimeout(function(){toast('Order #ORD-090 submitted \u00b7 Est. delivery 2\u20133 business days \u2713','ok');},1200);
 }
 document.addEventListener('DOMContentLoaded',function(){
-  buildSignMap();buildSignRows();
-  document.getElementById('sm-add').addEventListener('click',function(){modal('Add New Sign','Enter the intersection or address where you want to place a new sign.','Add Sign',function(){toast('Sign added to placement queue ✓','ok');});});
-  document.getElementById('sm-route').addEventListener('click',function(){toast('Optimizing sign placement route...','');setTimeout(function(){toast('Route ready — 12 stops, 28 min ✓','ok');},1200);});
-  document.getElementById('sm-fullmap').addEventListener('click',function(){toast('Opening full map view...','');});
-  window.addEventListener('resize',function(){buildSignMap();});
+  var d=new Date().toISOString().split('T')[0];
+  var de=document.getElementById('ord-date');if(de)de.value=d;
+  buildMap('sign-map','sign-pins');
+  buildTopSigns();buildRecentAct();buildInventory();buildSchedule();
+  buildPlacementStops();buildHeatRanking();
+  buildCodes();buildPerf();buildHistory();buildIssues();
+  window.addEventListener('resize',function(){
+    setTimeout(function(){
+      buildMap('sign-map','sign-pins');
+    },100);
+  });
 });
-
 </script>
 <script src="chloeiq-nav.js"></script>
 </body>

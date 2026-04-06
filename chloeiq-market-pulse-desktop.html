@@ -9,11 +9,15 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#0A0B07;--s1:#13160D;--s2:#1A1E12;--s3:#222818;
-  --acc:#B8E030;--ad:rgba(184,224,48,.10);--am:rgba(184,224,48,.22);
-  --tx:#EEF0E5;--txm:#8A8F7A;--txd:#4A5040;
-  --br:rgba(184,224,48,.12);--bs:rgba(238,240,229,.06);
-  --grn:#4ADE80;--red:#FF5A4A;--amb:#F5A623;--blu:#60A5FA;--pur:#A78BFA;
+  --bg:#F5F5F7;--s1:#FFFFFF;--s2:#F0F0F2;--s3:#E8E8EA;--s4:#E0E0E2;
+  --acc:#1D6F42;--ad:rgba(29,111,66,.10);--am:rgba(29,111,66,.18);
+  --tx:#1D1D1F;--txm:#6E6E73;--txd:#AEAEB2;
+  --br:rgba(29,111,66,.25);--bs:rgba(0,0,0,.08);
+  --grn:#1D6F42;--red:#D93025;--amb:#B06000;--blu:#1A56DB;--pur:#6741D9;
+  --font-body:'DM Sans',sans-serif;
+  --font-display:'Fraunces',serif;
+  --font-mono:'DM Mono',monospace;
+  --radius:11px;
 }
 html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,sans-serif;font-size:14px;overflow-x:hidden;}
 .topbar{height:56px;display:flex;align-items:center;padding:0 28px;border-bottom:1px solid var(--bs);background:var(--bg);gap:12px;position:sticky;top:0;z-index:20;}
@@ -23,7 +27,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,s
 .pt{font-family:Fraunces,serif;font-size:18px;font-weight:400;}.pt em{color:var(--acc);font-style:italic;}
 .tr{margin-left:auto;display:flex;gap:8px;align-items:center;}
 .btn{display:inline-flex;align-items:center;gap:5px;padding:7px 15px;border-radius:8px;font-family:DM Sans,sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;border:none;transition:all .13s;}
-.bp{background:var(--acc);color:var(--bg);}.bp:hover{background:#c8f040;}
+.bp{background:var(--acc);color:var(--bg);}.bp:hover{background:#2E8B57;}
 .bs2{background:transparent;color:var(--txm);border:1px solid var(--bs);}.bs2:hover{border-color:var(--br);color:var(--tx);}
 .main{padding:28px 32px;display:flex;flex-direction:column;gap:22px;overflow-y:auto;padding-bottom:80px;}
 .panel{background:var(--s1);border:1px solid var(--bs);border-radius:12px;overflow:hidden;}
@@ -71,13 +75,16 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,s
 /* Competitor card */
 .comp-card{background:var(--s2);border:1px solid var(--bs);border-radius:10px;padding:14px 16px;transition:border-color .13s;}
 .comp-card:hover{border-color:var(--br);}
-.comp-card.yours{border-color:rgba(184,224,48,0.3);background:var(--ad);}
+.comp-card.yours{border-color:rgba(29,111,66,0.3);background:var(--ad);}
 
 /* Area chip */
 .area-chip{padding:6px 14px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--bs);background:var(--s2);color:var(--txm);transition:all .12s;font-weight:500;}
 .area-chip:hover{border-color:var(--br);color:var(--tx);}
 .area-chip.active{background:var(--ad);border-color:var(--br);color:var(--acc);}
 </style>
+<script>
+(function(){document.documentElement.style.background='#F5F5F7';document.documentElement.style.color='#1D1D1F';})();
+</script>
 </head>
 <body>
 <header class="topbar">
@@ -99,8 +106,8 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,s
     <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,90,74,0.15);border:1px solid rgba(255,90,74,0.3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">⚠️</div>
     <div style="flex:1;">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;">
-        <span style="font-size:13px;font-weight:600;color:#EEF0E5;">2847 Magnolia Drive</span>
-        <span style="font-size:10px;font-family:DM Mono,monospace;color:#B8E030;background:rgba(184,224,48,0.1);border:1px solid rgba(184,224,48,0.2);padding:2px 8px;border-radius:10px;">87% MATCH · YOUR #1</span>
+        <span style="font-size:13px;font-weight:600;color:#1D1D1F;">2847 Magnolia Drive</span>
+        <span style="font-size:10px;font-family:DM Mono,monospace;color:#1D6F42;background:rgba(29,111,66,0.1);border:1px solid rgba(29,111,66,0.2);padding:2px 8px;border-radius:10px;">87% MATCH · YOUR #1</span>
         <span style="font-size:10px;font-family:DM Mono,monospace;color:#FF5A4A;background:rgba(255,90,74,0.1);border:1px solid rgba(255,90,74,0.25);padding:2px 8px;border-radius:10px;">⏱ DAY 11 OF 11 AVG</span>
       </div>
       <div style="font-size:12px;color:var(--txm);">This home has been listed <span style="color:var(--red);font-weight:600;">11 days</span> — identical homes in 75022 go under contract in 11 days on average · 14 buyers have it saved · 3 showings scheduled today · Your window is closing</div>
@@ -285,7 +292,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,s
     <div id="mls-table"></div>
 
     <!-- Chloe insight strip -->
-    <div style="padding:12px 18px;background:rgba(184,224,48,0.03);border-top:1px solid var(--bs);display:flex;align-items:flex-start;gap:10px;">
+    <div style="padding:12px 18px;background:rgba(29,111,66,0.03);border-top:1px solid var(--bs);display:flex;align-items:flex-start;gap:10px;">
       <svg width="10" height="10" viewBox="0 0 24 24" fill="var(--acc)" style="margin-top:3px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/></svg>
       <div style="font-size:12px;color:var(--txm);line-height:1.6;">
         <strong style="color:var(--tx);">Chloe's read on these closings:</strong> Refined Modern buyers in your budget tier who moved within 7 days of their first showing won 94% of the time — and paid an average of 101.3% of list. Buyers who waited past 14 days saw their target homes go under contract 71% of the time. Your 87% match on Magnolia Drive puts you in the same profile as the buyers who closed the 4 comps above it.
@@ -296,7 +303,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,s
 </div>
 
 <script>
-function toast(msg,type){var o=document.getElementById('_t');if(o)o.remove();var t=document.createElement('div');t.id='_t';t.textContent=msg;var bg=type==='ok'?'#B8E030':'#1A1E12';var c=type==='ok'?'#0A0B07':'#EEF0E5';t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:'+bg+';color:'+c+';padding:10px 20px;border-radius:8px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all .2s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.4);border:1px solid rgba(184,224,48,.15);';document.body.appendChild(t);requestAnimationFrame(function(){t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';});t._x=setTimeout(function(){t.style.opacity='0';},2600);}
+function toast(msg,type){var o=document.getElementById('_t');if(o)o.remove();var t=document.createElement('div');t.id='_t';t.textContent=msg;var bg=type==='ok'?'#1D6F42':'#F0F0F2';var c=type==='ok'?'#F5F5F7':'#1D1D1F';t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:'+bg+';color:'+c+';padding:10px 20px;border-radius:8px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all .2s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.4);border:1px solid rgba(29,111,66,.15);';document.body.appendChild(t);requestAnimationFrame(function(){t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';});t._x=setTimeout(function(){t.style.opacity='0';},2600);}
 
 // ── DATA ────────────────────────────────────────────────────────────────────
 
@@ -421,7 +428,7 @@ function renderVelocity() {
   function yPos(v)  { return pad.top + iH - ((v - minV) / (maxV - minV)) * iH; }
 
   // Gridlines
-  ctx.strokeStyle = 'rgba(238,240,229,0.04)';
+  ctx.strokeStyle = 'rgba(0,0,0,0.04)';
   ctx.lineWidth = 1;
   for (var g = 0; g <= 3; g++) {
     var gy = pad.top + (g / 3) * iH;
@@ -429,7 +436,7 @@ function renderVelocity() {
   }
 
   // X labels
-  ctx.fillStyle = '#4A5040';
+  ctx.fillStyle = '#AEAEB2';
   ctx.font = '10px DM Mono, monospace';
   ctx.textAlign = 'center';
   velocityData.labels.forEach(function(l, i) { ctx.fillText(l, xPos(i), H - 6); });
@@ -444,7 +451,7 @@ function renderVelocity() {
   // List price line (muted)
   ctx.beginPath();
   velocityData.list.forEach(function(v, i) { i===0 ? ctx.moveTo(xPos(i),yPos(v)) : ctx.lineTo(xPos(i),yPos(v)); });
-  ctx.strokeStyle = 'rgba(184,224,48,0.3)';
+  ctx.strokeStyle = 'rgba(29,111,66,0.3)';
   ctx.lineWidth = 1.5;
   ctx.setLineDash([4,4]);
   ctx.stroke();
@@ -453,12 +460,12 @@ function renderVelocity() {
   // Sale price line (solid accent)
   ctx.beginPath();
   velocityData.sale.forEach(function(v, i) { i===0 ? ctx.moveTo(xPos(i),yPos(v)) : ctx.lineTo(xPos(i),yPos(v)); });
-  ctx.strokeStyle = '#B8E030';
+  ctx.strokeStyle = '#1D6F42';
   ctx.lineWidth = 2.5;
   ctx.stroke();
 
   // Dots on sale price
-  ctx.fillStyle = '#B8E030';
+  ctx.fillStyle = '#1D6F42';
   velocityData.sale.forEach(function(v, i) {
     ctx.beginPath(); ctx.arc(xPos(i), yPos(v), 3.5, 0, Math.PI*2); ctx.fill();
   });
@@ -466,14 +473,14 @@ function renderVelocity() {
   // Legend
   ctx.font = '10px DM Mono, monospace';
   ctx.textAlign = 'left';
-  ctx.fillStyle = 'rgba(184,224,48,0.5)';
+  ctx.fillStyle = 'rgba(29,111,66,0.5)';
   ctx.fillRect(pad.left, pad.top - 2, 16, 2);
-  ctx.fillStyle = '#4A5040';
+  ctx.fillStyle = '#AEAEB2';
   ctx.fillText('List Price', pad.left + 20, pad.top + 4);
-  ctx.strokeStyle = '#B8E030';
+  ctx.strokeStyle = '#1D6F42';
   ctx.lineWidth = 2.5;
   ctx.beginPath(); ctx.moveTo(pad.left + 90, pad.top - 1); ctx.lineTo(pad.left + 106, pad.top - 1); ctx.stroke();
-  ctx.fillStyle = '#B8E030';
+  ctx.fillStyle = '#1D6F42';
   ctx.fillText('Sale Price', pad.left + 110, pad.top + 4);
 }
 
@@ -497,19 +504,19 @@ function renderZipTable() {
   function demandLabel(d) {
     if (d >= 80) return { label:'Very High', color:'#FF5A4A', bg:'rgba(255,90,74,0.1)' };
     if (d >= 60) return { label:'High',      color:'#F5A623', bg:'rgba(245,166,35,0.1)' };
-    if (d >= 40) return { label:'Moderate',  color:'#B8E030', bg:'rgba(184,224,48,0.1)' };
+    if (d >= 40) return { label:'Moderate',  color:'#1D6F42', bg:'rgba(29,111,66,0.1)' };
     return               { label:'Low',      color:'#60A5FA', bg:'rgba(96,165,250,0.1)' };
   }
 
   function trendColor(t) {
-    return t.startsWith('+') ? '#4ADE80' : t === '0%' ? '#8A8F7A' : '#FF5A4A';
+    return t.startsWith('+') ? '#4ADE80' : t === '0%' ? '#6E6E73' : '#FF5A4A';
   }
 
   el.innerHTML = zones.map(function(z) {
     var dl = demandLabel(z.demand);
     var barW = z.demand;
-    var rowBg = z.yours ? 'background:rgba(184,224,48,0.04);' : '';
-    return '<div style="display:grid;grid-template-columns:1fr 90px 72px 80px 90px;gap:8px;padding:10px 18px;border-bottom:1px solid var(--bs);align-items:center;transition:background 0.11s;' + rowBg + '" onmouseover="this.style.background=\'var(--s2)\'" onmouseout="this.style.background=\'' + (z.yours ? 'rgba(184,224,48,0.04)' : '') + '\'">'
+    var rowBg = z.yours ? 'background:rgba(29,111,66,0.04);' : '';
+    return '<div style="display:grid;grid-template-columns:1fr 90px 72px 80px 90px;gap:8px;padding:10px 18px;border-bottom:1px solid var(--bs);align-items:center;transition:background 0.11s;' + rowBg + '" onmouseover="this.style.background=\'var(--s2)\'" onmouseout="this.style.background=\'' + (z.yours ? 'rgba(29,111,66,0.04)' : '') + '\'">'
 
       // Area
       + '<div>'
@@ -631,7 +638,7 @@ function renderClosings() {
     var overColor = c.sold > c.list ? 'var(--red)' : c.sold < c.list ? 'var(--grn)' : 'var(--txm)';
     var overLabel = c.sold > c.list ? '+$' + (over/1000).toFixed(0) + 'K over ask' : c.sold < c.list ? '-$' + (Math.abs(over)/1000).toFixed(0) + 'K under ask' : 'At ask';
     var domColor = c.dom <= 10 ? 'var(--red)' : c.dom <= 16 ? 'var(--amb)' : 'var(--txm)';
-    var relBg = c.relevance === 'high' ? 'rgba(184,224,48,0.04)' : '';
+    var relBg = c.relevance === 'high' ? 'rgba(29,111,66,0.04)' : '';
     var dnaColor = c.dnaMatch >= 85 ? 'var(--acc)' : c.dnaMatch >= 70 ? 'var(--amb)' : 'var(--txm)';
 
     // Relevance tag
@@ -788,36 +795,36 @@ function showActNowModal() {
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:9990;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:32px 16px;';
 
   var html = '';
-  html += '<div style="background:#13160D;border:1px solid rgba(255,90,74,0.25);border-radius:16px;width:580px;max-width:95vw;box-shadow:0 28px 80px rgba(0,0,0,0.7);overflow:hidden;">';
+  html += '<div style="background:#FFFFFF;border:1px solid rgba(255,90,74,0.25);border-radius:16px;width:580px;max-width:95vw;box-shadow:0 28px 80px rgba(0,0,0,0.7);overflow:hidden;">';
 
   // ── Header ──
   html += '<div style="background:linear-gradient(135deg,rgba(255,90,74,0.1),rgba(255,90,74,0.03));padding:22px 26px;border-bottom:1px solid rgba(255,90,74,0.15);display:flex;align-items:flex-start;justify-content:space-between;">';
   html += '<div>';
   html += '<div style="font-size:10px;font-family:DM Mono,monospace;letter-spacing:0.1em;text-transform:uppercase;color:#FF5A4A;margin-bottom:6px;">⚠ High Competition · Act Within 48 Hours</div>';
-  html += '<div style="font-family:Fraunces,serif;font-size:22px;color:#EEF0E5;line-height:1.1;">Your Next Move on <em style=\'color:#B8E030;font-style:italic;\'>Magnolia Drive</em></div>';
-  html += '<div style="font-size:12px;color:#8A8F7A;margin-top:4px;">2847 Magnolia Drive · Flower Mound, TX · $724,000 · 87% Match</div>';
+  html += '<div style="font-family:Fraunces,serif;font-size:22px;color:#1D1D1F;line-height:1.1;">Your Next Move on <em style=\'color:#1D6F42;font-style:italic;\'>Magnolia Drive</em></div>';
+  html += '<div style="font-size:12px;color:#6E6E73;margin-top:4px;">2847 Magnolia Drive · Flower Mound, TX · $724,000 · 87% Match</div>';
   html += '</div>';
-  html += '<button id="_an-x" style="background:none;border:none;color:#8A8F7A;font-size:18px;cursor:pointer;padding:2px 6px;">✕</button>';
+  html += '<button id="_an-x" style="background:none;border:none;color:#6E6E73;font-size:18px;cursor:pointer;padding:2px 6px;">✕</button>';
   html += '</div>';
 
   // ── Urgency stats row ──
-  html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;border-bottom:1px solid rgba(238,240,229,0.06);">';
+  html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;border-bottom:1px solid rgba(0,0,0,0.06);">';
   [
     { val:'14',   label:'Buyers have saved this', color:'#F5A623' },
     { val:'3',    label:'Showings today',          color:'#F5A623' },
     { val:'11d',  label:'Listed · avg DOM 11d',   color:'#FF5A4A' },
-    { val:'87%',  label:'Your match score',        color:'#B8E030' },
+    { val:'87%',  label:'Your match score',        color:'#1D6F42' },
   ].forEach(function(s, i) {
-    html += '<div style="padding:14px 0;text-align:center;' + (i < 3 ? 'border-right:1px solid rgba(238,240,229,0.06);' : '') + '">';
+    html += '<div style="padding:14px 0;text-align:center;' + (i < 3 ? 'border-right:1px solid rgba(0,0,0,0.06);' : '') + '">';
     html += '<div style="font-family:Fraunces,serif;font-size:22px;color:' + s.color + ';">' + s.val + '</div>';
-    html += '<div style="font-size:10px;color:#8A8F7A;text-transform:uppercase;letter-spacing:0.06em;font-family:DM Mono,monospace;margin-top:3px;">' + s.label + '</div>';
+    html += '<div style="font-size:10px;color:#6E6E73;text-transform:uppercase;letter-spacing:0.06em;font-family:DM Mono,monospace;margin-top:3px;">' + s.label + '</div>';
     html += '</div>';
   });
   html += '</div>';
 
   // ── Action cards ──
   html += '<div style="padding:20px 24px;">';
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:14px;">Choose Your Next Step</div>';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin-bottom:14px;">Choose Your Next Step</div>';
   html += '<div style="display:flex;flex-direction:column;gap:10px;" id="_an-actions">';
 
   var actions = [
@@ -844,15 +851,15 @@ function showActNowModal() {
   ];
 
   actions.forEach(function(a) {
-    html += '<div style="display:flex;align-items:center;gap:14px;background:#0E1108;border:1px solid rgba(238,240,229,0.07);border-radius:11px;padding:14px 16px;transition:border-color 0.13s;cursor:pointer;" class="_an-card" id="' + a.id + '" onmouseover="this.style.borderColor=\'rgba(184,224,48,0.25)\'" onmouseout="this.style.borderColor=\'rgba(238,240,229,0.07)\'">';
+    html += '<div style="display:flex;align-items:center;gap:14px;background:#F5F5F7;border:1px solid rgba(0,0,0,0.07);border-radius:11px;padding:14px 16px;transition:border-color 0.13s;cursor:pointer;" class="_an-card" id="' + a.id + '" onmouseover="this.style.borderColor=\'rgba(29,111,66,0.25)\'" onmouseout="this.style.borderColor=\'rgba(0,0,0,0.07)\'">';
     html += '<div style="font-size:22px;flex-shrink:0;">' + a.icon + '</div>';
     html += '<div style="flex:1;">';
-    html += '<div style="font-size:13px;font-weight:600;color:#EEF0E5;margin-bottom:3px;">' + a.label + '</div>';
-    html += '<div style="font-size:11px;color:#8A8F7A;line-height:1.5;">' + a.sub + '</div>';
+    html += '<div style="font-size:13px;font-weight:600;color:#1D1D1F;margin-bottom:3px;">' + a.label + '</div>';
+    html += '<div style="font-size:11px;color:#6E6E73;line-height:1.5;">' + a.sub + '</div>';
     html += '</div>';
     var btnStyle = a.accent
-      ? 'padding:9px 18px;border-radius:8px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;white-space:nowrap;'
-      : 'padding:9px 18px;border-radius:8px;border:1px solid rgba(184,224,48,0.2);background:rgba(184,224,48,0.06);color:#B8E030;font-family:DM Sans,sans-serif;font-size:12px;font-weight:500;cursor:pointer;flex-shrink:0;white-space:nowrap;';
+      ? 'padding:9px 18px;border-radius:8px;border:none;background:#1D6F42;color:#F5F5F7;font-family:DM Sans,sans-serif;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;white-space:nowrap;'
+      : 'padding:9px 18px;border-radius:8px;border:1px solid rgba(29,111,66,0.2);background:rgba(29,111,66,0.06);color:#1D6F42;font-family:DM Sans,sans-serif;font-size:12px;font-weight:500;cursor:pointer;flex-shrink:0;white-space:nowrap;';
     html += '<button style="' + btnStyle + '">' + a.cta + '</button>';
     html += '</div>';
   });
@@ -860,17 +867,17 @@ function showActNowModal() {
   html += '</div>';
 
   // ── Chloe insight ──
-  html += '<div style="margin-top:16px;background:#0A0B07;border:1px solid rgba(184,224,48,0.12);border-radius:10px;padding:14px 16px;display:flex;align-items:flex-start;gap:10px;">';
-  html += '<svg width="10" height="10" viewBox="0 0 24 24" fill="#B8E030" style="margin-top:3px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/></svg>';
-  html += '<div style="font-size:12px;color:#8A8F7A;line-height:1.6;"><strong style="color:#EEF0E5;">Chloe says:</strong> Based on your visit today and your 87% match score, Magnolia Drive is your strongest opportunity in the current market. The home is at the average days-on-market threshold for 75022. 14 buyers have it saved and 3 showings are booked today. A showing request now puts you in a strong position.</div>';
+  html += '<div style="margin-top:16px;background:#F5F5F7;border:1px solid rgba(29,111,66,0.12);border-radius:10px;padding:14px 16px;display:flex;align-items:flex-start;gap:10px;">';
+  html += '<svg width="10" height="10" viewBox="0 0 24 24" fill="#1D6F42" style="margin-top:3px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/></svg>';
+  html += '<div style="font-size:12px;color:#6E6E73;line-height:1.6;"><strong style="color:#1D1D1F;">Chloe says:</strong> Based on your visit today and your 87% match score, Magnolia Drive is your strongest opportunity in the current market. The home is at the average days-on-market threshold for 75022. 14 buyers have it saved and 3 showings are booked today. A showing request now puts you in a strong position.</div>';
   html += '</div>';
 
   html += '</div>'; // end padding
 
   // ── Footer ──
-  html += '<div style="padding:14px 24px;border-top:1px solid rgba(238,240,229,0.06);display:flex;align-items:center;justify-content:space-between;">';
-  html += '<div style="font-size:11px;color:#4A5040;">Marcus Rivera · REAL Broker, LLC · (214) 555-0192</div>';
-  html += '<button id="_an-close" style="padding:8px 18px;border-radius:8px;border:1px solid rgba(238,240,229,0.1);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Dismiss</button>';
+  html += '<div style="padding:14px 24px;border-top:1px solid rgba(0,0,0,0.06);display:flex;align-items:center;justify-content:space-between;">';
+  html += '<div style="font-size:11px;color:#AEAEB2;">Marcus Rivera · REAL Broker, LLC · (214) 555-0192</div>';
+  html += '<button id="_an-close" style="padding:8px 18px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);background:transparent;color:#6E6E73;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Dismiss</button>';
   html += '</div>';
 
   html += '</div>'; // end card
@@ -915,50 +922,50 @@ function showScheduleFromPulse() {
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:9991;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:32px 16px;';
 
   var html = '';
-  html += '<div style="background:#13160D;border:1px solid rgba(184,224,48,0.18);border-radius:16px;width:500px;max-width:95vw;box-shadow:0 24px 72px rgba(0,0,0,0.7);">';
+  html += '<div style="background:#FFFFFF;border:1px solid rgba(29,111,66,0.18);border-radius:16px;width:500px;max-width:95vw;box-shadow:0 24px 72px rgba(0,0,0,0.7);">';
   html += '<div style="padding:24px 26px 0;">';
   html += '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;">';
-  html += '<div><div style="font-family:Fraunces,serif;font-size:20px;color:#EEF0E5;">Schedule a <em style=\'color:#B8E030;\'>Showing</em></div>';
-  html += '<div style="font-size:12px;color:#8A8F7A;margin-top:4px;">2847 Magnolia Drive · with Marcus Rivera</div></div>';
-  html += '<button id="_sp-x" style="background:none;border:none;color:#8A8F7A;font-size:18px;cursor:pointer;padding:2px 6px;">✕</button>';
+  html += '<div><div style="font-family:Fraunces,serif;font-size:20px;color:#1D1D1F;">Schedule a <em style=\'color:#1D6F42;\'>Showing</em></div>';
+  html += '<div style="font-size:12px;color:#6E6E73;margin-top:4px;">2847 Magnolia Drive · with Marcus Rivera</div></div>';
+  html += '<button id="_sp-x" style="background:none;border:none;color:#6E6E73;font-size:18px;cursor:pointer;padding:2px 6px;">✕</button>';
   html += '</div>';
-  html += '<div style="height:1px;background:rgba(184,224,48,0.1);margin:16px 0 18px;"></div>';
+  html += '<div style="height:1px;background:rgba(29,111,66,0.1);margin:16px 0 18px;"></div>';
 
   // Quick slots
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:12px;">Available Today &amp; Tomorrow</div>';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin-bottom:12px;">Available Today &amp; Tomorrow</div>';
   html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;">';
   var slots = ['Today · 3:00 PM','Today · 5:00 PM','Tomorrow · 10:00 AM','Tomorrow · 2:00 PM'];
   slots.forEach(function(slot, i) {
-    var active = i === 0 ? 'border-color:rgba(184,224,48,0.5);background:rgba(184,224,48,0.08);color:#B8E030;' : 'border-color:rgba(238,240,229,0.08);background:#0E1108;color:#8A8F7A;';
+    var active = i === 0 ? 'border-color:rgba(29,111,66,0.5);background:rgba(29,111,66,0.08);color:#1D6F42;' : 'border-color:rgba(0,0,0,0.08);background:#F5F5F7;color:#6E6E73;';
     html += '<div class="_sp-slot" data-slot="' + slot + '" style="' + active + 'border:1px solid;border-radius:9px;padding:11px 14px;cursor:pointer;font-size:13px;text-align:center;transition:all 0.12s;">' + slot + '</div>';
   });
   html += '</div>';
 
   // Custom date
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:10px;">Or Pick a Custom Time</div>';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin-bottom:10px;">Or Pick a Custom Time</div>';
   html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">';
-  html += '<div><label style="display:block;font-size:11px;color:#8A8F7A;margin-bottom:6px;">Date</label><input id="_sp-date" type="date" style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;color-scheme:dark;" /></div>';
-  html += '<div><label style="display:block;font-size:11px;color:#8A8F7A;margin-bottom:6px;">Time</label><input id="_sp-time" type="time" style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;color-scheme:dark;" /></div>';
+  html += '<div><label style="display:block;font-size:11px;color:#6E6E73;margin-bottom:6px;">Date</label><input id="_sp-date" type="date" style="width:100%;background:#F5F5F7;border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 12px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;color-scheme:dark;" /></div>';
+  html += '<div><label style="display:block;font-size:11px;color:#6E6E73;margin-bottom:6px;">Time</label><input id="_sp-time" type="time" style="width:100%;background:#F5F5F7;border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 12px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;color-scheme:dark;" /></div>';
   html += '</div>';
 
   // Tour type
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:10px;">Tour Type</div>';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin-bottom:10px;">Tour Type</div>';
   html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:4px;">';
   [['🏠','In-Person','Walk the property'],['📹','Video Tour','Live call walkthrough'],['🔑','Self-Led','Unaccompanied']].forEach(function(t, i) {
-    var act = i === 0 ? 'border-color:rgba(184,224,48,0.4);background:rgba(184,224,48,0.06);' : 'border-color:rgba(238,240,229,0.08);background:#0E1108;';
+    var act = i === 0 ? 'border-color:rgba(29,111,66,0.4);background:rgba(29,111,66,0.06);' : 'border-color:rgba(0,0,0,0.08);background:#F5F5F7;';
     html += '<div class="_sp-type" style="' + act + 'border:1px solid;border-radius:9px;padding:12px;cursor:pointer;text-align:center;transition:all 0.12s;">';
     html += '<div style="font-size:18px;margin-bottom:5px;">' + t[0] + '</div>';
-    html += '<div style="font-size:12px;color:#EEF0E5;font-weight:500;">' + t[1] + '</div>';
-    html += '<div style="font-size:10px;color:#8A8F7A;margin-top:2px;">' + t[2] + '</div>';
+    html += '<div style="font-size:12px;color:#1D1D1F;font-weight:500;">' + t[1] + '</div>';
+    html += '<div style="font-size:10px;color:#6E6E73;margin-top:2px;">' + t[2] + '</div>';
     html += '</div>';
   });
   html += '</div></div>';
 
-  html += '<div style="padding:14px 26px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(184,224,48,0.08);">';
-  html += '<div style="font-size:11px;color:#4A5040;">Marcus Rivera confirms within 2 hours.</div>';
+  html += '<div style="padding:14px 26px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(29,111,66,0.08);">';
+  html += '<div style="font-size:11px;color:#AEAEB2;">Marcus Rivera confirms within 2 hours.</div>';
   html += '<div style="display:flex;gap:10px;">';
-  html += '<button id="_sp-cancel" style="padding:9px 18px;border-radius:8px;border:1px solid rgba(238,240,229,0.1);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Cancel</button>';
-  html += '<button id="_sp-confirm" style="padding:9px 22px;border-radius:8px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Request Showing →</button>';
+  html += '<button id="_sp-cancel" style="padding:9px 18px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);background:transparent;color:#6E6E73;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Cancel</button>';
+  html += '<button id="_sp-confirm" style="padding:9px 22px;border-radius:8px;border:none;background:#1D6F42;color:#F5F5F7;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Request Showing →</button>';
   html += '</div></div>';
   html += '</div>';
 
@@ -969,13 +976,13 @@ function showScheduleFromPulse() {
   overlay.querySelectorAll('._sp-slot').forEach(function(s) {
     s.addEventListener('click', function() {
       overlay.querySelectorAll('._sp-slot').forEach(function(x) {
-        x.style.borderColor = 'rgba(238,240,229,0.08)';
-        x.style.background = '#0E1108';
-        x.style.color = '#8A8F7A';
+        x.style.borderColor = 'rgba(0,0,0,0.08)';
+        x.style.background = '#F5F5F7';
+        x.style.color = '#6E6E73';
       });
-      s.style.borderColor = 'rgba(184,224,48,0.5)';
-      s.style.background = 'rgba(184,224,48,0.08)';
-      s.style.color = '#B8E030';
+      s.style.borderColor = 'rgba(29,111,66,0.5)';
+      s.style.background = 'rgba(29,111,66,0.08)';
+      s.style.color = '#1D6F42';
     });
   });
 
@@ -983,11 +990,11 @@ function showScheduleFromPulse() {
   overlay.querySelectorAll('._sp-type').forEach(function(t) {
     t.addEventListener('click', function() {
       overlay.querySelectorAll('._sp-type').forEach(function(x) {
-        x.style.borderColor = 'rgba(238,240,229,0.08)';
-        x.style.background = '#0E1108';
+        x.style.borderColor = 'rgba(0,0,0,0.08)';
+        x.style.background = '#F5F5F7';
       });
-      t.style.borderColor = 'rgba(184,224,48,0.4)';
-      t.style.background = 'rgba(184,224,48,0.06)';
+      t.style.borderColor = 'rgba(29,111,66,0.4)';
+      t.style.background = 'rgba(29,111,66,0.06)';
     });
   });
 
@@ -995,7 +1002,7 @@ function showScheduleFromPulse() {
   document.getElementById('_sp-x').addEventListener('click', function() { overlay.remove(); });
   document.getElementById('_sp-cancel').addEventListener('click', function() { overlay.remove(); });
   document.getElementById('_sp-confirm').addEventListener('click', function() {
-    var activeSlot = overlay.querySelector('._sp-slot[style*="rgba(184,224,48,0.5)"]');
+    var activeSlot = overlay.querySelector('._sp-slot[style*="rgba(29,111,66,0.5)"]');
     var slotText = activeSlot ? activeSlot.getAttribute('data-slot') : (document.getElementById('_sp-date').value || 'your selected time');
     overlay.remove();
     toast('Showing requested · Marcus Rivera will confirm shortly ✓', 'ok');
@@ -1029,52 +1036,52 @@ function showIntentModal() {
 // ── REPRESENTED: Share terms → send to buyer's own agent ──────────────────
 function renderRepresentedFlow(overlay) {
   var html = '';
-  html += '<div style="background:#13160D;border:1px solid rgba(184,224,48,0.18);border-radius:16px;width:520px;max-width:95vw;box-shadow:0 24px 72px rgba(0,0,0,0.7);">';
+  html += '<div style="background:#FFFFFF;border:1px solid rgba(29,111,66,0.18);border-radius:16px;width:520px;max-width:95vw;box-shadow:0 24px 72px rgba(0,0,0,0.7);">';
   html += '<div style="padding:24px 26px 0;">';
 
   // Header
   html += '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;">';
   html += '<div>';
-  html += '<div style="font-family:Fraunces,serif;font-size:20px;color:#EEF0E5;">Share Your <em style=\'color:#B8E030;\'>Intent</em> with Your Agent</div>';
-  html += '<div style="font-size:12px;color:#8A8F7A;margin-top:4px;">2847 Magnolia Drive · List price: $724,000 · 87% match</div>';
+  html += '<div style="font-family:Fraunces,serif;font-size:20px;color:#1D1D1F;">Share Your <em style=\'color:#1D6F42;\'>Intent</em> with Your Agent</div>';
+  html += '<div style="font-size:12px;color:#6E6E73;margin-top:4px;">2847 Magnolia Drive · List price: $724,000 · 87% match</div>';
   html += '</div>';
-  html += '<button id="_of-x" style="background:none;border:none;color:#8A8F7A;font-size:18px;cursor:pointer;padding:2px 6px;">✕</button>';
+  html += '<button id="_of-x" style="background:none;border:none;color:#6E6E73;font-size:18px;cursor:pointer;padding:2px 6px;">✕</button>';
   html += '</div>';
-  html += '<div style="height:1px;background:rgba(184,224,48,0.1);margin:16px 0 18px;"></div>';
+  html += '<div style="height:1px;background:rgba(29,111,66,0.1);margin:16px 0 18px;"></div>';
 
   // Chloe coaching note
-  html += '<div style="background:#0A0B07;border:1px solid rgba(184,224,48,0.15);border-radius:10px;padding:13px 15px;margin-bottom:18px;display:flex;gap:10px;">';
-  html += '<svg width="10" height="10" viewBox="0 0 24 24" fill="#B8E030" style="margin-top:3px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/></svg>';
-  html += '<div style="font-size:12px;color:#8A8F7A;line-height:1.6;"><strong style="color:#EEF0E5;">Chloe\'s read:</strong> Homes in your match closing at 101.3% of list price — and this home is now at the average days-on-market threshold for its tier. Your agent is best placed to advise on timing and pricing strategy. Share your thinking below and let them guide the process.</div>';
+  html += '<div style="background:#F5F5F7;border:1px solid rgba(29,111,66,0.15);border-radius:10px;padding:13px 15px;margin-bottom:18px;display:flex;gap:10px;">';
+  html += '<svg width="10" height="10" viewBox="0 0 24 24" fill="#1D6F42" style="margin-top:3px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/></svg>';
+  html += '<div style="font-size:12px;color:#6E6E73;line-height:1.6;"><strong style="color:#1D1D1F;">Chloe\'s read:</strong> Homes in your match closing at 101.3% of list price — and this home is now at the average days-on-market threshold for its tier. Your agent is best placed to advise on timing and pricing strategy. Share your thinking below and let them guide the process.</div>';
   html += '</div>';
 
   // Price thinking
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:10px;">What Price Are You Thinking?</div>';
-  html += '<div style="background:linear-gradient(135deg,rgba(184,224,48,0.08),rgba(184,224,48,0.02));border:1px solid rgba(184,224,48,0.15);border-radius:12px;padding:20px;text-align:center;margin-bottom:14px;">';
-  html += '<div style="font-family:Fraunces,serif;font-size:40px;color:#B8E030;line-height:1;" id="_of-amt">$735,000</div>';
-  html += '<div style="font-size:10px;color:#8A8F7A;font-family:DM Mono,monospace;margin-top:4px;" id="_of-pct">101.5% of list · <span style="color:#B8E030;">Competitive — your agent will advise</span></div>';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin-bottom:10px;">What Price Are You Thinking?</div>';
+  html += '<div style="background:linear-gradient(135deg,rgba(29,111,66,0.08),rgba(29,111,66,0.02));border:1px solid rgba(29,111,66,0.15);border-radius:12px;padding:20px;text-align:center;margin-bottom:14px;">';
+  html += '<div style="font-family:Fraunces,serif;font-size:40px;color:#1D6F42;line-height:1;" id="_of-amt">$735,000</div>';
+  html += '<div style="font-size:10px;color:#6E6E73;font-family:DM Mono,monospace;margin-top:4px;" id="_of-pct">101.5% of list · <span style="color:#1D6F42;">Competitive — your agent will advise</span></div>';
   html += '</div>';
-  html += '<input type="range" id="_of-slider" min="700" max="800" value="735" style="width:100%;-webkit-appearance:none;height:4px;border-radius:2px;background:linear-gradient(to right,#B8E030 35%,#1A1E12 35%);outline:none;cursor:pointer;margin-bottom:6px;">';
-  html += '<div style="display:flex;justify-content:space-between;font-size:10px;color:#4A5040;font-family:DM Mono,monospace;margin-bottom:18px;"><span>$700K</span><span>$724K list</span><span>$750K</span><span>$800K</span></div>';
+  html += '<input type="range" id="_of-slider" min="700" max="800" value="735" style="width:100%;-webkit-appearance:none;height:4px;border-radius:2px;background:linear-gradient(to right,#1D6F42 35%,#F0F0F2 35%);outline:none;cursor:pointer;margin-bottom:6px;">';
+  html += '<div style="display:flex;justify-content:space-between;font-size:10px;color:#AEAEB2;font-family:DM Mono,monospace;margin-bottom:18px;"><span>$700K</span><span>$724K list</span><span>$750K</span><span>$800K</span></div>';
 
   // Preferences
   html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">';
-  html += '<div><label style="display:block;font-size:11px;color:#8A8F7A;margin-bottom:6px;">Ideal Close Timeline</label><select style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;outline:none;"><option>21 days</option><option selected>30 days</option><option>45 days</option><option>60 days</option></select></div>';
-  html += '<div><label style="display:block;font-size:11px;color:#8A8F7A;margin-bottom:6px;">Inspection Preference</label><select style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;outline:none;"><option selected>Standard (10 days)</option><option>Waived</option><option>As-Is</option></select></div>';
+  html += '<div><label style="display:block;font-size:11px;color:#6E6E73;margin-bottom:6px;">Ideal Close Timeline</label><select style="width:100%;background:#F5F5F7;border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 12px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-size:13px;outline:none;"><option>21 days</option><option selected>30 days</option><option>45 days</option><option>60 days</option></select></div>';
+  html += '<div><label style="display:block;font-size:11px;color:#6E6E73;margin-bottom:6px;">Inspection Preference</label><select style="width:100%;background:#F5F5F7;border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 12px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-size:13px;outline:none;"><option selected>Standard (10 days)</option><option>Waived</option><option>As-Is</option></select></div>';
   html += '</div>';
 
   // Note to agent
-  html += '<div style="margin-bottom:4px;"><label style="display:block;font-size:11px;color:#8A8F7A;margin-bottom:6px;">Anything else your agent should know?</label>';
-  html += '<textarea rows="2" placeholder="e.g. We\'re flexible on close date, but inspection is a must. Already pre-approved." style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;resize:none;outline:none;box-sizing:border-box;"></textarea>';
+  html += '<div style="margin-bottom:4px;"><label style="display:block;font-size:11px;color:#6E6E73;margin-bottom:6px;">Anything else your agent should know?</label>';
+  html += '<textarea rows="2" placeholder="e.g. We\'re flexible on close date, but inspection is a must. Already pre-approved." style="width:100%;background:#F5F5F7;border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 12px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-size:13px;resize:none;outline:none;box-sizing:border-box;"></textarea>';
   html += '</div>';
   html += '</div>'; // end padding
 
   // Footer
-  html += '<div style="padding:14px 26px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(184,224,48,0.08);">';
-  html += '<div style="font-size:11px;color:#4A5040;">Your agent will handle all negotiations and paperwork.</div>';
+  html += '<div style="padding:14px 26px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(29,111,66,0.08);">';
+  html += '<div style="font-size:11px;color:#AEAEB2;">Your agent will handle all negotiations and paperwork.</div>';
   html += '<div style="display:flex;gap:10px;">';
-  html += '<button id="_of-cancel" style="padding:9px 18px;border-radius:8px;border:1px solid rgba(238,240,229,0.1);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Cancel</button>';
-  html += '<button id="_of-submit" style="padding:9px 22px;border-radius:8px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Send to My Agent →</button>';
+  html += '<button id="_of-cancel" style="padding:9px 18px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);background:transparent;color:#6E6E73;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Cancel</button>';
+  html += '<button id="_of-submit" style="padding:9px 22px;border-radius:8px;border:none;background:#1D6F42;color:#F5F5F7;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Send to My Agent →</button>';
   html += '</div></div>';
   html += '</div>'; // end card
 
@@ -1085,41 +1092,41 @@ function renderRepresentedFlow(overlay) {
 // ── UNREPRESENTED: Connect with Marcus ────────────────────────────────────────
 function renderUnrepresentedFlow(overlay) {
   var html = '';
-  html += '<div style="background:#13160D;border:1px solid rgba(184,224,48,0.18);border-radius:16px;width:520px;max-width:95vw;box-shadow:0 24px 72px rgba(0,0,0,0.7);">';
+  html += '<div style="background:#FFFFFF;border:1px solid rgba(29,111,66,0.18);border-radius:16px;width:520px;max-width:95vw;box-shadow:0 24px 72px rgba(0,0,0,0.7);">';
   html += '<div style="padding:24px 26px 0;">';
 
   // Header
   html += '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;">';
   html += '<div>';
-  html += '<div style="font-family:Fraunces,serif;font-size:20px;color:#EEF0E5;">Ready to <em style=\'color:#B8E030;\'>Move Forward?</em></div>';
-  html += '<div style="font-size:12px;color:#8A8F7A;margin-top:4px;">2847 Magnolia Drive · List price: $724,000 · 87% match</div>';
+  html += '<div style="font-family:Fraunces,serif;font-size:20px;color:#1D1D1F;">Ready to <em style=\'color:#1D6F42;\'>Move Forward?</em></div>';
+  html += '<div style="font-size:12px;color:#6E6E73;margin-top:4px;">2847 Magnolia Drive · List price: $724,000 · 87% match</div>';
   html += '</div>';
-  html += '<button id="_of-x" style="background:none;border:none;color:#8A8F7A;font-size:18px;cursor:pointer;padding:2px 6px;">✕</button>';
+  html += '<button id="_of-x" style="background:none;border:none;color:#6E6E73;font-size:18px;cursor:pointer;padding:2px 6px;">✕</button>';
   html += '</div>';
-  html += '<div style="height:1px;background:rgba(184,224,48,0.1);margin:16px 0 18px;"></div>';
+  html += '<div style="height:1px;background:rgba(29,111,66,0.1);margin:16px 0 18px;"></div>';
 
   // Chloe explanation
-  html += '<div style="background:#0A0B07;border:1px solid rgba(184,224,48,0.15);border-radius:10px;padding:13px 15px;margin-bottom:20px;display:flex;gap:10px;">';
-  html += '<svg width="10" height="10" viewBox="0 0 24 24" fill="#B8E030" style="margin-top:3px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/></svg>';
-  html += '<div style="font-size:12px;color:#8A8F7A;line-height:1.6;"><strong style="color:#EEF0E5;">You\'re not currently represented.</strong> To move on this home, you\'ll need a buyer\'s agent. Chloe can connect you with Marcus Rivera right now — he can refer you to a buyer\'s agent or discuss your representation options. Your 87% match score and visit data go with you.</div>';
+  html += '<div style="background:#F5F5F7;border:1px solid rgba(29,111,66,0.15);border-radius:10px;padding:13px 15px;margin-bottom:20px;display:flex;gap:10px;">';
+  html += '<svg width="10" height="10" viewBox="0 0 24 24" fill="#1D6F42" style="margin-top:3px;flex-shrink:0;"><circle cx="12" cy="12" r="10"/></svg>';
+  html += '<div style="font-size:12px;color:#6E6E73;line-height:1.6;"><strong style="color:#1D1D1F;">You\'re not currently represented.</strong> To move on this home, you\'ll need a buyer\'s agent. Chloe can connect you with Marcus Rivera right now — he can refer you to a buyer\'s agent or discuss your representation options. Your 87% match score and visit data go with you.</div>';
   html += '</div>';
 
   // Agent card
-  html += '<div style="background:#1A1E12;border:1px solid rgba(184,224,48,0.15);border-radius:12px;padding:18px 20px;margin-bottom:18px;">';
+  html += '<div style="background:#F0F0F2;border:1px solid rgba(29,111,66,0.15);border-radius:12px;padding:18px 20px;margin-bottom:18px;">';
   html += '<div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;">';
-  html += '<div style="width:48px;height:48px;border-radius:50%;background:#B8E030;display:flex;align-items:center;justify-content:center;font-family:Fraunces,serif;font-size:18px;font-weight:600;color:#0A0B07;flex-shrink:0;">MR</div>';
+  html += '<div style="width:48px;height:48px;border-radius:50%;background:#1D6F42;display:flex;align-items:center;justify-content:center;font-family:Fraunces,serif;font-size:18px;font-weight:600;color:#F5F5F7;flex-shrink:0;">MR</div>';
   html += '<div style="flex:1;">';
-  html += '<div style="font-size:14px;font-weight:600;color:#EEF0E5;">Marcus Rivera</div>';
-  html += '<div style="font-size:12px;color:#8A8F7A;">REALTOR® · REAL Broker, LLC · DFW Metroplex</div>';
-  html += '<div style="font-size:11px;color:#B8E030;margin-top:2px;">● Available now · Avg response: 4 min</div>';
+  html += '<div style="font-size:14px;font-weight:600;color:#1D1D1F;">Marcus Rivera</div>';
+  html += '<div style="font-size:12px;color:#6E6E73;">REALTOR® · REAL Broker, LLC · DFW Metroplex</div>';
+  html += '<div style="font-size:11px;color:#1D6F42;margin-top:2px;">● Available now · Avg response: 4 min</div>';
   html += '</div>';
   html += '<div style="text-align:right;flex-shrink:0;">';
-  html += '<div style="font-size:10px;font-family:DM Mono,monospace;color:#8A8F7A;">Listing Agent</div>';
-  html += '<div style="font-size:12px;color:#EEF0E5;margin-top:2px;">(214) 555-0192</div>';
+  html += '<div style="font-size:10px;font-family:DM Mono,monospace;color:#6E6E73;">Listing Agent</div>';
+  html += '<div style="font-size:12px;color:#1D1D1F;margin-top:2px;">(214) 555-0192</div>';
   html += '</div></div>';
 
   // What Chloe will send
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:10px;">What Chloe Sends With Your Connection Request</div>';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin-bottom:10px;">What Chloe Sends With Your Connection Request</div>';
   html += '<div style="display:flex;flex-direction:column;gap:7px;">';
   [
     { icon:'🎯', text:'87% match score on 2847 Magnolia Drive' },
@@ -1128,7 +1135,7 @@ function renderUnrepresentedFlow(overlay) {
     { icon:'💰', text:'Budget range: $650K–$800K · Pre-approved' },
     { icon:'📋', text:'Must-haves: Open concept, natural light, home office, smart home' },
   ].forEach(function(item) {
-    html += '<div style="display:flex;align-items:center;gap:10px;font-size:12px;color:#8A8F7A;">';
+    html += '<div style="display:flex;align-items:center;gap:10px;font-size:12px;color:#6E6E73;">';
     html += '<span style="flex-shrink:0;">' + item.icon + '</span>';
     html += '<span>' + item.text + '</span>';
     html += '</div>';
@@ -1136,29 +1143,29 @@ function renderUnrepresentedFlow(overlay) {
   html += '</div></div>';
 
   // How to connect
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:10px;">How Would You Like to Connect?</div>';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin-bottom:10px;">How Would You Like to Connect?</div>';
   html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:4px;">';
   [
     { id:'con-call', icon:'📞', label:'Call Now',    sub:'(214) 555-0192' },
     { id:'con-text', icon:'💬', label:'Send a Text', sub:'Quick intro message' },
     { id:'con-req',  icon:'📋', label:'Request Intro', sub:'Chloe sends your full profile' },
   ].forEach(function(c, i) {
-    var act = i === 2 ? 'border-color:rgba(184,224,48,0.4);background:rgba(184,224,48,0.06);' : 'border-color:rgba(238,240,229,0.08);background:#0E1108;';
+    var act = i === 2 ? 'border-color:rgba(29,111,66,0.4);background:rgba(29,111,66,0.06);' : 'border-color:rgba(0,0,0,0.08);background:#F5F5F7;';
     html += '<div class="_of-con" id="' + c.id + '" style="' + act + 'border:1px solid;border-radius:10px;padding:14px;cursor:pointer;text-align:center;transition:all 0.12s;">';
     html += '<div style="font-size:20px;margin-bottom:6px;">' + c.icon + '</div>';
-    html += '<div style="font-size:12px;color:#EEF0E5;font-weight:500;">' + c.label + '</div>';
-    html += '<div style="font-size:10px;color:#8A8F7A;margin-top:2px;">' + c.sub + '</div>';
+    html += '<div style="font-size:12px;color:#1D1D1F;font-weight:500;">' + c.label + '</div>';
+    html += '<div style="font-size:10px;color:#6E6E73;margin-top:2px;">' + c.sub + '</div>';
     html += '</div>';
   });
   html += '</div>';
   html += '</div>'; // end padding
 
   // Footer
-  html += '<div style="padding:14px 26px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(184,224,48,0.08);">';
-  html += '<div style="font-size:11px;color:#4A5040;line-height:1.5;">Your profile is shared only with agents<br>you choose to connect with.</div>';
+  html += '<div style="padding:14px 26px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(29,111,66,0.08);">';
+  html += '<div style="font-size:11px;color:#AEAEB2;line-height:1.5;">Your profile is shared only with agents<br>you choose to connect with.</div>';
   html += '<div style="display:flex;gap:10px;">';
-  html += '<button id="_of-cancel" style="padding:9px 18px;border-radius:8px;border:1px solid rgba(238,240,229,0.1);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Cancel</button>';
-  html += '<button id="_of-submit" style="padding:9px 22px;border-radius:8px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Connect with Marcus →</button>';
+  html += '<button id="_of-cancel" style="padding:9px 18px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);background:transparent;color:#6E6E73;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Cancel</button>';
+  html += '<button id="_of-submit" style="padding:9px 22px;border-radius:8px;border:none;background:#1D6F42;color:#F5F5F7;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Connect with Marcus →</button>';
   html += '</div></div>';
   html += '</div>'; // end card
 
@@ -1168,18 +1175,18 @@ function renderUnrepresentedFlow(overlay) {
   overlay.querySelectorAll('._of-con').forEach(function(card) {
     card.addEventListener('click', function() {
       overlay.querySelectorAll('._of-con').forEach(function(c) {
-        c.style.borderColor = 'rgba(238,240,229,0.08)';
-        c.style.background = '#0E1108';
+        c.style.borderColor = 'rgba(0,0,0,0.08)';
+        c.style.background = '#F5F5F7';
       });
-      card.style.borderColor = 'rgba(184,224,48,0.4)';
-      card.style.background = 'rgba(184,224,48,0.06)';
+      card.style.borderColor = 'rgba(29,111,66,0.4)';
+      card.style.background = 'rgba(29,111,66,0.06)';
     });
   });
 
   overlay.querySelector('#_of-x').addEventListener('click', function() { overlay.remove(); });
   overlay.querySelector('#_of-cancel').addEventListener('click', function() { overlay.remove(); });
   overlay.querySelector('#_of-submit').addEventListener('click', function() {
-    var activeType = overlay.querySelector('._of-con[style*="rgba(184,224,48,0.4)"]');
+    var activeType = overlay.querySelector('._of-con[style*="rgba(29,111,66,0.4)"]');
     var typeLabel = activeType ? activeType.querySelector('div:nth-child(2)').textContent : 'Request Intro';
     overlay.remove();
     if (typeLabel === 'Call Now') {
@@ -1203,15 +1210,15 @@ function wireIntentModal(overlay, successMsg) {
       var pct = ((val * 1000) / 724000 * 100).toFixed(1);
       var label = pct >= 102
         ? '<span style="color:#FF5A4A;">Aggressive — your agent will advise</span>'
-        : pct >= 101 ? '<span style="color:#B8E030;">Competitive — your agent will advise</span>'
+        : pct >= 101 ? '<span style="color:#1D6F42;">Competitive — your agent will advise</span>'
         : pct >= 100 ? '<span style="color:#F5A623;">At list — your agent will advise</span>'
-        : '<span style="color:#8A8F7A;">Below list — your agent will advise</span>';
+        : '<span style="color:#6E6E73;">Below list — your agent will advise</span>';
       var amtEl = overlay.querySelector('#_of-amt');
       var pctEl = overlay.querySelector('#_of-pct');
       if (amtEl) amtEl.textContent = '$' + (val * 1000).toLocaleString();
       if (pctEl) pctEl.innerHTML = pct + '% of list · ' + label;
       var fillPct = ((val - 700) / 100) * 100;
-      this.style.background = 'linear-gradient(to right,#B8E030 ' + fillPct + '%,#1A1E12 ' + fillPct + '%)';
+      this.style.background = 'linear-gradient(to right,#1D6F42 ' + fillPct + '%,#F0F0F2 ' + fillPct + '%)';
     });
   }
   overlay.querySelector('#_of-x').addEventListener('click', function() { overlay.remove(); });

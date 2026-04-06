@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>ChloeIQ &mdash; Sign Placement</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;1,9..144,300&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0A0B07;--s1:#13160D;--s2:#1A1E12;--s3:#222818;
+  --acc:#B8E030;--ad:rgba(184,224,48,.10);
+  --tx:#EEF0E5;--txm:#8A8F7A;--txd:#4A5040;
+  --bs:rgba(238,240,229,.07);--br:rgba(184,224,48,.15);
+  --grn:#4ADE80;--red:#FF5A4A;--amb:#F5A623;--blu:#60A5FA;
+  --font-body:'DM Sans',sans-serif;--font-display:'Fraunces',serif;--font-mono:'DM Mono',monospace;
+}
+html,body{height:100%;background:var(--bg);color:var(--tx);font-family:var(--font-body);font-size:14px;overflow:hidden;-webkit-tap-highlight-color:transparent;}
+
+/* ── APP SHELL ── */
+.app{height:100vh;display:flex;flex-direction:column;max-width:420px;margin:0 auto;position:relative;}
+
+/* ── STATUS BAR ── */
+.statusbar{height:44px;background:var(--bg);display:flex;align-items:center;justify-content:space-between;padding:0 18px;flex-shrink:0;}
+.sb-left{font-family:var(--font-mono);font-size:11px;color:var(--txm);}
+.sb-right{display:flex;align-items:center;gap:8px;}
+.gps-dot{width:7px;height:7px;border-radius:50%;background:var(--grn);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+
+/* ── TOPBAR ── */
+.topbar{background:var(--s1);border-bottom:1px solid var(--bs);padding:12px 16px;flex-shrink:0;}
+.tb-row1{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
+.tb-title{font-family:var(--font-display);font-size:18px;color:var(--tx);}
+.tb-title em{color:var(--acc);font-style:italic;}
+.tb-badge{font-family:var(--font-mono);font-size:10px;color:var(--txm);background:var(--s2);border:1px solid var(--bs);padding:2px 9px;border-radius:20px;}
+.tb-row2{font-size:12px;color:var(--txm);}
+.tb-row2 span{color:var(--acc);}
+
+/* ── TABS ── */
+.tabs{display:flex;background:var(--s1);border-bottom:1px solid var(--bs);flex-shrink:0;}
+.tab{flex:1;padding:11px 0;text-align:center;font-size:12px;font-weight:500;color:var(--txm);cursor:pointer;transition:all .15s;border-bottom:2px solid transparent;}
+.tab.active{color:var(--acc);border-bottom-color:var(--acc);}
+
+/* ── CONTENT ── */
+.screens{flex:1;overflow:hidden;position:relative;}
+.screen{position:absolute;inset:0;overflow-y:auto;display:none;padding:0;}
+.screen.active{display:block;}
+
+/* ── MAP SCREEN ── */
+.map-area{position:relative;height:360px;background:var(--s2);overflow:hidden;}
+.map-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(184,224,48,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(184,224,48,.04) 1px,transparent 1px);background-size:40px 40px;}
+.map-road{position:absolute;background:rgba(184,224,48,.08);border-radius:2px;}
+.map-overlay{position:absolute;top:10px;left:10px;right:10px;display:flex;justify-content:space-between;align-items:flex-start;pointer-events:none;z-index:5;}
+.map-tag{font-family:var(--font-mono);font-size:9px;color:var(--txd);background:rgba(10,11,7,.7);padding:3px 8px;border-radius:10px;}
+.prop-star{position:absolute;background:var(--acc);color:var(--bg);font-size:11px;font-weight:700;padding:5px 11px;border-radius:20px;white-space:nowrap;box-shadow:0 2px 12px rgba(184,224,48,.4);cursor:pointer;z-index:6;}
+.placed-pin{position:absolute;transform:translate(-50%,-100%);cursor:pointer;z-index:5;}
+.pp-body{display:flex;flex-direction:column;align-items:center;}
+.pp-flag{font-family:var(--font-mono);font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;color:#0A0B07;}
+.pp-tail{width:2px;height:5px;margin:0 auto;}
+.pp-dot{width:6px;height:6px;border-radius:50%;}
+/* compliance colors */
+.comp-green{background:#4ADE80;}
+.comp-amber{background:#F5A623;}
+.comp-red{background:#FF5A4A;}
+.tap-hint{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);background:rgba(10,11,7,.85);border:1px solid var(--bs);border-radius:20px;padding:7px 16px;font-size:12px;color:var(--txm);white-space:nowrap;pointer-events:none;z-index:5;}
+
+/* ── HB 3611 BANNER ── */
+.hb-banner{background:rgba(255,90,74,.08);border-bottom:1px solid rgba(255,90,74,.2);padding:10px 16px;display:flex;gap:9px;align-items:flex-start;flex-shrink:0;}
+.hb-text{font-size:11px;color:var(--txm);line-height:1.6;}
+.hb-title{font-size:12px;font-weight:600;color:var(--red);margin-bottom:2px;}
+
+/* ── STOP LIST ── */
+.stop-list{padding:14px 16px;}
+.stop-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.stop-title{font-size:13px;font-weight:600;color:var(--tx);}
+.stop-stats{display:flex;gap:8px;}
+.ss{font-family:var(--font-mono);font-size:11px;padding:2px 8px;border-radius:9px;}
+.ss.g{background:rgba(74,222,128,.1);color:var(--grn);}
+.ss.a{background:rgba(245,166,35,.1);color:var(--amb);}
+.ss.r{background:rgba(255,90,74,.1);color:var(--red);}
+.stop-item{background:var(--s1);border:1px solid var(--bs);border-radius:11px;padding:13px;margin-bottom:9px;transition:border-color .15s;}
+.stop-item.flagged{border-color:rgba(255,90,74,.3);background:rgba(255,90,74,.03);}
+.stop-item.warning{border-color:rgba(245,166,35,.25);}
+.si-row1{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
+.si-num{width:22px;height:22px;border-radius:50%;font-family:var(--font-mono);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-right:8px;}
+.si-loc{font-size:13px;font-weight:500;color:var(--tx);}
+.si-row2{font-size:11px;color:var(--txm);margin-left:30px;margin-bottom:6px;}
+.si-row3{margin-left:30px;font-size:11px;line-height:1.6;}
+.si-actions{display:flex;gap:6px;margin-left:30px;margin-top:8px;}
+/* compliance badge */
+.cb{font-size:11px;font-family:var(--font-mono);padding:3px 10px;border-radius:20px;}
+.cb-g{background:rgba(74,222,128,.1);color:var(--grn);border:1px solid rgba(74,222,128,.2);}
+.cb-a{background:rgba(245,166,35,.1);color:var(--amb);border:1px solid rgba(245,166,35,.2);}
+.cb-r{background:rgba(255,90,74,.1);color:var(--red);border:1px solid rgba(255,90,74,.2);}
+
+/* ── ADD PIN FLOW ── */
+.add-section{padding:16px;}
+.add-card{background:var(--s1);border:1px solid var(--bs);border-radius:12px;overflow:hidden;margin-bottom:12px;}
+.ac-header{padding:12px 15px;border-bottom:1px solid var(--bs);font-size:13px;font-weight:600;color:var(--tx);display:flex;align-items:center;gap:8px;}
+.ac-body{padding:14px 15px;}
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:11px;}
+.fl{font-family:var(--font-mono);font-size:10px;color:var(--txm);text-transform:uppercase;letter-spacing:.6px;}
+.fi{background:var(--s2);border:1px solid var(--bs);border-radius:8px;padding:10px 12px;color:var(--tx);font-family:var(--font-body);font-size:13px;outline:none;}
+.fi:focus{border-color:var(--br);}
+.fi::placeholder{color:var(--txd);}
+.fs{background:var(--s2);border:1px solid var(--bs);border-radius:8px;padding:10px 12px;color:var(--tx);font-family:var(--font-body);font-size:13px;outline:none;cursor:pointer;width:100%;}
+.fs option{background:var(--s1);}
+/* compliance checker */
+.comp-checker{border-radius:11px;padding:13px;margin-bottom:11px;}
+.comp-checker.green{background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);}
+.comp-checker.amber{background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.2);}
+.comp-checker.red{background:rgba(255,90,74,.07);border:1px solid rgba(255,90,74,.2);}
+.cc-title{font-size:13px;font-weight:600;margin-bottom:5px;}
+.cc-rules{font-size:11px;line-height:1.7;}
+/* homeowner card */
+.ho-card{background:var(--s2);border:1px solid var(--bs);border-radius:9px;padding:12px;margin-bottom:9px;}
+/* btn */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;padding:8px 14px;border-radius:8px;font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--bs);background:var(--s2);color:var(--txm);transition:all .13s;-webkit-tap-highlight-color:transparent;}
+.btn:active{transform:scale(.97);}
+.btn.bp{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:600;}
+.btn.br2{background:rgba(255,90,74,.1);border-color:rgba(255,90,74,.2);color:var(--red);}
+.btn.full{width:100%;}
+.btn.sm{padding:6px 11px;font-size:12px;}
+.btn-r{display:flex;gap:6px;flex-wrap:wrap;}
+
+/* ── ROUTE SCREEN ── */
+.route-section{padding:16px;}
+.route-card{background:var(--s1);border:1px solid var(--bs);border-radius:12px;padding:14px;margin-bottom:11px;}
+.rc-title{font-size:13px;font-weight:600;color:var(--tx);margin-bottom:11px;}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.sg-item{background:var(--s2);border-radius:9px;padding:11px;text-align:center;}
+.sv{font-family:var(--font-display);font-size:22px;line-height:1;color:var(--acc);}
+.slb{font-size:9px;color:var(--txd);font-family:var(--font-mono);text-transform:uppercase;margin-top:3px;}
+.route-step{display:flex;gap:11px;padding:10px 0;border-bottom:1px solid var(--bs);}
+.route-step:last-child{border-bottom:none;}
+.rs-num{width:24px;height:24px;border-radius:50%;font-family:var(--font-mono);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.rs-content{flex:1;}
+.rs-loc{font-size:13px;font-weight:500;color:var(--tx);margin-bottom:2px;}
+.rs-detail{font-size:11px;color:var(--txm);}
+.rs-status{font-size:11px;margin-top:3px;}
+
+/* ── RETURN SCREEN ── */
+.return-section{padding:16px;}
+.return-card{background:var(--s1);border:1px solid var(--bs);border-radius:12px;padding:14px;margin-bottom:11px;}
+.sign-return-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bs);}
+.sign-return-item:last-child{border-bottom:none;}
+.sri-info{flex:1;}
+.sri-loc{font-size:13px;font-weight:500;color:var(--tx);}
+.sri-detail{font-size:11px;color:var(--txm);margin-top:1px;}
+.sri-status{font-family:var(--font-mono);font-size:11px;padding:2px 9px;border-radius:10px;}
+.sri-status.ret{background:rgba(74,222,128,.1);color:var(--grn);}
+.sri-status.out{background:rgba(245,166,35,.1);color:var(--amb);}
+
+/* ── COMPLIANCE MODAL OVERLAY ── */
+.comp-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:100;display:flex;align-items:flex-end;}
+.comp-sheet{background:var(--s1);border-radius:20px 20px 0 0;padding:20px;width:100%;max-height:85vh;overflow-y:auto;}
+.cs-handle{width:36px;height:4px;background:var(--bs);border-radius:2px;margin:0 auto 16px;}
+.cs-title{font-family:var(--font-display);font-size:20px;color:var(--tx);margin-bottom:4px;}
+.cs-title em{color:var(--acc);font-style:italic;}
+.cs-sub{font-size:12px;color:var(--txm);margin-bottom:16px;}
+/* outreach sheet */
+.os-msg{background:var(--s2);border:1px solid var(--bs);border-radius:10px;padding:13px;font-size:13px;color:var(--tx);line-height:1.7;margin-bottom:14px;}
+
+/* ── BOTTOM NAV ── */
+.bottom-nav{height:56px;background:var(--s1);border-top:1px solid var(--bs);display:flex;flex-shrink:0;}
+.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;font-size:10px;color:var(--txm);transition:color .13s;-webkit-tap-highlight-color:transparent;}
+.bn-item.active{color:var(--acc);}
+.bn-icon{font-size:18px;line-height:1;}
+.bn-dot{position:relative;}
+.bn-dot:after{content:'';position:absolute;top:-2px;right:-2px;width:6px;height:6px;background:var(--red);border-radius:50%;border:1px solid var(--s1);}
+
+/* ── FAB ── */
+.fab{position:fixed;bottom:72px;right:20px;width:56px;height:56px;border-radius:50%;background:var(--acc);color:var(--bg);font-size:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 20px rgba(184,224,48,.4);border:none;z-index:30;-webkit-tap-highlight-color:transparent;transition:transform .15s;}
+.fab:active{transform:scale(.93);}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- STATUS BAR -->
+<div class="statusbar">
+  <div class="sb-left">&#x1F4CD; Marcus Rivera &mdash; Day-of Mode</div>
+  <div class="sb-right">
+    <div class="gps-dot"></div>
+    <span style="font-family:var(--font-mono);font-size:11px;color:var(--grn);">GPS Active</span>
+    <span style="font-family:var(--font-mono);font-size:11px;color:var(--txm);">9:14 AM</span>
+  </div>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="tb-row1">
+    <div class="tb-title">Sign <em>Placement</em></div>
+    <div class="tb-badge">APR 12 &middot; 1&ndash;4 PM</div>
+  </div>
+  <div class="tb-row2">2847 Magnolia Drive &middot; <span>6 of 8 stops compliant</span></div>
+</div>
+
+<!-- HB 3611 BANNER -->
+<div class="hb-banner">
+  <span style="font-size:16px;flex-shrink:0;">&#x26A0;&#xFE0F;</span>
+  <div class="hb-text">
+    <div class="hb-title">TX HB 3611 &mdash; Private Property Only</div>
+    ROW placement = up to $5,000 fine &middot; broker liable. Flower Mound: private prop. only &middot; &lt;6sqft &middot; 24hr window &middot; no permit.
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('map',this)">&#x1F5FA; Map</div>
+  <div class="tab" onclick="switchTab('stops',this)">&#x1F4CD; Stops</div>
+  <div class="tab" onclick="switchTab('add',this)">+ Add Pin</div>
+  <div class="tab" onclick="switchTab('route',this)">&#x1F6E3; Route</div>
+  <div class="tab" onclick="switchTab('return',this)">&#x2713; Return</div>
+</div>
+
+<!-- SCREENS -->
+<div class="screens">
+
+  <!-- MAP SCREEN -->
+  <div class="screen active" id="screen-map">
+    <div class="map-area" id="map-area">
+      <div class="map-grid"></div>
+      <div class="map-road" style="left:0;top:55%;width:100%;height:3px;"></div>
+      <div class="map-road" style="left:42%;top:0;width:3px;height:100%;"></div>
+      <div class="map-road" style="left:0;top:30%;width:60%;height:2px;opacity:.5;"></div>
+      <div class="map-road" style="left:20%;top:72%;width:50%;height:2px;opacity:.4;"></div>
+      <div id="map-pins"></div>
+      <!-- Property marker -->
+      <div class="prop-star" style="left:47%;top:52%;transform:translate(-50%,-50%);" onclick="toast('2847 Magnolia Dr \u00b7 Open house 1\u20134 PM','')">&#x1F3E0; Magnolia</div>
+      <!-- Route line SVG -->
+      <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;" xmlns="http://www.w3.org/2000/svg">
+        <polyline id="route-svg" fill="none" stroke="rgba(184,224,48,.3)" stroke-width="1.5" stroke-dasharray="5,4"/>
+      </svg>
+      <div class="map-overlay">
+        <div class="map-tag">FLOWER MOUND &middot; OPEN HOUSE ROUTE</div>
+        <div class="map-tag">Tap map to drop pin</div>
+      </div>
+      <div class="tap-hint">Tap anywhere on the map to drop a sign pin</div>
+    </div>
+
+    <!-- Map legend -->
+    <div style="padding:12px 16px;">
+      <div style="display:flex;gap:14px;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--txm);"><div style="width:8px;height:8px;border-radius:50%;background:var(--grn);"></div>Compliant</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--txm);"><div style="width:8px;height:8px;border-radius:50%;background:var(--amb);"></div>Check HOA</div>
+        <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--txm);"><div style="width:8px;height:8px;border-radius:50%;background:var(--red);"></div>Flagged</div>
+        <div style="margin-left:auto;font-family:var(--font-mono);font-size:11px;color:var(--acc);">8 pins</div>
+      </div>
+      <!-- Quick compliance summary -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+        <div style="background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.15);border-radius:9px;padding:10px;text-align:center;">
+          <div style="font-family:var(--font-display);font-size:22px;color:var(--grn);">6</div>
+          <div style="font-size:10px;color:var(--txd);font-family:var(--font-mono);">COMPLIANT</div>
+        </div>
+        <div style="background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.15);border-radius:9px;padding:10px;text-align:center;">
+          <div style="font-family:var(--font-display);font-size:22px;color:var(--amb);">1</div>
+          <div style="font-size:10px;color:var(--txd);font-family:var(--font-mono);">HOA CHECK</div>
+        </div>
+        <div style="background:rgba(255,90,74,.07);border:1px solid rgba(255,90,74,.15);border-radius:9px;padding:10px;text-align:center;">
+          <div style="font-family:var(--font-display);font-size:22px;color:var(--red);">1</div>
+          <div style="font-size:10px;color:var(--txd);font-family:var(--font-mono);">FLAGGED</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STOPS SCREEN -->
+  <div class="screen" id="screen-stops">
+    <div class="stop-list">
+      <div class="stop-header">
+        <div class="stop-title">Planned Stops</div>
+        <div class="stop-stats">
+          <span class="ss g">6 OK</span>
+          <span class="ss a">1 check</span>
+          <span class="ss r">1 flag</span>
+        </div>
+      </div>
+      <div id="stops-list"></div>
+    </div>
+  </div>
+
+  <!-- ADD PIN SCREEN -->
+  <div class="screen" id="screen-add">
+    <div class="add-section">
+      <!-- GPS reading -->
+      <div class="add-card">
+        <div class="ac-header">&#x1F4CD; Current GPS Location</div>
+        <div class="ac-body">
+          <div style="font-family:var(--font-mono);font-size:13px;color:var(--acc);margin-bottom:4px;">33.0147&deg;N, &minus;97.0971&deg;W</div>
+          <div style="font-size:12px;color:var(--txm);margin-bottom:10px;">Approx: Magnolia Dr &amp; FM2499, Flower Mound TX</div>
+          <div style="display:flex;gap:7px;">
+            <button class="btn sm" onclick="toast('GPS refreshed \u2713','ok')">&#x1F504; Refresh GPS</button>
+            <button class="btn sm" onclick="toast('Using current location','ok')">Use This Location</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Compliance checker (live) -->
+      <div id="live-comp-check">
+        <div class="comp-checker green">
+          <div class="cc-title" style="color:var(--grn);">&#x2705; Location Compliant &mdash; Flower Mound</div>
+          <div class="cc-rules" style="color:var(--txm);">
+            Private property confirmed &middot; Under 6 sq ft &middot; Within 24hr window (Sec. 86-233(4))<br>
+            No known HOA restriction at this intersection<br>
+            <strong style="color:var(--tx);">HB 3611:</strong> Private prop. placement permitted with owner consent
+          </div>
+        </div>
+      </div>
+
+      <!-- Sign details -->
+      <div class="add-card">
+        <div class="ac-header">&#x1F4DD; Sign Details</div>
+        <div class="ac-body">
+          <div class="fg"><div class="fl">Location Description</div><input class="fi" id="pin-loc" placeholder="e.g. Magnolia Dr & FM2499 NE corner"></div>
+          <div class="fg"><div class="fl">Sign Type</div>
+            <select class="fs" id="pin-type" onchange="updateCompCheck(this.value)">
+              <option value="directional">Directional Arrow (&lt;6sqft) &mdash; Compliant FM</option>
+              <option value="yard">Yard Sign + Chloe Rider</option>
+              <option value="oh">Open House Sign</option>
+              <option value="aframe">A-Frame &mdash; PROHIBITED in Flower Mound</option>
+            </select>
+          </div>
+          <div class="fg"><div class="fl">Property Permission</div>
+            <select class="fs" id="pin-perm">
+              <option>Owner verbal consent obtained</option>
+              <option>Owner written consent obtained</option>
+              <option>Commercial property (public-facing)</option>
+              <option>Permission pending &mdash; outreach sent</option>
+              <option>No permission yet &mdash; DO NOT PLACE</option>
+            </select>
+          </div>
+          <div class="fg"><div class="fl">Facing Direction</div>
+            <select class="fs">
+              <option>Northbound traffic</option>
+              <option>Southbound traffic</option>
+              <option>Eastbound traffic</option>
+              <option>Westbound traffic</option>
+              <option>All directions (corner)</option>
+            </select>
+          </div>
+          <div class="fg"><div class="fl">Historical Performance</div>
+            <div style="background:var(--s2);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--txm);">
+              &#x1F4CA; <span style="color:var(--acc);">42 avg scans</span> at this intersection &middot; 3.2x area benchmark &middot; Top performer in your route
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Homeowner outreach -->
+      <div class="add-card">
+        <div class="ac-header">&#x1F4AC; Property Owner Outreach</div>
+        <div class="ac-body">
+          <div style="font-size:12px;color:var(--txm);margin-bottom:10px;line-height:1.6;">If this is a private residential property, send the owner a quick permission request. This also creates a warm lead &mdash; neighbors who give permission often know buyers.</div>
+          <div class="ho-card">
+            <div style="font-size:12px;font-weight:500;color:var(--tx);margin-bottom:3px;">Property Owner at This Location</div>
+            <div style="font-size:11px;color:var(--txm);margin-bottom:8px;">County records: M. Davis &middot; 412 Heritage Oak Dr</div>
+            <div class="btn-r">
+              <button class="btn sm" onclick="showOutreachSheet('M. Davis','412 Heritage Oak Dr')">View Message</button>
+              <button class="btn sm bp" onclick="toast('Text sent to M. Davis \u2713','ok')">Send Text</button>
+            </div>
+          </div>
+          <button class="btn full" onclick="toast('Door hanger printed for this address \u2713','ok')">&#x1F4C4; Print Door Hanger</button>
+        </div>
+      </div>
+
+      <!-- Drop pin button -->
+      <button class="btn bp full" style="height:48px;font-size:15px;margin-bottom:16px;" onclick="dropPin()">&#x1F4CD; Drop Pin at This Location</button>
+    </div>
+  </div>
+
+  <!-- ROUTE SCREEN -->
+  <div class="screen" id="screen-route">
+    <div class="route-section">
+      <div class="route-card">
+        <div class="rc-title">Route Summary &mdash; Apr 12</div>
+        <div class="stat-grid">
+          <div class="sg-item"><div class="sv">8</div><div class="slb">Total Stops</div></div>
+          <div class="sg-item"><div class="sv" style="color:var(--grn);">6</div><div class="slb">Compliant</div></div>
+          <div class="sg-item"><div class="sv">23.4<span style="font-size:14px;">mi</span></div><div class="slb">Total Route</div></div>
+          <div class="sg-item"><div class="sv">48<span style="font-size:14px;">min</span></div><div class="slb">Est. Time</div></div>
+        </div>
+        <div style="background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.15);border-radius:8px;padding:10px 12px;margin-bottom:12px;">
+          <div style="font-size:11px;color:var(--amb);font-family:var(--font-mono);margin-bottom:2px;">RETRIEVAL DEADLINE</div>
+          <div style="font-size:12px;color:var(--tx);">All signs must be retrieved by <strong>5:00 PM</strong> &mdash; Flower Mound 24hr rule (Sec. 86-233(4))</div>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn bp" style="flex:1;" onclick="toast('Opening route in Maps \u2713','ok')">&#x1F5FA; Navigate Route</button>
+          <button class="btn" onclick="toast('Route optimized \u2713','ok')">Optimize</button>
+        </div>
+      </div>
+      <div class="route-card">
+        <div class="rc-title">Stop Order</div>
+        <div id="route-steps"></div>
+      </div>
+      <div class="route-card">
+        <div class="rc-title">&#x26A0;&#xFE0F; Flagged Stops</div>
+        <div style="background:rgba(255,90,74,.07);border:1px solid rgba(255,90,74,.2);border-radius:9px;padding:12px;">
+          <div style="font-size:12px;font-weight:500;color:var(--red);margin-bottom:4px;">Stop #8 &mdash; FM3040 &amp; Long Prairie</div>
+          <div style="font-size:11px;color:var(--txm);line-height:1.6;margin-bottom:8px;">&#x26D4; Median detected &mdash; ROW placement. HB 3611 violation risk. Potential fine $1,000&ndash;$5,000. Broker notified.</div>
+          <div class="btn-r">
+            <button class="btn sm br2" onclick="removeStop()">Remove Stop</button>
+            <button class="btn sm" onclick="toast('Nearest private prop. location suggested \u2713','ok')">Find Nearby Alternative</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RETURN SCREEN -->
+  <div class="screen" id="screen-return">
+    <div class="return-section">
+      <div style="background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.2);border-radius:10px;padding:12px 14px;margin-bottom:12px;">
+        <div style="font-size:12px;font-weight:600;color:var(--grn);margin-bottom:3px;">&#x23F0; Retrieval Mode &mdash; Open House Ended</div>
+        <div style="font-size:11px;color:var(--txm);line-height:1.6;">Tap each sign location when retrieved. All signs must be cleared by 5:00 PM per Flower Mound ordinance. 2 of 8 signs still out.</div>
+      </div>
+      <div class="return-card">
+        <div style="font-size:13px;font-weight:600;color:var(--tx);margin-bottom:12px;">Sign Return Status</div>
+        <div id="return-list"></div>
+      </div>
+      <div class="return-card">
+        <div style="font-size:13px;font-weight:600;color:var(--tx);margin-bottom:8px;">Quick Actions</div>
+        <div style="display:flex;flex-direction:column;gap:7px;">
+          <button class="btn full" onclick="toast('Route to next unretrieved sign \u2713','ok')">&#x1F5FA; Navigate to Nearest Unretrieved</button>
+          <button class="btn full" onclick="markAllReturned()">&#x2713; Mark All Retrieved</button>
+          <button class="btn full" onclick="toast('Broker notified: all signs retrieved by 4:52PM \u2713','ok')">&#x1F4E8; Notify Broker of Completion</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /screens -->
+
+<!-- FAB (visible on map screen) -->
+<button class="fab" id="fab" onclick="switchTab('add',null);document.querySelector('.tab:nth-child(3)').classList.add('active');">+</button>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <div class="bn-item active" onclick="switchTab('map',this)" id="bn-map">
+    <div class="bn-icon">&#x1F5FA;</div>
+    <div>Map</div>
+  </div>
+  <div class="bn-item" onclick="switchTab('stops',this)" id="bn-stops">
+    <div class="bn-icon bn-dot">&#x1F4CD;</div>
+    <div>Stops</div>
+  </div>
+  <div class="bn-item" onclick="switchTab('add',this)" id="bn-add">
+    <div class="bn-icon">+</div>
+    <div>Add Pin</div>
+  </div>
+  <div class="bn-item" onclick="switchTab('route',this)" id="bn-route">
+    <div class="bn-icon">&#x1F6E3;</div>
+    <div>Route</div>
+  </div>
+  <div class="bn-item" onclick="switchTab('return',this)" id="bn-return">
+    <div class="bn-icon">&#x2713;</div>
+    <div>Return</div>
+  </div>
+</div>
+
+<!-- COMPLIANCE SHEET (hidden by default) -->
+<div class="comp-overlay" id="comp-overlay" style="display:none;" onclick="if(event.target===this)closeSheet()">
+  <div class="comp-sheet" id="comp-sheet"></div>
+</div>
+
+<script>
+function toast(msg,type){
+  var o=document.getElementById('_t');if(o)o.remove();
+  var t=document.createElement('div');t.id='_t';t.textContent=msg;
+  var bg=type==='ok'?'#B8E030':'#1A1E12',c=type==='ok'?'#0A0B07':'#EEF0E5';
+  t.style.cssText='position:fixed;bottom:70px;left:50%;transform:translateX(-50%) translateY(20px);background:'+bg+';color:'+c+';padding:10px 20px;border-radius:8px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all .2s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.5);max-width:90vw;text-align:center;';
+  document.body.appendChild(t);
+  requestAnimationFrame(function(){t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';});
+  clearTimeout(t._x);t._x=setTimeout(function(){t.style.opacity='0';},2800);
+}
+function openSheet(html){
+  var ov=document.getElementById('comp-overlay');
+  var sh=document.getElementById('comp-sheet');
+  sh.innerHTML='<div class="cs-handle"></div>'+html;
+  ov.style.display='flex';
+}
+function closeSheet(){document.getElementById('comp-overlay').style.display='none';}
+
+function switchTab(name,el){
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  document.querySelectorAll('.bn-item').forEach(function(b){b.classList.remove('active');});
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  var screen=document.getElementById('screen-'+name);
+  if(screen)screen.classList.add('active');
+  if(el&&el.classList&&el.classList.contains('tab'))el.classList.add('active');
+  var bn=document.getElementById('bn-'+name);if(bn)bn.classList.add('active');
+  var fab=document.getElementById('fab');
+  if(fab)fab.style.display=name==='map'?'flex':'none';
+}
+
+// ── DATA ───────────────────────────────────────────────────────────────────
+var stops=[
+  {n:1,loc:'Magnolia Dr & FM2499',dist:'0.4mi',comp:'green',note:'42 avg scans \u00b7 Private prop. \u00b7 M. Davis consent',perm:true,placed:true},
+  {n:2,loc:'Cross Timbers & FM2499',dist:'0.8mi',comp:'green',note:'High traffic \u00b7 Commercial corner \u00b7 No permission needed',perm:true,placed:true},
+  {n:3,loc:'Long Prairie & FM2499',dist:'1.1mi',comp:'green',note:'32 avg scans \u00b7 Gas station lot (commercial)',perm:true,placed:false},
+  {n:4,loc:'Heritage Oak & Quail Run',dist:'0.6mi',comp:'amber',note:'HOA community \u00b7 Canyon Falls \u00b7 Verify with management',perm:false,placed:false},
+  {n:5,loc:'Garden Ridge & Morriss',dist:'1.4mi',comp:'green',note:'28 avg scans \u00b7 High visibility southbound',perm:true,placed:false},
+  {n:6,loc:'Ridgecrest & SH114',dist:'1.9mi',comp:'green',note:'Entry corridor \u00b7 Eastbound traffic',perm:true,placed:false},
+  {n:7,loc:'Elmhurst & Belt Line',dist:'1.2mi',comp:'amber',note:'Low performer 4 avg scans \u00b7 Consider skipping',perm:false,placed:false},
+  {n:8,loc:'FM3040 & Long Prairie',dist:'0.7mi',comp:'red',note:'\u26D4 MEDIAN \u00b7 ROW violation \u00b7 HB 3611 \u00b7 Broker notified',perm:false,placed:false},
+];
+var returnStatus=[
+  {loc:'Magnolia Dr & FM2499',placed:'9:22 AM',retrieved:true,time:'4:41 PM'},
+  {loc:'Cross Timbers & FM2499',placed:'9:31 AM',retrieved:true,time:'4:48 PM'},
+  {loc:'Long Prairie & FM2499',placed:'9:44 AM',retrieved:false,time:null},
+  {loc:'Heritage Oak & Quail Run',placed:'9:58 AM',retrieved:true,time:'4:52 PM'},
+  {loc:'Garden Ridge & Morriss',placed:'10:08 AM',retrieved:true,time:'4:35 PM'},
+  {loc:'Ridgecrest & SH114',placed:'10:19 AM',retrieved:true,time:'4:28 PM'},
+  {loc:'Elmhurst & Belt Line',placed:'10:28 AM',retrieved:false,time:null},
+];
+
+// ── MAP PINS ───────────────────────────────────────────────────────────────
+var mapPinData=[
+  {n:1,x:18,y:54,comp:'green',scans:42},
+  {n:2,x:42,y:30,comp:'green',scans:32},
+  {n:3,x:60,y:28,comp:'green',scans:28},
+  {n:4,x:75,y:45,comp:'amber',scans:0},
+  {n:5,x:28,y:72,comp:'green',scans:22},
+  {n:6,x:58,y:68,comp:'green',scans:19},
+  {n:7,x:35,y:50,comp:'amber',scans:4},
+  {n:8,x:82,y:62,comp:'red',scans:0},
+];
+
+function buildMapPins(){
+  var area=document.getElementById('map-area');
+  var el=document.getElementById('map-pins');if(!el){el=document.createElement('div');el.id='map-pins';area.appendChild(el);}
+  el.innerHTML='';
+  var W=area.offsetWidth||360,H=area.offsetHeight||360;
+  var routePts=[];
+  mapPinData.forEach(function(p){
+  var px=(p.x/100)*W,py=(p.y/100)*H;
+    routePts.push(px+','+py);
+    var pin=document.createElement('div');pin.className='placed-pin';
+    pin.style.left=px+'px';pin.style.top=py+'px';
+    var col=p.comp==='green'?'#4ADE80':p.comp==='amber'?'#F5A623':'#FF5A4A';
+    var icon=p.comp==='green'?'':p.comp==='amber'?'\u26A0':'\u26D4';
+    pin.innerHTML='<div class="pp-body"><div class="pp-flag comp-'+p.comp+'" style="background:'+col+'">'+p.n+(icon?'&nbsp;'+icon:'')+'</div><div class="pp-tail" style="background:'+col+'"></div><div class="pp-dot" style="background:'+col+'"></div></div>';
+    pin.addEventListener('click',function(){
+      var s=stops[p.n-1];
+      showCompSheet(s);
+    });
+    el.appendChild(pin);
+  });
+  // Draw route line
+  var svg=document.getElementById('route-svg');
+  if(svg)svg.setAttribute('points',routePts.join(' '));
+}
+
+// ── STOPS LIST ─────────────────────────────────────────────────────────────
+function buildStops(){
+  var el=document.getElementById('stops-list');if(!el)return;
+  el.innerHTML=stops.map(function(s){
+    var bc=s.comp==='green'?'':s.comp==='amber'?'warning':'flagged';
+    var nc=s.comp==='green'?'var(--grn)':s.comp==='amber'?'var(--amb)':'var(--red)';
+    var bg=s.comp==='green'?'rgba(74,222,128,.15)':s.comp==='amber'?'rgba(245,166,35,.15)':'rgba(255,90,74,.15)';
+    var cb=s.comp==='green'?'cb-g':s.comp==='amber'?'cb-a':'cb-r';
+    var cl=s.comp==='green'?'\u2705 Compliant':s.comp==='amber'?'\u26A0\uFE0F Check HOA':'\u26D4 Flagged ROW';
+    var icon=s.comp==='green'?'\u2705':s.comp==='amber'?'\u26A0\uFE0F':'\u26D4';
+    return '<div class="stop-item '+bc+'">'
+      +'<div class="si-row1">'
+      +'<div style="display:flex;align-items:center;flex:1;">'
+      +'<div class="si-num" style="background:'+bg+';color:'+nc+'">'+s.n+'</div>'
+      +'<div class="si-loc">'+s.loc+'</div>'
+      +'</div>'
+      +'<span class="cb '+cb+'">'+cl+'</span>'
+      +'</div>'
+      +'<div class="si-row2">'+s.dist+' from property &middot; '+icon+(s.placed?' &middot; <span style="color:var(--grn);">Placed</span>':'')+' </div>'
+      +'<div class="si-row3" style="color:'+nc+'">'+s.note+'</div>'
+      +'<div class="si-actions">'
+      +(s.comp==='red'?'<button class="btn sm br2" onclick="removeStopN('+s.n+')">Remove</button><button class="btn sm" onclick="toast(\'Finding nearby private prop. alternative...\',\'\')">Find Alternative</button>':'')
+      +(s.comp==='amber'&&!s.perm?'<button class="btn sm" onclick="showOutreachSheet(\''+s.loc+' owner\',\''+s.loc+'\')">Request Permission</button>':'')
+      +(s.comp==='green'&&!s.placed?'<button class="btn sm bp" onclick="markPlaced('+s.n+')">Mark Placed</button>':'')
+      +(s.placed?'<button class="btn sm" onclick="toast(\'Placed at 9:'+(18+s.n*3)+' AM \u2713\',\'\')">Placed \u2713</button>':'')
+      +'<button class="btn sm" onclick="showCompSheet(stops['+(s.n-1)+'])">Details</button>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
+
+// ── ROUTE STEPS ────────────────────────────────────────────────────────────
+function buildRouteSteps(){
+  var el=document.getElementById('route-steps');if(!el)return;
+  el.innerHTML=stops.map(function(s){
+    var col=s.comp==='green'?'var(--grn)':s.comp==='amber'?'var(--amb)':'var(--red)';
+    var bg=s.comp==='green'?'rgba(74,222,128,.15)':s.comp==='amber'?'rgba(245,166,35,.15)':'rgba(255,90,74,.15)';
+    return '<div class="route-step">'
+      +'<div class="rs-num" style="background:'+bg+';color:'+col+'">'+s.n+'</div>'
+      +'<div class="rs-content">'
+      +'<div class="rs-loc">'+s.loc+'</div>'
+      +'<div class="rs-detail">'+s.dist+' \u00b7 '+s.note.split('\u00b7')[0].trim()+'</div>'
+      +(s.placed?'<div class="rs-status" style="color:var(--grn);">\u2713 Placed</div>':'')
+      +(s.comp==='red'?'<div class="rs-status" style="color:var(--red);">\u26D4 Remove from route</div>':'')
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
+
+// ── RETURN LIST ─────────────────────────────────────────────────────────────
+function buildReturnList(){
+  var el=document.getElementById('return-list');if(!el)return;
+  el.innerHTML=returnStatus.map(function(r,i){
+    return '<div class="sign-return-item">'
+      +'<div class="sri-info">'
+      +'<div class="sri-loc">'+r.loc+'</div>'
+      +'<div class="sri-detail">Placed '+r.placed+(r.retrieved?' \u00b7 Retrieved '+r.time:' \u00b7 Still out')+'</div>'
+      +'</div>'
+      +(r.retrieved
+        ?'<span class="sri-status ret">\u2713 Retrieved</span>'
+        :'<button class="btn sm bp" onclick="markRetrieved('+i+')">Scan Return</button>')
+      +'</div>';
+  }).join('');
+}
+
+// ── ACTIONS ─────────────────────────────────────────────────────────────────
+function dropPin(){
+  var loc=document.getElementById('pin-loc').value||'Magnolia Dr & FM2499';
+  toast('Pin dropped \u00b7 '+loc+' \u00b7 Compliant \u2713','ok');
+  switchTab('map',null);
+  document.querySelector('.tab').classList.add('active');
+  document.getElementById('bn-map').classList.add('active');
+}
+function markPlaced(n){
+  stops[n-1].placed=true;
+  buildStops();
+  toast('Stop #'+n+' marked as placed \u2713','ok');
+}
+function removeStop(){
+  stops[7].comp='removed';
+  toast('Stop #8 removed from route \u2713','ok');
+  buildStops();buildRouteSteps();
+}
+function removeStopN(n){
+  stops[n-1].comp='removed';
+  toast('Stop #'+n+' removed \u2713','ok');
+  buildStops();buildRouteSteps();
+}
+function markRetrieved(i){
+  returnStatus[i].retrieved=true;
+  returnStatus[i].time=new Date().getHours()+':'+(new Date().getMinutes()<10?'0':'')+new Date().getMinutes()+' PM';
+  buildReturnList();
+  toast('Sign retrieved \u2713','ok');
+}
+function markAllReturned(){
+  returnStatus.forEach(function(r){r.retrieved=true;r.time='4:58 PM';});
+  buildReturnList();
+  toast('All 8 signs marked retrieved \u2713','ok');
+}
+function updateCompCheck(val){
+  var el=document.getElementById('live-comp-check');if(!el)return;
+  if(val==='aframe'){
+    el.innerHTML='<div class="comp-checker red"><div class="cc-title" style="color:var(--red);">\u26D4 PROHIBITED \u2014 A-Frame Signs Banned in Flower Mound</div><div class="cc-rules" style="color:var(--txm);">A-frame, bandit, banners, and feather flags are explicitly prohibited under Flower Mound code even on private property. Use a directional stake sign under 6 sq ft instead.\n<strong style="color:var(--tx);">HB 3611:</strong> ROW placement = up to $5,000 fine.</div></div>';
+  } else {
+    el.innerHTML='<div class="comp-checker green"><div class="cc-title" style="color:var(--grn);">\u2705 Location Compliant \u2014 Flower Mound</div><div class="cc-rules" style="color:var(--txm);">Private property confirmed \u00b7 Under 6 sq ft \u00b7 Within 24hr window (Sec. 86-233(4))\nNo known HOA restriction at this intersection\n<strong style="color:var(--tx);">HB 3611:</strong> Private prop. placement permitted with owner consent.</div></div>';
+  }
+}
+function showCompSheet(s){
+  var col=s.comp==='green'?'var(--grn)':s.comp==='amber'?'var(--amb)':'var(--red)';
+  var title=s.comp==='green'?'\u2705 Compliant':s.comp==='amber'?'\u26A0\uFE0F HOA Check Required':'\u26D4 ROW Violation Risk';
+  openSheet('<div class="cs-title">Stop #'+s.n+' <em>\u2014 '+title+'</em></div>'
+    +'<div class="cs-sub">'+s.loc+'</div>'
+    +'<div style="background:var(--s2);border-radius:10px;padding:13px;margin-bottom:14px;font-size:12px;color:var(--txm);line-height:1.7;">'+s.note+'</div>'
+    +(s.comp==='red'?'<div style="background:rgba(255,90,74,.07);border:1px solid rgba(255,90,74,.2);border-radius:10px;padding:13px;margin-bottom:14px;"><div style="font-size:13px;font-weight:600;color:var(--red);margin-bottom:5px;">\u26D4 TX HB 3611 Warning</div><div style="font-size:12px;color:var(--txm);line-height:1.6;">Placing a sign here exposes you and your broker to fines of $1,000&ndash;$5,000 per sign. Broker has been automatically notified. Remove this stop or find a nearby private property alternative.</div></div>':'')
+    +(s.comp==='amber'?'<div style="background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.2);border-radius:10px;padding:13px;margin-bottom:14px;"><div style="font-size:13px;font-weight:600;color:var(--amb);margin-bottom:4px;">\u26A0\uFE0F HOA Verification Required</div><div style="font-size:12px;color:var(--txm);line-height:1.6;">This appears to be within an HOA community. Even on private property with owner consent, the HOA may prohibit all signs. Contact the HOA management company before placing.</div></div>':'')
+    +'<div style="display:flex;gap:9px;">'
+    +(s.comp!=='green'?'<button class="btn br2" style="flex:1;" onclick="closeSheet();removeStopN('+s.n+')">Remove Stop</button>':'')
+    +(s.comp==='amber'?'<button class="btn bp" style="flex:1;" onclick="closeSheet();showOutreachSheet(\'HOA\',\''+s.loc+'\')">Contact HOA</button>':'')
+    +(s.comp==='green'&&!s.placed?'<button class="btn bp" style="flex:1;" onclick="closeSheet();markPlaced('+s.n+')">Mark Placed \u2713</button>':'')
+    +'<button class="btn" style="flex:1;" onclick="closeSheet()">Close</button>'
+    +'</div>');
+}
+function showOutreachSheet(owner,loc){
+  var msg='Hi '+owner+', I\'m Marcus Rivera, a REALTOR\u00ae hosting an open house at 2847 Magnolia Drive this Saturday from 1\u20134 PM. Would you allow a small directional sign at '+loc+' for just a few hours? I\'ll remove it the same day. Feel free to stop by as a neighbor! \u2014 Marcus Rivera, REAL Broker LLC, 972-555-0147';
+  openSheet('<div class="cs-title">Homeowner <em>Outreach</em></div>'
+    +'<div class="cs-sub">'+loc+' \u00b7 '+owner+'</div>'
+    +'<div style="font-size:11px;color:var(--txm);margin-bottom:10px;line-height:1.6;">Chloe generated this message based on your open house details. Sending permission requests also creates warm leads \u2014 neighbors who respond often know buyers in the area.</div>'
+    +'<div class="os-msg">'+msg+'</div>'
+    +'<div style="display:flex;gap:9px;">'
+    +'<button class="btn" style="flex:1;" onclick="toast(\'Message copied \u2713\',\'ok\');closeSheet()">Copy</button>'
+    +'<button class="btn bp" style="flex:1;" onclick="toast(\'Text sent to '+owner+' \u2713\',\'ok\');closeSheet()">Send Text</button>'
+    +'<button class="btn" onclick="closeSheet()">Close</button>'
+    +'</div>');
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',function(){
+  buildMapPins();buildStops();buildRouteSteps();buildReturnList();
+  // Map tap to drop pin
+  document.getElementById('map-area').addEventListener('click',function(e){
+    if(e.target.closest('.placed-pin')||e.target.closest('.prop-star'))return;
+    var rect=this.getBoundingClientRect();
+    var x=((e.clientX-rect.left)/rect.width*100).toFixed(1);
+    var y=((e.clientY-rect.top)/rect.height*100).toFixed(1);
+    toast('Tap detected \u00b7 Checking compliance...','');
+    setTimeout(function(){
+      toast('\u2705 Compliant location \u00b7 Switch to + Add Pin to drop','ok');
+    },800);
+  });
+  window.addEventListener('resize',function(){setTimeout(buildMapPins,100);});
+});
+</script>
+<script src="chloeiq-nav.js"></script>
+</body>
+</html>

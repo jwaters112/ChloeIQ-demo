@@ -10,12 +10,15 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#0A0B07; --s1:#13160D; --s2:#1A1E12; --s3:#222818; --s4:#2A3020;
-  --acc:#B8E030; --acc-d:rgba(184,224,48,0.09); --acc-m:rgba(184,224,48,0.20);
-  --tx:#EEF0E5; --txm:#8A8F7A; --txd:#4A5040;
-  --bdr:rgba(184,224,48,0.12); --bds:rgba(238,240,229,0.06);
-  --red:#FF5A4A; --amb:#F5A623; --grn:#4ADE80; --blu:#60A5FA;
-  --panel-w:220px;
+  --bg:#F5F5F7;--s1:#FFFFFF;--s2:#F0F0F2;--s3:#E8E8EA;--s4:#E0E0E2;
+  --acc:#1D6F42;--ad:rgba(29,111,66,.10);--am:rgba(29,111,66,.18);
+  --tx:#1D1D1F;--txm:#6E6E73;--txd:#AEAEB2;
+  --br:rgba(29,111,66,.25);--bs:rgba(0,0,0,.08);
+  --grn:#1D6F42;--red:#D93025;--amb:#B06000;--blu:#1A56DB;--pur:#6741D9;
+  --font-body:'DM Sans',sans-serif;
+  --font-display:'Fraunces',serif;
+  --font-mono:'DM Mono',monospace;
+  --radius:11px;
 }
 html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:14px;overflow:hidden;}
 
@@ -275,6 +278,9 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans'
 .kbd-hint{position:absolute;bottom:14px;right:18px;font-family:'DM Mono',monospace;font-size:10px;color:var(--txd);display:flex;gap:8px;align-items:center;}
 .kbd{background:var(--s2);border:1px solid var(--bds);border-radius:4px;padding:2px 6px;font-size:10px;}
 </style>
+<script>
+(function(){document.documentElement.style.background='#F5F5F7';document.documentElement.style.color='#1D1D1F';})();
+</script>
 </head>
 <body>
 <div class="shell">
@@ -623,8 +629,8 @@ function toast(msg, type) {
   var t = document.getElementById('ciq-toast') || document.createElement('div');
   t.id = 'ciq-toast';
   t.textContent = msg;
-  var bg = type==='success'?'#B8E030':'#1A1E12';
-  var col = type==='success'?'#0A0B07':'#EEF0E5';
+  var bg = type==='success'?'#1D6F42':'#F0F0F2';
+  var col = type==='success'?'#F5F5F7':'#1D1D1F';
   t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:'+bg+';color:'+col+';padding:10px 20px;border-radius:8px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all .2s ease;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.5);';
   document.body.appendChild(t);
   requestAnimationFrame(function(){ t.style.opacity='1'; t.style.transform='translateX(-50%) translateY(0)'; });

@@ -8,15 +8,18 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 :root{
-  --bg:#0A0B07;--s1:#13160D;--s2:#1A1E12;--s3:#222818;
-  --acc:#B8E030;--ad:rgba(184,224,48,.10);--am:rgba(184,224,48,.22);
-  --tx:#EEF0E5;--txm:#8A8F7A;--txd:#4A5040;
-  --br:rgba(184,224,48,.14);--bs:rgba(238,240,229,.07);
-  --grn:#4ADE80;--red:#FF5A4A;--amb:#F5A623;--blu:#60A5FA;
-  --radius:16px;
+  --bg:#F5F5F7;--s1:#FFFFFF;--s2:#F0F0F2;--s3:#E8E8EA;--s4:#E0E0E2;
+  --acc:#1D6F42;--ad:rgba(29,111,66,.10);--am:rgba(29,111,66,.18);
+  --tx:#1D1D1F;--txm:#6E6E73;--txd:#AEAEB2;
+  --br:rgba(29,111,66,.25);--bs:rgba(0,0,0,.08);
+  --grn:#1D6F42;--red:#D93025;--amb:#B06000;--blu:#1A56DB;--pur:#6741D9;
+  --font-body:'DM Sans',sans-serif;
+  --font-display:'Fraunces',serif;
+  --font-mono:'DM Mono',monospace;
+  --radius:11px;
 }
-html,body{height:100%;background:#111;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;padding:20px 16px;gap:14px;}
-.device-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(184,224,48,0.5);}
+html,body{height:100%;background: var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;padding:20px 16px;gap:14px;}
+.device-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:rgba(29,111,66,0.5);}
 
 /* ── PHONE SHELL ── */
 .phone{
@@ -30,7 +33,7 @@ html,body{height:100%;background:#111;display:flex;flex-direction:column;align-i
   box-shadow:0 0 0 1px rgba(255,255,255,0.08),0 0 0 3px rgba(0,0,0,0.6),0 40px 80px rgba(0,0,0,0.8);
 }
 .notch{position:absolute;top:0;left:50%;transform:translateX(-50%);width:126px;height:34px;background:#080808;border-radius:0 0 22px 22px;z-index:30;}
-.status-bar{display:flex;justify-content:space-between;align-items:center;padding:14px 28px 0;font-family:'DM Mono',monospace;font-size:11px;color:rgba(238,240,229,0.5);flex-shrink:0;z-index:10;position:relative;}
+.status-bar{display:flex;justify-content:space-between;align-items:center;padding:14px 28px 0;font-family:'DM Mono',monospace;font-size:11px;color:rgba(0,0,0,0.5);flex-shrink:0;z-index:10;position:relative;}
 
 /* ── SCREENS ── */
 .screen{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;opacity:0;pointer-events:none;transition:opacity 0.3s ease, transform 0.3s ease;transform:translateX(30px);}
@@ -59,7 +62,7 @@ html,body{height:100%;background:#111;display:flex;flex-direction:column;align-i
 .mob-inp:focus{border-color:var(--br);}
 .mob-inp::placeholder{color:var(--txd);}
 .mob-sel{width:100%;background:var(--s2);border:1px solid var(--bs);border-radius:12px;padding:14px 16px;color:var(--tx);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;cursor:pointer;}
-.mob-sel option{background:#13160D;}
+.mob-sel option{background:#FFFFFF;}
 .inp-lbl{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--txm);margin-bottom:8px;display:block;}
 
 /* ── CHIPS ── */
@@ -69,26 +72,26 @@ html,body{height:100%;background:#111;display:flex;flex-direction:column;align-i
 
 /* ── OPTION CARDS ── */
 .opt-card{background:var(--s2);border:1.5px solid var(--bs);border-radius:14px;padding:15px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all 0.15s;}
-.opt-card.sel{border-color:rgba(184,224,48,0.45);background:var(--ad);}
+.opt-card.sel{border-color:rgba(29,111,66,0.45);background:var(--ad);}
 .opt-radio{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--bs);display:flex;align-items:center;justify-content:center;font-size:11px;color:transparent;flex-shrink:0;transition:all 0.15s;}
 .opt-card.sel .opt-radio{background:var(--acc);border-color:var(--acc);color:var(--bg);}
 
 /* ── PRIORITY GRID ── */
 .pri-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .pri-card{background:var(--s2);border:1.5px solid var(--bs);border-radius:14px;padding:18px 12px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;text-align:center;position:relative;transition:all 0.15s;}
-.pri-card.sel{border-color:rgba(184,224,48,0.45);background:var(--ad);}
+.pri-card.sel{border-color:rgba(29,111,66,0.45);background:var(--ad);}
 .pri-chk{position:absolute;top:8px;right:8px;width:18px;height:18px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--bg);opacity:0;transition:opacity 0.15s;}
 .pri-card.sel .pri-chk{opacity:1;}
 
 /* ── QUIZ OPTION ── */
 .quiz-opt{background:var(--s2);border:1px solid var(--bs);border-radius:14px;padding:16px 18px;font-size:14px;color:var(--txm);cursor:pointer;transition:all 0.15s;line-height:1.5;}
-.quiz-opt:hover{border-color:rgba(184,224,48,0.25);color:var(--tx);}
-.quiz-opt.sel{border-color:rgba(184,224,48,0.5);background:var(--ad);color:var(--acc);}
+.quiz-opt:hover{border-color:rgba(29,111,66,0.25);color:var(--tx);}
+.quiz-opt.sel{border-color:rgba(29,111,66,0.5);background:var(--ad);color:var(--acc);}
 
 /* ── ANIMATIONS ── */
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 @keyframes popIn{from{transform:scale(0.7);opacity:0}to{transform:scale(1);opacity:1}}
-@keyframes pulseAcc{0%,100%{box-shadow:0 0 0 0 rgba(184,224,48,0)}50%{box-shadow:0 0 20px rgba(184,224,48,0.15)}}
+@keyframes pulseAcc{0%,100%{box-shadow:0 0 0 0 rgba(29,111,66,0)}50%{box-shadow:0 0 20px rgba(29,111,66,0.15)}}
 .fade-up{animation:fadeUp 0.3s ease both;}
 
   /* ── MODAL OVERLAY (shared) ── */
@@ -126,6 +129,9 @@ html,body{height:100%;background:#111;display:flex;flex-direction:column;align-i
   .tab-panel{display:none;animation:fadeUp 0.25s ease;}
   .tab-panel.active{display:block;}
 </style>
+<script>
+(function(){document.documentElement.style.background='#F5F5F7';document.documentElement.style.color='#1D1D1F';})();
+</script>
 </head>
 <body>
 
@@ -141,8 +147,8 @@ html,body{height:100%;background:#111;display:flex;flex-direction:column;align-i
   <div class="screen active" id="sc-welcome" style="background:var(--bg);justify-content:space-between;padding:24px 24px 32px;overflow-y:auto;">
 
     <!-- Radial glow -->
-    <div style="position:absolute;width:300px;height:300px;background:radial-gradient(circle,rgba(184,224,48,0.07) 0%,transparent 65%);top:5%;left:50%;transform:translateX(-50%);pointer-events:none;"></div>
-    <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(184,224,48,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(184,224,48,0.025) 1px,transparent 1px);background-size:36px 36px;mask-image:radial-gradient(ellipse 80% 60% at 50% 20%,black,transparent);pointer-events:none;"></div>
+    <div style="position:absolute;width:300px;height:300px;background:radial-gradient(circle,rgba(29,111,66,0.07) 0%,transparent 65%);top:5%;left:50%;transform:translateX(-50%);pointer-events:none;"></div>
+    <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(29,111,66,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(29,111,66,0.025) 1px,transparent 1px);background-size:36px 36px;mask-image:radial-gradient(ellipse 80% 60% at 50% 20%,black,transparent);pointer-events:none;"></div>
 
     <!-- Top section -->
     <div style="display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1;">
@@ -174,7 +180,7 @@ html,body{height:100%;background:#111;display:flex;flex-direction:column;align-i
 
     <!-- Returning user CTA (hidden until profile detected) -->
     <div style="display:none;flex-direction:column;gap:9px;position:relative;z-index:1;" id="w-cta-returning">
-      <div style="background:var(--s1);border:1px solid rgba(184,224,48,0.2);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;">
+      <div style="background:var(--s1);border:1px solid rgba(29,111,66,0.2);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:12px;">
         <div style="font-size:24px;">🧬</div>
         <div style="flex:1;">
           <div style="font-size:13px;font-weight:600;color:var(--tx);" id="w-ret-name">Welcome back, Jordan</div>
@@ -396,12 +402,12 @@ html,body{height:100%;background:#111;display:flex;flex-direction:column;align-i
   ══════════════════════════════════════ -->
   <div class="screen" id="sc-reveal" style="background:var(--bg);justify-content:space-between;padding:28px 24px 32px;overflow-y:auto;">
 
-    <div style="position:absolute;width:280px;height:280px;background:radial-gradient(circle,rgba(184,224,48,0.1) 0%,transparent 70%);top:10%;left:50%;transform:translateX(-50%);pointer-events:none;"></div>
+    <div style="position:absolute;width:280px;height:280px;background:radial-gradient(circle,rgba(29,111,66,0.1) 0%,transparent 70%);top:10%;left:50%;transform:translateX(-50%);pointer-events:none;"></div>
 
     <!-- Top: DNA reveal -->
     <div style="display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1;" class="fade-up">
       <div style="width:72px;height:72px;border-radius:50%;background:var(--ad);border:2px solid var(--br);display:flex;align-items:center;justify-content:center;margin-bottom:16px;animation:popIn 0.5s cubic-bezier(0.34,1.56,0.64,1);">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#B8E030" stroke-width="1.5"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1D6F42" stroke-width="1.5"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
       </div>
       <div style="font-size:10px;font-family:'DM Mono',monospace;color:var(--acc);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:8px;">Your Buyer DNA</div>
       <div style="font-family:'Fraunces',serif;font-size:30px;color:var(--tx);line-height:1.1;margin-bottom:8px;" id="rev-dna">Refined Modern</div>
@@ -409,7 +415,7 @@ html,body{height:100%;background:#111;display:flex;flex-direction:column;align-i
     </div>
 
     <!-- Match card -->
-    <div style="background:linear-gradient(135deg,rgba(184,224,48,0.1),rgba(184,224,48,0.02));border:1px solid rgba(184,224,48,0.2);border-radius:20px;padding:22px;position:relative;z-index:1;" class="fade-up">
+    <div style="background:linear-gradient(135deg,rgba(29,111,66,0.1),rgba(29,111,66,0.02));border:1px solid rgba(29,111,66,0.2);border-radius:20px;padding:22px;position:relative;z-index:1;" class="fade-up">
       <div style="font-size:11px;color:var(--txm);margin-bottom:3px;">Your match with this home</div>
       <div style="font-family:'Fraunces',serif;font-size:16px;color:var(--tx);font-weight:500;margin-bottom:14px;">📍 2847 Magnolia Drive</div>
       <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
@@ -469,7 +475,7 @@ html,body{height:100%;background:#111;display:flex;flex-direction:column;align-i
       </div>
 
       <!-- This home match -->
-      <div style="background:var(--s1);border:1px solid rgba(184,224,48,0.2);border-radius:14px;padding:14px 16px;margin-bottom:16px;">
+      <div style="background:var(--s1);border:1px solid rgba(29,111,66,0.2);border-radius:14px;padding:14px 16px;margin-bottom:16px;">
         <div style="font-size:10px;font-family:'DM Mono',monospace;color:var(--acc);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px;">● You're Here Now</div>
         <div style="font-family:'Fraunces',serif;font-size:17px;color:var(--tx);margin-bottom:2px;">2847 Magnolia Drive</div>
         <div style="font-size:12px;color:var(--txm);margin-bottom:12px;">Flower Mound · $724,000 · 4bd / 3.5ba</div>
@@ -520,7 +526,7 @@ html,body{height:100%;background:#111;display:flex;flex-direction:column;align-i
       </div>
 
       <!-- Agent CTA -->
-      <div style="background:var(--s1);border:1px solid rgba(184,224,48,0.15);border-radius:14px;padding:16px;display:flex;align-items:center;gap:12px;">
+      <div style="background:var(--s1);border:1px solid rgba(29,111,66,0.15);border-radius:14px;padding:16px;display:flex;align-items:center;gap:12px;">
         <div style="width:42px;height:42px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:15px;font-weight:600;color:var(--bg);flex-shrink:0;">MR</div>
         <div style="flex:1;">
           <div style="font-size:13px;font-weight:600;color:var(--tx);">Marcus Rivera</div>
@@ -553,7 +559,7 @@ html,body{height:100%;background:#111;display:flex;flex-direction:column;align-i
             <div class="mob-chip">Southlake</div>
           </div>
           <div style="display:flex;flex-direction:column;gap:12px;">
-            <div style="background:var(--s1);border:1px solid rgba(184,224,48,0.2);border-radius:14px;padding:14px;">
+            <div style="background:var(--s1);border:1px solid rgba(29,111,66,0.2);border-radius:14px;padding:14px;">
               <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><div><div style="font-size:13px;font-weight:600;color:var(--tx);">2847 Magnolia Drive</div><div style="font-size:11px;color:var(--txm);">Flower Mound · $724K · 4bd/3.5ba</div></div><div style="font-family:'Fraunces',serif;font-size:24px;color:var(--acc);">87%</div></div>
               <div style="font-size:11px;color:var(--txm);margin-bottom:10px;">Primary suite + open kitchen matches your top traits</div>
               <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;"><span style="font-size:10px;background:var(--ad);color:var(--acc);border:1px solid var(--br);padding:2px 8px;border-radius:10px;font-family:'DM Mono',monospace;">● LIVE OPEN HOUSE</span><span style="font-size:10px;background:var(--s3);color:var(--txm);padding:2px 8px;border-radius:10px;font-family:'DM Mono',monospace;">4bd · 3.5ba · 3,240sqft</span></div>
@@ -601,7 +607,7 @@ html,body{height:100%;background:#111;display:flex;flex-direction:column;align-i
         <div style="font-size:12px;color:var(--txm);margin-bottom:16px;">4 homes visited · Sorted by date</div>
 
         <div style="display:flex;flex-direction:column;gap:10px;">
-          <div style="background:var(--s1);border:1px solid rgba(184,224,48,0.2);border-radius:14px;padding:14px;cursor:pointer;" onclick="showVisitReport('2847 Magnolia Drive')">
+          <div style="background:var(--s1);border:1px solid rgba(29,111,66,0.2);border-radius:14px;padding:14px;cursor:pointer;" onclick="showVisitReport('2847 Magnolia Drive')">
             <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
               <div><div style="font-size:13px;font-weight:600;color:var(--tx);">2847 Magnolia Drive</div><div style="font-size:11px;color:var(--txm);">Flower Mound · Today, 2:14 PM</div></div>
               <div style="text-align:right;"><div style="font-family:'Fraunces',serif;font-size:20px;color:var(--acc);">87%</div><div style="font-size:9px;font-family:'DM Mono',monospace;color:var(--grn);">● Hot Lead</div></div>
@@ -677,7 +683,7 @@ html,body{height:100%;background:#111;display:flex;flex-direction:column;align-i
         <div style="font-family:'Fraunces',serif;font-size:20px;color:var(--tx);margin-bottom:16px;">My <em style='color:var(--acc);'>Profile</em></div>
 
         <!-- Buyer card -->
-        <div style="background:var(--s1);border:1px solid rgba(184,224,48,0.2);border-radius:14px;padding:16px;margin-bottom:14px;display:flex;align-items:center;gap:14px;">
+        <div style="background:var(--s1);border:1px solid rgba(29,111,66,0.2);border-radius:14px;padding:16px;margin-bottom:14px;display:flex;align-items:center;gap:14px;">
           <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--acc),#7AB800);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:var(--bg);flex-shrink:0;">JL</div>
           <div style="flex:1;">
             <div style="font-size:15px;font-weight:600;color:var(--tx);">Jordan Lee</div>
@@ -987,8 +993,8 @@ function toast(msg, type) {
   if (old) old.remove();
   var t = document.createElement('div');
   t.id = '_mob-toast';
-  var bg = type === 'ok' ? '#B8E030' : '#1A1E12';
-  var c  = type === 'ok' ? '#0A0B07' : '#EEF0E5';
+  var bg = type === 'ok' ? '#1D6F42' : '#F0F0F2';
+  var c  = type === 'ok' ? '#F5F5F7' : '#1D1D1F';
   t.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:' + bg + ';color:' + c + ';padding:10px 20px;border-radius:10px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all 0.2s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,0.5);white-space:nowrap;max-width:320px;text-align:center;';
   t.textContent = msg;
   document.body.appendChild(t);
@@ -1061,7 +1067,7 @@ function renderSavedList() {
   empty.style.display = 'none';
 
   list.innerHTML = homes.map(function(h) {
-    return '<div style="background:var(--s1);border:1px solid rgba(184,224,48,0.18);border-radius:14px;padding:14px;">'
+    return '<div style="background:var(--s1);border:1px solid rgba(29,111,66,0.18);border-radius:14px;padding:14px;">'
       + '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">'
       + '<div><div style="font-size:13px;font-weight:600;color:var(--tx);">' + h.addr + '</div>'
       + '<div style="font-size:11px;color:var(--txm);">' + h.area + ' · ' + h.price + '</div></div>'
@@ -1069,7 +1075,7 @@ function renderSavedList() {
       + '</div>'
       + '<div style="display:flex;gap:8px;">'
       + '<button style="flex:1;padding:9px;border-radius:9px;border:none;background:var(--acc);color:var(--bg);font-family:\'DM Sans\',sans-serif;font-size:11px;font-weight:600;cursor:pointer;" onclick="showHomeDetail(\'' + h.addr + '\')">View Details</button>'
-      + '<button style="width:40px;padding:9px;border-radius:9px;border:1px solid var(--br);background:rgba(184,224,48,0.06);color:var(--acc);font-size:14px;cursor:pointer;" onclick="unsaveFromList(\'' + h.addr + '\')">♥</button>'
+      + '<button style="width:40px;padding:9px;border-radius:9px;border:1px solid var(--br);background:rgba(29,111,66,0.06);color:var(--acc);font-size:14px;cursor:pointer;" onclick="unsaveFromList(\'' + h.addr + '\')">♥</button>'
       + '</div></div>';
   }).join('');
 }
@@ -1180,28 +1186,28 @@ function showHomeDetail(addr) {
   var existing = document.getElementById('_hd');
   if (existing) existing.remove();
 
-  var matchColor = h.matchClass === 'high' ? '#B8E030' : h.matchClass === 'mid' ? '#F5A623' : '#FF5A4A';
+  var matchColor = h.matchClass === 'high' ? '#1D6F42' : h.matchClass === 'mid' ? '#F5A623' : '#FF5A4A';
 
   var html = '';
 
   // Overlay
   html += '<div id="_hd" style="position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:9990;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:32px 16px;">';
-  html += '<div style="background:#13160D;border:1px solid rgba(184,224,48,0.15);border-radius:16px;width:720px;max-width:95vw;box-shadow:0 28px 80px rgba(0,0,0,0.7);overflow:hidden;">';
+  html += '<div style="background:#FFFFFF;border:1px solid rgba(29,111,66,0.15);border-radius:16px;width:720px;max-width:95vw;box-shadow:0 28px 80px rgba(0,0,0,0.7);overflow:hidden;">';
 
   // ── Hero bar ──
-  html += '<div style="background:linear-gradient(135deg,#1A1E12,#0E1108);padding:24px 28px;border-bottom:1px solid rgba(184,224,48,0.1);display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">';
+  html += '<div style="background:linear-gradient(135deg,#F0F0F2,#F5F5F7);padding:24px 28px;border-bottom:1px solid rgba(29,111,66,0.1);display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">';
   html += '<div style="flex:1;">';
-  html += '<div style="font-family:Fraunces,serif;font-size:24px;color:#EEF0E5;line-height:1.1;">' + h.addr + '</div>';
-  html += '<div style="font-size:12px;color:#8A8F7A;margin-top:4px;">' + h.area + '</div>';
+  html += '<div style="font-family:Fraunces,serif;font-size:24px;color:#1D1D1F;line-height:1.1;">' + h.addr + '</div>';
+  html += '<div style="font-size:12px;color:#6E6E73;margin-top:4px;">' + h.area + '</div>';
   html += '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;">';
   h.tags.forEach(function(tag) {
-    html += '<span style="font-size:11px;padding:3px 10px;border-radius:20px;background:rgba(184,224,48,0.08);border:1px solid rgba(184,224,48,0.15);color:#B8E030;font-family:DM Mono,monospace;">' + tag + '</span>';
+    html += '<span style="font-size:11px;padding:3px 10px;border-radius:20px;background:rgba(29,111,66,0.08);border:1px solid rgba(29,111,66,0.15);color:#1D6F42;font-family:DM Mono,monospace;">' + tag + '</span>';
   });
   html += '</div></div>';
   html += '<div style="text-align:right;flex-shrink:0;">';
   html += '<div style="font-family:Fraunces,serif;font-size:42px;color:' + matchColor + ';line-height:1;">' + h.match + '%</div>';
-  html += '<div style="font-size:10px;color:#8A8F7A;font-family:DM Mono,monospace;letter-spacing:0.06em;">MATCH SCORE</div>';
-  html += '<div style="font-size:11px;color:#8A8F7A;margin-top:6px;">' + h.dna + '</div>';
+  html += '<div style="font-size:10px;color:#6E6E73;font-family:DM Mono,monospace;letter-spacing:0.06em;">MATCH SCORE</div>';
+  html += '<div style="font-size:11px;color:#6E6E73;margin-top:6px;">' + h.dna + '</div>';
   html += '</div>';
   html += '</div>';
 
@@ -1216,43 +1222,43 @@ function showHomeDetail(addr) {
     { label:'Lot', val: h.lot },
     { label:'HOA', val: h.hoa },
   ];
-  html += '<div style="display:grid;grid-template-columns:repeat(8,1fr);border-bottom:1px solid rgba(238,240,229,0.06);">';
+  html += '<div style="display:grid;grid-template-columns:repeat(8,1fr);border-bottom:1px solid rgba(0,0,0,0.06);">';
   specs.forEach(function(s, i) {
-    html += '<div style="padding:12px 0;text-align:center;' + (i < 7 ? 'border-right:1px solid rgba(238,240,229,0.06);' : '') + '">';
-    html += '<div style="font-family:Fraunces,serif;font-size:16px;color:#EEF0E5;">' + s.val + '</div>';
-    html += '<div style="font-size:9px;color:#8A8F7A;text-transform:uppercase;letter-spacing:0.07em;margin-top:3px;">' + s.label + '</div>';
+    html += '<div style="padding:12px 0;text-align:center;' + (i < 7 ? 'border-right:1px solid rgba(0,0,0,0.06);' : '') + '">';
+    html += '<div style="font-family:Fraunces,serif;font-size:16px;color:#1D1D1F;">' + s.val + '</div>';
+    html += '<div style="font-size:9px;color:#6E6E73;text-transform:uppercase;letter-spacing:0.07em;margin-top:3px;">' + s.label + '</div>';
     html += '</div>';
   });
   html += '</div>';
 
   // ── Body: two columns ──
-  html += '<div style="display:grid;grid-template-columns:1fr 260px;gap:0;border-bottom:1px solid rgba(238,240,229,0.06);">';
+  html += '<div style="display:grid;grid-template-columns:1fr 260px;gap:0;border-bottom:1px solid rgba(0,0,0,0.06);">';
 
   // Left col
-  html += '<div style="padding:22px 24px;border-right:1px solid rgba(238,240,229,0.06);">';
+  html += '<div style="padding:22px 24px;border-right:1px solid rgba(0,0,0,0.06);">';
 
   // Description
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:10px;">About This Home</div>';
-  html += '<div style="font-size:13px;color:#8A8F7A;line-height:1.7;margin-bottom:20px;">' + h.description + '</div>';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin-bottom:10px;">About This Home</div>';
+  html += '<div style="font-size:13px;color:#6E6E73;line-height:1.7;margin-bottom:20px;">' + h.description + '</div>';
 
   // Match breakdown
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:12px;">Why It Matches You</div>';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin-bottom:12px;">Why It Matches You</div>';
   h.matchReasons.forEach(function(r) {
     html += '<div style="margin-bottom:10px;">';
     html += '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;">';
-    html += '<span style="color:#8A8F7A;">' + r.trait + '</span>';
-    html += '<span style="font-family:DM Mono,monospace;font-size:11px;color:#B8E030;">' + r.score + '%</span>';
+    html += '<span style="color:#6E6E73;">' + r.trait + '</span>';
+    html += '<span style="font-family:DM Mono,monospace;font-size:11px;color:#1D6F42;">' + r.score + '%</span>';
     html += '</div>';
-    html += '<div style="height:4px;background:#1A1E12;border-radius:2px;overflow:hidden;">';
-    html += '<div style="height:4px;background:#B8E030;border-radius:2px;width:' + r.score + '%;"></div>';
+    html += '<div style="height:4px;background:#F0F0F2;border-radius:2px;overflow:hidden;">';
+    html += '<div style="height:4px;background:#1D6F42;border-radius:2px;width:' + r.score + '%;"></div>';
     html += '</div></div>';
   });
 
   // Top rooms
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-top:18px;margin-bottom:10px;">Top Rooms for Your Profile</div>';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin-top:18px;margin-bottom:10px;">Top Rooms for Your Profile</div>';
   html += '<div style="display:flex;gap:8px;flex-wrap:wrap;">';
   h.topRooms.forEach(function(room) {
-    html += '<div style="background:#1A1E12;border:1px solid rgba(238,240,229,0.08);border-radius:8px;padding:8px 14px;font-size:12px;color:#EEF0E5;">📍 ' + room + '</div>';
+    html += '<div style="background:#F0F0F2;border:1px solid rgba(0,0,0,0.08);border-radius:8px;padding:8px 14px;font-size:12px;color:#1D1D1F;">📍 ' + room + '</div>';
   });
   html += '</div>';
 
@@ -1262,8 +1268,8 @@ function showHomeDetail(addr) {
   html += '<div style="padding:22px 20px;display:flex;flex-direction:column;gap:16px;">';
 
   // Listing stats
-  html += '<div style="background:#0E1108;border:1px solid rgba(238,240,229,0.06);border-radius:10px;padding:14px 16px;">';
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:10px;">Listing Activity</div>';
+  html += '<div style="background:#F5F5F7;border:1px solid rgba(0,0,0,0.06);border-radius:10px;padding:14px 16px;">';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin-bottom:10px;">Listing Activity</div>';
   html += '<div style="display:flex;flex-direction:column;gap:8px;">';
   [
     { k:'Status', v:'● ' + h.status, accent: true },
@@ -1272,16 +1278,16 @@ function showHomeDetail(addr) {
     { k:'Saved By', v: h.savedBy + ' buyers' },
   ].forEach(function(row) {
     html += '<div style="display:flex;justify-content:space-between;font-size:12px;">';
-    html += '<span style="color:#8A8F7A;">' + row.k + '</span>';
-    html += '<span style="color:' + (row.accent ? '#4ADE80' : '#EEF0E5') + ';font-family:DM Mono,monospace;font-size:11px;">' + row.v + '</span>';
+    html += '<span style="color:#6E6E73;">' + row.k + '</span>';
+    html += '<span style="color:' + (row.accent ? '#4ADE80' : '#1D1D1F') + ';font-family:DM Mono,monospace;font-size:11px;">' + row.v + '</span>';
     html += '</div>';
   });
   html += '</div></div>';
 
   // Agent note
-  html += '<div style="background:#0E1108;border:1px solid rgba(184,224,48,0.12);border-radius:10px;padding:14px 16px;">';
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:8px;">Agent Note · ' + h.agent + '</div>';
-  html += '<div style="font-size:12px;color:#8A8F7A;line-height:1.6;font-style:italic;">"' + h.agentNote + '"</div>';
+  html += '<div style="background:#F5F5F7;border:1px solid rgba(29,111,66,0.12);border-radius:10px;padding:14px 16px;">';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin-bottom:8px;">Agent Note · ' + h.agent + '</div>';
+  html += '<div style="font-size:12px;color:#6E6E73;line-height:1.6;font-style:italic;">"' + h.agentNote + '"</div>';
   html += '</div>';
 
   html += '</div>'; // end right col
@@ -1289,10 +1295,10 @@ function showHomeDetail(addr) {
 
   // ── Footer CTA ──
   html += '<div style="padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;">';
-  html += '<button id="_hd-close" style="padding:10px 20px;border-radius:8px;border:1px solid rgba(238,240,229,0.1);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Close</button>';
+  html += '<button id="_hd-close" style="padding:10px 20px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);background:transparent;color:#6E6E73;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Close</button>';
   html += '<div style="display:flex;gap:10px;">';
-  html += '<button id="_hd-save" style="padding:10px 18px;border-radius:8px;border:1px solid rgba(184,224,48,0.2);background:rgba(184,224,48,0.08);color:#B8E030;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">♡ Save Home</button>';
-  html += '<button id="_hd-tour" style="padding:10px 22px;border-radius:8px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Schedule a Showing →</button>';
+  html += '<button id="_hd-save" style="padding:10px 18px;border-radius:8px;border:1px solid rgba(29,111,66,0.2);background:rgba(29,111,66,0.08);color:#1D6F42;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">♡ Save Home</button>';
+  html += '<button id="_hd-tour" style="padding:10px 22px;border-radius:8px;border:none;background:#1D6F42;color:#F5F5F7;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Schedule a Showing →</button>';
   html += '</div></div>';
 
   html += '</div></div>'; // end card + overlay
@@ -1307,8 +1313,8 @@ function showHomeDetail(addr) {
   document.getElementById('_hd-save').addEventListener('click', function() {
     saved = !saved;
     this.textContent = saved ? '♥ Saved' : '♡ Save Home';
-    this.style.color = saved ? '#EEF0E5' : '#B8E030';
-    this.style.background = saved ? 'rgba(184,224,48,0.15)' : 'rgba(184,224,48,0.08)';
+    this.style.color = saved ? '#1D1D1F' : '#1D6F42';
+    this.style.background = saved ? 'rgba(29,111,66,0.15)' : 'rgba(29,111,66,0.08)';
     toast(saved ? h.addr + ' saved to your list ✓' : 'Removed from saved homes', saved ? 'ok' : '');
     // Sync with savedHomes store
     if (typeof savedHomes !== 'undefined') {
@@ -1346,21 +1352,21 @@ function showScheduleModal(h) {
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:9995;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:32px 16px;';
 
   var html = '';
-  html += '<div style="background:#13160D;border:1px solid rgba(184,224,48,0.18);border-radius:16px;width:500px;max-width:95vw;box-shadow:0 24px 72px rgba(0,0,0,0.7);">';
+  html += '<div style="background:#FFFFFF;border:1px solid rgba(29,111,66,0.18);border-radius:16px;width:500px;max-width:95vw;box-shadow:0 24px 72px rgba(0,0,0,0.7);">';
 
   // Header
   html += '<div style="padding:26px 28px 0;">';
   html += '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px;">';
   html += '<div>';
-  html += '<div style="font-family:Fraunces,serif;font-size:21px;color:#EEF0E5;">Schedule a <em style=\'color:#B8E030;\'>Showing</em></div>';
-  html += '<div style="font-size:12px;color:#8A8F7A;margin-top:4px;">' + h.addr + ' · with ' + h.agent + '</div>';
+  html += '<div style="font-family:Fraunces,serif;font-size:21px;color:#1D1D1F;">Schedule a <em style=\'color:#1D6F42;\'>Showing</em></div>';
+  html += '<div style="font-size:12px;color:#6E6E73;margin-top:4px;">' + h.addr + ' · with ' + h.agent + '</div>';
   html += '</div>';
-  html += '<button id="_sm-x" style="background:none;border:none;color:#8A8F7A;font-size:18px;cursor:pointer;padding:2px 6px;">✕</button>';
+  html += '<button id="_sm-x" style="background:none;border:none;color:#6E6E73;font-size:18px;cursor:pointer;padding:2px 6px;">✕</button>';
   html += '</div>';
-  html += '<div style="height:1px;background:rgba(184,224,48,0.1);margin:18px 0 20px;"></div>';
+  html += '<div style="height:1px;background:rgba(29,111,66,0.1);margin:18px 0 20px;"></div>';
 
   // Date + Time row
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:12px;">Preferred Date &amp; Time</div>';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin-bottom:12px;">Preferred Date &amp; Time</div>';
   html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;">';
   html += inpField('_sm-date', 'Date', 'date', '');
   html += inpField('_sm-time1', 'Start Time', 'time', '');
@@ -1368,17 +1374,17 @@ function showScheduleModal(h) {
   html += '</div>';
 
   // Alternate date
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:12px;">Alternate Date <span style=\'color:#4A4F3A;font-weight:400;text-transform:none;\'>(optional)</span></div>';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin-bottom:12px;">Alternate Date <span style=\'color:#4A4F3A;font-weight:400;text-transform:none;\'>(optional)</span></div>';
   html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;">';
   html += inpField('_sm-alt-date', 'Alt Date', 'date', '');
   html += inpField('_sm-alt-time1', 'Start Time', 'time', '');
   html += inpField('_sm-alt-time2', 'End Time', 'time', '');
   html += '</div>';
 
-  html += '<div style="height:1px;background:rgba(184,224,48,0.1);margin-bottom:16px;"></div>';
+  html += '<div style="height:1px;background:rgba(29,111,66,0.1);margin-bottom:16px;"></div>';
 
   // Tour type
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:12px;">Tour Type</div>';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin-bottom:12px;">Tour Type</div>';
   html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;">';
   var tourTypes = [
     { id:'tt-in', label:'In-Person', sub:'Walk the property', icon:'🏠' },
@@ -1386,29 +1392,29 @@ function showScheduleModal(h) {
     { id:'tt-sl', label:'Self-Led', sub:'Unaccompanied access', icon:'🔑' },
   ];
   tourTypes.forEach(function(t, i) {
-    var active = i === 0 ? 'border-color:rgba(184,224,48,0.4);background:rgba(184,224,48,0.06);' : '';
-    html += '<div class="_tt-card" data-tt="' + t.id + '" style="background:#0E1108;border:1px solid rgba(238,240,229,0.08);' + active + 'border-radius:10px;padding:12px 14px;cursor:pointer;transition:all 0.12s;">';
+    var active = i === 0 ? 'border-color:rgba(29,111,66,0.4);background:rgba(29,111,66,0.06);' : '';
+    html += '<div class="_tt-card" data-tt="' + t.id + '" style="background:#F5F5F7;border:1px solid rgba(0,0,0,0.08);' + active + 'border-radius:10px;padding:12px 14px;cursor:pointer;transition:all 0.12s;">';
     html += '<div style="font-size:18px;margin-bottom:6px;">' + t.icon + '</div>';
-    html += '<div style="font-size:12px;color:#EEF0E5;font-weight:500;">' + t.label + '</div>';
-    html += '<div style="font-size:11px;color:#8A8F7A;margin-top:2px;">' + t.sub + '</div>';
+    html += '<div style="font-size:12px;color:#1D1D1F;font-weight:500;">' + t.label + '</div>';
+    html += '<div style="font-size:11px;color:#6E6E73;margin-top:2px;">' + t.sub + '</div>';
     html += '</div>';
   });
   html += '</div>';
 
-  html += '<div style="height:1px;background:rgba(184,224,48,0.1);margin-bottom:16px;"></div>';
+  html += '<div style="height:1px;background:rgba(29,111,66,0.1);margin-bottom:16px;"></div>';
 
   // Questions / notes
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:10px;">Questions for the Agent <span style=\'color:#4A4F3A;font-weight:400;text-transform:none;\'>(optional)</span></div>';
-  html += '<textarea id="_sm-note" rows="3" placeholder="e.g. Can we see the backyard? Is the pool permit transferred? What&#39;s the HOA include?" style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;resize:none;outline:none;box-sizing:border-box;"></textarea>';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin-bottom:10px;">Questions for the Agent <span style=\'color:#4A4F3A;font-weight:400;text-transform:none;\'>(optional)</span></div>';
+  html += '<textarea id="_sm-note" rows="3" placeholder="e.g. Can we see the backyard? Is the pool permit transferred? What&#39;s the HOA include?" style="width:100%;background:#F5F5F7;border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 12px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-size:13px;resize:none;outline:none;box-sizing:border-box;"></textarea>';
 
   html += '</div>'; // end padding wrapper
 
   // Footer
-  html += '<div style="padding:18px 28px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(184,224,48,0.1);margin-top:20px;">';
+  html += '<div style="padding:18px 28px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(29,111,66,0.1);margin-top:20px;">';
   html += '<div style="font-size:11px;color:#4A4F3A;line-height:1.5;">' + h.agent + ' will confirm within 2 hours.</div>';
   html += '<div style="display:flex;gap:10px;">';
-  html += '<button id="_sm-cancel" style="padding:10px 18px;border-radius:8px;border:1px solid rgba(238,240,229,0.1);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Cancel</button>';
-  html += '<button id="_sm-confirm" style="padding:10px 22px;border-radius:8px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Request Showing →</button>';
+  html += '<button id="_sm-cancel" style="padding:10px 18px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);background:transparent;color:#6E6E73;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Cancel</button>';
+  html += '<button id="_sm-confirm" style="padding:10px 22px;border-radius:8px;border:none;background:#1D6F42;color:#F5F5F7;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Request Showing →</button>';
   html += '</div></div>';
 
   html += '</div>'; // end card
@@ -1419,11 +1425,11 @@ function showScheduleModal(h) {
   overlay.querySelectorAll('._tt-card').forEach(function(card) {
     card.addEventListener('click', function() {
       overlay.querySelectorAll('._tt-card').forEach(function(c) {
-        c.style.borderColor = 'rgba(238,240,229,0.08)';
-        c.style.background = '#0E1108';
+        c.style.borderColor = 'rgba(0,0,0,0.08)';
+        c.style.background = '#F5F5F7';
       });
-      card.style.borderColor = 'rgba(184,224,48,0.4)';
-      card.style.background = 'rgba(184,224,48,0.06)';
+      card.style.borderColor = 'rgba(29,111,66,0.4)';
+      card.style.background = 'rgba(29,111,66,0.06)';
     });
   });
 
@@ -1440,7 +1446,7 @@ function showScheduleModal(h) {
       toast('Please select a date and start time', '');
       return;
     }
-    var tourLabel = (overlay.querySelector('._tt-card[style*="rgba(184,224,48,0.4)"]') || {}).querySelector ? overlay.querySelector('._tt-card[style*="rgba(184,224,48,0.4)"] div:nth-child(2)') : null;
+    var tourLabel = (overlay.querySelector('._tt-card[style*="rgba(29,111,66,0.4)"]') || {}).querySelector ? overlay.querySelector('._tt-card[style*="rgba(29,111,66,0.4)"] div:nth-child(2)') : null;
     var type = tourLabel ? tourLabel.textContent : 'In-Person';
     overlay.remove();
     toast('Showing requested · ' + h.agent + ' will confirm shortly ✓', 'ok');
@@ -1450,8 +1456,8 @@ function showScheduleModal(h) {
 
 function inpField(id, label, type, placeholder) {
   return '<div>'
-    + '<label style="display:block;font-size:11px;color:#8A8F7A;margin-bottom:6px;">' + label + '</label>'
-    + '<input id="' + id + '" type="' + type + '" placeholder="' + placeholder + '" style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;color-scheme:dark;" />'
+    + '<label style="display:block;font-size:11px;color:#6E6E73;margin-bottom:6px;">' + label + '</label>'
+    + '<input id="' + id + '" type="' + type + '" placeholder="' + placeholder + '" style="width:100%;background:#F5F5F7;border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 12px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;color-scheme:dark;" />'
     + '</div>';
 }
 
@@ -1462,12 +1468,12 @@ function modal(title, body, label, cb) {
   var el = document.createElement('div');
   el.id = '_m';
   el.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9995;display:flex;align-items:center;justify-content:center;padding:20px;';
-  el.innerHTML = '<div style="background:#13160D;border:1px solid rgba(184,224,48,0.15);border-radius:14px;padding:24px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,0.7);">'
-    + '<div style="font-family:Fraunces,serif;font-size:19px;color:#EEF0E5;margin-bottom:8px;">' + title + '</div>'
-    + '<div style="font-size:13px;color:#8A8F7A;line-height:1.6;margin-bottom:20px;">' + body + '</div>'
+  el.innerHTML = '<div style="background:#FFFFFF;border:1px solid rgba(29,111,66,0.15);border-radius:14px;padding:24px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,0.7);">'
+    + '<div style="font-family:Fraunces,serif;font-size:19px;color:#1D1D1F;margin-bottom:8px;">' + title + '</div>'
+    + '<div style="font-size:13px;color:#6E6E73;line-height:1.6;margin-bottom:20px;">' + body + '</div>'
     + '<div style="display:flex;gap:10px;justify-content:flex-end;">'
-    + '<button id="_mc" style="padding:9px 18px;border-radius:8px;border:1px solid rgba(238,240,229,0.1);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Cancel</button>'
-    + '<button id="_mo" style="padding:9px 18px;border-radius:8px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:13px;font-weight:600;cursor:pointer;">' + (label || 'OK') + '</button>'
+    + '<button id="_mc" style="padding:9px 18px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);background:transparent;color:#6E6E73;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Cancel</button>'
+    + '<button id="_mo" style="padding:9px 18px;border-radius:8px;border:none;background:#1D6F42;color:#F5F5F7;font-family:DM Sans,sans-serif;font-size:13px;font-weight:600;cursor:pointer;">' + (label || 'OK') + '</button>'
     + '</div></div>';
   document.body.appendChild(el);
   el.querySelector('#_mc').onclick = function(){ el.remove(); };

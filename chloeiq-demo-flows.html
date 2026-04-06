@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ChloeIQ &mdash; Demo Flows</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0A0B07;--s1:#13160D;--s2:#1A1E12;--s3:#222818;--s4:#2A3020;
+  --acc:#B8E030;--ad:rgba(184,224,48,.10);--am:rgba(184,224,48,.22);
+  --tx:#EEF0E5;--txm:#8A8F7A;--txd:#4A5040;
+  --br:rgba(184,224,48,.14);--bs:rgba(238,240,229,.07);
+  --grn:#4ADE80;--red:#FF5A4A;--amb:#F5A623;--blu:#60A5FA;--pur:#A78BFA;
+  --font-body:'DM Sans',sans-serif;--font-display:'Fraunces',serif;--font-mono:'DM Mono',monospace;
+  --radius:12px;
+}
+html,body{min-height:100%;background:var(--bg);color:var(--tx);font-family:var(--font-body);font-size:14px;}
+.topbar{height:56px;display:flex;align-items:center;padding:0 32px;border-bottom:1px solid var(--bs);background:var(--bg);position:sticky;top:0;z-index:20;gap:14px;}
+.lm{width:30px;height:30px;background:var(--acc);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--bg);}
+.lt{font-family:var(--font-display);font-size:18px;}.lt b{color:var(--acc);font-weight:400;}
+.ptag{font-family:var(--font-mono);font-size:10px;color:var(--txm);background:var(--s2);border:1px solid var(--bs);padding:3px 10px;border-radius:20px;letter-spacing:.5px;}
+.tr{margin-left:auto;}
+.tbtn{padding:7px 14px;border-radius:8px;font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--bs);background:var(--s1);color:var(--txm);text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .13s;}
+.tbtn:hover{border-color:var(--br);color:var(--tx);}
+.page{max-width:1100px;margin:0 auto;padding:48px 32px;}
+.hero{text-align:center;margin-bottom:56px;}
+.hero-label{font-family:var(--font-mono);font-size:10px;color:var(--acc);letter-spacing:.8px;text-transform:uppercase;margin-bottom:12px;}
+.hero-h{font-family:var(--font-display);font-size:48px;color:var(--tx);line-height:1.1;margin-bottom:12px;}
+.hero-h em{color:var(--acc);font-style:italic;}
+.hero-sub{font-size:15px;color:var(--txm);line-height:1.7;max-width:560px;margin:0 auto;}
+.flows-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+.flow-card{background:var(--s1);border:1px solid var(--bs);border-radius:16px;overflow:hidden;cursor:pointer;transition:all .15s;text-decoration:none;color:inherit;display:flex;flex-direction:column;}
+.flow-card:hover{border-color:var(--br);transform:translateY(-2px);box-shadow:0 12px 40px rgba(0,0,0,.4);}
+.fc-header{padding:22px 24px 0;}
+.fc-icon-row{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
+.fc-icon{width:44px;height:44px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.fc-audience{font-family:var(--font-mono);font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:var(--txm);}
+.fc-title{font-family:var(--font-display);font-size:22px;color:var(--tx);margin-bottom:6px;line-height:1.2;}
+.fc-title em{color:var(--acc);font-style:italic;}
+.fc-desc{font-size:13px;color:var(--txm);line-height:1.65;margin-bottom:18px;}
+.fc-steps{padding:0 24px 18px;display:flex;flex-direction:column;gap:0;flex:1;}
+.fc-step{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--bs);}
+.fc-step:last-child{border-bottom:none;}
+.fc-step-n{width:20px;height:20px;border-radius:50%;background:var(--s2);border:1px solid var(--bs);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:9px;color:var(--txd);flex-shrink:0;}
+.fc-step-label{font-size:12px;color:var(--txm);}
+.fc-step-file{font-family:var(--font-mono);font-size:10px;color:var(--txd);margin-left:auto;}
+.fc-footer{padding:14px 24px;border-top:1px solid var(--bs);display:flex;align-items:center;justify-content:space-between;}
+.fc-start{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;background:var(--acc);color:var(--bg);font-weight:600;font-size:12px;text-decoration:none;transition:opacity .13s;}
+.fc-start:hover{opacity:.88;}
+.fc-count{font-family:var(--font-mono);font-size:10px;color:var(--txd);}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="lm">C</div>
+  <div class="lt">Chloe<b>IQ</b></div>
+  <div class="ptag">Demo Flows</div>
+  <div class="tr">
+    <a href="chloeiq-demo-hub.html" class="tbtn">&larr; Back to Hub</a>
+  </div>
+</header>
+<div class="page">
+  <div class="hero">
+    <div class="hero-label">ChloeIQ &middot; Demo Flows</div>
+    <div class="hero-h">Pick your <em>audience.</em><br>Start the right demo.</div>
+    <div class="hero-sub">8 curated flows &mdash; each one designed to tell the most compelling story for a specific type of person sitting across from you.</div>
+  </div>
+  <div class="flows-grid" id="flows-grid"></div>
+</div>
+<script>
+var flows=[
+  {
+    id:'buyer',
+    icon:'&#x1F4F1;',
+    iconBg:'rgba(184,224,48,.12)',
+    iconColor:'#B8E030',
+    audience:'Buyer / Open House Visitor',
+    title:'The <em>Buyer</em> Experience',
+    desc:'Show what happens when someone scans a Chloe Code at a yard sign. They go from curious visitor to fully profiled, DNA-matched buyer in under 90 seconds.',
+    steps:[
+      {n:1,label:'Exterior Chloe Code &mdash; yard sign scan',file:'chloeiq-exterior-code.html'},
+      {n:2,label:'Buyer Onboarding &mdash; name, budget, timeline',file:'chloeiq-buyer-app.html'},
+      {n:3,label:'StyleDNA Quiz &mdash; 6-question profile',file:'chloeiq-styledna-quiz.html'},
+      {n:4,label:'Match Reveal &mdash; 87% score, DNA type',file:'chloeiq-buyer-app.html'},
+      {n:5,label:'Market Pulse &mdash; urgency signals',file:'chloeiq-market-pulse-desktop.html'},
+    ],
+    startFile:'chloeiq-exterior-code.html',
+    accentColor:'#B8E030'
+  },
+  {
+    id:'listing-agent',
+    icon:'&#x1F3E0;',
+    iconBg:'rgba(96,165,250,.12)',
+    iconColor:'#60A5FA',
+    audience:'Listing Agent',
+    title:'The <em>Listing Agent</em> Flow',
+    desc:'Show how the listing agent onboards to ChloeIQ, sets up an open house, invites or approves a host agent, and sees real-time buyer intelligence during and after the event.',
+    steps:[
+      {n:1,label:'Listing Agent Onboarding &mdash; platform setup',file:'chloeiq-agent-setup-desktop.html'},
+      {n:2,label:'New Open House Setup &mdash; date, time, host',file:'chloeiq-new-open-house.html'},
+      {n:3,label:'Host Agent Approval &mdash; review applicants',file:'chloeiq-agent-host-approval.html'},
+      {n:4,label:'Live Tour &mdash; real-time buyer intelligence',file:'chloeiq-tour-desktop.html'},
+      {n:5,label:'Listing Dashboard &mdash; post-event report',file:'chloeiq-listing-dashboard-desktop.html'},
+      {n:6,label:'Follow-Up Queue &mdash; AI-drafted messages',file:'chloeiq-followup-desktop.html'},
+    ],
+    startFile:'chloeiq-agent-setup-desktop.html',
+    accentColor:'#60A5FA'
+  },
+  {
+    id:'host-agent',
+    icon:'&#x1FA7;',
+    iconBg:'rgba(167,139,250,.12)',
+    iconColor:'#A78BFA',
+    audience:'Host Agent',
+    title:'The <em>Host Agent</em> Flow',
+    desc:'Show how a hosting agent sets up, runs, and walks away from an open house with ranked buyer leads, AI follow-ups, and a Host Score that drives their career forward.',
+    steps:[
+      {n:1,label:'Agent Onboarding &mdash; 6-step setup wizard',file:'chloeiq-agent-setup-desktop.html'},
+      {n:2,label:'Sign Manager &mdash; order, placement, compliance',file:'chloeiq-sign-manager-desktop.html'},
+      {n:3,label:'Sign Placement &mdash; day-of GPS mobile app',file:'chloeiq-sign-placement.html'},
+      {n:4,label:'Agent Dashboard &mdash; live event view',file:'chloeiq-agent-dashboard-desktop.html'},
+      {n:5,label:'Follow-Up Queue &mdash; one-click AI messages',file:'chloeiq-followup-desktop.html'},
+      {n:6,label:'ROI Calculator &mdash; earnings projection',file:'chloeiq-roi-calculator-desktop.html'},
+      {n:7,label:'Agent Scorecard &mdash; Host Score leaderboard',file:'chloeiq-agent-scorecard-desktop.html'},
+    ],
+    startFile:'chloeiq-agent-setup-desktop.html',
+    accentColor:'#A78BFA'
+  },
+  {
+    id:'brokerage',
+    icon:'&#x1F3E2;',
+    iconBg:'rgba(74,222,128,.12)',
+    iconColor:'#4ADE80',
+    audience:'Brokerage / Team Leader',
+    title:'The <em>Brokerage</em> View',
+    desc:'Show the 30,000-foot intelligence layer. Production by agent, coaching queues, market intelligence, and the Host Score system that creates healthy competition on the team.',
+    steps:[
+      {n:1,label:'Brokerage Dashboard &mdash; team production',file:'chloeiq-brokerage-dashboard-desktop.html'},
+      {n:2,label:'Market Intelligence &mdash; buyer trends by ZIP',file:'chloeiq-market-intelligence-desktop.html'},
+      {n:3,label:'Agent Scorecard &mdash; Host Score leaderboard',file:'chloeiq-agent-scorecard-desktop.html'},
+      {n:4,label:'Opportunity Board &mdash; underserved listings',file:'chloeiq-opportunity-board-desktop.html'},
+      {n:5,label:'Feature Mastermind &mdash; coaching curriculum',file:'chloeiq-feature-mastermind-desktop.html'},
+      {n:6,label:'ROI Calculator &mdash; team-level projection',file:'chloeiq-roi-calculator-desktop.html'},
+    ],
+    startFile:'chloeiq-brokerage-dashboard-desktop.html',
+    accentColor:'#4ADE80'
+  },
+  {
+    id:'vendor',
+    icon:'&#x1F3AF;',
+    iconBg:'rgba(245,166,35,.12)',
+    iconColor:'#F5A623',
+    audience:'Vendor / Partner',
+    title:'The <em>Vendor</em> Intelligence Flow',
+    desc:'Show mortgage, title, and home services vendors how they reach buyer DNA segments at the exact moment of purchase intent &mdash; with precision no portal can match.',
+    steps:[
+      {n:1,label:'Vendor Dashboard &mdash; campaign overview',file:'chloeiq-vendor-dashboard-desktop.html'},
+      {n:2,label:'Buyer Heatmap &mdash; DNA segments by ZIP',file:'chloeiq-buyer-heatmap-desktop.html'},
+      {n:3,label:'Market Intelligence &mdash; buyer trend data',file:'chloeiq-market-intelligence-desktop.html'},
+      {n:4,label:'Marketplace &mdash; available buyer segments',file:'chloeiq-marketplace-desktop.html'},
+    ],
+    startFile:'chloeiq-vendor-dashboard-desktop.html',
+    accentColor:'#F5A623'
+  },
+  {
+    id:'investor',
+    icon:'&#x1F4C8;',
+    iconBg:'rgba(184,224,48,.12)',
+    iconColor:'#B8E030',
+    audience:'Investor / PropTech',
+    title:'The <em>Investor</em> Demo Arc',
+    desc:'Open with the pitch, close with the live product. Problem &rarr; solution &rarr; traction &rarr; market &rarr; then drop straight into the actual platform working in real time.',
+    steps:[
+      {n:1,label:'Seed Deck &mdash; 10-slide investor presentation',file:'chloeiq-seed-deck-desktop.html'},
+      {n:2,label:'Exterior Code &mdash; scan the yard sign',file:'chloeiq-exterior-code.html'},
+      {n:3,label:'Buyer App &mdash; StyleDNA + match reveal',file:'chloeiq-buyer-app.html'},
+      {n:4,label:'Agent Dashboard &mdash; real-time intelligence',file:'chloeiq-agent-dashboard-desktop.html'},
+      {n:5,label:'Brokerage Dashboard &mdash; scale view',file:'chloeiq-brokerage-dashboard-desktop.html'},
+    ],
+    startFile:'chloeiq-seed-deck-desktop.html',
+    accentColor:'#B8E030'
+  },
+  {
+    id:'coaching',
+    icon:'&#x1F3CB;',
+    iconBg:'rgba(96,165,250,.12)',
+    iconColor:'#60A5FA',
+    audience:'Coaching Program / Mastermind',
+    title:'The <em>Coaching</em> Flow',
+    desc:'For team leads and coaching program directors. Shows how ChloeIQ integrates into training curriculum and creates a performance feedback loop for the agents they coach.',
+    steps:[
+      {n:1,label:'Early Partner Deck &mdash; 7-slide overview',file:'chloeiq-early-adopter-deck.html'},
+      {n:2,label:'Feature Mastermind &mdash; coaching modules',file:'chloeiq-feature-mastermind-desktop.html'},
+      {n:3,label:'Agent Scorecard &mdash; leaderboard + badges',file:'chloeiq-agent-scorecard-desktop.html'},
+      {n:4,label:'Brokerage Dashboard &mdash; team intelligence',file:'chloeiq-brokerage-dashboard-desktop.html'},
+      {n:5,label:'Outreach Kit &mdash; branded follow-up tools',file:'chloeiq-outreach-kit-desktop.html'},
+    ],
+    startFile:'chloeiq-early-adopter-deck.html',
+    accentColor:'#60A5FA'
+  },
+  {
+    id:'press',
+    icon:'&#x1F4F0;',
+    iconBg:'rgba(255,90,74,.12)',
+    iconColor:'#FF5A4A',
+    audience:'Press / Media / Podcast',
+    title:'The <em>Media</em> Arc',
+    desc:'The full product story in under 3 minutes. Consumer landing page &rarr; scan the code &rarr; watch the match happen &rarr; see what the agent sees. Compelling for any format.',
+    steps:[
+      {n:1,label:'Consumer Landing &mdash; the buyer-facing pitch',file:'chloeiq-consumer-landing.html'},
+      {n:2,label:'Exterior Code &mdash; scan the yard sign',file:'chloeiq-exterior-code.html'},
+      {n:3,label:'Buyer App &mdash; profile + match reveal',file:'chloeiq-buyer-app.html'},
+      {n:4,label:'Agent Dashboard &mdash; what the agent sees',file:'chloeiq-agent-dashboard-desktop.html'},
+    ],
+    startFile:'chloeiq-consumer-landing.html',
+    accentColor:'#FF5A4A'
+  },
+];
+
+function buildFlows(){
+  var grid=document.getElementById('flows-grid');
+  grid.innerHTML=flows.map(function(f){
+    var steps=f.steps.map(function(s){
+      return '<div class="fc-step"><div class="fc-step-n">'+s.n+'</div><div class="fc-step-label">'+s.label+'</div><span class="fc-step-file">'+s.file.replace('chloeiq-','').replace('-desktop','').replace('.html','')+'</span></div>';
+    }).join('');
+    return '<div class="flow-card" onclick="window.location.href=\''+f.startFile+'\'">'
+      +'<div class="fc-header">'
+      +'<div class="fc-icon-row"><div class="fc-icon" style="background:'+f.iconBg+';">'+f.icon+'</div><div class="fc-audience">'+f.audience+'</div></div>'
+      +'<div class="fc-title">'+f.title+'</div>'
+      +'<div class="fc-desc">'+f.desc+'</div>'
+      +'</div>'
+      +'<div class="fc-steps">'+steps+'</div>'
+      +'<div class="fc-footer">'
+      +'<a href="'+f.startFile+'" class="fc-start" onclick="event.stopPropagation();" style="background:'+f.accentColor+';color:#0A0B07;">Start Flow &rarr;</a>'
+      +'<span class="fc-count">'+f.steps.length+' screens</span>'
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
+buildFlows();
+</script>
+<script src="chloeiq-nav.js"></script>
+</body>
+</html>

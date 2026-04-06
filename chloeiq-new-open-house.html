@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ChloeIQ &mdash; New Open House</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--bg:#0A0B07;--s1:#13160D;--s2:#1A1E12;--s3:#222818;--acc:#B8E030;--ad:rgba(184,224,48,.10);--am:rgba(184,224,48,.22);--tx:#EEF0E5;--txm:#8A8F7A;--txd:#4A5040;--br:rgba(184,224,48,.14);--bs:rgba(238,240,229,.07);--grn:#4ADE80;--red:#FF5A4A;--amb:#F5A623;--blu:#60A5FA;--font-body:'DM Sans',sans-serif;--font-display:'Fraunces',serif;--font-mono:'DM Mono',monospace;--radius:11px;}
+html,body{min-height:100%;background:var(--bg);color:var(--tx);font-family:var(--font-body);font-size:14px;}
+.topbar{height:56px;display:flex;align-items:center;padding:0 28px;border-bottom:1px solid var(--bs);background:var(--bg);position:sticky;top:0;z-index:20;gap:14px;}
+.lm{width:30px;height:30px;background:var(--acc);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:15px;font-weight:600;color:var(--bg);}
+.lt{font-family:var(--font-display);font-size:18px;}.lt b{color:var(--acc);font-weight:400;}
+.ptag{font-family:var(--font-mono);font-size:10px;color:var(--txm);background:var(--s2);border:1px solid var(--bs);padding:3px 10px;border-radius:20px;}
+.tr{margin-left:auto;display:flex;gap:9px;}
+.tbtn{padding:6px 13px;border-radius:8px;font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--bs);background:var(--s1);color:var(--txm);text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all .13s;}
+.tbtn:hover{border-color:var(--br);color:var(--tx);}
+.tbtn.pri{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:600;}
+.page{max-width:900px;margin:0 auto;padding:36px 28px;}
+.steps-bar{display:flex;gap:0;margin-bottom:36px;background:var(--s1);border:1px solid var(--bs);border-radius:var(--radius);overflow:hidden;}
+.step-item{flex:1;padding:14px 16px;border-right:1px solid var(--bs);cursor:pointer;transition:background .13s;}
+.step-item:last-child{border-right:none;}
+.step-item.active{background:var(--ad);}
+.step-n{font-family:var(--font-mono);font-size:9px;color:var(--txd);margin-bottom:3px;}
+.step-label{font-size:12px;font-weight:500;color:var(--txm);}
+.step-item.active .step-label{color:var(--acc);}
+.step-item.done .step-label{color:var(--grn);}
+.step-item.done .step-n::after{content:' \u2713';}
+.panel{background:var(--s1);border:1px solid var(--bs);border-radius:var(--radius);}
+.ph{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--bs);}
+.pht{font-size:14px;font-weight:600;color:var(--tx);}
+.pb{padding:22px 20px;}
+.fg{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+.fl{font-family:var(--font-mono);font-size:10px;color:var(--txm);text-transform:uppercase;letter-spacing:.7px;}
+.fi{background:var(--s2);border:1px solid var(--bs);border-radius:8px;padding:10px 13px;color:var(--tx);font-family:var(--font-body);font-size:13px;outline:none;transition:border-color .15s;}
+.fi:focus{border-color:var(--br);}
+.fi::placeholder{color:var(--txd);}
+.fs{background:var(--s2);border:1px solid var(--bs);border-radius:8px;padding:10px 13px;color:var(--tx);font-family:var(--font-body);font-size:13px;outline:none;cursor:pointer;width:100%;}
+.fs option{background:var(--s1);}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:11px;font-family:var(--font-mono);}
+.pill:before{content:'';width:5px;height:5px;border-radius:50%;}
+.pg{background:rgba(74,222,128,.1);color:var(--grn);}.pg:before{background:var(--grn);}
+.pa{background:rgba(245,166,35,.1);color:var(--amb);}.pa:before{background:var(--amb);}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:8px;font-family:var(--font-body);font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--bs);background:var(--s2);color:var(--txm);transition:all .13s;}
+.btn:hover{border-color:var(--br);color:var(--tx);}
+.btn.bp{background:var(--acc);color:var(--bg);border-color:var(--acc);font-weight:600;}
+.host-card{background:var(--s2);border:1px solid var(--bs);border-radius:10px;padding:14px;display:flex;align-items:center;gap:12px;transition:border-color .15s;}
+.host-card:hover{border-color:rgba(184,224,48,.3);}
+.host-card.sel{border-color:var(--acc);background:var(--ad);}
+.hav{width:38px;height:38px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:14px;font-weight:600;color:var(--bg);flex-shrink:0;}
+.host-name{font-size:13px;font-weight:500;color:var(--tx);margin-bottom:2px;}
+.host-meta{font-size:11px;color:var(--txm);}
+.host-score{margin-left:auto;text-align:right;}
+.hs-val{font-family:var(--font-display);font-size:18px;color:var(--acc);}
+.hs-lbl{font-size:10px;color:var(--txd);font-family:var(--font-mono);}
+.code-card{background:rgba(184,224,48,.05);border:1px solid rgba(184,224,48,.2);border-radius:10px;padding:16px;display:flex;align-items:center;gap:14px;}
+.qr-mini{width:56px;height:56px;background:var(--tx);border-radius:6px;display:grid;grid-template-columns:repeat(7,1fr);grid-template-rows:repeat(7,1fr);gap:1px;padding:4px;flex-shrink:0;}
+.qc{background:var(--bg);}.qc.f{background:var(--tx);}
+.confirm-card{background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.2);border-radius:12px;padding:20px;text-align:center;}
+.sl{font-family:var(--font-mono);font-size:10px;color:var(--acc);letter-spacing:.8px;text-transform:uppercase;margin-bottom:9px;display:block;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="lm">C</div>
+  <div class="lt">Chloe<b>IQ</b></div>
+  <div class="ptag">New Open House</div>
+  <div class="tr">
+    <a href="chloeiq-agent-dashboard-desktop.html" class="tbtn">&larr; Dashboard</a>
+    <button class="tbtn pri" id="btn-publish" onclick="publishOH()">Publish Open House &rarr;</button>
+  </div>
+</header>
+<div class="page">
+  <!-- Steps bar -->
+  <div class="steps-bar">
+    <div class="step-item active" id="step1-tab" onclick="goStep(1)"><div class="step-n">STEP 01</div><div class="step-label">Property Details</div></div>
+    <div class="step-item" id="step2-tab" onclick="goStep(2)"><div class="step-n">STEP 02</div><div class="step-label">Date &amp; Time</div></div>
+    <div class="step-item" id="step3-tab" onclick="goStep(3)"><div class="step-n">STEP 03</div><div class="step-label">Host Agent</div></div>
+    <div class="step-item" id="step4-tab" onclick="goStep(4)"><div class="step-n">STEP 04</div><div class="step-label">Chloe Code</div></div>
+    <div class="step-item" id="step5-tab" onclick="goStep(5)"><div class="step-n">STEP 05</div><div class="step-label">Confirm &amp; Publish</div></div>
+  </div>
+
+  <!-- Step 1: Property Details -->
+  <div id="view-step1">
+    <div class="panel">
+      <div class="ph"><span class="pht">Property Details</span></div>
+      <div class="pb">
+        <span class="sl">Listing Information</span>
+        <div class="fg"><div class="fl">Property Address</div><input class="fi" value="2847 Magnolia Drive, Flower Mound TX 75022"></div>
+        <div class="grid3">
+          <div class="fg"><div class="fl">MLS Number</div><input class="fi" value="20891234"></div>
+          <div class="fg"><div class="fl">List Price</div><input class="fi" value="$724,000"></div>
+          <div class="fg"><div class="fl">Status</div><select class="fs"><option selected>Active</option><option>Coming Soon</option><option>Back on Market</option></select></div>
+        </div>
+        <div class="grid3">
+          <div class="fg"><div class="fl">Beds</div><input class="fi" value="4"></div>
+          <div class="fg"><div class="fl">Baths</div><input class="fi" value="3.5"></div>
+          <div class="fg"><div class="fl">Sq Ft</div><input class="fi" value="3,240"></div>
+        </div>
+        <div class="fg"><div class="fl">Property Description (shown to buyers)</div><textarea class="fi" rows="3">Stunning modern build with open-concept living, floor-to-ceiling windows, and fully integrated smart home system. Primary suite with spa bath. Chef's kitchen with waterfall island.</textarea></div>
+        <div class="fg"><div class="fl">Key Selling Points (up to 5)</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <input class="fi" value="Floor-to-ceiling windows &mdash; natural light throughout">
+            <input class="fi" value="Fully integrated Control4 smart home system">
+            <input class="fi" value="Open chef's kitchen with waterfall Calacatta marble island">
+            <input class="fi" value="Spa-style primary suite with heated floors">
+            <input class="fi" placeholder="+ Add another selling point">
+          </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-top:8px;">
+          <button class="btn bp" onclick="goStep(2)">Next: Date &amp; Time &rarr;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2: Date & Time -->
+  <div id="view-step2" style="display:none;">
+    <div class="panel">
+      <div class="ph"><span class="pht">Open House Date &amp; Time</span></div>
+      <div class="pb">
+        <span class="sl">Event Window</span>
+        <div class="grid3">
+          <div class="fg"><div class="fl">Date</div><input class="fi" type="date" id="oh-date"></div>
+          <div class="fg"><div class="fl">Start Time</div><select class="fs"><option>12:00 PM</option><option selected>1:00 PM</option><option>2:00 PM</option><option>3:00 PM</option></select></div>
+          <div class="fg"><div class="fl">End Time</div><select class="fs"><option>2:00 PM</option><option>3:00 PM</option><option selected>4:00 PM</option><option>5:00 PM</option></select></div>
+        </div>
+        <div class="grid2" style="margin-top:4px;">
+          <div class="fg"><div class="fl">Refreshments / Setup Notes</div><input class="fi" placeholder="e.g. Catering provided, arrive 30 min early"></div>
+          <div class="fg"><div class="fl">Parking Instructions</div><input class="fi" placeholder="e.g. Street parking on Magnolia Dr"></div>
+        </div>
+        <div class="fg"><div class="fl">Agent Notes (not shown to buyers)</div><textarea class="fi" rows="2" placeholder="Internal notes for the host agent"></textarea></div>
+        <div style="margin-top:16px;background:var(--s2);border:1px solid var(--bs);border-radius:10px;padding:14px;">
+          <div style="font-size:11px;font-family:var(--font-mono);color:var(--acc);margin-bottom:6px;">COMPLIANCE REMINDER</div>
+          <div style="font-size:12px;color:var(--txm);line-height:1.7;">Flower Mound: Directional signs may be placed up to 24 hours before the event and must be removed within 24 hours after. Signs must be under 6 sq ft on private property only. <span style="color:var(--acc);">TX HB 3611</span> fines apply to ROW placement.</div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:16px;">
+          <button class="btn" onclick="goStep(1)">&larr; Back</button>
+          <button class="btn bp" onclick="goStep(3)">Next: Host Agent &rarr;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: Host Agent -->
+  <div id="view-step3" style="display:none;">
+    <div class="panel">
+      <div class="ph">
+        <span class="pht">Select or Invite Host Agent</span>
+        <button class="btn" onclick="toast('Invite link copied \u2713','ok')">&#x2B21; Copy Invite Link</button>
+      </div>
+      <div class="pb">
+        <span class="sl">Available Agents &mdash; Your Team</span>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
+          <div class="host-card sel" id="host-sarah" onclick="selHost(this,'sarah')">
+            <div class="hav" style="background:#60A5FA;color:#0A0B07;">SC</div>
+            <div>
+              <div class="host-name">Sarah Chen</div>
+              <div class="host-meta">REAL Broker &middot; DFW &middot; 48 open houses hosted</div>
+            </div>
+            <div class="host-score">
+              <div class="hs-val">94</div>
+              <div class="hs-lbl">HOST SCORE</div>
+            </div>
+            <span class="pill pg">Selected</span>
+          </div>
+          <div class="host-card" id="host-david" onclick="selHost(this,'david')">
+            <div class="hav" style="background:#A78BFA;color:#0A0B07;">DP</div>
+            <div>
+              <div class="host-name">David Park</div>
+              <div class="host-meta">REAL Broker &middot; DFW &middot; 31 open houses hosted</div>
+            </div>
+            <div class="host-score">
+              <div class="hs-val">88</div>
+              <div class="hs-lbl">HOST SCORE</div>
+            </div>
+            <span class="pill pa">Available</span>
+          </div>
+          <div class="host-card" id="host-morgan" onclick="selHost(this,'morgan')">
+            <div class="hav" style="background:#F5A623;color:#0A0B07;">MK</div>
+            <div>
+              <div class="host-name">Morgan Kim</div>
+              <div class="host-meta">REAL Broker &middot; DFW &middot; 22 open houses hosted</div>
+            </div>
+            <div class="host-score">
+              <div class="hs-val">81</div>
+              <div class="hs-lbl">HOST SCORE</div>
+            </div>
+            <span class="pill pa">Available</span>
+          </div>
+        </div>
+        <span class="sl">Or Invite an Outside Agent</span>
+        <div class="grid2">
+          <div class="fg"><div class="fl">Agent Name</div><input class="fi" placeholder="Full name"></div>
+          <div class="fg"><div class="fl">Email / Phone</div><input class="fi" placeholder="Send invitation to..."></div>
+        </div>
+        <div class="fg"><div class="fl">Host Requirements</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;">
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--txm);cursor:pointer;"><input type="checkbox" checked> Must use ChloeIQ sign-in</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--txm);cursor:pointer;"><input type="checkbox" checked> Report all visitors via platform</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--txm);cursor:pointer;"><input type="checkbox"> Listing agent must approve all follow-ups</label>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:16px;">
+          <button class="btn" onclick="goStep(2)">&larr; Back</button>
+          <button class="btn bp" onclick="goStep(4)">Next: Chloe Code &rarr;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 4: Chloe Code -->
+  <div id="view-step4" style="display:none;">
+    <div class="panel">
+      <div class="ph"><span class="pht">Chloe Code Setup</span></div>
+      <div class="pb">
+        <span class="sl">Codes for This Event</span>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;">
+          <div class="code-card">
+            <div class="qr-mini" id="qr1"></div>
+            <div>
+              <div style="font-family:var(--font-mono);font-size:12px;color:var(--acc);margin-bottom:3px;">CQ-2847-EXT</div>
+              <div style="font-size:13px;font-weight:500;color:var(--tx);margin-bottom:2px;">Exterior Code</div>
+              <div style="font-size:11px;color:var(--txm);">Yard sign &amp; directional riders</div>
+              <div style="font-size:11px;color:var(--grn);margin-top:4px;">&#x2713; Auto-generated</div>
+            </div>
+          </div>
+          <div class="code-card">
+            <div class="qr-mini" id="qr2"></div>
+            <div>
+              <div style="font-family:var(--font-mono);font-size:12px;color:var(--acc);margin-bottom:3px;">CQ-2847-INT</div>
+              <div style="font-size:13px;font-weight:500;color:var(--tx);margin-bottom:2px;">Interior Code</div>
+              <div style="font-size:11px;color:var(--txm);">Front door sign-in QR</div>
+              <div style="font-size:11px;color:var(--grn);margin-top:4px;">&#x2713; Auto-generated</div>
+            </div>
+          </div>
+        </div>
+        <span class="sl">Buyer Experience Settings</span>
+        <div class="grid2">
+          <div class="fg"><div class="fl">Require Phone Number</div><select class="fs"><option selected>Optional</option><option>Required</option></select></div>
+          <div class="fg"><div class="fl">Agent Introduction</div><select class="fs"><option>Show Marcus Rivera (Listing)</option><option selected>Show Host Agent (Sarah Chen)</option><option>Show both</option></select></div>
+        </div>
+        <div class="fg"><div class="fl">Custom Welcome Message (optional)</div><input class="fi" placeholder="e.g. Welcome! We&rsquo;re so glad you&rsquo;re here. Chloe will help you explore every inch of this home."></div>
+        <div class="fg"><div class="fl">Post-Tour CTA</div><select class="fs"><option selected>Schedule a private showing</option><option>Request more info</option><option>Make an offer</option><option>Connect with agent</option></select></div>
+        <div style="display:flex;gap:9px;margin-top:8px;">
+          <button class="btn" onclick="toast('Downloading print package \u2713','ok')">&#x2B07; Download Print Package</button>
+          <button class="btn" onclick="toast('Preview buyer experience opening...','')">&#x1F441; Preview Buyer Experience</button>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:16px;">
+          <button class="btn" onclick="goStep(3)">&larr; Back</button>
+          <button class="btn bp" onclick="goStep(5)">Review &amp; Publish &rarr;</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 5: Confirm -->
+  <div id="view-step5" style="display:none;">
+    <div class="confirm-card" style="margin-bottom:20px;">
+      <div style="font-size:32px;margin-bottom:12px;">&#x2705;</div>
+      <div style="font-family:var(--font-display);font-size:24px;color:var(--tx);margin-bottom:8px;">Ready to <em style="color:var(--acc);">Publish</em></div>
+      <div style="font-size:13px;color:var(--txm);line-height:1.7;max-width:480px;margin:0 auto;">Everything looks good. Once you publish, Sarah Chen will receive a notification, Chloe Codes will go live, and the event will appear on your listing dashboard.</div>
+    </div>
+    <div class="panel">
+      <div class="ph"><span class="pht">Open House Summary</span></div>
+      <div style="display:flex;flex-direction:column;gap:0;border-top:1px solid var(--bs);">
+        <div style="display:grid;grid-template-columns:160px 1fr;padding:11px 20px;border-bottom:1px solid var(--bs);font-size:13px;"><span style="color:var(--txm);">Property</span><span>2847 Magnolia Drive, Flower Mound TX &middot; $724,000</span></div>
+        <div style="display:grid;grid-template-columns:160px 1fr;padding:11px 20px;border-bottom:1px solid var(--bs);font-size:13px;"><span style="color:var(--txm);">Date &amp; Time</span><span>Saturday, Apr 12, 2026 &middot; 1:00 PM &ndash; 4:00 PM</span></div>
+        <div style="display:grid;grid-template-columns:160px 1fr;padding:11px 20px;border-bottom:1px solid var(--bs);font-size:13px;"><span style="color:var(--txm);">Host Agent</span><span>Sarah Chen &middot; Host Score 94</span></div>
+        <div style="display:grid;grid-template-columns:160px 1fr;padding:11px 20px;border-bottom:1px solid var(--bs);font-size:13px;"><span style="color:var(--txm);">Chloe Codes</span><span style="color:var(--acc);">CQ-2847-EXT (exterior) &middot; CQ-2847-INT (interior)</span></div>
+        <div style="display:grid;grid-template-columns:160px 1fr;padding:11px 20px;font-size:13px;"><span style="color:var(--txm);">Notifications</span><span>Host agent + listing agent &middot; Email + push</span></div>
+      </div>
+      <div style="padding:16px 20px;border-top:1px solid var(--bs);display:flex;justify-content:space-between;">
+        <button class="btn" onclick="goStep(4)">&larr; Back</button>
+        <button class="btn bp" onclick="publishOH()">&#x1F7E2; Publish Open House</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function toast(msg,type){
+  var o=document.getElementById('_t');if(o)o.remove();
+  var t=document.createElement('div');t.id='_t';t.textContent=msg;
+  var bg=type==='ok'?'#B8E030':'#1A1E12',c=type==='ok'?'#0A0B07':'#EEF0E5';
+  t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:'+bg+';color:'+c+';padding:10px 20px;border-radius:8px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all .2s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.5);';
+  document.body.appendChild(t);
+  requestAnimationFrame(function(){t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';});
+  clearTimeout(t._x);t._x=setTimeout(function(){t.style.opacity='0';},2600);
+}
+
+var currentStep=1;
+function goStep(n){
+  if(n===currentStep)return;
+  document.getElementById('view-step'+currentStep).style.display='none';
+  for(var i=1;i<=5;i++){
+    var tab=document.getElementById('step'+i+'-tab');
+    tab.className='step-item'+(i===n?' active':i<n?' done':'');
+  }
+  document.getElementById('view-step'+n).style.display='';
+  currentStep=n;
+  window.scrollTo(0,0);
+}
+
+function selHost(el,id){
+  document.querySelectorAll('.host-card').forEach(function(c){
+    c.classList.remove('sel');
+    var pill=c.querySelector('.pill');
+    if(pill){pill.className='pill pa';pill.textContent='Available';}
+  });
+  el.classList.add('sel');
+  var pill=el.querySelector('.pill');
+  if(pill){pill.className='pill pg';pill.textContent='Selected';}
+}
+
+function publishOH(){
+  toast('Publishing open house...','');
+  setTimeout(function(){
+    toast('Open house published \u2713 Sarah Chen notified \u00b7 Chloe Codes live','ok');
+    setTimeout(function(){window.location.href='chloeiq-listing-dashboard-desktop.html';},1800);
+  },1200);
+}
+
+function qrPat(el){
+  if(!el)return;
+  var fill=[0,1,2,3,4,5,6,7,14,21,28,35,42,8,9,10,11,12,13,15,22,29,36,43,20,27,34,41,48,24,25,30,31];
+  el.innerHTML='';
+  for(var i=0;i<49;i++){var d=document.createElement('div');d.className='qc'+(fill.indexOf(i)>=0||Math.sin(i*7.3+2.1)>0.35?' f':'');el.appendChild(d);}
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  var d=new Date();d.setDate(d.getDate()+7);
+  var el=document.getElementById('oh-date');
+  if(el)el.value=d.toISOString().split('T')[0];
+  qrPat(document.getElementById('qr1'));
+  qrPat(document.getElementById('qr2'));
+});
+</script>
+<script src="chloeiq-nav.js"></script>
+</body>
+</html>

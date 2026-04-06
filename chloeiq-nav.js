@@ -14,110 +14,50 @@
 
 
   // ── THEME READER — reads from localStorage, applies on every page load ──
-  (function applyStoredTheme() {
-    var STORAGE_KEY = 'chloeiq_theme_v2';
-    var GOOGLE_FONTS_BASE = 'https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=DM+Mono:wght@400;500&family=';
+  (function applyLockedTheme() {
+  // ChloeIQ locked to Apple Light design system
+  var r = document.documentElement;
+  r.style.setProperty('--bg',  '#F5F5F7');
+  r.style.setProperty('--s1',  '#FFFFFF');
+  r.style.setProperty('--s2',  '#F0F0F2');
+  r.style.setProperty('--s3',  '#E8E8EA');
+  r.style.setProperty('--s4',  '#E0E0E2');
+  r.style.setProperty('--acc', '#1D6F42');
+  r.style.setProperty('--ad',  'rgba(29,111,66,.10)');
+  r.style.setProperty('--am',  'rgba(29,111,66,.18)');
+  r.style.setProperty('--tx',  '#1D1D1F');
+  r.style.setProperty('--txm', '#6E6E73');
+  r.style.setProperty('--txd', '#AEAEB2');
+  r.style.setProperty('--br',  'rgba(29,111,66,.25)');
+  r.style.setProperty('--bs',  'rgba(0,0,0,.08)');
+  r.style.setProperty('--grn', '#1D6F42');
+  r.style.setProperty('--red', '#D93025');
+  r.style.setProperty('--amb', '#B06000');
+  r.style.setProperty('--blu', '#1A56DB');
+  r.style.setProperty('--pur', '#6741D9');
+  r.style.setProperty('--radius', '11px');
 
-    var SCHEMES = {
-      // ── Light themes ──
-      apple:      { bg:'#F5F5F7', s1:'#FFFFFF', s2:'#F0F0F2', acc:'#1D6F42', tx:'#1D1D1F', txm:'#6E6E73', light:true },
-      paper:      { bg:'#FAFAF8', s1:'#FFFFFF', s2:'#F2F2EF', acc:'#B8E030', tx:'#1A1A18', txm:'#70706A', light:true },
-      'warm-light':{ bg:'#F7F3ED', s1:'#FFFDFB', s2:'#EFE9E1', acc:'#7A5C2E', tx:'#241E17', txm:'#7A7060', light:true },
-      sky:        { bg:'#F0F6FF', s1:'#FFFFFF', s2:'#E8F0FC', acc:'#1A56DB', tx:'#111827', txm:'#4B5563', light:true },
-      // ── Dark themes ──
-      default:    { bg:'#0A0B07', s1:'#13160D', s2:'#1A1E12', acc:'#B8E030', tx:'#EEF0E5', txm:'#8A8F7A' },
-      midnight:   { bg:'#08091A', s1:'#0F1124', s2:'#161830', acc:'#818CF8', tx:'#E8E9F8', txm:'#6870A0' },
-      obsidian:   { bg:'#0C0C0C', s1:'#161616', s2:'#1F1F1F', acc:'#F5F5F5', tx:'#F0F0F0', txm:'#888888' },
-      navy:       { bg:'#04080F', s1:'#071220', s2:'#0C1E30', acc:'#38BDF8', tx:'#DFF0FF', txm:'#5A7A9A' },
-      espresso:   { bg:'#0E0A06', s1:'#1A1208', s2:'#261A0E', acc:'#F59E0B', tx:'#F5EDE0', txm:'#8A7258' },
-      forest:     { bg:'#060D08', s1:'#0D1A0F', s2:'#132416', acc:'#4ADE80', tx:'#E4F0E6', txm:'#5A7A5C' },
-      royal:      { bg:'#08060F', s1:'#100D1A', s2:'#181424', acc:'#C084FC', tx:'#EDE8F8', txm:'#706098' },
-      crimson:    { bg:'#0E0608', s1:'#1A0C0E', s2:'#241216', acc:'#FB7185', tx:'#F8E8EC', txm:'#806070' },
-      // ── Legacy aliases (backward compat) ──
-      charcoal:   { bg:'#0C0C0E', s1:'#151518', s2:'#1E1E22', acc:'#F472B6', tx:'#F0EEF4', txm:'#707080' },
-      light:      { bg:'#F5F5F7', s1:'#FFFFFF', s2:'#F0F0F2', acc:'#1D6F42', tx:'#1D1D1F', txm:'#6E6E73', light:true },
-      softlight:  { bg:'#F7F3ED', s1:'#FFFDFB', s2:'#EFE9E1', acc:'#7A5C2E', tx:'#241E17', txm:'#7A7060', light:true },
-      sepia:      { bg:'#1A1408', s1:'#231B0C', s2:'#2C2210', acc:'#D97706', tx:'#F5EDD0', txm:'#8A7040' },
-    };
+  // Force body background + color immediately (prevents flash)
+  document.documentElement.style.background = '#F5F5F7';
+  document.documentElement.style.color = '#1D1D1F';
 
-    var FONT_MAP = {
-      'dm-sans':       { google:'DM+Sans:wght@300;400;500;600',           css:"'DM Sans',sans-serif" },
-      'inter':         { google:'Inter:wght@300;400;500;600',              css:"'Inter',sans-serif" },
-      'geist':         { google:'Geist:wght@300;400;500;600',              css:"'Geist',sans-serif" },
-      'space-grotesk': { google:'Space+Grotesk:wght@300;400;500;600',      css:"'Space Grotesk',sans-serif" },
-      'syne':          { google:'Syne:wght@400;500;600;700',               css:"'Syne',sans-serif" },
-      'plus-jakarta':  { google:'Plus+Jakarta+Sans:wght@300;400;500;600',  css:"'Plus Jakarta Sans',sans-serif" },
-      'outfit':        { google:'Outfit:wght@300;400;500;600',             css:"'Outfit',sans-serif" },
-      'manrope':       { google:'Manrope:wght@300;400;500;600',            css:"'Manrope',sans-serif" },
-      'ibm-plex':      { google:'IBM+Plex+Sans:wght@300;400;500;600',      css:"'IBM Plex Sans',sans-serif" },
-      'nunito':        { google:'Nunito:wght@300;400;500;600',             css:"'Nunito',sans-serif" },
-      'lexend':        { google:'Lexend:wght@300;400;500;600',             css:"'Lexend',sans-serif" },
-      'raleway':       { google:'Raleway:wght@300;400;500;600',            css:"'Raleway',sans-serif" },
-    };
-
-    function hexToRgba(hex, alpha) {
-      var r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
-      return 'rgba('+r+','+g+','+b+','+alpha+')';
-    }
-    function blend(h1, h2, t) {
-      function p(h){ return [parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)]; }
-      var a=p(h1),b=p(h2);
-      return '#'+a.map(function(v,i){ return ('0'+Math.round(v*(1-t)+b[i]*t).toString(16)).slice(-2); }).join('');
-    }
-
-    try {
-      var raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) return; // use file defaults
-
-      var theme = JSON.parse(raw);
-      var s = SCHEMES[theme.scheme] || SCHEMES.default;
-      var f = FONT_MAP[theme.font] || FONT_MAP['dm-sans'];
-      var mode = theme.mode || 'dark';
-      var radius = theme.radius || '11px';
-
-      var isLight = mode === 'light' || (mode === 'system' && window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches);
-      // Use scheme's light flag instead of hardcoded list
-      var bg = s.bg, s1 = s.s1, s2 = s.s2, tx = s.tx, txm = s.txm;
-      // light flag is already baked into the scheme colors above — no override needed
-
-      var r = document.documentElement;
-      r.style.setProperty('--bg', bg);
-      r.style.setProperty('--s1', s1);
-      r.style.setProperty('--s2', s2);
-      r.style.setProperty('--s3', blend(s2, bg, 0.5));
-      r.style.setProperty('--s4', blend(s2, bg, 0.3));
-      r.style.setProperty('--acc', s.acc);
-      r.style.setProperty('--ad', hexToRgba(s.acc, 0.10));
-      r.style.setProperty('--am', hexToRgba(s.acc, 0.22));
-      r.style.setProperty('--tx', tx);
-      r.style.setProperty('--txm', txm);
-      r.style.setProperty('--txd', blend(txm, bg, 0.5));
-      r.style.setProperty('--br', hexToRgba(s.acc, 0.18));
-      r.style.setProperty('--bs', hexToRgba(tx, 0.07));
-      r.style.setProperty('--font-body', f.css);
-      r.style.setProperty('--radius', radius);
-
-      // Inject font link if not already present
-      var existing = document.getElementById('ciq-font-override');
-      if (!existing) {
-        var link = document.createElement('link');
-        link.id = 'ciq-font-override';
-        link.rel = 'stylesheet';
-        link.href = GOOGLE_FONTS_BASE + f.google + '&display=swap';
-        document.head.appendChild(link);
-      } else {
-        var newHref = GOOGLE_FONTS_BASE + f.google + '&display=swap';
-        if (existing.href !== newHref) existing.href = newHref;
-      }
-
-      // Apply font-body to body immediately (before DOMContentLoaded)
-      if (document.body) document.body.style.fontFamily = f.css;
-      else document.addEventListener('DOMContentLoaded', function() {
-        document.body.style.fontFamily = f.css;
-      });
-
-    } catch(e) { /* silently skip — use file defaults */ }
-  })();
+  // Inject override style to beat any hardcoded backgrounds
+  var styleTag = document.getElementById('ciq-theme-override');
+  if (!styleTag) {
+    styleTag = document.createElement('style');
+    styleTag.id = 'ciq-theme-override';
+    (document.head || document.documentElement).appendChild(styleTag);
+  }
+  styleTag.textContent = [
+    'html, body { background: #F5F5F7 !important; color: #1D1D1F !important; }',
+    ':root {',
+    '  --bg:#F5F5F7;--s1:#FFFFFF;--s2:#F0F0F2;--s3:#E8E8EA;',
+    '  --acc:#1D6F42;--ad:rgba(29,111,66,.10);--am:rgba(29,111,66,.18);',
+    '  --tx:#1D1D1F;--txm:#6E6E73;--txd:#AEAEB2;',
+    '  --br:rgba(29,111,66,.25);--bs:rgba(0,0,0,.08);',
+    '}'
+  ].join('\n');
+})();
 
   // ── APP REGISTRY ──
   var APPS = [

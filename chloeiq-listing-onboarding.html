@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ChloeIQ — Listing Agent Onboarding</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0A0B07;--s1:#13160D;--s2:#1A1E12;--s3:#222818;
+  --acc:#B8E030;--ad:rgba(184,224,48,.10);
+  --tx:#EEF0E5;--txm:#8A8F7A;--txd:#4A5040;
+  --br:rgba(184,224,48,.14);--bs:rgba(238,240,229,.07);
+  --grn:#4ADE80;--red:#FF5A4A;--amb:#F5A623;--blu:#60A5FA;--pur:#A78BFA;
+  --font-body:'DM Sans',sans-serif;--font-display:'Fraunces',serif;--font-mono:'DM Mono',monospace;
+}
+html,body{min-height:100%;background:var(--bg);color:var(--tx);font-family:var(--font-body);font-size:14px;}
+body{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:0;}
+/* Progress bar at very top */
+.prog-strip{width:100%;height:4px;background:var(--s2);position:fixed;top:0;left:0;z-index:100;}
+.prog-fill{height:4px;background:var(--acc);transition:width .4s cubic-bezier(.4,0,.2,1);}
+/* Shell */
+.shell{width:100%;max-width:640px;padding:48px 24px 80px;margin:0 auto;}
+/* Step indicator */
+.step-dots{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:40px;}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--s3);transition:all .25s;}
+.dot.active{width:24px;border-radius:4px;background:var(--acc);}
+.dot.done{background:var(--grn);}
+/* Step heading */
+.step-lbl{font-family:var(--font-mono);font-size:10px;color:var(--acc);letter-spacing:.8px;text-transform:uppercase;text-align:center;margin-bottom:10px;}
+.step-h{font-family:var(--font-display);font-size:34px;color:var(--tx);text-align:center;line-height:1.15;margin-bottom:10px;}
+.step-h em{color:var(--acc);font-style:italic;}
+.step-sub{font-size:14px;color:var(--txm);text-align:center;line-height:1.7;max-width:480px;margin:0 auto 36px;}
+/* Cards / option selects */
+.opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px;}
+.opt-card{background:var(--s1);border:1.5px solid var(--bs);border-radius:14px;padding:18px 16px;cursor:pointer;transition:all .15s;text-align:center;}
+.opt-card:hover{border-color:rgba(184,224,48,.3);}
+.opt-card.sel{border-color:var(--acc);background:var(--ad);}
+.opt-icon{font-size:28px;margin-bottom:8px;}
+.opt-title{font-size:14px;font-weight:600;color:var(--tx);margin-bottom:4px;}
+.opt-sub{font-size:11px;color:var(--txm);line-height:1.5;}
+.opt-chk{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--bs);display:flex;align-items:center;justify-content:center;font-size:10px;color:transparent;margin:10px auto 0;transition:all .15s;}
+.opt-card.sel .opt-chk{background:var(--acc);border-color:var(--acc);color:var(--bg);}
+/* Feature list */
+.feature-list{display:flex;flex-direction:column;gap:10px;margin-bottom:28px;}
+.feat-item{background:var(--s1);border:1px solid var(--bs);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:14px;}
+.feat-icon{width:38px;height:38px;border-radius:10px;background:var(--ad);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.feat-text{flex:1;}
+.feat-title{font-size:13px;font-weight:500;color:var(--tx);}
+.feat-sub{font-size:11px;color:var(--txm);margin-top:2px;}
+.feat-chk{color:var(--grn);font-size:16px;flex-shrink:0;}
+/* Form fields */
+.fg{margin-bottom:14px;}
+.fl{font-family:var(--font-mono);font-size:10px;color:var(--txm);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px;display:block;}
+.fi{width:100%;background:var(--s2);border:1px solid var(--bs);border-radius:10px;padding:12px 14px;color:var(--tx);font-family:var(--font-body);font-size:14px;outline:none;transition:border-color .15s;}
+.fi:focus{border-color:var(--br);}
+.fi::placeholder{color:var(--txd);}
+.fs{width:100%;background:var(--s2);border:1px solid var(--bs);border-radius:10px;padding:12px 14px;color:var(--tx);font-family:var(--font-body);font-size:14px;outline:none;cursor:pointer;}
+.fs option{background:var(--s1);}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+/* Chip toggles */
+.chip-group{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+.chip{padding:8px 16px;border-radius:100px;background:var(--s1);border:1px solid var(--bs);font-size:13px;color:var(--txm);cursor:pointer;transition:all .15s;}
+.chip.sel{background:var(--ad);border-color:var(--br);color:var(--acc);}
+/* Preference toggles */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--bs);}
+.toggle-row:last-child{border-bottom:none;}
+.tg-label{font-size:13px;color:var(--tx);}
+.tg-sub{font-size:11px;color:var(--txm);margin-top:2px;}
+.toggle{width:44px;height:24px;border-radius:12px;background:var(--acc);position:relative;cursor:pointer;flex-shrink:0;}
+.toggle.off{background:var(--s3);}
+.toggle-knob{width:18px;height:18px;border-radius:50%;background:var(--bg);position:absolute;top:3px;right:3px;transition:right .15s;}
+.toggle.off .toggle-knob{right:23px;}
+/* Done screen */
+.done-ring{width:80px;height:80px;border-radius:50%;background:var(--ad);border:2px solid var(--br);display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 20px;animation:popIn .5s cubic-bezier(.34,1.56,.64,1);}
+@keyframes popIn{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+.summary-box{background:var(--s1);border:1px solid var(--bs);border-radius:14px;overflow:hidden;margin-bottom:20px;}
+.sr{display:flex;justify-content:space-between;padding:11px 16px;border-bottom:1px solid var(--bs);font-size:13px;}
+.sr:last-child{border-bottom:none;}
+/* Nav footer */
+.nav-footer{position:fixed;bottom:0;left:0;right:0;background:rgba(10,11,7,.97);border-top:1px solid var(--bs);padding:14px 24px;display:flex;justify-content:space-between;align-items:center;gap:12px;backdrop-filter:blur(12px);z-index:50;}
+.btn-back{padding:10px 20px;border-radius:10px;border:1px solid var(--bs);background:transparent;color:var(--txm);font-family:var(--font-body);font-size:14px;cursor:pointer;}
+.btn-next{flex:1;max-width:260px;padding:12px 24px;border-radius:10px;border:none;background:var(--acc);color:var(--bg);font-family:var(--font-display);font-size:16px;font-weight:600;cursor:pointer;transition:opacity .15s;}
+.btn-next:active{opacity:.88;}
+.step-count{font-family:var(--font-mono);font-size:10px;color:var(--txd);}
+</style>
+</head>
+<body>
+<div class="prog-strip"><div class="prog-fill" id="prog" style="width:14%;"></div></div>
+
+<div class="shell">
+  <!-- STEP 1: Welcome / Role -->
+  <div id="s1">
+    <div class="step-dots">
+      <div class="dot active" id="d1"></div><div class="dot" id="d2"></div><div class="dot" id="d3"></div>
+      <div class="dot" id="d4"></div><div class="dot" id="d5"></div><div class="dot" id="d6"></div><div class="dot" id="d7"></div>
+    </div>
+    <div class="step-lbl">Step 1 of 7 &middot; Welcome</div>
+    <div class="step-h">Welcome to<br><em>ChloeIQ</em>.</div>
+    <div class="step-sub">You&rsquo;re about to set up your listing agent account. This takes about 4 minutes and unlocks every open house intelligence feature on the platform.</div>
+    <div class="feature-list">
+      <div class="feat-item"><div class="feat-icon">&#x1F4CD;</div><div class="feat-text"><div class="feat-title">Chloe Codes on every listing</div><div class="feat-sub">QR sign-in replaces paper sheets &mdash; NAR-compliant buyer records</div></div><div class="feat-chk">&#x2713;</div></div>
+      <div class="feat-item"><div class="feat-icon">&#x1F9EC;</div><div class="feat-text"><div class="feat-title">StyleDNA buyer intelligence</div><div class="feat-sub">Every visitor profiled &mdash; ranked buyer reports delivered to you</div></div><div class="feat-chk">&#x2713;</div></div>
+      <div class="feat-item"><div class="feat-icon">&#x1FA7;</div><div class="feat-text"><div class="feat-title">Approved host agent network</div><div class="feat-sub">Post your open house &mdash; qualified agents apply to host</div></div><div class="feat-chk">&#x2713;</div></div>
+      <div class="feat-item"><div class="feat-icon">&#x1F4CA;</div><div class="feat-text"><div class="feat-title">Post-event listing dashboard</div><div class="feat-sub">Buyer intelligence, follow-up queue, and ROI metrics</div></div><div class="feat-chk">&#x2713;</div></div>
+    </div>
+  </div>
+
+  <!-- STEP 2: About You -->
+  <div id="s2" style="display:none;">
+    <div class="step-dots">
+      <div class="dot done"></div><div class="dot active"></div><div class="dot"></div>
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+    <div class="step-lbl">Step 2 of 7 &middot; Your Profile</div>
+    <div class="step-h">Tell us about<br><em>yourself.</em></div>
+    <div class="step-sub">Your profile is shown to host agents reviewing your listings.</div>
+    <div class="grid2">
+      <div class="fg"><label class="fl">First Name</label><input class="fi" value="Marcus" placeholder="First name"></div>
+      <div class="fg"><label class="fl">Last Name</label><input class="fi" value="Rivera" placeholder="Last name"></div>
+    </div>
+    <div class="fg"><label class="fl">Brokerage</label><select class="fs"><option selected>REAL Broker, LLC</option><option>Keller Williams</option><option>Compass</option><option>eXp Realty</option><option>Other</option></select></div>
+    <div class="fg"><label class="fl">Team / Group Name (optional)</label><input class="fi" value="Dallas Collective Group" placeholder="e.g. The Rivera Team"></div>
+    <div class="grid2">
+      <div class="fg"><label class="fl">License Number</label><input class="fi" value="TX-0614728" placeholder="State license #"></div>
+      <div class="fg"><label class="fl">Primary Market</label><select class="fs"><option selected>DFW Metroplex</option><option>Dallas</option><option>Fort Worth</option><option>Collin County</option></select></div>
+    </div>
+    <div class="fg"><label class="fl">Phone</label><input class="fi" value="(972) 555-0147" type="tel"></div>
+    <div class="fg"><label class="fl">Email</label><input class="fi" value="marcus@dallascollectivegroup.com" type="email"></div>
+  </div>
+
+  <!-- STEP 3: Listing Focus -->
+  <div id="s3" style="display:none;">
+    <div class="step-dots">
+      <div class="dot done"></div><div class="dot done"></div><div class="dot active"></div>
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+    <div class="step-lbl">Step 3 of 7 &middot; Your Listings</div>
+    <div class="step-h">What do you<br><em>typically list?</em></div>
+    <div class="step-sub">Chloe uses this to calibrate buyer matching and sign compliance settings for your market.</div>
+    <div class="opt-grid">
+      <div class="opt-card sel" onclick="togOpt(this)">
+        <div class="opt-icon">&#x1F3E1;</div>
+        <div class="opt-title">Luxury / High-End</div>
+        <div class="opt-sub">$600K+ &middot; Refined, Coastal, Modern buyers</div>
+        <div class="opt-chk">&#x2713;</div>
+      </div>
+      <div class="opt-card" onclick="togOpt(this)">
+        <div class="opt-icon">&#x1F3E0;</div>
+        <div class="opt-title">Mid-Market</div>
+        <div class="opt-sub">$300K&ndash;$600K &middot; Broad buyer profile mix</div>
+        <div class="opt-chk">&#x2713;</div>
+      </div>
+      <div class="opt-card" onclick="togOpt(this)">
+        <div class="opt-icon">&#x1F3D7;&#xFE0F;</div>
+        <div class="opt-title">New Construction</div>
+        <div class="opt-sub">Builder listings &middot; Modern buyer DNA heavy</div>
+        <div class="opt-chk">&#x2713;</div>
+      </div>
+      <div class="opt-card" onclick="togOpt(this)">
+        <div class="opt-icon">&#x1F4BC;</div>
+        <div class="opt-title">Investment / Multi</div>
+        <div class="opt-sub">Investor buyers &middot; ROI-first profile</div>
+        <div class="opt-chk">&#x2713;</div>
+      </div>
+    </div>
+    <div class="fg"><label class="fl">Average Listing Price</label>
+      <select class="fs"><option>Under $300K</option><option>$300K&ndash;$500K</option><option selected>$500K&ndash;$800K</option><option>$800K&ndash;$1.2M</option><option>$1.2M+</option></select>
+    </div>
+    <div class="fg"><label class="fl">Average Open Houses Per Month</label>
+      <select class="fs"><option>1&ndash;2</option><option selected>3&ndash;5</option><option>6&ndash;10</option><option>10+</option></select>
+    </div>
+  </div>
+
+  <!-- STEP 4: Host Agent Preferences -->
+  <div id="s4" style="display:none;">
+    <div class="step-dots">
+      <div class="dot done"></div><div class="dot done"></div><div class="dot done"></div>
+      <div class="dot active"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+    <div class="step-lbl">Step 4 of 7 &middot; Host Agent Setup</div>
+    <div class="step-h">How do you want to<br><em>use host agents?</em></div>
+    <div class="step-sub">ChloeIQ can post your open houses to the host agent marketplace, or you can keep it internal to your team only.</div>
+    <div class="opt-grid" style="grid-template-columns:1fr 1fr;margin-bottom:20px;">
+      <div class="opt-card sel" onclick="selMode(this)">
+        <div class="opt-icon">&#x1F30D;</div>
+        <div class="opt-title">Open Marketplace</div>
+        <div class="opt-sub">Qualified agents from across DFW can apply to host your listings</div>
+        <div class="opt-chk">&#x2713;</div>
+      </div>
+      <div class="opt-card" onclick="selMode(this)">
+        <div class="opt-icon">&#x1F512;</div>
+        <div class="opt-title">Team Only</div>
+        <div class="opt-sub">Only agents on your team roster can host your open houses</div>
+        <div class="opt-chk">&#x2713;</div>
+      </div>
+    </div>
+    <div style="background:var(--s1);border:1px solid var(--bs);border-radius:12px;padding:16px 18px;">
+      <div style="font-size:13px;font-weight:600;color:var(--tx);margin-bottom:14px;">Host Agent Requirements</div>
+      <div class="toggle-row">
+        <div><div class="tg-label">Minimum Host Score</div><div class="tg-sub">Only agents with 75+ Host Score can apply</div></div>
+        <div class="toggle" onclick="this.classList.toggle('off')"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="toggle-row">
+        <div><div class="tg-label">Must use ChloeIQ sign-in exclusively</div><div class="tg-sub">No paper sheets &mdash; all visitors go through Chloe</div></div>
+        <div class="toggle" onclick="this.classList.toggle('off')"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="toggle-row">
+        <div><div class="tg-label">Require my approval before agent can follow up</div><div class="tg-sub">You review and approve all outreach to buyers</div></div>
+        <div class="toggle off" onclick="this.classList.toggle('off')"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="toggle-row">
+        <div><div class="tg-label">Share buyer intelligence with host agent</div><div class="tg-sub">Host sees ranked buyer report after the event</div></div>
+        <div class="toggle" onclick="this.classList.toggle('off')"><div class="toggle-knob"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 5: Sign & Code Preferences -->
+  <div id="s5" style="display:none;">
+    <div class="step-dots">
+      <div class="dot done"></div><div class="dot done"></div><div class="dot done"></div>
+      <div class="dot done"></div><div class="dot active"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+    <div class="step-lbl">Step 5 of 7 &middot; Signs &amp; Chloe Codes</div>
+    <div class="step-h">Set up your<br><em>Chloe Codes.</em></div>
+    <div class="step-sub">Every listing gets an exterior code (yard sign rider) and interior code (open house sign-in) automatically generated.</div>
+    <div class="feature-list" style="margin-bottom:20px;">
+      <div class="feat-item" style="border-color:rgba(184,224,48,.2);background:var(--ad);">
+        <div class="feat-icon">&#x1FA7;</div>
+        <div class="feat-text"><div class="feat-title">Exterior Code &mdash; Yard Sign Rider</div><div class="feat-sub">Scanned at the curb before buyers enter &middot; captures pre-tour interest</div></div>
+        <div class="feat-chk">Auto</div>
+      </div>
+      <div class="feat-item" style="border-color:rgba(184,224,48,.2);background:var(--ad);">
+        <div class="feat-icon">&#x1F4F1;</div>
+        <div class="feat-text"><div class="feat-title">Interior Code &mdash; Front Door Sign-In</div><div class="feat-sub">NAR-compliant digital visitor log &middot; replaces paper sheet</div></div>
+        <div class="feat-chk">Auto</div>
+      </div>
+    </div>
+    <div style="background:var(--s1);border:1px solid var(--bs);border-radius:12px;padding:16px 18px;">
+      <div style="font-size:13px;font-weight:600;color:var(--tx);margin-bottom:14px;">Preferred Sign Vendor</div>
+      <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(184,224,48,.05);border:1px solid rgba(184,224,48,.2);border-radius:10px;margin-bottom:10px;">
+        <div style="width:36px;height:36px;background:var(--acc);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">&#x1FA7;</div>
+        <div style="flex:1;"><div style="font-size:13px;font-weight:500;color:var(--tx);">SignPro DFW</div><div style="font-size:11px;color:var(--acc);">ChloeIQ Co-Sponsor &middot; 7AM day-of delivery</div></div>
+        <div style="font-size:11px;font-family:var(--font-mono);color:var(--grn);background:rgba(74,222,128,.1);padding:2px 8px;border-radius:10px;">Recommended</div>
+      </div>
+      <div class="fg"><label class="fl">Typical order lead time needed</label>
+        <select class="fs"><option>Next day</option><option selected>2&ndash;3 days</option><option>Week ahead</option></select>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 6: Notifications -->
+  <div id="s6" style="display:none;">
+    <div class="step-dots">
+      <div class="dot done"></div><div class="dot done"></div><div class="dot done"></div>
+      <div class="dot done"></div><div class="dot done"></div><div class="dot active"></div><div class="dot"></div>
+    </div>
+    <div class="step-lbl">Step 6 of 7 &middot; Notifications</div>
+    <div class="step-h">Stay in the<br><em>loop.</em></div>
+    <div class="step-sub">Choose how Chloe keeps you informed. You can change these any time.</div>
+    <div style="background:var(--s1);border:1px solid var(--bs);border-radius:12px;padding:16px 18px;margin-bottom:14px;">
+      <div style="font-size:12px;font-family:var(--font-mono);color:var(--txd);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px;">During Open House</div>
+      <div class="toggle-row">
+        <div><div class="tg-label">New visitor alert (every scan)</div><div class="tg-sub">Push notification each time someone scans in</div></div>
+        <div class="toggle off" onclick="this.classList.toggle('off')"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="toggle-row">
+        <div><div class="tg-label">High-intent buyer alert</div><div class="tg-sub">When a 85%+ match score buyer scans in</div></div>
+        <div class="toggle" onclick="this.classList.toggle('off')"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="toggle-row">
+        <div><div class="tg-label">Live headcount updates (every 30 min)</div><div class="tg-sub">Summary of visitors, scans, and onboard rate</div></div>
+        <div class="toggle" onclick="this.classList.toggle('off')"><div class="toggle-knob"></div></div>
+      </div>
+    </div>
+    <div style="background:var(--s1);border:1px solid var(--bs);border-radius:12px;padding:16px 18px;">
+      <div style="font-size:12px;font-family:var(--font-mono);color:var(--txd);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px;">After Open House</div>
+      <div class="toggle-row">
+        <div><div class="tg-label">Post-event buyer intelligence report</div><div class="tg-sub">Full ranked buyer list with DNA profiles</div></div>
+        <div class="toggle" onclick="this.classList.toggle('off')"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="toggle-row">
+        <div><div class="tg-label">Host agent follow-up approval requests</div><div class="tg-sub">When host wants to reach out to a buyer</div></div>
+        <div class="toggle" onclick="this.classList.toggle('off')"><div class="toggle-knob"></div></div>
+      </div>
+      <div class="toggle-row">
+        <div><div class="tg-label">Weekly listing intelligence digest</div><div class="tg-sub">All listings &middot; buyer trends &middot; recommended actions</div></div>
+        <div class="toggle" onclick="this.classList.toggle('off')"><div class="toggle-knob"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 7: Done -->
+  <div id="s7" style="display:none;text-align:center;">
+    <div class="done-ring">&#x2713;</div>
+    <div class="step-lbl">All Set</div>
+    <div class="step-h">Welcome to<br><em>ChloeIQ</em>, Marcus.</div>
+    <div class="step-sub" style="margin-bottom:28px;">Your listing agent account is live. Set up your first open house and watch the buyer intelligence roll in.</div>
+    <div class="summary-box">
+      <div class="sr"><span style="color:var(--txm);">Name</span><span>Marcus Rivera &middot; Dallas Collective Group</span></div>
+      <div class="sr"><span style="color:var(--txm);">Brokerage</span><span>REAL Broker, LLC</span></div>
+      <div class="sr"><span style="color:var(--txm);">Market</span><span>DFW Metroplex &middot; Luxury focus</span></div>
+      <div class="sr"><span style="color:var(--txm);">Host Mode</span><span>Open Marketplace &middot; Score 75+ required</span></div>
+      <div class="sr"><span style="color:var(--txm);">Chloe Codes</span><span style="color:var(--acc);">Auto-generated per listing &middot; SignPro DFW</span></div>
+      <div class="sr"><span style="color:var(--txm);">Notifications</span><span>High-intent buyers &middot; Post-event report</span></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <button onclick="window.location.href='chloeiq-new-open-house.html'" style="width:100%;padding:14px;border-radius:12px;border:none;background:var(--acc);color:var(--bg);font-family:var(--font-display);font-size:17px;font-weight:600;cursor:pointer;">Set Up First Open House &rarr;</button>
+      <button onclick="window.location.href='chloeiq-listing-dashboard-desktop.html'" style="width:100%;padding:12px;border-radius:12px;border:1px solid var(--bs);background:transparent;color:var(--txm);font-family:var(--font-body);font-size:14px;cursor:pointer;">Go to Dashboard</button>
+    </div>
+  </div>
+</div>
+
+<div class="nav-footer" id="nav-footer">
+  <span class="step-count" id="step-count">Step 1 of 7</span>
+  <button class="btn-back" id="btn-back" onclick="prevStep()" style="display:none;">&larr; Back</button>
+  <button class="btn-next" id="btn-next" onclick="nextStep()">Let&rsquo;s go &rarr;</button>
+</div>
+
+<script>
+var currentStep=1;var totalSteps=7;
+var nextLabels=['Let\'s go \u2192','Continue \u2192','Continue \u2192','Continue \u2192','Continue \u2192','Almost there \u2192',''];
+
+function goStep(n){
+  document.getElementById('s'+currentStep).style.display='none';
+  document.getElementById('s'+n).style.display='';
+  currentStep=n;
+  // Update progress
+  document.getElementById('prog').style.width=Math.round((n/totalSteps)*100)+'%';
+  document.getElementById('step-count').textContent='Step '+n+' of '+totalSteps;
+  // Update dots
+  for(var i=1;i<=totalSteps;i++){
+    var d=document.getElementById('d'+i);
+    if(!d)continue;
+    d.className='dot'+(i===n?' active':i<n?' done':'');
+  }
+  // Update nav buttons
+  document.getElementById('btn-back').style.display=n>1?'':'none';
+  var nextBtn=document.getElementById('btn-next');
+  if(n===totalSteps){document.getElementById('nav-footer').style.display='none';}
+  else{document.getElementById('nav-footer').style.display='';nextBtn.textContent=nextLabels[n-1]||'Continue \u2192';}
+  window.scrollTo(0,0);
+}
+function nextStep(){if(currentStep<totalSteps)goStep(currentStep+1);}
+function prevStep(){if(currentStep>1)goStep(currentStep-1);}
+function togOpt(el){el.classList.toggle('sel');}
+function selMode(el){document.querySelectorAll('.opt-grid .opt-card').forEach(function(c){c.classList.remove('sel');});el.classList.add('sel');}
+</script>
+<script src="chloeiq-nav.js"></script>
+</body>
+</html>

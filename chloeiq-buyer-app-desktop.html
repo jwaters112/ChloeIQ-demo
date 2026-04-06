@@ -6,7 +6,17 @@
 <title>ChloeIQ — Buyer App</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-:root{--bg:#0A0B07;--s1:#13160D;--s2:#1A1E12;--s3:#222818;--acc:#B8E030;--ad:rgba(184,224,48,.10);--tx:#EEF0E5;--txm:#8A8F7A;--txd:#4A5040;--br:rgba(184,224,48,.12);--bs:rgba(238,240,229,.06);--grn:#4ADE80;--red:#FF5A4A;--amb:#F5A623;--blu:#60A5FA;--pur:#A78BFA;}
+:root{
+  --bg:#F5F5F7;--s1:#FFFFFF;--s2:#F0F0F2;--s3:#E8E8EA;--s4:#E0E0E2;
+  --acc:#1D6F42;--ad:rgba(29,111,66,.10);--am:rgba(29,111,66,.18);
+  --tx:#1D1D1F;--txm:#6E6E73;--txd:#AEAEB2;
+  --br:rgba(29,111,66,.25);--bs:rgba(0,0,0,.08);
+  --grn:#1D6F42;--red:#D93025;--amb:#B06000;--blu:#1A56DB;--pur:#6741D9;
+  --font-body:'DM Sans',sans-serif;
+  --font-display:'Fraunces',serif;
+  --font-mono:'DM Mono',monospace;
+  --radius:11px;
+}
 html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,sans-serif;font-size:14px;overflow-x:hidden;}
 .topbar{height:56px;display:flex;align-items:center;padding:0 28px;border-bottom:1px solid var(--bs);background:var(--bg);gap:12px;position:sticky;top:0;z-index:20;}
 .lm{width:28px;height:28px;background:var(--acc);border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:Fraunces,serif;font-size:14px;font-weight:600;color:var(--bg);}
@@ -15,7 +25,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,s
 .sep{width:1px;height:20px;background:var(--bs);}
 .tr{margin-left:auto;display:flex;gap:8px;align-items:center;}
 .btn{display:inline-flex;align-items:center;gap:5px;padding:7px 15px;border-radius:8px;font-family:DM Sans,sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;border:none;transition:all .13s;}
-.bp{background:var(--acc);color:var(--bg);}.bp:hover{background:#c8f040;}
+.bp{background:var(--acc);color:var(--bg);}.bp:hover{background:#2E8B57;}
 .bs2{background:transparent;color:var(--txm);border:1px solid var(--bs);}.bs2:hover{border-color:var(--br);color:var(--tx);background:var(--s1);}
 .main{padding:28px 32px;display:flex;flex-direction:column;gap:22px;max-height:calc(100vh - 56px);overflow-y:auto;padding-bottom:80px;}
 .panel{background:var(--s1);border:1px solid var(--bs);border-radius:11px;overflow:hidden;}
@@ -32,6 +42,9 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,s
 .chip{padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--bs);background:var(--s2);color:var(--txm);transition:all .12s;}
 .chip:hover{border-color:var(--br);color:var(--tx);}.chip.active{background:var(--ad);border-color:var(--br);color:var(--acc);}
 ::-webkit-scrollbar{width:3px;}</style>
+<script>
+(function(){document.documentElement.style.background='#F5F5F7';document.documentElement.style.color='#1D1D1F';})();
+</script>
 </head>
 <body>
 <!-- ══ ONBOARDING OVERLAY ══ -->
@@ -131,27 +144,27 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,s
   style.textContent = [
     '@keyframes ob-fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}',
     '.ob-animate{animation:ob-fadeUp 0.32s ease}',
-    '.ob-inp{width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:10px;padding:12px 14px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:14px;outline:none;box-sizing:border-box;transition:border-color 0.2s;}',
-    '.ob-inp:focus{border-color:rgba(184,224,48,0.4);}',
-    '.ob-inp::placeholder{color:#4A5040;}',
-    '.ob-sel{width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:10px;padding:12px 14px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:14px;outline:none;box-sizing:border-box;cursor:pointer;}',
-    '.ob-sel option{background:#13160D;}',
-    '.ob-btn-pri{width:100%;padding:14px;border-radius:10px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:0.02em;transition:background 0.15s;}',
-    '.ob-btn-pri:hover{background:#c8f040;}',
-    '.ob-btn-sec{padding:11px 22px;border-radius:10px;border:1px solid rgba(238,240,229,0.1);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;}',
-    '.ob-dna-card{background:#0E1108;border:1.5px solid rgba(238,240,229,0.08);border-radius:13px;padding:18px 14px;cursor:pointer;text-align:center;transition:all 0.18s;}',
-    '.ob-dna-card:hover{border-color:rgba(184,224,48,0.3);transform:translateY(-2px);}',
-    '.ob-dna-card.sel{border-color:rgba(184,224,48,0.6);background:rgba(184,224,48,0.06);}',
-    '.ob-pref{display:flex;align-items:center;gap:11px;padding:13px 15px;background:#0E1108;border:1.5px solid rgba(238,240,229,0.08);border-radius:11px;cursor:pointer;transition:all 0.15s;}',
-    '.ob-pref:hover{border-color:rgba(184,224,48,0.25);}',
-    '.ob-pref.sel{border-color:rgba(184,224,48,0.5);background:rgba(184,224,48,0.05);}',
-    '.ob-chk{width:18px;height:18px;border-radius:4px;border:2px solid rgba(238,240,229,0.15);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;transition:all 0.15s;}',
-    '.ob-pref.sel .ob-chk{background:#B8E030;border-color:#B8E030;color:#0A0B07;}',
-    '.ob-opt{background:#13160D;border:1px solid rgba(238,240,229,0.08);border-radius:12px;padding:16px 18px;cursor:pointer;font-size:13px;color:#8A8F7A;line-height:1.5;transition:all 0.13s;}',
-    '.ob-opt:hover{border-color:rgba(184,224,48,0.3);color:#EEF0E5;}',
-    '.ob-opt.sel{border-color:rgba(184,224,48,0.5);background:rgba(184,224,48,0.07);color:#B8E030;}',
+    '.ob-inp{width:100%;background:#F5F5F7;border:1px solid rgba(0,0,0,0.1);border-radius:10px;padding:12px 14px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-size:14px;outline:none;box-sizing:border-box;transition:border-color 0.2s;}',
+    '.ob-inp:focus{border-color:rgba(29,111,66,0.4);}',
+    '.ob-inp::placeholder{color:#AEAEB2;}',
+    '.ob-sel{width:100%;background:#F5F5F7;border:1px solid rgba(0,0,0,0.1);border-radius:10px;padding:12px 14px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-size:14px;outline:none;box-sizing:border-box;cursor:pointer;}',
+    '.ob-sel option{background:#FFFFFF;}',
+    '.ob-btn-pri{width:100%;padding:14px;border-radius:10px;border:none;background:#1D6F42;color:#F5F5F7;font-family:DM Sans,sans-serif;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:0.02em;transition:background 0.15s;}',
+    '.ob-btn-pri:hover{background:#2E8B57;}',
+    '.ob-btn-sec{padding:11px 22px;border-radius:10px;border:1px solid rgba(0,0,0,0.1);background:transparent;color:#6E6E73;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;}',
+    '.ob-dna-card{background:#F5F5F7;border:1.5px solid rgba(0,0,0,0.08);border-radius:13px;padding:18px 14px;cursor:pointer;text-align:center;transition:all 0.18s;}',
+    '.ob-dna-card:hover{border-color:rgba(29,111,66,0.3);transform:translateY(-2px);}',
+    '.ob-dna-card.sel{border-color:rgba(29,111,66,0.6);background:rgba(29,111,66,0.06);}',
+    '.ob-pref{display:flex;align-items:center;gap:11px;padding:13px 15px;background:#F5F5F7;border:1.5px solid rgba(0,0,0,0.08);border-radius:11px;cursor:pointer;transition:all 0.15s;}',
+    '.ob-pref:hover{border-color:rgba(29,111,66,0.25);}',
+    '.ob-pref.sel{border-color:rgba(29,111,66,0.5);background:rgba(29,111,66,0.05);}',
+    '.ob-chk{width:18px;height:18px;border-radius:4px;border:2px solid rgba(0,0,0,0.15);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;transition:all 0.15s;}',
+    '.ob-pref.sel .ob-chk{background:#1D6F42;border-color:#1D6F42;color:#F5F5F7;}',
+    '.ob-opt{background:#FFFFFF;border:1px solid rgba(0,0,0,0.08);border-radius:12px;padding:16px 18px;cursor:pointer;font-size:13px;color:#6E6E73;line-height:1.5;transition:all 0.13s;}',
+    '.ob-opt:hover{border-color:rgba(29,111,66,0.3);color:#1D1D1F;}',
+    '.ob-opt.sel{border-color:rgba(29,111,66,0.5);background:rgba(29,111,66,0.07);color:#1D6F42;}',
     '.ob-slider{width:100%;-webkit-appearance:none;height:4px;border-radius:2px;outline:none;cursor:pointer;}',
-    '.ob-slider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#B8E030;cursor:pointer;border:3px solid #0A0B07;box-shadow:0 2px 8px rgba(184,224,48,0.3);}',
+    '.ob-slider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#1D6F42;cursor:pointer;border:3px solid #F5F5F7;box-shadow:0 2px 8px rgba(29,111,66,0.3);}',
   ].join('\n');
   document.head.appendChild(style);
 
@@ -168,35 +181,35 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,s
   function hdr(step, total, icon, tag, title, desc) {
     return '<div style="text-align:center;margin-bottom:32px;">'
       + (icon ? '<div style="font-size:44px;margin-bottom:14px;">' + icon + '</div>' : '')
-      + '<div style="display:inline-block;font-family:DM Mono,monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#B8E030;background:rgba(184,224,48,0.08);border:1px solid rgba(184,224,48,0.2);padding:4px 14px;border-radius:4px;margin-bottom:14px;">' + tag + '</div>'
-      + '<div style="font-family:Fraunces,serif;font-size:28px;color:#EEF0E5;line-height:1.2;margin-bottom:8px;">' + title + '</div>'
-      + '<div style="font-size:13px;color:#8A8F7A;line-height:1.7;max-width:420px;margin:0 auto;">' + desc + '</div>'
+      + '<div style="display:inline-block;font-family:DM Mono,monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:#1D6F42;background:rgba(29,111,66,0.08);border:1px solid rgba(29,111,66,0.2);padding:4px 14px;border-radius:4px;margin-bottom:14px;">' + tag + '</div>'
+      + '<div style="font-family:Fraunces,serif;font-size:28px;color:#1D1D1F;line-height:1.2;margin-bottom:8px;">' + title + '</div>'
+      + '<div style="font-size:13px;color:#6E6E73;line-height:1.7;max-width:420px;margin:0 auto;">' + desc + '</div>'
       + '</div>';
   }
 
   function progressBar(step, total) {
     var pct = ((step - 1) / total) * 100;
     var html = '<div style="display:flex;align-items:center;gap:10px;margin-bottom:28px;">';
-    html += '<div style="flex:1;height:3px;background:#1A1E12;border-radius:2px;overflow:hidden;">';
-    html += '<div style="height:3px;background:#B8E030;width:' + pct + '%;transition:width 0.4s ease;border-radius:2px;"></div>';
+    html += '<div style="flex:1;height:3px;background:#F0F0F2;border-radius:2px;overflow:hidden;">';
+    html += '<div style="height:3px;background:#1D6F42;width:' + pct + '%;transition:width 0.4s ease;border-radius:2px;"></div>';
     html += '</div>';
-    html += '<div style="font-size:11px;font-family:DM Mono,monospace;color:#8A8F7A;flex-shrink:0;">' + step + ' / ' + total + '</div>';
+    html += '<div style="font-size:11px;font-family:DM Mono,monospace;color:#6E6E73;flex-shrink:0;">' + step + ' / ' + total + '</div>';
     html += '</div>';
     return html;
   }
 
   function footer(backFn, nextLabel, nextFn, showBack) {
-    var html = '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:28px;padding-top:20px;border-top:1px solid rgba(184,224,48,0.08);">';
-    html += '<div style="font-size:11px;color:#4A5040;">Presented by Marcus Rivera · REAL Broker, LLC</div>';
+    var html = '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:28px;padding-top:20px;border-top:1px solid rgba(29,111,66,0.08);">';
+    html += '<div style="font-size:11px;color:#AEAEB2;">Presented by Marcus Rivera · REAL Broker, LLC</div>';
     html += '<div style="display:flex;gap:10px;">';
     if (showBack) html += '<button class="ob-btn-sec" id="ob-back">' + '← Back' + '</button>';
-    html += '<button style="padding:11px 24px;border-radius:10px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;" id="ob-next">' + nextLabel + '</button>';
+    html += '<button style="padding:11px 24px;border-radius:10px;border:none;background:#1D6F42;color:#F5F5F7;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;" id="ob-next">' + nextLabel + '</button>';
     html += '</div></div>';
     return html;
   }
 
   function lbl(text) {
-    return '<div style="font-size:11px;font-weight:600;color:#8A8F7A;letter-spacing:0.06em;text-transform:uppercase;font-family:DM Mono,monospace;margin-bottom:7px;">' + text + '</div>';
+    return '<div style="font-size:11px;font-weight:600;color:#6E6E73;letter-spacing:0.06em;text-transform:uppercase;font-family:DM Mono,monospace;margin-bottom:7px;">' + text + '</div>';
   }
 
   // ── STEPS ──────────────────────────────────────────────────────────────────
@@ -207,23 +220,23 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,s
     var html = card(
       '<div style="text-align:center;">'
       + '<div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:36px;">'
-      + '<div style="width:36px;height:36px;background:#B8E030;border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:Fraunces,serif;font-size:18px;font-weight:600;color:#0A0B07;">C</div>'
-      + '<div style="font-family:Fraunces,serif;font-size:22px;color:#EEF0E5;">Chloe<span style=\'color:#B8E030;\'>IQ</span></div>'
+      + '<div style="width:36px;height:36px;background:#1D6F42;border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:Fraunces,serif;font-size:18px;font-weight:600;color:#F5F5F7;">C</div>'
+      + '<div style="font-family:Fraunces,serif;font-size:22px;color:#1D1D1F;">Chloe<span style=\'color:#1D6F42;\'>IQ</span></div>'
       + '</div>'
 
-      + '<div style="background:#13160D;border:1px solid rgba(184,224,48,0.2);border-radius:16px;padding:26px 28px;margin-bottom:22px;text-align:left;">'
-      + '<div style="font-size:10px;font-family:DM Mono,monospace;color:#B8E030;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">● LIVE OPEN HOUSE</div>'
-      + '<div style="font-family:Fraunces,serif;font-size:24px;color:#EEF0E5;line-height:1.1;margin-bottom:4px;">' + ob.property + '</div>'
-      + '<div style="font-size:12px;color:#8A8F7A;margin-bottom:18px;">Flower Mound, TX 75022 &nbsp;·&nbsp; $724,000 &nbsp;·&nbsp; 4 bed / 3.5 bath</div>'
-      + '<div style="display:flex;align-items:center;gap:12px;padding:13px 15px;background:#1A1E12;border-radius:10px;border:1px solid rgba(238,240,229,0.06);">'
-      + '<div style="width:38px;height:38px;border-radius:50%;background:#B8E030;display:flex;align-items:center;justify-content:center;font-family:Fraunces,serif;font-size:14px;font-weight:600;color:#0A0B07;flex-shrink:0;">' + ob.agent.initials + '</div>'
-      + '<div style="flex:1;"><div style="font-size:13px;font-weight:600;color:#EEF0E5;">' + ob.agent.name + '</div><div style="font-size:11px;color:#8A8F7A;">' + ob.agent.title + '</div></div>'
-      + '<div style="font-size:10px;font-family:DM Mono,monospace;color:#B8E030;background:rgba(184,224,48,0.1);border:1px solid rgba(184,224,48,0.2);padding:3px 10px;border-radius:20px;">Host</div>'
+      + '<div style="background:#FFFFFF;border:1px solid rgba(29,111,66,0.2);border-radius:16px;padding:26px 28px;margin-bottom:22px;text-align:left;">'
+      + '<div style="font-size:10px;font-family:DM Mono,monospace;color:#1D6F42;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">● LIVE OPEN HOUSE</div>'
+      + '<div style="font-family:Fraunces,serif;font-size:24px;color:#1D1D1F;line-height:1.1;margin-bottom:4px;">' + ob.property + '</div>'
+      + '<div style="font-size:12px;color:#6E6E73;margin-bottom:18px;">Flower Mound, TX 75022 &nbsp;·&nbsp; $724,000 &nbsp;·&nbsp; 4 bed / 3.5 bath</div>'
+      + '<div style="display:flex;align-items:center;gap:12px;padding:13px 15px;background:#F0F0F2;border-radius:10px;border:1px solid rgba(0,0,0,0.06);">'
+      + '<div style="width:38px;height:38px;border-radius:50%;background:#1D6F42;display:flex;align-items:center;justify-content:center;font-family:Fraunces,serif;font-size:14px;font-weight:600;color:#F5F5F7;flex-shrink:0;">' + ob.agent.initials + '</div>'
+      + '<div style="flex:1;"><div style="font-size:13px;font-weight:600;color:#1D1D1F;">' + ob.agent.name + '</div><div style="font-size:11px;color:#6E6E73;">' + ob.agent.title + '</div></div>'
+      + '<div style="font-size:10px;font-family:DM Mono,monospace;color:#1D6F42;background:rgba(29,111,66,0.1);border:1px solid rgba(29,111,66,0.2);padding:3px 10px;border-radius:20px;">Host</div>'
       + '</div></div>'
 
-      + '<div style="font-size:13px;color:#8A8F7A;line-height:1.75;margin-bottom:26px;">Take a 90-second setup and Chloe will tell you exactly how well this home matches your style — and find you others like it.</div>'
+      + '<div style="font-size:13px;color:#6E6E73;line-height:1.75;margin-bottom:26px;">Take a 90-second setup and Chloe will tell you exactly how well this home matches your style — and find you others like it.</div>'
       + '<button class="ob-btn-pri" id="ob-start">Get My Match Score →</button>'
-      + '<div style="font-size:11px;color:#4A5040;margin-top:10px;">No account needed · 5 quick steps</div>'
+      + '<div style="font-size:11px;color:#AEAEB2;margin-top:10px;">No account needed · 5 quick steps</div>'
       + '</div>'
     );
     render(html);
@@ -236,7 +249,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,s
     var html = card(
       progressBar(1, 8)
       + hdr(1,8,'👋','Step 1 of 8 · Welcome',
-          'Hi! I\'m <em style=\'color:#B8E030;font-style:italic;\'>Chloe.</em><br>Let\'s start with your name.',
+          'Hi! I\'m <em style=\'color:#1D6F42;font-style:italic;\'>Chloe.</em><br>Let\'s start with your name.',
           'I\'ll create your buyer profile and find your match score for this home.')
 
       + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">'
@@ -267,15 +280,15 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,s
     var html = card(
       progressBar(2, 8)
       + hdr(2,8,'💰','Step 2 of 8 · Budget',
-          'What\'s your <em style=\'color:#B8E030;font-style:italic;\'>budget range?</em>',
+          'What\'s your <em style=\'color:#1D6F42;font-style:italic;\'>budget range?</em>',
           'Chloe uses your budget to weight your match score — a perfect-style home that\'s out of range scores lower.')
 
-      + '<div style="background:linear-gradient(135deg,rgba(184,224,48,0.08),rgba(184,224,48,0.02));border:1px solid rgba(184,224,48,0.15);border-radius:14px;padding:26px;text-align:center;margin-bottom:20px;">'
-      + '<div style="font-family:Fraunces,serif;font-size:40px;color:#B8E030;line-height:1;margin-bottom:4px;" id="ob-budget-display">' + budgetRanges[ob.budget] + '</div>'
-      + '<div style="font-size:11px;color:#8A8F7A;font-family:DM Mono,monospace;letter-spacing:0.08em;">TARGET PURCHASE RANGE</div>'
+      + '<div style="background:linear-gradient(135deg,rgba(29,111,66,0.08),rgba(29,111,66,0.02));border:1px solid rgba(29,111,66,0.15);border-radius:14px;padding:26px;text-align:center;margin-bottom:20px;">'
+      + '<div style="font-family:Fraunces,serif;font-size:40px;color:#1D6F42;line-height:1;margin-bottom:4px;" id="ob-budget-display">' + budgetRanges[ob.budget] + '</div>'
+      + '<div style="font-size:11px;color:#6E6E73;font-family:DM Mono,monospace;letter-spacing:0.08em;">TARGET PURCHASE RANGE</div>'
       + '</div>'
-      + '<input type="range" class="ob-slider" id="ob-slider" min="0" max="10" value="' + ob.budget + '" style="background:linear-gradient(to right,#B8E030 ' + sliderPct + '%,#1A1E12 ' + sliderPct + '%)">'
-      + '<div style="display:flex;justify-content:space-between;font-size:10px;color:#4A5040;font-family:DM Mono,monospace;margin-bottom:22px;"><span>$300K</span><span>$500K</span><span>$750K</span><span>$1M</span><span>$1.5M+</span></div>'
+      + '<input type="range" class="ob-slider" id="ob-slider" min="0" max="10" value="' + ob.budget + '" style="background:linear-gradient(to right,#1D6F42 ' + sliderPct + '%,#F0F0F2 ' + sliderPct + '%)">'
+      + '<div style="display:flex;justify-content:space-between;font-size:10px;color:#AEAEB2;font-family:DM Mono,monospace;margin-bottom:22px;"><span>$300K</span><span>$500K</span><span>$750K</span><span>$1M</span><span>$1.5M+</span></div>'
 
       + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:4px;">'
       + '<div>' + lbl('Pre-Approval Status') + '<select class="ob-sel"><option>Pre-approved and ready</option><option>Pre-qualified</option><option>Not yet started</option><option>Cash buyer</option></select></div>'
@@ -288,7 +301,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,s
     document.getElementById('ob-slider').addEventListener('input', function() {
       ob.budget = parseInt(this.value);
       var pct = (ob.budget / 10) * 100;
-      this.style.background = 'linear-gradient(to right,#B8E030 ' + pct + '%,#1A1E12 ' + pct + '%)';
+      this.style.background = 'linear-gradient(to right,#1D6F42 ' + pct + '%,#F0F0F2 ' + pct + '%)';
       document.getElementById('ob-budget-display').textContent = budgetRanges[ob.budget];
     });
     document.getElementById('ob-back').addEventListener('click', function() { showStep1(); });
@@ -301,7 +314,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,s
     var html = card(
       progressBar(3, 8)
       + hdr(3,8,'🧬','Step 3 of 8 · StyleDNA',
-          'Which style feels most <em style=\'color:#B8E030;font-style:italic;\'>like you?</em>',
+          'Which style feels most <em style=\'color:#1D6F42;font-style:italic;\'>like you?</em>',
           'Pick the one that resonates. Your StyleDNA shapes how Chloe scores every home for you.')
 
       + '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;">'
@@ -309,8 +322,8 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,s
           var sel = d.name === ob.dnaChoice ? ' sel' : '';
           return '<div class="ob-dna-card' + sel + '" data-dna="' + d.name + '">'
             + '<div style="font-size:26px;margin-bottom:8px;">' + d.icon + '</div>'
-            + '<div style="font-family:Fraunces,serif;font-size:14px;color:#EEF0E5;margin-bottom:3px;">' + d.name + '</div>'
-            + '<div style="font-size:11px;color:#8A8F7A;">' + d.trait + '</div>'
+            + '<div style="font-family:Fraunces,serif;font-size:14px;color:#1D1D1F;margin-bottom:3px;">' + d.name + '</div>'
+            + '<div style="font-size:11px;color:#6E6E73;">' + d.trait + '</div>'
             + '</div>';
         }).join('')
       + '</div>'
@@ -335,7 +348,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,s
     var html = card(
       progressBar(4, 8)
       + hdr(4,8,'🏠','Step 4 of 8 · Must-Haves',
-          'What are your <em style=\'color:#B8E030;font-style:italic;\'>must-haves?</em>',
+          'What are your <em style=\'color:#1D6F42;font-style:italic;\'>must-haves?</em>',
           'Select everything that matters. Chloe weights these heavily in your match score.')
 
       + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px;">'
@@ -344,7 +357,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,s
           return '<div class="ob-pref' + sel + '" data-pref="' + p.label + '">'
             + '<div class="ob-chk">' + (p.sel ? '✓' : '') + '</div>'
             + '<span style="font-size:17px;">' + p.icon + '</span>'
-            + '<span style="font-size:13px;font-weight:500;color:#EEF0E5;">' + p.label + '</span>'
+            + '<span style="font-size:13px;font-weight:500;color:#1D1D1F;">' + p.label + '</span>'
             + '</div>';
         }).join('')
       + '</div>'
@@ -375,7 +388,7 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,s
     var html = card(
       progressBar(5, 8)
       + hdr(5,8,'📍','Step 5 of 8 · Property Details',
-          'A few more <em style=\'color:#B8E030;font-style:italic;\'>specifics.</em>',
+          'A few more <em style=\'color:#1D6F42;font-style:italic;\'>specifics.</em>',
           'This helps Chloe narrow down matching listings in your target area.')
 
       + '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;">'
@@ -404,14 +417,14 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,s
 
     var html = card(
       '<div style="display:flex;align-items:center;gap:10px;margin-bottom:28px;">'
-      + '<div style="flex:1;height:3px;background:#1A1E12;border-radius:2px;overflow:hidden;">'
-      + '<div style="height:3px;background:#B8E030;width:' + (progress*100) + '%;transition:width 0.4s ease;border-radius:2px;"></div>'
+      + '<div style="flex:1;height:3px;background:#F0F0F2;border-radius:2px;overflow:hidden;">'
+      + '<div style="height:3px;background:#1D6F42;width:' + (progress*100) + '%;transition:width 0.4s ease;border-radius:2px;"></div>'
       + '</div>'
-      + '<div style="font-size:11px;font-family:DM Mono,monospace;color:#8A8F7A;flex-shrink:0;">' + (idx+1) + ' / ' + quizQuestions.length + '</div>'
+      + '<div style="font-size:11px;font-family:DM Mono,monospace;color:#6E6E73;flex-shrink:0;">' + (idx+1) + ' / ' + quizQuestions.length + '</div>'
       + '</div>'
 
-      + '<div style="text-align:center;margin-bottom:6px;font-size:10px;font-family:DM Mono,monospace;color:#B8E030;letter-spacing:0.1em;text-transform:uppercase;">StyleDNA Quiz</div>'
-      + '<div style="font-family:Fraunces,serif;font-size:22px;color:#EEF0E5;line-height:1.3;margin-bottom:22px;text-align:center;">' + q.q + '</div>'
+      + '<div style="text-align:center;margin-bottom:6px;font-size:10px;font-family:DM Mono,monospace;color:#1D6F42;letter-spacing:0.1em;text-transform:uppercase;">StyleDNA Quiz</div>'
+      + '<div style="font-family:Fraunces,serif;font-size:22px;color:#1D1D1F;line-height:1.3;margin-bottom:22px;text-align:center;">' + q.q + '</div>'
 
       + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">'
       + q.opts.map(function(opt, i) {
@@ -453,30 +466,30 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,s
       '<div style="text-align:center;">'
       + progressBar(8, 8)
 
-      + '<div style="width:72px;height:72px;border-radius:50%;background:rgba(184,224,48,0.1);border:2px solid rgba(184,224,48,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;">'
-      + '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#B8E030" stroke-width="1.5"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>'
+      + '<div style="width:72px;height:72px;border-radius:50%;background:rgba(29,111,66,0.1);border:2px solid rgba(29,111,66,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;">'
+      + '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1D6F42" stroke-width="1.5"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>'
       + '</div>'
 
-      + '<div style="font-size:10px;font-family:DM Mono,monospace;color:#B8E030;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:8px;">Your Buyer DNA · Refined Modern</div>'
-      + '<div style="font-family:Fraunces,serif;font-size:30px;color:#EEF0E5;margin-bottom:8px;">' + name + ', here\'s your <em style=\'color:#B8E030;font-style:italic;\'>match score</em></div>'
-      + '<div style="font-size:13px;color:#8A8F7A;margin-bottom:24px;">Based on your Refined Modern DNA, budget, and must-haves.</div>'
+      + '<div style="font-size:10px;font-family:DM Mono,monospace;color:#1D6F42;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:8px;">Your Buyer DNA · Refined Modern</div>'
+      + '<div style="font-family:Fraunces,serif;font-size:30px;color:#1D1D1F;margin-bottom:8px;">' + name + ', here\'s your <em style=\'color:#1D6F42;font-style:italic;\'>match score</em></div>'
+      + '<div style="font-size:13px;color:#6E6E73;margin-bottom:24px;">Based on your Refined Modern DNA, budget, and must-haves.</div>'
 
-      + '<div style="background:linear-gradient(135deg,rgba(184,224,48,0.1),rgba(184,224,48,0.02));border:1px solid rgba(184,224,48,0.2);border-radius:18px;padding:32px;margin-bottom:20px;position:relative;overflow:hidden;text-align:center;">'
-      + '<div style="font-family:Fraunces,serif;font-size:84px;font-weight:600;color:#B8E030;line-height:1;margin-bottom:4px;">87%</div>'
-      + '<div style="font-size:11px;font-family:DM Mono,monospace;color:#8A8F7A;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:18px;">Match Score · Top 8% of all visitors</div>'
-      + '<div style="display:inline-flex;align-items:center;gap:8px;background:rgba(184,224,48,0.1);border:1px solid rgba(184,224,48,0.2);border-radius:100px;padding:7px 18px;font-size:13px;font-weight:600;color:#EEF0E5;margin-bottom:20px;">✦ Refined Modern DNA</div>'
-      + '<div style="background:#0E1108;border:1px solid rgba(238,240,229,0.06);border-radius:12px;padding:18px;text-align:left;">'
-      + '<div style="font-family:Fraunces,serif;font-size:17px;color:#EEF0E5;margin-bottom:3px;">2847 Magnolia Drive</div>'
-      + '<div style="font-size:12px;color:#8A8F7A;margin-bottom:12px;">Flower Mound, TX 75022 · $724,000 · 4BD / 3.5BA / 3,240 sqft</div>'
+      + '<div style="background:linear-gradient(135deg,rgba(29,111,66,0.1),rgba(29,111,66,0.02));border:1px solid rgba(29,111,66,0.2);border-radius:18px;padding:32px;margin-bottom:20px;position:relative;overflow:hidden;text-align:center;">'
+      + '<div style="font-family:Fraunces,serif;font-size:84px;font-weight:600;color:#1D6F42;line-height:1;margin-bottom:4px;">87%</div>'
+      + '<div style="font-size:11px;font-family:DM Mono,monospace;color:#6E6E73;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:18px;">Match Score · Top 8% of all visitors</div>'
+      + '<div style="display:inline-flex;align-items:center;gap:8px;background:rgba(29,111,66,0.1);border:1px solid rgba(29,111,66,0.2);border-radius:100px;padding:7px 18px;font-size:13px;font-weight:600;color:#1D1D1F;margin-bottom:20px;">✦ Refined Modern DNA</div>'
+      + '<div style="background:#F5F5F7;border:1px solid rgba(0,0,0,0.06);border-radius:12px;padding:18px;text-align:left;">'
+      + '<div style="font-family:Fraunces,serif;font-size:17px;color:#1D1D1F;margin-bottom:3px;">2847 Magnolia Drive</div>'
+      + '<div style="font-size:12px;color:#6E6E73;margin-bottom:12px;">Flower Mound, TX 75022 · $724,000 · 4BD / 3.5BA / 3,240 sqft</div>'
       + '<div style="display:flex;flex-wrap:wrap;gap:7px;">'
       + ['Open Floor Plan ✓','Natural Light ✓','Home Office ✓','Smart Home ✓','Spa Suite ✓'].map(function(t) {
-          return '<span style="font-size:10px;background:rgba(184,224,48,0.08);color:#B8E030;border:1px solid rgba(184,224,48,0.2);border-radius:4px;padding:3px 9px;font-family:DM Mono,monospace;">' + t + '</span>';
+          return '<span style="font-size:10px;background:rgba(29,111,66,0.08);color:#1D6F42;border:1px solid rgba(29,111,66,0.2);border-radius:4px;padding:3px 9px;font-family:DM Mono,monospace;">' + t + '</span>';
         }).join('')
       + '</div></div>'
       + '</div>'
 
       + '<button class="ob-btn-pri" id="ob-enter">Open My Buyer Dashboard →</button>'
-      + '<div style="font-size:11px;color:#4A5040;margin-top:10px;">Chloe found 3 more homes that match your DNA</div>'
+      + '<div style="font-size:11px;color:#AEAEB2;margin-top:10px;">Chloe found 3 more homes that match your DNA</div>'
       + '</div>'
     );
     render(html);
@@ -507,8 +520,8 @@ html,body{height:100%;background:var(--bg);color:var(--tx);font-family:DM Sans,s
 
 })();
 
-function toast(msg,type){var o=document.getElementById('_t');if(o)o.remove();var t=document.createElement('div');t.id='_t';t.textContent=msg;var bg=type==='ok'?'#B8E030':'#1A1E12';var c=type==='ok'?'#0A0B07':'#EEF0E5';t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:'+bg+';color:'+c+';padding:10px 20px;border-radius:8px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all .2s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.4);border:1px solid rgba(184,224,48,.15);';document.body.appendChild(t);requestAnimationFrame(function(){t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';});clearTimeout(t._x);t._x=setTimeout(function(){t.style.opacity='0';},2600);}
-function modal(title,body,label,cb){var o=document.getElementById('_m');if(o)o.remove();var el=document.createElement('div');el.id='_m';el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9990;display:flex;align-items:center;justify-content:center;';el.innerHTML='<div style="background:#13160D;border:1px solid rgba(184,224,48,.15);border-radius:13px;padding:26px 28px;min-width:380px;max-width:460px;box-shadow:0 20px 60px rgba(0,0,0,.6);"><div style="font-family:Fraunces,serif;font-size:19px;margin-bottom:9px;">'+title+'</div><div style="font-size:13px;color:#8A8F7A;line-height:1.6;margin-bottom:20px;">'+body+'</div><div style="display:flex;gap:9px;justify-content:flex-end;"><button id="_mc" style="padding:7px 16px;border-radius:7px;border:1px solid rgba(238,240,229,.08);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:12px;cursor:pointer;">Cancel</button><button id="_mo" style="padding:7px 16px;border-radius:7px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:12px;font-weight:600;cursor:pointer;">'+(label||'OK')+'</button></div></div>';document.body.appendChild(el);el.querySelector('#_mc').onclick=function(){el.remove();};el.querySelector('#_mo').onclick=function(){el.remove();if(cb)cb();};el.onclick=function(e){if(e.target===el)el.remove();};}
+function toast(msg,type){var o=document.getElementById('_t');if(o)o.remove();var t=document.createElement('div');t.id='_t';t.textContent=msg;var bg=type==='ok'?'#1D6F42':'#F0F0F2';var c=type==='ok'?'#F5F5F7':'#1D1D1F';t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:'+bg+';color:'+c+';padding:10px 20px;border-radius:8px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all .2s;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,.4);border:1px solid rgba(29,111,66,.15);';document.body.appendChild(t);requestAnimationFrame(function(){t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';});clearTimeout(t._x);t._x=setTimeout(function(){t.style.opacity='0';},2600);}
+function modal(title,body,label,cb){var o=document.getElementById('_m');if(o)o.remove();var el=document.createElement('div');el.id='_m';el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:9990;display:flex;align-items:center;justify-content:center;';el.innerHTML='<div style="background:#FFFFFF;border:1px solid rgba(29,111,66,.15);border-radius:13px;padding:26px 28px;min-width:380px;max-width:460px;box-shadow:0 20px 60px rgba(0,0,0,.6);"><div style="font-family:Fraunces,serif;font-size:19px;margin-bottom:9px;">'+title+'</div><div style="font-size:13px;color:#6E6E73;line-height:1.6;margin-bottom:20px;">'+body+'</div><div style="display:flex;gap:9px;justify-content:flex-end;"><button id="_mc" style="padding:7px 16px;border-radius:7px;border:1px solid rgba(0,0,0,.08);background:transparent;color:#6E6E73;font-family:DM Sans,sans-serif;font-size:12px;cursor:pointer;">Cancel</button><button id="_mo" style="padding:7px 16px;border-radius:7px;border:none;background:#1D6F42;color:#F5F5F7;font-family:DM Sans,sans-serif;font-size:12px;font-weight:600;cursor:pointer;">'+(label||'OK')+'</button></div></div>';document.body.appendChild(el);el.querySelector('#_mc').onclick=function(){el.remove();};el.querySelector('#_mo').onclick=function(){el.remove();if(cb)cb();};el.onclick=function(e){if(e.target===el)el.remove();};}
 
 var traits=[
   {label:'Clean lines over ornate detail',strength:92},
@@ -630,28 +643,28 @@ function showHomeDetail(addr) {
   var existing = document.getElementById('_hd');
   if (existing) existing.remove();
 
-  var matchColor = h.matchClass === 'high' ? '#B8E030' : h.matchClass === 'mid' ? '#F5A623' : '#FF5A4A';
+  var matchColor = h.matchClass === 'high' ? '#1D6F42' : h.matchClass === 'mid' ? '#F5A623' : '#FF5A4A';
 
   var html = '';
 
   // Overlay
   html += '<div id="_hd" style="position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:9990;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:32px 16px;">';
-  html += '<div style="background:#13160D;border:1px solid rgba(184,224,48,0.15);border-radius:16px;width:720px;max-width:95vw;box-shadow:0 28px 80px rgba(0,0,0,0.7);overflow:hidden;">';
+  html += '<div style="background:#FFFFFF;border:1px solid rgba(29,111,66,0.15);border-radius:16px;width:720px;max-width:95vw;box-shadow:0 28px 80px rgba(0,0,0,0.7);overflow:hidden;">';
 
   // ── Hero bar ──
-  html += '<div style="background:linear-gradient(135deg,#1A1E12,#0E1108);padding:24px 28px;border-bottom:1px solid rgba(184,224,48,0.1);display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">';
+  html += '<div style="background:linear-gradient(135deg,#F0F0F2,#F5F5F7);padding:24px 28px;border-bottom:1px solid rgba(29,111,66,0.1);display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">';
   html += '<div style="flex:1;">';
-  html += '<div style="font-family:Fraunces,serif;font-size:24px;color:#EEF0E5;line-height:1.1;">' + h.addr + '</div>';
-  html += '<div style="font-size:12px;color:#8A8F7A;margin-top:4px;">' + h.area + '</div>';
+  html += '<div style="font-family:Fraunces,serif;font-size:24px;color:#1D1D1F;line-height:1.1;">' + h.addr + '</div>';
+  html += '<div style="font-size:12px;color:#6E6E73;margin-top:4px;">' + h.area + '</div>';
   html += '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;">';
   h.tags.forEach(function(tag) {
-    html += '<span style="font-size:11px;padding:3px 10px;border-radius:20px;background:rgba(184,224,48,0.08);border:1px solid rgba(184,224,48,0.15);color:#B8E030;font-family:DM Mono,monospace;">' + tag + '</span>';
+    html += '<span style="font-size:11px;padding:3px 10px;border-radius:20px;background:rgba(29,111,66,0.08);border:1px solid rgba(29,111,66,0.15);color:#1D6F42;font-family:DM Mono,monospace;">' + tag + '</span>';
   });
   html += '</div></div>';
   html += '<div style="text-align:right;flex-shrink:0;">';
   html += '<div style="font-family:Fraunces,serif;font-size:42px;color:' + matchColor + ';line-height:1;">' + h.match + '%</div>';
-  html += '<div style="font-size:10px;color:#8A8F7A;font-family:DM Mono,monospace;letter-spacing:0.06em;">MATCH SCORE</div>';
-  html += '<div style="font-size:11px;color:#8A8F7A;margin-top:6px;">' + h.dna + '</div>';
+  html += '<div style="font-size:10px;color:#6E6E73;font-family:DM Mono,monospace;letter-spacing:0.06em;">MATCH SCORE</div>';
+  html += '<div style="font-size:11px;color:#6E6E73;margin-top:6px;">' + h.dna + '</div>';
   html += '</div>';
   html += '</div>';
 
@@ -666,43 +679,43 @@ function showHomeDetail(addr) {
     { label:'Lot', val: h.lot },
     { label:'HOA', val: h.hoa },
   ];
-  html += '<div style="display:grid;grid-template-columns:repeat(8,1fr);border-bottom:1px solid rgba(238,240,229,0.06);">';
+  html += '<div style="display:grid;grid-template-columns:repeat(8,1fr);border-bottom:1px solid rgba(0,0,0,0.06);">';
   specs.forEach(function(s, i) {
-    html += '<div style="padding:12px 0;text-align:center;' + (i < 7 ? 'border-right:1px solid rgba(238,240,229,0.06);' : '') + '">';
-    html += '<div style="font-family:Fraunces,serif;font-size:16px;color:#EEF0E5;">' + s.val + '</div>';
-    html += '<div style="font-size:9px;color:#8A8F7A;text-transform:uppercase;letter-spacing:0.07em;margin-top:3px;">' + s.label + '</div>';
+    html += '<div style="padding:12px 0;text-align:center;' + (i < 7 ? 'border-right:1px solid rgba(0,0,0,0.06);' : '') + '">';
+    html += '<div style="font-family:Fraunces,serif;font-size:16px;color:#1D1D1F;">' + s.val + '</div>';
+    html += '<div style="font-size:9px;color:#6E6E73;text-transform:uppercase;letter-spacing:0.07em;margin-top:3px;">' + s.label + '</div>';
     html += '</div>';
   });
   html += '</div>';
 
   // ── Body: two columns ──
-  html += '<div style="display:grid;grid-template-columns:1fr 260px;gap:0;border-bottom:1px solid rgba(238,240,229,0.06);">';
+  html += '<div style="display:grid;grid-template-columns:1fr 260px;gap:0;border-bottom:1px solid rgba(0,0,0,0.06);">';
 
   // Left col
-  html += '<div style="padding:22px 24px;border-right:1px solid rgba(238,240,229,0.06);">';
+  html += '<div style="padding:22px 24px;border-right:1px solid rgba(0,0,0,0.06);">';
 
   // Description
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:10px;">About This Home</div>';
-  html += '<div style="font-size:13px;color:#8A8F7A;line-height:1.7;margin-bottom:20px;">' + h.description + '</div>';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin-bottom:10px;">About This Home</div>';
+  html += '<div style="font-size:13px;color:#6E6E73;line-height:1.7;margin-bottom:20px;">' + h.description + '</div>';
 
   // Match breakdown
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:12px;">Why It Matches You</div>';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin-bottom:12px;">Why It Matches You</div>';
   h.matchReasons.forEach(function(r) {
     html += '<div style="margin-bottom:10px;">';
     html += '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;">';
-    html += '<span style="color:#8A8F7A;">' + r.trait + '</span>';
-    html += '<span style="font-family:DM Mono,monospace;font-size:11px;color:#B8E030;">' + r.score + '%</span>';
+    html += '<span style="color:#6E6E73;">' + r.trait + '</span>';
+    html += '<span style="font-family:DM Mono,monospace;font-size:11px;color:#1D6F42;">' + r.score + '%</span>';
     html += '</div>';
-    html += '<div style="height:4px;background:#1A1E12;border-radius:2px;overflow:hidden;">';
-    html += '<div style="height:4px;background:#B8E030;border-radius:2px;width:' + r.score + '%;"></div>';
+    html += '<div style="height:4px;background:#F0F0F2;border-radius:2px;overflow:hidden;">';
+    html += '<div style="height:4px;background:#1D6F42;border-radius:2px;width:' + r.score + '%;"></div>';
     html += '</div></div>';
   });
 
   // Top rooms
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-top:18px;margin-bottom:10px;">Top Rooms for Your Profile</div>';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin-top:18px;margin-bottom:10px;">Top Rooms for Your Profile</div>';
   html += '<div style="display:flex;gap:8px;flex-wrap:wrap;">';
   h.topRooms.forEach(function(room) {
-    html += '<div style="background:#1A1E12;border:1px solid rgba(238,240,229,0.08);border-radius:8px;padding:8px 14px;font-size:12px;color:#EEF0E5;">📍 ' + room + '</div>';
+    html += '<div style="background:#F0F0F2;border:1px solid rgba(0,0,0,0.08);border-radius:8px;padding:8px 14px;font-size:12px;color:#1D1D1F;">📍 ' + room + '</div>';
   });
   html += '</div>';
 
@@ -712,8 +725,8 @@ function showHomeDetail(addr) {
   html += '<div style="padding:22px 20px;display:flex;flex-direction:column;gap:16px;">';
 
   // Listing stats
-  html += '<div style="background:#0E1108;border:1px solid rgba(238,240,229,0.06);border-radius:10px;padding:14px 16px;">';
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:10px;">Listing Activity</div>';
+  html += '<div style="background:#F5F5F7;border:1px solid rgba(0,0,0,0.06);border-radius:10px;padding:14px 16px;">';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin-bottom:10px;">Listing Activity</div>';
   html += '<div style="display:flex;flex-direction:column;gap:8px;">';
   [
     { k:'Status', v:'● ' + h.status, accent: true },
@@ -722,16 +735,16 @@ function showHomeDetail(addr) {
     { k:'Saved By', v: h.savedBy + ' buyers' },
   ].forEach(function(row) {
     html += '<div style="display:flex;justify-content:space-between;font-size:12px;">';
-    html += '<span style="color:#8A8F7A;">' + row.k + '</span>';
-    html += '<span style="color:' + (row.accent ? '#4ADE80' : '#EEF0E5') + ';font-family:DM Mono,monospace;font-size:11px;">' + row.v + '</span>';
+    html += '<span style="color:#6E6E73;">' + row.k + '</span>';
+    html += '<span style="color:' + (row.accent ? '#4ADE80' : '#1D1D1F') + ';font-family:DM Mono,monospace;font-size:11px;">' + row.v + '</span>';
     html += '</div>';
   });
   html += '</div></div>';
 
   // Agent note
-  html += '<div style="background:#0E1108;border:1px solid rgba(184,224,48,0.12);border-radius:10px;padding:14px 16px;">';
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:8px;">Agent Note · ' + h.agent + '</div>';
-  html += '<div style="font-size:12px;color:#8A8F7A;line-height:1.6;font-style:italic;">"' + h.agentNote + '"</div>';
+  html += '<div style="background:#F5F5F7;border:1px solid rgba(29,111,66,0.12);border-radius:10px;padding:14px 16px;">';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin-bottom:8px;">Agent Note · ' + h.agent + '</div>';
+  html += '<div style="font-size:12px;color:#6E6E73;line-height:1.6;font-style:italic;">"' + h.agentNote + '"</div>';
   html += '</div>';
 
   html += '</div>'; // end right col
@@ -739,10 +752,10 @@ function showHomeDetail(addr) {
 
   // ── Footer CTA ──
   html += '<div style="padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;">';
-  html += '<button id="_hd-close" style="padding:10px 20px;border-radius:8px;border:1px solid rgba(238,240,229,0.1);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Close</button>';
+  html += '<button id="_hd-close" style="padding:10px 20px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);background:transparent;color:#6E6E73;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Close</button>';
   html += '<div style="display:flex;gap:10px;">';
-  html += '<button id="_hd-save" style="padding:10px 18px;border-radius:8px;border:1px solid rgba(184,224,48,0.2);background:rgba(184,224,48,0.08);color:#B8E030;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">♡ Save Home</button>';
-  html += '<button id="_hd-tour" style="padding:10px 22px;border-radius:8px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Schedule a Showing →</button>';
+  html += '<button id="_hd-save" style="padding:10px 18px;border-radius:8px;border:1px solid rgba(29,111,66,0.2);background:rgba(29,111,66,0.08);color:#1D6F42;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">♡ Save Home</button>';
+  html += '<button id="_hd-tour" style="padding:10px 22px;border-radius:8px;border:none;background:#1D6F42;color:#F5F5F7;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Schedule a Showing →</button>';
   html += '</div></div>';
 
   html += '</div></div>'; // end card + overlay
@@ -757,8 +770,8 @@ function showHomeDetail(addr) {
   document.getElementById('_hd-save').addEventListener('click', function() {
     saved = !saved;
     this.textContent = saved ? '♥ Saved' : '♡ Save Home';
-    this.style.color = saved ? '#EEF0E5' : '#B8E030';
-    this.style.background = saved ? 'rgba(184,224,48,0.15)' : 'rgba(184,224,48,0.08)';
+    this.style.color = saved ? '#1D1D1F' : '#1D6F42';
+    this.style.background = saved ? 'rgba(29,111,66,0.15)' : 'rgba(29,111,66,0.08)';
     toast(saved ? h.addr + ' saved to your list ✓' : 'Removed from saved homes', saved ? 'ok' : '');
   });
 
@@ -780,21 +793,21 @@ function showScheduleModal(h) {
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:9995;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:32px 16px;';
 
   var html = '';
-  html += '<div style="background:#13160D;border:1px solid rgba(184,224,48,0.18);border-radius:16px;width:500px;max-width:95vw;box-shadow:0 24px 72px rgba(0,0,0,0.7);">';
+  html += '<div style="background:#FFFFFF;border:1px solid rgba(29,111,66,0.18);border-radius:16px;width:500px;max-width:95vw;box-shadow:0 24px 72px rgba(0,0,0,0.7);">';
 
   // Header
   html += '<div style="padding:26px 28px 0;">';
   html += '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px;">';
   html += '<div>';
-  html += '<div style="font-family:Fraunces,serif;font-size:21px;color:#EEF0E5;">Schedule a <em style=\'color:#B8E030;\'>Showing</em></div>';
-  html += '<div style="font-size:12px;color:#8A8F7A;margin-top:4px;">' + h.addr + ' · with ' + h.agent + '</div>';
+  html += '<div style="font-family:Fraunces,serif;font-size:21px;color:#1D1D1F;">Schedule a <em style=\'color:#1D6F42;\'>Showing</em></div>';
+  html += '<div style="font-size:12px;color:#6E6E73;margin-top:4px;">' + h.addr + ' · with ' + h.agent + '</div>';
   html += '</div>';
-  html += '<button id="_sm-x" style="background:none;border:none;color:#8A8F7A;font-size:18px;cursor:pointer;padding:2px 6px;">✕</button>';
+  html += '<button id="_sm-x" style="background:none;border:none;color:#6E6E73;font-size:18px;cursor:pointer;padding:2px 6px;">✕</button>';
   html += '</div>';
-  html += '<div style="height:1px;background:rgba(184,224,48,0.1);margin:18px 0 20px;"></div>';
+  html += '<div style="height:1px;background:rgba(29,111,66,0.1);margin:18px 0 20px;"></div>';
 
   // Date + Time row
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:12px;">Preferred Date &amp; Time</div>';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin-bottom:12px;">Preferred Date &amp; Time</div>';
   html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;">';
   html += inpField('_sm-date', 'Date', 'date', '');
   html += inpField('_sm-time1', 'Start Time', 'time', '');
@@ -802,17 +815,17 @@ function showScheduleModal(h) {
   html += '</div>';
 
   // Alternate date
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:12px;">Alternate Date <span style=\'color:#4A4F3A;font-weight:400;text-transform:none;\'>(optional)</span></div>';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin-bottom:12px;">Alternate Date <span style=\'color:#4A4F3A;font-weight:400;text-transform:none;\'>(optional)</span></div>';
   html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;">';
   html += inpField('_sm-alt-date', 'Alt Date', 'date', '');
   html += inpField('_sm-alt-time1', 'Start Time', 'time', '');
   html += inpField('_sm-alt-time2', 'End Time', 'time', '');
   html += '</div>';
 
-  html += '<div style="height:1px;background:rgba(184,224,48,0.1);margin-bottom:16px;"></div>';
+  html += '<div style="height:1px;background:rgba(29,111,66,0.1);margin-bottom:16px;"></div>';
 
   // Tour type
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:12px;">Tour Type</div>';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin-bottom:12px;">Tour Type</div>';
   html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;">';
   var tourTypes = [
     { id:'tt-in', label:'In-Person', sub:'Walk the property', icon:'🏠' },
@@ -820,29 +833,29 @@ function showScheduleModal(h) {
     { id:'tt-sl', label:'Self-Led', sub:'Unaccompanied access', icon:'🔑' },
   ];
   tourTypes.forEach(function(t, i) {
-    var active = i === 0 ? 'border-color:rgba(184,224,48,0.4);background:rgba(184,224,48,0.06);' : '';
-    html += '<div class="_tt-card" data-tt="' + t.id + '" style="background:#0E1108;border:1px solid rgba(238,240,229,0.08);' + active + 'border-radius:10px;padding:12px 14px;cursor:pointer;transition:all 0.12s;">';
+    var active = i === 0 ? 'border-color:rgba(29,111,66,0.4);background:rgba(29,111,66,0.06);' : '';
+    html += '<div class="_tt-card" data-tt="' + t.id + '" style="background:#F5F5F7;border:1px solid rgba(0,0,0,0.08);' + active + 'border-radius:10px;padding:12px 14px;cursor:pointer;transition:all 0.12s;">';
     html += '<div style="font-size:18px;margin-bottom:6px;">' + t.icon + '</div>';
-    html += '<div style="font-size:12px;color:#EEF0E5;font-weight:500;">' + t.label + '</div>';
-    html += '<div style="font-size:11px;color:#8A8F7A;margin-top:2px;">' + t.sub + '</div>';
+    html += '<div style="font-size:12px;color:#1D1D1F;font-weight:500;">' + t.label + '</div>';
+    html += '<div style="font-size:11px;color:#6E6E73;margin-top:2px;">' + t.sub + '</div>';
     html += '</div>';
   });
   html += '</div>';
 
-  html += '<div style="height:1px;background:rgba(184,224,48,0.1);margin-bottom:16px;"></div>';
+  html += '<div style="height:1px;background:rgba(29,111,66,0.1);margin-bottom:16px;"></div>';
 
   // Questions / notes
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:10px;">Questions for the Agent <span style=\'color:#4A4F3A;font-weight:400;text-transform:none;\'>(optional)</span></div>';
-  html += '<textarea id="_sm-note" rows="3" placeholder="e.g. Can we see the backyard? Is the pool permit transferred? What&#39;s the HOA include?" style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;resize:none;outline:none;box-sizing:border-box;"></textarea>';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin-bottom:10px;">Questions for the Agent <span style=\'color:#4A4F3A;font-weight:400;text-transform:none;\'>(optional)</span></div>';
+  html += '<textarea id="_sm-note" rows="3" placeholder="e.g. Can we see the backyard? Is the pool permit transferred? What&#39;s the HOA include?" style="width:100%;background:#F5F5F7;border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 12px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-size:13px;resize:none;outline:none;box-sizing:border-box;"></textarea>';
 
   html += '</div>'; // end padding wrapper
 
   // Footer
-  html += '<div style="padding:18px 28px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(184,224,48,0.1);margin-top:20px;">';
+  html += '<div style="padding:18px 28px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(29,111,66,0.1);margin-top:20px;">';
   html += '<div style="font-size:11px;color:#4A4F3A;line-height:1.5;">' + h.agent + ' will confirm within 2 hours.</div>';
   html += '<div style="display:flex;gap:10px;">';
-  html += '<button id="_sm-cancel" style="padding:10px 18px;border-radius:8px;border:1px solid rgba(238,240,229,0.1);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Cancel</button>';
-  html += '<button id="_sm-confirm" style="padding:10px 22px;border-radius:8px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Request Showing →</button>';
+  html += '<button id="_sm-cancel" style="padding:10px 18px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);background:transparent;color:#6E6E73;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Cancel</button>';
+  html += '<button id="_sm-confirm" style="padding:10px 22px;border-radius:8px;border:none;background:#1D6F42;color:#F5F5F7;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Request Showing →</button>';
   html += '</div></div>';
 
   html += '</div>'; // end card
@@ -853,11 +866,11 @@ function showScheduleModal(h) {
   overlay.querySelectorAll('._tt-card').forEach(function(card) {
     card.addEventListener('click', function() {
       overlay.querySelectorAll('._tt-card').forEach(function(c) {
-        c.style.borderColor = 'rgba(238,240,229,0.08)';
-        c.style.background = '#0E1108';
+        c.style.borderColor = 'rgba(0,0,0,0.08)';
+        c.style.background = '#F5F5F7';
       });
-      card.style.borderColor = 'rgba(184,224,48,0.4)';
-      card.style.background = 'rgba(184,224,48,0.06)';
+      card.style.borderColor = 'rgba(29,111,66,0.4)';
+      card.style.background = 'rgba(29,111,66,0.06)';
     });
   });
 
@@ -874,7 +887,7 @@ function showScheduleModal(h) {
       toast('Please select a date and start time', '');
       return;
     }
-    var tourLabel = (overlay.querySelector('._tt-card[style*="rgba(184,224,48,0.4)"]') || {}).querySelector ? overlay.querySelector('._tt-card[style*="rgba(184,224,48,0.4)"] div:nth-child(2)') : null;
+    var tourLabel = (overlay.querySelector('._tt-card[style*="rgba(29,111,66,0.4)"]') || {}).querySelector ? overlay.querySelector('._tt-card[style*="rgba(29,111,66,0.4)"] div:nth-child(2)') : null;
     var type = tourLabel ? tourLabel.textContent : 'In-Person';
     overlay.remove();
     toast('Showing requested · ' + h.agent + ' will confirm shortly ✓', 'ok');
@@ -884,8 +897,8 @@ function showScheduleModal(h) {
 
 function inpField(id, label, type, placeholder) {
   return '<div>'
-    + '<label style="display:block;font-size:11px;color:#8A8F7A;margin-bottom:6px;">' + label + '</label>'
-    + '<input id="' + id + '" type="' + type + '" placeholder="' + placeholder + '" style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;color-scheme:dark;" />'
+    + '<label style="display:block;font-size:11px;color:#6E6E73;margin-bottom:6px;">' + label + '</label>'
+    + '<input id="' + id + '" type="' + type + '" placeholder="' + placeholder + '" style="width:100%;background:#F5F5F7;border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 12px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;color-scheme:dark;" />'
     + '</div>';
 }
 
@@ -995,73 +1008,73 @@ function showVisitReport(addr) {
   var existing = document.getElementById('_vr');
   if (existing) existing.remove();
 
-  var statusColors = { hot:'#4ADE80', fu:'#F5A623', low:'#8A8F7A' };
+  var statusColors = { hot:'#4ADE80', fu:'#F5A623', low:'#6E6E73' };
   var statusLabels = { hot:'● Hot Lead', fu:'Follow Up', low:h.status };
-  var matchColor = h.match >= 80 ? '#B8E030' : h.match >= 70 ? '#F5A623' : '#8A8F7A';
+  var matchColor = h.match >= 80 ? '#1D6F42' : h.match >= 70 ? '#F5A623' : '#6E6E73';
 
   var overlay = document.createElement('div');
   overlay.id = '_vr';
   overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:9990;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:32px 16px;';
 
   var html = '';
-  html += '<div style="background:#13160D;border:1px solid rgba(184,224,48,0.15);border-radius:16px;width:700px;max-width:95vw;box-shadow:0 28px 80px rgba(0,0,0,0.7);overflow:hidden;">';
+  html += '<div style="background:#FFFFFF;border:1px solid rgba(29,111,66,0.15);border-radius:16px;width:700px;max-width:95vw;box-shadow:0 28px 80px rgba(0,0,0,0.7);overflow:hidden;">';
 
   // Hero
-  html += '<div style="background:linear-gradient(135deg,#1A1E12,#0E1108);padding:22px 26px;border-bottom:1px solid rgba(184,224,48,0.1);display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">';
+  html += '<div style="background:linear-gradient(135deg,#F0F0F2,#F5F5F7);padding:22px 26px;border-bottom:1px solid rgba(29,111,66,0.1);display:flex;align-items:flex-start;justify-content:space-between;gap:16px;">';
   html += '<div>';
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#B8E030;text-transform:uppercase;margin-bottom:6px;font-family:DM Mono,monospace;">Visit Report</div>';
-  html += '<div style="font-family:Fraunces,serif;font-size:22px;color:#EEF0E5;line-height:1.1;">' + h.addr + '</div>';
-  html += '<div style="font-size:12px;color:#8A8F7A;margin-top:4px;">' + h.area + ' · Visited ' + h.date + '</div>';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#1D6F42;text-transform:uppercase;margin-bottom:6px;font-family:DM Mono,monospace;">Visit Report</div>';
+  html += '<div style="font-family:Fraunces,serif;font-size:22px;color:#1D1D1F;line-height:1.1;">' + h.addr + '</div>';
+  html += '<div style="font-size:12px;color:#6E6E73;margin-top:4px;">' + h.area + ' · Visited ' + h.date + '</div>';
   html += '<div style="display:flex;gap:16px;margin-top:12px;">';
   [
     { k:'Duration', v: h.duration },
     { k:'List Price', v: h.price },
     { k:h.beds + ' bed / ' + h.baths + ' bath', v: h.sqft + ' sqft' },
   ].forEach(function(s) {
-    html += '<div style="font-size:11px;color:#8A8F7A;">' + s.k + ' <span style="color:#EEF0E5;font-family:DM Mono,monospace;">· ' + s.v + '</span></div>';
+    html += '<div style="font-size:11px;color:#6E6E73;">' + s.k + ' <span style="color:#1D1D1F;font-family:DM Mono,monospace;">· ' + s.v + '</span></div>';
   });
   html += '</div></div>';
   html += '<div style="text-align:right;flex-shrink:0;">';
   html += '<div style="font-family:Fraunces,serif;font-size:40px;color:' + matchColor + ';line-height:1;">' + h.match + '%</div>';
-  html += '<div style="font-size:10px;color:#8A8F7A;font-family:DM Mono,monospace;letter-spacing:0.06em;margin-top:2px;">MATCH SCORE</div>';
+  html += '<div style="font-size:10px;color:#6E6E73;font-family:DM Mono,monospace;letter-spacing:0.06em;margin-top:2px;">MATCH SCORE</div>';
   html += '<div style="font-size:11px;color:' + statusColors[h.statusClass] + ';margin-top:8px;font-family:DM Mono,monospace;">' + statusLabels[h.statusClass] + '</div>';
   html += '</div>';
-  html += '<button id="_vr-x" style="background:none;border:none;color:#8A8F7A;font-size:18px;cursor:pointer;padding:2px 6px;align-self:flex-start;">✕</button>';
+  html += '<button id="_vr-x" style="background:none;border:none;color:#6E6E73;font-size:18px;cursor:pointer;padding:2px 6px;align-self:flex-start;">✕</button>';
   html += '</div>';
 
   // Body: two columns
   html += '<div style="display:grid;grid-template-columns:1fr 240px;gap:0;">';
 
   // Left col
-  html += '<div style="padding:20px 22px;border-right:1px solid rgba(238,240,229,0.06);">';
+  html += '<div style="padding:20px 22px;border-right:1px solid rgba(0,0,0,0.06);">';
 
   // Rooms visited
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:12px;">Rooms Visited</div>';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin-bottom:12px;">Rooms Visited</div>';
   h.rooms.forEach(function(r) {
-    html += '<div style="margin-bottom:12px;background:#0E1108;border:1px solid rgba(238,240,229,0.06);border-radius:9px;padding:12px 14px;">';
+    html += '<div style="margin-bottom:12px;background:#F5F5F7;border:1px solid rgba(0,0,0,0.06);border-radius:9px;padding:12px 14px;">';
     html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">';
-    html += '<span style="font-size:13px;color:#EEF0E5;font-weight:500;">📍 ' + r.name + '</span>';
+    html += '<span style="font-size:13px;color:#1D1D1F;font-weight:500;">📍 ' + r.name + '</span>';
     html += '<div style="display:flex;align-items:center;gap:10px;">';
-    html += '<span style="font-size:11px;color:#8A8F7A;font-family:DM Mono,monospace;">' + r.time + '</span>';
-    html += '<span style="font-family:DM Mono,monospace;font-size:11px;color:' + (r.interest >= 85 ? '#B8E030' : r.interest >= 70 ? '#F5A623' : '#8A8F7A') + ';">' + r.interest + '% interest</span>';
+    html += '<span style="font-size:11px;color:#6E6E73;font-family:DM Mono,monospace;">' + r.time + '</span>';
+    html += '<span style="font-family:DM Mono,monospace;font-size:11px;color:' + (r.interest >= 85 ? '#1D6F42' : r.interest >= 70 ? '#F5A623' : '#6E6E73') + ';">' + r.interest + '% interest</span>';
     html += '</div></div>';
-    html += '<div style="height:3px;background:#1A1E12;border-radius:2px;overflow:hidden;margin-bottom:7px;">';
-    html += '<div style="height:3px;background:' + (r.interest >= 85 ? '#B8E030' : r.interest >= 70 ? '#F5A623' : '#8A8F7A') + ';border-radius:2px;width:' + r.interest + '%;transition:width 0.6s ease;"></div>';
+    html += '<div style="height:3px;background:#F0F0F2;border-radius:2px;overflow:hidden;margin-bottom:7px;">';
+    html += '<div style="height:3px;background:' + (r.interest >= 85 ? '#1D6F42' : r.interest >= 70 ? '#F5A623' : '#6E6E73') + ';border-radius:2px;width:' + r.interest + '%;transition:width 0.6s ease;"></div>';
     html += '</div>';
-    html += '<div style="font-size:11px;color:#8A8F7A;line-height:1.5;font-style:italic;">' + r.note + '</div>';
+    html += '<div style="font-size:11px;color:#6E6E73;line-height:1.5;font-style:italic;">' + r.note + '</div>';
     html += '</div>';
   });
 
   // Match breakdown
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin:16px 0 12px;">DNA Match Breakdown</div>';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin:16px 0 12px;">DNA Match Breakdown</div>';
   h.matchReasons.forEach(function(r) {
     html += '<div style="margin-bottom:9px;">';
     html += '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">';
-    html += '<span style="color:#8A8F7A;">' + r.trait + '</span>';
-    html += '<span style="font-family:DM Mono,monospace;font-size:11px;color:#B8E030;">' + r.score + '%</span>';
+    html += '<span style="color:#6E6E73;">' + r.trait + '</span>';
+    html += '<span style="font-family:DM Mono,monospace;font-size:11px;color:#1D6F42;">' + r.score + '%</span>';
     html += '</div>';
-    html += '<div style="height:3px;background:#1A1E12;border-radius:2px;overflow:hidden;">';
-    html += '<div style="height:3px;background:#B8E030;border-radius:2px;width:' + r.score + '%;"></div>';
+    html += '<div style="height:3px;background:#F0F0F2;border-radius:2px;overflow:hidden;">';
+    html += '<div style="height:3px;background:#1D6F42;border-radius:2px;width:' + r.score + '%;"></div>';
     html += '</div></div>';
   });
 
@@ -1071,28 +1084,28 @@ function showVisitReport(addr) {
   html += '<div style="padding:20px 18px;display:flex;flex-direction:column;gap:14px;">';
 
   // Chloe's Take
-  html += '<div style="background:#0E1108;border:1px solid rgba(184,224,48,0.12);border-radius:10px;padding:14px;">';
+  html += '<div style="background:#F5F5F7;border:1px solid rgba(29,111,66,0.12);border-radius:10px;padding:14px;">';
   html += '<div style="display:flex;align-items:center;gap:7px;margin-bottom:9px;">';
-  html += '<svg width="10" height="10" viewBox="0 0 24 24" fill="#B8E030"><circle cx="12" cy="12" r="10"/></svg>';
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;">Chloe&#39;s Take</div>';
+  html += '<svg width="10" height="10" viewBox="0 0 24 24" fill="#1D6F42"><circle cx="12" cy="12" r="10"/></svg>';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;">Chloe&#39;s Take</div>';
   html += '</div>';
-  html += '<div style="font-size:12px;color:#8A8F7A;line-height:1.7;">' + h.chloesTake + '</div>';
+  html += '<div style="font-size:12px;color:#6E6E73;line-height:1.7;">' + h.chloesTake + '</div>';
   html += '</div>';
 
   // Your Notes
-  html += '<div style="background:#0E1108;border:1px solid rgba(238,240,229,0.06);border-radius:10px;padding:14px;flex:1;">';
-  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:8px;">Your Notes</div>';
-  html += '<textarea id="_vr-notes" rows="5" placeholder="Jot down your thoughts — what you loved, what gave you pause, questions to ask at a second showing…" style="width:100%;background:transparent;border:none;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:12px;line-height:1.6;resize:none;outline:none;box-sizing:border-box;">' + (h.yourNotes || '') + '</textarea>';
+  html += '<div style="background:#F5F5F7;border:1px solid rgba(0,0,0,0.06);border-radius:10px;padding:14px;flex:1;">';
+  html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin-bottom:8px;">Your Notes</div>';
+  html += '<textarea id="_vr-notes" rows="5" placeholder="Jot down your thoughts — what you loved, what gave you pause, questions to ask at a second showing…" style="width:100%;background:transparent;border:none;color:#1D1D1F;font-family:DM Sans,sans-serif;font-size:12px;line-height:1.6;resize:none;outline:none;box-sizing:border-box;">' + (h.yourNotes || '') + '</textarea>';
   html += '</div>';
 
   html += '</div>'; // end right col
   html += '</div>'; // end body grid
 
   // Footer
-  html += '<div style="padding:16px 22px;display:flex;gap:10px;justify-content:flex-end;border-top:1px solid rgba(184,224,48,0.08);">';
-  html += '<button id="_vr-close" style="padding:9px 18px;border-radius:8px;border:1px solid rgba(238,240,229,0.1);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Close</button>';
-  html += '<button id="_vr-send" style="padding:9px 18px;border-radius:8px;border:1px solid rgba(184,224,48,0.2);background:rgba(184,224,48,0.08);color:#B8E030;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Send Follow-Up</button>';
-  html += '<button id="_vr-tour" style="padding:9px 20px;border-radius:8px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Schedule Showing →</button>';
+  html += '<div style="padding:16px 22px;display:flex;gap:10px;justify-content:flex-end;border-top:1px solid rgba(29,111,66,0.08);">';
+  html += '<button id="_vr-close" style="padding:9px 18px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);background:transparent;color:#6E6E73;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Close</button>';
+  html += '<button id="_vr-send" style="padding:9px 18px;border-radius:8px;border:1px solid rgba(29,111,66,0.2);background:rgba(29,111,66,0.08);color:#1D6F42;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Send Follow-Up</button>';
+  html += '<button id="_vr-tour" style="padding:9px 20px;border-radius:8px;border:none;background:#1D6F42;color:#F5F5F7;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Schedule Showing →</button>';
   html += '</div>';
 
   html += '</div>'; // end card
@@ -1144,22 +1157,22 @@ function showFollowUpModal(h) {
 
   function buildStep1(h) {
     var html = '';
-    html += '<div style="background:#13160D;border:1px solid rgba(184,224,48,0.18);border-radius:16px;width:520px;max-width:95vw;box-shadow:0 24px 72px rgba(0,0,0,0.7);">';
+    html += '<div style="background:#FFFFFF;border:1px solid rgba(29,111,66,0.18);border-radius:16px;width:520px;max-width:95vw;box-shadow:0 24px 72px rgba(0,0,0,0.7);">';
 
     // Header
     html += '<div style="padding:24px 26px 0;">';
     html += '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;">';
     html += '<div>';
-    html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#B8E030;text-transform:uppercase;font-family:DM Mono,monospace;margin-bottom:6px;">Step 1 of 2 · Review Draft</div>';
-    html += '<div style="font-family:Fraunces,serif;font-size:20px;color:#EEF0E5;">Send <em style=\'color:#B8E030;\'>Follow-Up</em></div>';
-    html += '<div style="font-size:12px;color:#8A8F7A;margin-top:3px;">To: Jordan Lee &nbsp;·&nbsp; Re: ' + h.addr + '</div>';
+    html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#1D6F42;text-transform:uppercase;font-family:DM Mono,monospace;margin-bottom:6px;">Step 1 of 2 · Review Draft</div>';
+    html += '<div style="font-family:Fraunces,serif;font-size:20px;color:#1D1D1F;">Send <em style=\'color:#1D6F42;\'>Follow-Up</em></div>';
+    html += '<div style="font-size:12px;color:#6E6E73;margin-top:3px;">To: Jordan Lee &nbsp;·&nbsp; Re: ' + h.addr + '</div>';
     html += '</div>';
-    html += '<button id="_fu-x" style="background:none;border:none;color:#8A8F7A;font-size:18px;cursor:pointer;padding:2px 6px;">✕</button>';
+    html += '<button id="_fu-x" style="background:none;border:none;color:#6E6E73;font-size:18px;cursor:pointer;padding:2px 6px;">✕</button>';
     html += '</div>';
-    html += '<div style="height:1px;background:rgba(184,224,48,0.1);margin:16px 0 18px;"></div>';
+    html += '<div style="height:1px;background:rgba(29,111,66,0.1);margin:16px 0 18px;"></div>';
 
     // Tone selector
-    html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:10px;">Tone</div>';
+    html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin-bottom:10px;">Tone</div>';
     html += '<div style="display:flex;gap:8px;margin-bottom:18px;">';
     var tones = [
       { id:'tone-warm',   label:'Warm',       active: true  },
@@ -1167,29 +1180,29 @@ function showFollowUpModal(h) {
       { id:'tone-urgent', label:'Urgent',      active: false },
     ];
     tones.forEach(function(t) {
-      var act = t.active ? 'background:rgba(184,224,48,0.1);border-color:rgba(184,224,48,0.4);color:#B8E030;' : 'background:#0E1108;border-color:rgba(238,240,229,0.08);color:#8A8F7A;';
+      var act = t.active ? 'background:rgba(29,111,66,0.1);border-color:rgba(29,111,66,0.4);color:#1D6F42;' : 'background:#F5F5F7;border-color:rgba(0,0,0,0.08);color:#6E6E73;';
       html += '<div class="_fu-tone" data-tone="' + t.id + '" style="' + act + 'border:1px solid;border-radius:8px;padding:7px 16px;font-size:12px;cursor:pointer;transition:all 0.12s;">' + t.label + '</div>';
     });
     html += '</div>';
 
     // Subject line
-    html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:8px;">Subject Line</div>';
-    html += '<input id="_fu-subject" type="text" value="Following up on ' + h.addr + '" style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;margin-bottom:16px;" />';
+    html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin-bottom:8px;">Subject Line</div>';
+    html += '<input id="_fu-subject" type="text" value="Following up on ' + h.addr + '" style="width:100%;background:#F5F5F7;border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 12px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;margin-bottom:16px;" />';
 
     // Draft body
     html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">';
-    html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;">Message</div>';
-    html += '<span id="_fu-regen" style="font-size:11px;color:#B8E030;cursor:pointer;">↺ Regenerate with Chloe AI</span>';
+    html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;">Message</div>';
+    html += '<span id="_fu-regen" style="font-size:11px;color:#1D6F42;cursor:pointer;">↺ Regenerate with Chloe AI</span>';
     html += '</div>';
-    html += '<textarea id="_fu-body" rows="6" style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;line-height:1.6;resize:vertical;outline:none;box-sizing:border-box;">' + h.draft + '</textarea>';
+    html += '<textarea id="_fu-body" rows="6" style="width:100%;background:#F5F5F7;border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 12px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-size:13px;line-height:1.6;resize:vertical;outline:none;box-sizing:border-box;">' + h.draft + '</textarea>';
     html += '</div>'; // end padding
 
     // Footer
-    html += '<div style="padding:16px 26px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(184,224,48,0.08);margin-top:18px;">';
+    html += '<div style="padding:16px 26px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(29,111,66,0.08);margin-top:18px;">';
     html += '<div style="font-size:11px;color:#4A4F3A;">Powered by Chloe AI · Personalized to Jordan\'s DNA profile</div>';
     html += '<div style="display:flex;gap:10px;">';
-    html += '<button id="_fu-cancel" style="padding:9px 18px;border-radius:8px;border:1px solid rgba(238,240,229,0.1);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Cancel</button>';
-    html += '<button id="_fu-next" style="padding:9px 22px;border-radius:8px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Choose Channel →</button>';
+    html += '<button id="_fu-cancel" style="padding:9px 18px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);background:transparent;color:#6E6E73;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Cancel</button>';
+    html += '<button id="_fu-next" style="padding:9px 22px;border-radius:8px;border:none;background:#1D6F42;color:#F5F5F7;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Choose Channel →</button>';
     html += '</div></div>';
 
     html += '</div>'; // end card
@@ -1205,13 +1218,13 @@ function showFollowUpModal(h) {
     overlay.querySelectorAll('._fu-tone').forEach(function(btn) {
       btn.addEventListener('click', function() {
         overlay.querySelectorAll('._fu-tone').forEach(function(b) {
-          b.style.background = '#0E1108';
-          b.style.borderColor = 'rgba(238,240,229,0.08)';
-          b.style.color = '#8A8F7A';
+          b.style.background = '#F5F5F7';
+          b.style.borderColor = 'rgba(0,0,0,0.08)';
+          b.style.color = '#6E6E73';
         });
-        btn.style.background = 'rgba(184,224,48,0.1)';
-        btn.style.borderColor = 'rgba(184,224,48,0.4)';
-        btn.style.color = '#B8E030';
+        btn.style.background = 'rgba(29,111,66,0.1)';
+        btn.style.borderColor = 'rgba(29,111,66,0.4)';
+        btn.style.color = '#1D6F42';
       });
     });
 
@@ -1239,21 +1252,21 @@ function showFollowUpModal(h) {
 
   function buildStep2(h, draft) {
     var html = '';
-    html += '<div style="background:#13160D;border:1px solid rgba(184,224,48,0.18);border-radius:16px;width:520px;max-width:95vw;box-shadow:0 24px 72px rgba(0,0,0,0.7);">';
+    html += '<div style="background:#FFFFFF;border:1px solid rgba(29,111,66,0.18);border-radius:16px;width:520px;max-width:95vw;box-shadow:0 24px 72px rgba(0,0,0,0.7);">';
 
     html += '<div style="padding:24px 26px 0;">';
     html += '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;">';
     html += '<div>';
-    html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#B8E030;text-transform:uppercase;font-family:DM Mono,monospace;margin-bottom:6px;">Step 2 of 2 · Choose Channel</div>';
-    html += '<div style="font-family:Fraunces,serif;font-size:20px;color:#EEF0E5;">Send <em style=\'color:#B8E030;\'>Follow-Up</em></div>';
-    html += '<div style="font-size:12px;color:#8A8F7A;margin-top:3px;">To: Jordan Lee &nbsp;·&nbsp; Re: ' + h.addr + '</div>';
+    html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#1D6F42;text-transform:uppercase;font-family:DM Mono,monospace;margin-bottom:6px;">Step 2 of 2 · Choose Channel</div>';
+    html += '<div style="font-family:Fraunces,serif;font-size:20px;color:#1D1D1F;">Send <em style=\'color:#1D6F42;\'>Follow-Up</em></div>';
+    html += '<div style="font-size:12px;color:#6E6E73;margin-top:3px;">To: Jordan Lee &nbsp;·&nbsp; Re: ' + h.addr + '</div>';
     html += '</div>';
-    html += '<button id="_fu-x2" style="background:none;border:none;color:#8A8F7A;font-size:18px;cursor:pointer;padding:2px 6px;">✕</button>';
+    html += '<button id="_fu-x2" style="background:none;border:none;color:#6E6E73;font-size:18px;cursor:pointer;padding:2px 6px;">✕</button>';
     html += '</div>';
-    html += '<div style="height:1px;background:rgba(184,224,48,0.1);margin:16px 0 18px;"></div>';
+    html += '<div style="height:1px;background:rgba(29,111,66,0.1);margin:16px 0 18px;"></div>';
 
     // Channel cards
-    html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#B8E030;text-transform:uppercase;margin-bottom:12px;">Send Via</div>';
+    html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.09em;color:#1D6F42;text-transform:uppercase;margin-bottom:12px;">Send Via</div>';
     html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px;">';
     var channels = [
       { id:'ch-email', icon:'✉️', label:'Email',      sub:'jordan@email.com',   active:false },
@@ -1261,40 +1274,40 @@ function showFollowUpModal(h) {
       { id:'ch-both',  icon:'⚡', label:'Email + Text', sub:'Both channels',    active:true  },
     ];
     channels.forEach(function(ch) {
-      var act = ch.active ? 'border-color:rgba(184,224,48,0.4);background:rgba(184,224,48,0.06);' : 'border-color:rgba(238,240,229,0.08);background:#0E1108;';
+      var act = ch.active ? 'border-color:rgba(29,111,66,0.4);background:rgba(29,111,66,0.06);' : 'border-color:rgba(0,0,0,0.08);background:#F5F5F7;';
       html += '<div class="_fu-ch" data-ch="' + ch.id + '" style="' + act + 'border:1px solid;border-radius:10px;padding:14px;cursor:pointer;transition:all 0.12s;text-align:center;">';
       html += '<div style="font-size:20px;margin-bottom:6px;">' + ch.icon + '</div>';
-      html += '<div style="font-size:13px;color:#EEF0E5;font-weight:500;margin-bottom:3px;">' + ch.label + '</div>';
-      html += '<div style="font-size:10px;color:#8A8F7A;font-family:DM Mono,monospace;">' + ch.sub + '</div>';
+      html += '<div style="font-size:13px;color:#1D1D1F;font-weight:500;margin-bottom:3px;">' + ch.label + '</div>';
+      html += '<div style="font-size:10px;color:#6E6E73;font-family:DM Mono,monospace;">' + ch.sub + '</div>';
       html += '</div>';
     });
     html += '</div>';
 
     // Schedule toggle
-    html += '<div style="background:#0E1108;border:1px solid rgba(238,240,229,0.06);border-radius:10px;padding:14px 16px;margin-bottom:20px;">';
+    html += '<div style="background:#F5F5F7;border:1px solid rgba(0,0,0,0.06);border-radius:10px;padding:14px 16px;margin-bottom:20px;">';
     html += '<div style="display:flex;align-items:center;justify-content:space-between;">';
     html += '<div>';
-    html += '<div style="font-size:13px;color:#EEF0E5;font-weight:500;margin-bottom:2px;">Send Now</div>';
-    html += '<div style="font-size:11px;color:#8A8F7A;">Or schedule for a specific time</div>';
+    html += '<div style="font-size:13px;color:#1D1D1F;font-weight:500;margin-bottom:2px;">Send Now</div>';
+    html += '<div style="font-size:11px;color:#6E6E73;">Or schedule for a specific time</div>';
     html += '</div>';
-    html += '<div style="display:flex;gap:0;border:1px solid rgba(238,240,229,0.1);border-radius:8px;overflow:hidden;">';
-    html += '<button class="_fu-when active-when" data-when="now" style="padding:6px 14px;font-size:12px;border:none;background:rgba(184,224,48,0.1);color:#B8E030;cursor:pointer;font-family:DM Sans,sans-serif;">Now</button>';
-    html += '<button class="_fu-when" data-when="schedule" style="padding:6px 14px;font-size:12px;border:none;border-left:1px solid rgba(238,240,229,0.1);background:transparent;color:#8A8F7A;cursor:pointer;font-family:DM Sans,sans-serif;">Schedule</button>';
+    html += '<div style="display:flex;gap:0;border:1px solid rgba(0,0,0,0.1);border-radius:8px;overflow:hidden;">';
+    html += '<button class="_fu-when active-when" data-when="now" style="padding:6px 14px;font-size:12px;border:none;background:rgba(29,111,66,0.1);color:#1D6F42;cursor:pointer;font-family:DM Sans,sans-serif;">Now</button>';
+    html += '<button class="_fu-when" data-when="schedule" style="padding:6px 14px;font-size:12px;border:none;border-left:1px solid rgba(0,0,0,0.1);background:transparent;color:#6E6E73;cursor:pointer;font-family:DM Sans,sans-serif;">Schedule</button>';
     html += '</div>';
     html += '</div>';
     html += '<div id="_fu-schedule-row" style="display:none;margin-top:12px;display:none;">';
-    html += '<input id="_fu-sched-time" type="datetime-local" style="background:#13160D;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:8px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;outline:none;color-scheme:dark;width:100%;box-sizing:border-box;" />';
+    html += '<input id="_fu-sched-time" type="datetime-local" style="background:#FFFFFF;border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:8px 12px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-size:13px;outline:none;color-scheme:dark;width:100%;box-sizing:border-box;" />';
     html += '</div>';
     html += '</div>';
 
     html += '</div>'; // end padding
 
     // Footer
-    html += '<div style="padding:16px 26px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(184,224,48,0.08);">';
-    html += '<button id="_fu-back" style="padding:9px 16px;border-radius:8px;border:1px solid rgba(238,240,229,0.1);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">← Back</button>';
+    html += '<div style="padding:16px 26px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(29,111,66,0.08);">';
+    html += '<button id="_fu-back" style="padding:9px 16px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);background:transparent;color:#6E6E73;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">← Back</button>';
     html += '<div style="display:flex;gap:10px;">';
-    html += '<button id="_fu-cancel2" style="padding:9px 18px;border-radius:8px;border:1px solid rgba(238,240,229,0.1);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Cancel</button>';
-    html += '<button id="_fu-send-final" style="padding:9px 22px;border-radius:8px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Send Follow-Up ✓</button>';
+    html += '<button id="_fu-cancel2" style="padding:9px 18px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);background:transparent;color:#6E6E73;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Cancel</button>';
+    html += '<button id="_fu-send-final" style="padding:9px 22px;border-radius:8px;border:none;background:#1D6F42;color:#F5F5F7;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;">Send Follow-Up ✓</button>';
     html += '</div></div>';
 
     html += '</div>'; // end card
@@ -1311,11 +1324,11 @@ function showFollowUpModal(h) {
     overlay.querySelectorAll('._fu-ch').forEach(function(card) {
       card.addEventListener('click', function() {
         overlay.querySelectorAll('._fu-ch').forEach(function(c) {
-          c.style.borderColor = 'rgba(238,240,229,0.08)';
-          c.style.background = '#0E1108';
+          c.style.borderColor = 'rgba(0,0,0,0.08)';
+          c.style.background = '#F5F5F7';
         });
-        card.style.borderColor = 'rgba(184,224,48,0.4)';
-        card.style.background = 'rgba(184,224,48,0.06)';
+        card.style.borderColor = 'rgba(29,111,66,0.4)';
+        card.style.background = 'rgba(29,111,66,0.06)';
       });
     });
 
@@ -1324,10 +1337,10 @@ function showFollowUpModal(h) {
       btn.addEventListener('click', function() {
         overlay.querySelectorAll('._fu-when').forEach(function(b) {
           b.style.background = 'transparent';
-          b.style.color = '#8A8F7A';
+          b.style.color = '#6E6E73';
         });
-        btn.style.background = 'rgba(184,224,48,0.1)';
-        btn.style.color = '#B8E030';
+        btn.style.background = 'rgba(29,111,66,0.1)';
+        btn.style.color = '#1D6F42';
         var row = document.getElementById('_fu-schedule-row');
         if (row) row.style.display = btn.getAttribute('data-when') === 'schedule' ? 'block' : 'none';
       });
@@ -1335,7 +1348,7 @@ function showFollowUpModal(h) {
 
     // Send
     document.getElementById('_fu-send-final').addEventListener('click', function() {
-      var activeChannel = overlay.querySelector('._fu-ch[style*="rgba(184,224,48,0.4)"]');
+      var activeChannel = overlay.querySelector('._fu-ch[style*="rgba(29,111,66,0.4)"]');
       var channelLabel = activeChannel ? activeChannel.querySelector('div:nth-child(2)').textContent : 'Email + Text';
       var schedRow = document.getElementById('_fu-schedule-row');
       var isScheduled = schedRow && schedRow.style.display !== 'none';

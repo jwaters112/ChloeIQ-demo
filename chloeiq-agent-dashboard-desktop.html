@@ -10,26 +10,17 @@
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --bg: #0A0B07;
-    --surface: #13160D;
-    --surface2: #1A1E12;
-    --surface3: #222818;
-    --accent: #B8E030;
-    --accent-dim: rgba(184,224,48,0.12);
-    --accent-mid: rgba(184,224,48,0.25);
-    --text: #EEF0E5;
-    --text-muted: #8A8F7A;
-    --text-dim: #5A5F4A;
-    --border: rgba(184,224,48,0.1);
-    --border-subtle: rgba(238,240,229,0.06);
-    --red: #FF5A4A;
-    --amber: #F5A623;
-    --green: #4ADE80;
-    --blue: #60A5FA;
-    --sidebar-w: 220px;
-    --header-h: 60px;
-  }
+  :root{
+  --bg:#F5F5F7;--s1:#FFFFFF;--s2:#F0F0F2;--s3:#E8E8EA;--s4:#E0E0E2;
+  --acc:#1D6F42;--ad:rgba(29,111,66,.10);--am:rgba(29,111,66,.18);
+  --tx:#1D1D1F;--txm:#6E6E73;--txd:#AEAEB2;
+  --br:rgba(29,111,66,.25);--bs:rgba(0,0,0,.08);
+  --grn:#1D6F42;--red:#D93025;--amb:#B06000;--blu:#1A56DB;--pur:#6741D9;
+  --font-body:'DM Sans',sans-serif;
+  --font-display:'Fraunces',serif;
+  --font-mono:'DM Mono',monospace;
+  --radius:11px;
+}
 
   html, body {
     height: 100%;
@@ -321,7 +312,7 @@
     background: var(--accent);
     color: var(--bg);
   }
-  .btn-primary:hover { background: #c8f040; }
+  .btn-primary:hover { background: #2E8B57; }
   .btn-ghost {
     background: transparent;
     color: var(--text-muted);
@@ -388,8 +379,8 @@
 
   /* ── HOT LEAD BANNER ── */
   .hot-lead-banner {
-    background: linear-gradient(135deg, rgba(184,224,48,0.08) 0%, rgba(184,224,48,0.03) 100%);
-    border: 1px solid rgba(184,224,48,0.25);
+    background: linear-gradient(135deg, rgba(29,111,66,0.08) 0%, rgba(29,111,66,0.03) 100%);
+    border: 1px solid rgba(29,111,66,0.25);
     border-radius: 12px;
     padding: 16px 20px;
     display: flex;
@@ -400,10 +391,10 @@
     animation: pulseGlow 3s ease-in-out infinite;
   }
   @keyframes pulseGlow {
-    0%, 100% { box-shadow: 0 0 0 0 rgba(184,224,48,0); }
-    50% { box-shadow: 0 0 16px rgba(184,224,48,0.08); }
+    0%, 100% { box-shadow: 0 0 0 0 rgba(29,111,66,0); }
+    50% { box-shadow: 0 0 16px rgba(29,111,66,0.08); }
   }
-  .hot-lead-banner:hover { border-color: rgba(184,224,48,0.4); }
+  .hot-lead-banner:hover { border-color: rgba(29,111,66,0.4); }
   .hot-tag {
     background: var(--accent);
     color: var(--bg);
@@ -697,7 +688,7 @@
   .chip:hover { border-color: var(--border); color: var(--text); }
   .chip.active {
     background: var(--accent-dim);
-    border-color: rgba(184,224,48,0.3);
+    border-color: rgba(29,111,66,0.3);
     color: var(--accent);
   }
 
@@ -751,7 +742,7 @@
     padding: 4px 10px;
     border-radius: 20px;
   }
-  .match-pill.high { background: rgba(184,224,48,0.12); color: var(--accent); }
+  .match-pill.high { background: rgba(29,111,66,0.12); color: var(--accent); }
   .match-pill.mid { background: rgba(245,166,35,0.12); color: var(--amber); }
   .match-pill.low { background: rgba(255,90,74,0.12); color: var(--red); }
   .source-tag {
@@ -804,7 +795,7 @@
   .ld-name { font-size: 17px; font-weight: 600; color: var(--text); }
   .ld-dna-badge {
     background: var(--accent-dim);
-    border: 1px solid rgba(184,224,48,0.2);
+    border: 1px solid rgba(29,111,66,0.2);
     color: var(--accent);
     font-size: 11px;
     padding: 3px 10px;
@@ -897,7 +888,7 @@
     transition: border-color 0.15s;
   }
   .badge-item:hover { border-color: var(--border); }
-  .badge-item.earned { border-color: rgba(184,224,48,0.3); background: var(--accent-dim); }
+  .badge-item.earned { border-color: rgba(29,111,66,0.3); background: var(--accent-dim); }
   .badge-icon { font-size: 22px; }
   .badge-name { font-size: 10px; color: var(--text-muted); font-weight: 500; }
   .badge-item.earned .badge-name { color: var(--accent); }
@@ -946,6 +937,9 @@
   }
   .view.active { animation: fadeUp 0.2s ease-out; }
 </style>
+<script>
+(function(){document.documentElement.style.background='#F5F5F7';document.documentElement.style.color='#1D1D1F';})();
+</script>
 </head>
 <body>
 
@@ -1928,8 +1922,8 @@
     var t = document.createElement('div');
     t.id = 'ciq-toast';
     t.textContent = msg;
-    var bg = type === 'success' ? '#B8E030' : type === 'error' ? '#FF5A4A' : '#1A1E12';
-    var color = type === 'success' ? '#0A0B07' : '#EEF0E5';
+    var bg = type === 'success' ? '#1D6F42' : type === 'error' ? '#FF5A4A' : '#F0F0F2';
+    var color = type === 'success' ? '#F5F5F7' : '#1D1D1F';
     t.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(20px);background:' + bg + ';color:' + color + ';padding:10px 22px;border-radius:8px;font-family:DM Sans,sans-serif;font-size:13px;font-weight:500;z-index:9999;opacity:0;transition:all 0.2s ease;pointer-events:none;box-shadow:0 4px 20px rgba(0,0,0,0.4);';
     document.body.appendChild(t);
     requestAnimationFrame(function() {
@@ -1950,12 +1944,12 @@
     var overlay = document.createElement('div');
     overlay.id = 'ciq-modal';
     overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9990;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.15s ease;';
-    overlay.innerHTML = '<div style="background:#13160D;border:1px solid rgba(184,224,48,0.15);border-radius:14px;padding:28px 32px;min-width:380px;max-width:480px;box-shadow:0 20px 60px rgba(0,0,0,0.6);">'
-      + '<div style="font-family:Fraunces,serif;font-size:20px;color:#EEF0E5;margin-bottom:10px;">' + title + '</div>'
-      + '<div style="font-size:13px;color:#8A8F7A;line-height:1.6;margin-bottom:22px;">' + body + '</div>'
+    overlay.innerHTML = '<div style="background:#FFFFFF;border:1px solid rgba(29,111,66,0.15);border-radius:14px;padding:28px 32px;min-width:380px;max-width:480px;box-shadow:0 20px 60px rgba(0,0,0,0.6);">'
+      + '<div style="font-family:Fraunces,serif;font-size:20px;color:#1D1D1F;margin-bottom:10px;">' + title + '</div>'
+      + '<div style="font-size:13px;color:#6E6E73;line-height:1.6;margin-bottom:22px;">' + body + '</div>'
       + '<div style="display:flex;gap:10px;justify-content:flex-end;">'
-      + '<button id="modal-cancel" style="padding:8px 18px;border-radius:8px;border:1px solid rgba(238,240,229,0.1);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Cancel</button>'
-      + '<button id="modal-confirm" style="padding:8px 18px;border-radius:8px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:13px;font-weight:600;cursor:pointer;">' + (confirmLabel || 'Confirm') + '</button>'
+      + '<button id="modal-cancel" style="padding:8px 18px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);background:transparent;color:#6E6E73;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Cancel</button>'
+      + '<button id="modal-confirm" style="padding:8px 18px;border-radius:8px;border:none;background:#1D6F42;color:#F5F5F7;font-family:DM Sans,sans-serif;font-size:13px;font-weight:600;cursor:pointer;">' + (confirmLabel || 'Confirm') + '</button>'
       + '</div></div>';
     document.body.appendChild(overlay);
     overlay.querySelector('#modal-cancel').addEventListener('click', function() { overlay.remove(); });
@@ -2132,8 +2126,8 @@
     var max = Math.max.apply(null, data), min = Math.min.apply(null, data);
     var pts = data.map(function(v, i) { return { x: (i / (data.length - 1)) * w, y: h - 8 - ((v - min) / (max - min)) * (h - 16) }; });
     var grad = ctx.createLinearGradient(0, 0, 0, h);
-    grad.addColorStop(0, 'rgba(184,224,48,0.18)');
-    grad.addColorStop(1, 'rgba(184,224,48,0)');
+    grad.addColorStop(0, 'rgba(29,111,66,0.18)');
+    grad.addColorStop(1, 'rgba(29,111,66,0)');
     ctx.beginPath();
     ctx.moveTo(pts[0].x, h);
     pts.forEach(function(p) { ctx.lineTo(p.x, p.y); });
@@ -2143,14 +2137,14 @@
     ctx.fill();
     ctx.beginPath();
     pts.forEach(function(p, i) { i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y); });
-    ctx.strokeStyle = '#B8E030';
+    ctx.strokeStyle = '#1D6F42';
     ctx.lineWidth = 2;
     ctx.lineJoin = 'round';
     ctx.stroke();
     var last = pts[pts.length-1];
     ctx.beginPath();
     ctx.arc(last.x, last.y, 4, 0, Math.PI * 2);
-    ctx.fillStyle = '#B8E030';
+    ctx.fillStyle = '#1D6F42';
     ctx.fill();
   }
 
@@ -2292,7 +2286,7 @@
       var draftEl = document.querySelector('.draft-text');
       if (!draftEditing) {
         draftEl.contentEditable = 'true';
-        draftEl.style.outline = '1px solid rgba(184,224,48,0.3)';
+        draftEl.style.outline = '1px solid rgba(29,111,66,0.3)';
         draftEl.style.borderRadius = '4px';
         draftEl.style.padding = '4px';
         draftEl.focus();
@@ -2472,10 +2466,10 @@
         { addr:'1420 Stoneridge',  vis:22, leads:6,  match:'63%', conv:'27%', status:'done'     }
       ],
       donut: [
-        { label:'Sent',        val:37, color:'#B8E030' },
+        { label:'Sent',        val:37, color:'#1D6F42' },
         { label:'Replied',     val:21, color:'#7AB800' },
         { label:'Pending',     val:10, color:'#2A3A10' },
-        { label:'No Contact',  val:6,  color:'#1A1E12' }
+        { label:'No Contact',  val:6,  color:'#F0F0F2' }
       ],
       scans: [18,9,14,22,8,31,17,24,11,19,15,27]
     },
@@ -2510,10 +2504,10 @@
         { addr:'77 Birchwood Ct',  vis:41,  leads:12, match:'77%', conv:'29%', status:'done'     }
       ],
       donut: [
-        { label:'Sent',        val:102, color:'#B8E030' },
+        { label:'Sent',        val:102, color:'#1D6F42' },
         { label:'Replied',     val:61,  color:'#7AB800' },
         { label:'Pending',     val:22,  color:'#2A3A10' },
-        { label:'No Contact',  val:18,  color:'#1A1E12' }
+        { label:'No Contact',  val:18,  color:'#F0F0F2' }
       ],
       scans: [28,41,19,55,33,47,38,62,29,44,51,67]
     },
@@ -2548,17 +2542,17 @@
         { addr:'319 Elmwood Pl',    vis:19,  leads:5,  match:'59%', conv:'26%', status:'done' }
       ],
       donut: [
-        { label:'Sent',        val:346, color:'#B8E030' },
+        { label:'Sent',        val:346, color:'#1D6F42' },
         { label:'Replied',     val:198, color:'#7AB800' },
         { label:'Pending',     val:66,  color:'#2A3A10' },
-        { label:'No Contact',  val:68,  color:'#1A1E12' }
+        { label:'No Contact',  val:68,  color:'#F0F0F2' }
       ],
       scans: [72,88,115,134,108,152,167,124,143,168,141,181]
     }
   };
 
   var insights = [
-    { icon:'↑', color:'#B8E030', text:'<strong>Refined Modern</strong> buyers convert 2.1× faster — prioritize matching listings.' },
+    { icon:'↑', color:'#1D6F42', text:'<strong>Refined Modern</strong> buyers convert 2.1× faster — prioritize matching listings.' },
     { icon:'🔥', color:'#FF8C42', text:'<strong>Jordan Lee</strong> viewed the listing 3× — strong intent signal. Follow up today.' },
     { icon:'⚡', color:'#60A5FA', text:'Chloe Codes at <strong>Magnolia Drive</strong> have your highest scan-to-lead rate: 21%.' },
     { icon:'📅', color:'#A78BFA', text:'Tuesday 2–4 PM is your peak visitor window. Schedule your next open house accordingly.' }
@@ -2593,7 +2587,7 @@
         + '<span style="font-size:12px;color:var(--text-muted);">' + f.label + '</span>'
         + '<span style="font-family:DM Mono,monospace;font-size:11px;color:var(--accent);">' + f.val.toLocaleString() + '</span>'
         + '</div>'
-        + '<div class="bar-bg"><div class="bar-fill" style="width:' + f.pct + '%;background:' + (f.pct === 100 ? 'rgba(184,224,48,0.3)' : 'var(--accent)') + ';"></div></div>'
+        + '<div class="bar-bg"><div class="bar-fill" style="width:' + f.pct + '%;background:' + (f.pct === 100 ? 'rgba(29,111,66,0.3)' : 'var(--accent)') + ';"></div></div>'
         + '</div>';
     }).join('');
   }
@@ -2649,20 +2643,20 @@
       // inner circle cutout
       ctx.beginPath();
       ctx.arc(cx, cy, inner, 0, Math.PI * 2);
-      ctx.fillStyle = '#13160D';
+      ctx.fillStyle = '#FFFFFF';
       ctx.fill();
 
       start += sweep;
     });
 
     // center text
-    ctx.fillStyle = '#EEF0E5';
+    ctx.fillStyle = '#1D1D1F';
     ctx.font = 'bold 18px Fraunces, serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(d.donut[0].val + d.donut[1].val, cx, cy - 8);
     ctx.font = '9px DM Mono, monospace';
-    ctx.fillStyle = '#8A8F7A';
+    ctx.fillStyle = '#6E6E73';
     ctx.fillText('CONTACTED', cx, cy + 8);
 
     // Legend
@@ -2672,7 +2666,7 @@
         var pct = Math.round((seg.val / total) * 100);
         return '<div style="display:flex;align-items:center;justify-content:space-between;">'
           + '<div style="display:flex;align-items:center;gap:7px;">'
-          + '<div style="width:8px;height:8px;border-radius:2px;background:' + seg.color + ';flex-shrink:0;border:1px solid rgba(238,240,229,0.1);"></div>'
+          + '<div style="width:8px;height:8px;border-radius:2px;background:' + seg.color + ';flex-shrink:0;border:1px solid rgba(0,0,0,0.1);"></div>'
           + '<span style="font-size:12px;color:var(--text-muted);">' + seg.label + '</span>'
           + '</div>'
           + '<span style="font-family:DM Mono,monospace;font-size:11px;color:var(--text-muted);">' + seg.val + ' <span style="color:var(--text-dim);">(' + pct + '%)</span></span>'
@@ -2704,7 +2698,7 @@
     function yPos(v, max) { return pad.top + iH - (v / max) * iH; }
 
     // Grid lines
-    ctx.strokeStyle = 'rgba(238,240,229,0.04)';
+    ctx.strokeStyle = 'rgba(0,0,0,0.04)';
     ctx.lineWidth = 1;
     for (var g = 0; g <= 4; g++) {
       var gy = pad.top + (g / 4) * iH;
@@ -2733,27 +2727,27 @@
     ctx.lineTo(xPos(0), pad.top + iH);
     ctx.closePath();
     var grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + iH);
-    grad.addColorStop(0, 'rgba(184,224,48,0.12)');
-    grad.addColorStop(1, 'rgba(184,224,48,0)');
+    grad.addColorStop(0, 'rgba(29,111,66,0.12)');
+    grad.addColorStop(1, 'rgba(29,111,66,0)');
     ctx.fillStyle = grad;
     ctx.fill();
 
     // Visitor line
     ctx.beginPath();
     vis.forEach(function(v, i) { i === 0 ? ctx.moveTo(xPos(i), yPos(v, maxV)) : ctx.lineTo(xPos(i), yPos(v, maxV)); });
-    ctx.strokeStyle = 'rgba(184,224,48,0.4)';
+    ctx.strokeStyle = 'rgba(29,111,66,0.4)';
     ctx.lineWidth = 1.5;
     ctx.stroke();
 
     // Lead line (scaled to same axis)
     ctx.beginPath();
     leads.forEach(function(v, i) { i === 0 ? ctx.moveTo(xPos(i), yPos(v, maxV)) : ctx.lineTo(xPos(i), yPos(v, maxV)); });
-    ctx.strokeStyle = '#B8E030';
+    ctx.strokeStyle = '#1D6F42';
     ctx.lineWidth = 2;
     ctx.stroke();
 
     // Lead dots
-    ctx.fillStyle = '#B8E030';
+    ctx.fillStyle = '#1D6F42';
     leads.forEach(function(v, i) {
       ctx.beginPath();
       ctx.arc(xPos(i), yPos(v, maxV), 3, 0, Math.PI * 2);
@@ -2783,8 +2777,8 @@
 
       // Bar gradient
       var g = ctx.createLinearGradient(0, y, 0, y + bH);
-      g.addColorStop(0, 'rgba(184,224,48,0.8)');
-      g.addColorStop(1, 'rgba(184,224,48,0.2)');
+      g.addColorStop(0, 'rgba(29,111,66,0.8)');
+      g.addColorStop(1, 'rgba(29,111,66,0.2)');
       ctx.fillStyle = g;
       ctx.beginPath();
       ctx.roundRect(x, y, barW, bH, [3, 3, 0, 0]);
@@ -2890,116 +2884,116 @@
     overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9990;display:flex;align-items:flex-start;justify-content:center;animation:fadeIn 0.15s ease;overflow-y:auto;padding:32px 16px;';
 
     var html = '';
-    html += '<div style="background:#13160D;border:1px solid rgba(184,224,48,0.18);border-radius:16px;padding:32px 36px;width:580px;max-width:95vw;box-shadow:0 24px 72px rgba(0,0,0,0.7);">';
+    html += '<div style="background:#FFFFFF;border:1px solid rgba(29,111,66,0.18);border-radius:16px;padding:32px 36px;width:580px;max-width:95vw;box-shadow:0 24px 72px rgba(0,0,0,0.7);">';
 
     // ── Header ──
     html += '<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px;">';
     html +=   '<div>';
-    html +=     '<div style="font-family:Fraunces,serif;font-size:22px;color:#EEF0E5;line-height:1.2;">New <em style=\'color:#B8E030;\'>Open House</em></div>';
-    html +=     '<div style="font-size:12px;color:#8A8F7A;margin-top:5px;">Fill in the details — Chloe generates your QR Chloe Code automatically.</div>';
+    html +=     '<div style="font-family:Fraunces,serif;font-size:22px;color:#1D1D1F;line-height:1.2;">New <em style=\'color:#1D6F42;\'>Open House</em></div>';
+    html +=     '<div style="font-size:12px;color:#6E6E73;margin-top:5px;">Fill in the details — Chloe generates your QR Chloe Code automatically.</div>';
     html +=   '</div>';
-    html +=   '<button id="oh-x" style="background:none;border:none;color:#8A8F7A;font-size:18px;cursor:pointer;padding:2px 6px;line-height:1;">✕</button>';
+    html +=   '<button id="oh-x" style="background:none;border:none;color:#6E6E73;font-size:18px;cursor:pointer;padding:2px 6px;line-height:1;">✕</button>';
     html += '</div>';
 
-    html += '<div style="height:1px;background:rgba(184,224,48,0.1);margin:18px 0;"></div>';
+    html += '<div style="height:1px;background:rgba(29,111,66,0.1);margin:18px 0;"></div>';
 
     // ── Property Details ──
-    html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#B8E030;text-transform:uppercase;margin-bottom:14px;">Property Details</div>';
+    html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#1D6F42;text-transform:uppercase;margin-bottom:14px;">Property Details</div>';
 
     // Street
     html += '<div style="margin-bottom:12px;">';
-    html +=   '<label style="display:block;font-size:11px;color:#8A8F7A;font-family:DM Sans,sans-serif;margin-bottom:6px;">Street Address</label>';
-    html +=   '<input id="oh-street" type="text" placeholder="e.g. 2847 Magnolia Drive" style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;" />';
+    html +=   '<label style="display:block;font-size:11px;color:#6E6E73;font-family:DM Sans,sans-serif;margin-bottom:6px;">Street Address</label>';
+    html +=   '<input id="oh-street" type="text" placeholder="e.g. 2847 Magnolia Drive" style="width:100%;background:#F5F5F7;border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 12px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;" />';
     html += '</div>';
 
     // City / State / ZIP
     html += '<div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;margin-bottom:12px;">';
-    html +=   '<div><label style="display:block;font-size:11px;color:#8A8F7A;margin-bottom:6px;">City</label><input id="oh-city" type="text" placeholder="Flower Mound" style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;" /></div>';
-    html +=   '<div><label style="display:block;font-size:11px;color:#8A8F7A;margin-bottom:6px;">State</label><input id="oh-state" type="text" placeholder="TX" style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;" /></div>';
-    html +=   '<div><label style="display:block;font-size:11px;color:#8A8F7A;margin-bottom:6px;">ZIP</label><input id="oh-zip" type="text" placeholder="75022" style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;" /></div>';
+    html +=   '<div><label style="display:block;font-size:11px;color:#6E6E73;margin-bottom:6px;">City</label><input id="oh-city" type="text" placeholder="Flower Mound" style="width:100%;background:#F5F5F7;border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 12px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;" /></div>';
+    html +=   '<div><label style="display:block;font-size:11px;color:#6E6E73;margin-bottom:6px;">State</label><input id="oh-state" type="text" placeholder="TX" style="width:100%;background:#F5F5F7;border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 12px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;" /></div>';
+    html +=   '<div><label style="display:block;font-size:11px;color:#6E6E73;margin-bottom:6px;">ZIP</label><input id="oh-zip" type="text" placeholder="75022" style="width:100%;background:#F5F5F7;border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 12px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;" /></div>';
     html += '</div>';
 
     // MLS / Price
     html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">';
-    html +=   '<div><label style="display:block;font-size:11px;color:#8A8F7A;margin-bottom:6px;">MLS #</label><input id="oh-mls" type="text" placeholder="e.g. 20512345" style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;" /></div>';
-    html +=   '<div><label style="display:block;font-size:11px;color:#8A8F7A;margin-bottom:6px;">List Price</label><input id="oh-price" type="text" placeholder="e.g. $649,000" style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;" /></div>';
+    html +=   '<div><label style="display:block;font-size:11px;color:#6E6E73;margin-bottom:6px;">MLS #</label><input id="oh-mls" type="text" placeholder="e.g. 20512345" style="width:100%;background:#F5F5F7;border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 12px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;" /></div>';
+    html +=   '<div><label style="display:block;font-size:11px;color:#6E6E73;margin-bottom:6px;">List Price</label><input id="oh-price" type="text" placeholder="e.g. $649,000" style="width:100%;background:#F5F5F7;border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 12px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;" /></div>';
     html += '</div>';
 
     // Beds / Baths / SqFt
     html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:4px;">';
-    html +=   '<div><label style="display:block;font-size:11px;color:#8A8F7A;margin-bottom:6px;">Bedrooms</label><input id="oh-beds" type="number" placeholder="4" min="1" max="20" style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;" /></div>';
-    html +=   '<div><label style="display:block;font-size:11px;color:#8A8F7A;margin-bottom:6px;">Bathrooms</label><input id="oh-baths" type="number" placeholder="3" min="1" max="20" step="0.5" style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;" /></div>';
-    html +=   '<div><label style="display:block;font-size:11px;color:#8A8F7A;margin-bottom:6px;">Sq Ft</label><input id="oh-sqft" type="text" placeholder="e.g. 2,850" style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;" /></div>';
+    html +=   '<div><label style="display:block;font-size:11px;color:#6E6E73;margin-bottom:6px;">Bedrooms</label><input id="oh-beds" type="number" placeholder="4" min="1" max="20" style="width:100%;background:#F5F5F7;border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 12px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;" /></div>';
+    html +=   '<div><label style="display:block;font-size:11px;color:#6E6E73;margin-bottom:6px;">Bathrooms</label><input id="oh-baths" type="number" placeholder="3" min="1" max="20" step="0.5" style="width:100%;background:#F5F5F7;border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 12px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;" /></div>';
+    html +=   '<div><label style="display:block;font-size:11px;color:#6E6E73;margin-bottom:6px;">Sq Ft</label><input id="oh-sqft" type="text" placeholder="e.g. 2,850" style="width:100%;background:#F5F5F7;border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 12px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;" /></div>';
     html += '</div>';
 
-    html += '<div style="height:1px;background:rgba(184,224,48,0.1);margin:20px 0;"></div>';
+    html += '<div style="height:1px;background:rgba(29,111,66,0.1);margin:20px 0;"></div>';
 
     // ── Schedule ──
-    html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#B8E030;text-transform:uppercase;margin-bottom:14px;">Event Schedule</div>';
+    html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#1D6F42;text-transform:uppercase;margin-bottom:14px;">Event Schedule</div>';
     html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:4px;">';
-    html +=   '<div><label style="display:block;font-size:11px;color:#8A8F7A;margin-bottom:6px;">Date</label><input id="oh-date" type="date" style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;color-scheme:dark;" /></div>';
-    html +=   '<div><label style="display:block;font-size:11px;color:#8A8F7A;margin-bottom:6px;">Start Time</label><input id="oh-start" type="time" style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;color-scheme:dark;" /></div>';
-    html +=   '<div><label style="display:block;font-size:11px;color:#8A8F7A;margin-bottom:6px;">End Time</label><input id="oh-end" type="time" style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;color-scheme:dark;" /></div>';
+    html +=   '<div><label style="display:block;font-size:11px;color:#6E6E73;margin-bottom:6px;">Date</label><input id="oh-date" type="date" style="width:100%;background:#F5F5F7;border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 12px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;color-scheme:dark;" /></div>';
+    html +=   '<div><label style="display:block;font-size:11px;color:#6E6E73;margin-bottom:6px;">Start Time</label><input id="oh-start" type="time" style="width:100%;background:#F5F5F7;border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 12px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;color-scheme:dark;" /></div>';
+    html +=   '<div><label style="display:block;font-size:11px;color:#6E6E73;margin-bottom:6px;">End Time</label><input id="oh-end" type="time" style="width:100%;background:#F5F5F7;border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 12px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;color-scheme:dark;" /></div>';
     html += '</div>';
 
-    html += '<div style="height:1px;background:rgba(184,224,48,0.1);margin:20px 0;"></div>';
+    html += '<div style="height:1px;background:rgba(29,111,66,0.1);margin:20px 0;"></div>';
 
     // ── Chloe Settings ──
-    html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#B8E030;text-transform:uppercase;margin-bottom:14px;">Chloe Code Settings</div>';
+    html += '<div style="font-size:10px;font-weight:700;letter-spacing:0.1em;color:#1D6F42;text-transform:uppercase;margin-bottom:14px;">Chloe Code Settings</div>';
     html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">';
 
     // Toggle card: StyleDNA
-    html += '<div style="background:#0E1108;border:1px solid rgba(238,240,229,0.08);border-radius:10px;padding:14px 16px;">';
+    html += '<div style="background:#F5F5F7;border:1px solid rgba(0,0,0,0.08);border-radius:10px;padding:14px 16px;">';
     html +=   '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;">';
-    html +=     '<div style="font-size:13px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-weight:500;">StyleDNA Quiz</div>';
-    html +=     '<div id="oh-tog-dna" data-on="true" style="width:36px;height:20px;border-radius:10px;background:#B8E030;cursor:pointer;position:relative;flex-shrink:0;">';
-    html +=       '<div style="position:absolute;right:3px;top:3px;width:14px;height:14px;border-radius:50%;background:#0A0B07;transition:right 0.15s;"></div>';
+    html +=     '<div style="font-size:13px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-weight:500;">StyleDNA Quiz</div>';
+    html +=     '<div id="oh-tog-dna" data-on="true" style="width:36px;height:20px;border-radius:10px;background:#1D6F42;cursor:pointer;position:relative;flex-shrink:0;">';
+    html +=       '<div style="position:absolute;right:3px;top:3px;width:14px;height:14px;border-radius:50%;background:#F5F5F7;transition:right 0.15s;"></div>';
     html +=     '</div>';
     html +=   '</div>';
-    html +=   '<div style="font-size:11px;color:#8A8F7A;line-height:1.5;">Buyers complete a 6-question buyer style quiz at arrival</div>';
+    html +=   '<div style="font-size:11px;color:#6E6E73;line-height:1.5;">Buyers complete a 6-question buyer style quiz at arrival</div>';
     html += '</div>';
 
     // Toggle card: Auto Follow-Up
-    html += '<div style="background:#0E1108;border:1px solid rgba(238,240,229,0.08);border-radius:10px;padding:14px 16px;">';
+    html += '<div style="background:#F5F5F7;border:1px solid rgba(0,0,0,0.08);border-radius:10px;padding:14px 16px;">';
     html +=   '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;">';
-    html +=     '<div style="font-size:13px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-weight:500;">Auto Follow-Up</div>';
-    html +=     '<div id="oh-tog-fu" data-on="true" style="width:36px;height:20px;border-radius:10px;background:#B8E030;cursor:pointer;position:relative;flex-shrink:0;">';
-    html +=       '<div style="position:absolute;right:3px;top:3px;width:14px;height:14px;border-radius:50%;background:#0A0B07;transition:right 0.15s;"></div>';
+    html +=     '<div style="font-size:13px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-weight:500;">Auto Follow-Up</div>';
+    html +=     '<div id="oh-tog-fu" data-on="true" style="width:36px;height:20px;border-radius:10px;background:#1D6F42;cursor:pointer;position:relative;flex-shrink:0;">';
+    html +=       '<div style="position:absolute;right:3px;top:3px;width:14px;height:14px;border-radius:50%;background:#F5F5F7;transition:right 0.15s;"></div>';
     html +=     '</div>';
     html +=   '</div>';
-    html +=   '<div style="font-size:11px;color:#8A8F7A;line-height:1.5;">Chloe sends match reports to buyers 24 hrs after event</div>';
+    html +=   '<div style="font-size:11px;color:#6E6E73;line-height:1.5;">Chloe sends match reports to buyers 24 hrs after event</div>';
     html += '</div>';
 
     // Toggle card: Live Notifications
-    html += '<div style="background:#0E1108;border:1px solid rgba(238,240,229,0.08);border-radius:10px;padding:14px 16px;">';
+    html += '<div style="background:#F5F5F7;border:1px solid rgba(0,0,0,0.08);border-radius:10px;padding:14px 16px;">';
     html +=   '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;">';
-    html +=     '<div style="font-size:13px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-weight:500;">Live Notifications</div>';
-    html +=     '<div id="oh-tog-notif" data-on="true" style="width:36px;height:20px;border-radius:10px;background:#B8E030;cursor:pointer;position:relative;flex-shrink:0;">';
-    html +=       '<div style="position:absolute;right:3px;top:3px;width:14px;height:14px;border-radius:50%;background:#0A0B07;transition:right 0.15s;"></div>';
+    html +=     '<div style="font-size:13px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-weight:500;">Live Notifications</div>';
+    html +=     '<div id="oh-tog-notif" data-on="true" style="width:36px;height:20px;border-radius:10px;background:#1D6F42;cursor:pointer;position:relative;flex-shrink:0;">';
+    html +=       '<div style="position:absolute;right:3px;top:3px;width:14px;height:14px;border-radius:50%;background:#F5F5F7;transition:right 0.15s;"></div>';
     html +=     '</div>';
     html +=   '</div>';
-    html +=   '<div style="font-size:11px;color:#8A8F7A;line-height:1.5;">Get pinged each time a buyer scans your Chloe Code</div>';
+    html +=   '<div style="font-size:11px;color:#6E6E73;line-height:1.5;">Get pinged each time a buyer scans your Chloe Code</div>';
     html += '</div>';
 
     // Visitor Limit
-    html += '<div><label style="display:block;font-size:11px;color:#8A8F7A;margin-bottom:6px;">Visitor Limit <span style=\'color:#4A4F3A;\'>(optional)</span></label><input id="oh-maxvis" type="number" placeholder="No limit" min="1" style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;" /></div>';
+    html += '<div><label style="display:block;font-size:11px;color:#6E6E73;margin-bottom:6px;">Visitor Limit <span style=\'color:#4A4F3A;\'>(optional)</span></label><input id="oh-maxvis" type="number" placeholder="No limit" min="1" style="width:100%;background:#F5F5F7;border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 12px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-size:13px;outline:none;box-sizing:border-box;" /></div>';
 
     html += '</div>';
 
     // Agent note (full width)
     html += '<div style="margin-bottom:4px;">';
-    html +=   '<label style="display:block;font-size:11px;color:#8A8F7A;margin-bottom:6px;">Agent Note for Buyers <span style=\'color:#4A4F3A;\'>(optional)</span></label>';
-    html +=   '<textarea id="oh-note" rows="2" placeholder="e.g. Ask me about the renovation, backyard, or neighborhood schools…" style="width:100%;background:#0E1108;border:1px solid rgba(238,240,229,0.1);border-radius:8px;padding:10px 12px;color:#EEF0E5;font-family:DM Sans,sans-serif;font-size:13px;resize:none;outline:none;box-sizing:border-box;"></textarea>';
+    html +=   '<label style="display:block;font-size:11px;color:#6E6E73;margin-bottom:6px;">Agent Note for Buyers <span style=\'color:#4A4F3A;\'>(optional)</span></label>';
+    html +=   '<textarea id="oh-note" rows="2" placeholder="e.g. Ask me about the renovation, backyard, or neighborhood schools…" style="width:100%;background:#F5F5F7;border:1px solid rgba(0,0,0,0.1);border-radius:8px;padding:10px 12px;color:#1D1D1F;font-family:DM Sans,sans-serif;font-size:13px;resize:none;outline:none;box-sizing:border-box;"></textarea>';
     html += '</div>';
 
-    html += '<div style="height:1px;background:rgba(184,224,48,0.1);margin:20px 0;"></div>';
+    html += '<div style="height:1px;background:rgba(29,111,66,0.1);margin:20px 0;"></div>';
 
     // ── Footer ──
     html += '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">';
     html +=   '<div style="font-size:11px;color:#4A4F3A;line-height:1.5;">A unique Chloe Code QR will be generated<br>and available immediately after creation.</div>';
     html +=   '<div style="display:flex;gap:10px;flex-shrink:0;">';
-    html +=     '<button id="oh-cancel" style="padding:10px 20px;border-radius:8px;border:1px solid rgba(238,240,229,0.12);background:transparent;color:#8A8F7A;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Cancel</button>';
-    html +=     '<button id="oh-confirm" style="padding:10px 24px;border-radius:8px;border:none;background:#B8E030;color:#0A0B07;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:0.02em;">Create &amp; Generate Code ›</button>';
+    html +=     '<button id="oh-cancel" style="padding:10px 20px;border-radius:8px;border:1px solid rgba(0,0,0,0.12);background:transparent;color:#6E6E73;font-family:DM Sans,sans-serif;font-size:13px;cursor:pointer;">Cancel</button>';
+    html +=     '<button id="oh-confirm" style="padding:10px 24px;border-radius:8px;border:none;background:#1D6F42;color:#F5F5F7;font-family:DM Sans,sans-serif;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:0.02em;">Create &amp; Generate Code ›</button>';
     html +=   '</div>';
     html += '</div>';
 
@@ -3015,7 +3009,7 @@
       el.addEventListener('click', function() {
         var on = el.getAttribute('data-on') !== 'true';
         el.setAttribute('data-on', String(on));
-        el.style.background = on ? '#B8E030' : '#2A2E20';
+        el.style.background = on ? '#1D6F42' : '#2A2E20';
         var dot = el.querySelector('div');
         if (dot) dot.style.right = on ? '3px' : '19px';
       });

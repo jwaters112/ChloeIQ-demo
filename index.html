@@ -5,8 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ChloeIQ</title>
 <style>
+:root{
+  --bg:#F5F5F7;--s1:#FFFFFF;--s2:#F0F0F2;--s3:#E8E8EA;--s4:#E0E0E2;
+  --acc:#1D6F42;--ad:rgba(29,111,66,.10);--am:rgba(29,111,66,.18);
+  --tx:#1D1D1F;--txm:#6E6E73;--txd:#AEAEB2;
+  --br:rgba(29,111,66,.25);--bs:rgba(0,0,0,.08);
+  --grn:#1D6F42;--red:#D93025;--amb:#B06000;--blu:#1A56DB;--pur:#6741D9;
+  --font-body:'DM Sans',sans-serif;
+  --font-display:'Fraunces',serif;
+  --font-mono:'DM Mono',monospace;
+  --radius:11px;
+}
+
   *{margin:0;padding:0;box-sizing:border-box;}
-  html,body{height:100%;background:#0A0B07;display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;}
+  html,body{height:100%;background: var(--bg);display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;}
   .loader{display:flex;flex-direction:column;align-items:center;gap:16px;}
   .logo{width:52px;height:52px;background:#B8E030;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:#0A0B07;font-family:Georgia,serif;}
   .wordmark{font-size:22px;color:#EEF0E5;letter-spacing:-.5px;}
@@ -17,6 +29,9 @@
   .dot div:nth-child(3){animation-delay:.4s;}
   @keyframes pulse{0%,100%{opacity:.3;}50%{opacity:1;}}
 </style>
+<script>
+(function(){document.documentElement.style.background='#F5F5F7';document.documentElement.style.color='#1D1D1F';})();
+</script>
 </head>
 <body>
 <div class="loader">
